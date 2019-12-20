@@ -9,12 +9,26 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
+      - darwin
+      - windows
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
 dockers:
   - image_templates:
       - "docker.pkg.github.com/equinor/radix-cli/rx:latest"
     dockerfile: Dockerfile
     binaries:
       - rx
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
 checksum:
   name_template: "checksums.txt"
 snapshot:
