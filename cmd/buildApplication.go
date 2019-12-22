@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
@@ -47,6 +48,14 @@ var buildApplicationCmd = &cobra.Command{
 		appName, _ := cmd.Flags().GetString("application")
 		branch, _ := cmd.Flags().GetString("branch")
 		follow, _ := cmd.Flags().GetBool("follow")
+		fromConfig, _ := cmd.Flags().GetBool("from-config")
+
+		if fromConfig {
+			radicConfig, _ := getRadixApplicationFromFile()
+			if appName == "" {
+				appName = radicConfig.GetName()
+			}
+		}
 
 		if appName == "" || branch == "" {
 			return errors.New("Application name and branch are required")
@@ -69,42 +78,60 @@ var buildApplicationCmd = &cobra.Command{
 		}
 
 		if follow {
+			jobName := newJob.GetPayload().Name
+
 			jobParameters := job.NewGetApplicationJobParams()
 			jobParameters.SetAppName(appName)
-			jobParameters.SetJobName(newJob.GetPayload().Name)
+			jobParameters.SetJobName(jobName)
 
-			newJobName := newJob.GetPayload().Name
-			m := fmt.Sprintf("Building %s on branch %s with name %s", cyan(appName), yellow(branch), yellow(newJobName))
-			s := `-\|/-`
-			i := 0
+			fmt.Fprintf(cmd.OutOrStdout(), "\r%s", fmt.Sprintf("Building %s on branch %s with name %s", cyan(appName), yellow(branch), yellow(jobName)))
+
 			buildComplete := false
 
-			refreshApplication := time.After(deltaRefreshApplication)
-			tick := time.Tick(deltaRefreshOutput)
+			numLogLinesOutput := 0
+			refreshApplication := time.Tick(deltaRefreshApplication)
 
 			for {
 				select {
 				case <-refreshApplication:
+					jobLogParameters := job.NewGetApplicationJobLogsParams()
+					jobLogParameters.SetAppName(appName)
+					jobLogParameters.SetJobName(jobName)
+
+					respJobLog, _ := apiClient.Job.GetApplicationJobLogs(jobLogParameters, nil)
+					if respJobLog != nil {
+						numLogLines := 0
+
+						stepsLog := respJobLog.Payload
+						for _, stepLog := range stepsLog {
+							stepLogLines := strings.Split(strings.Replace(stepLog.Log, "\r\n", "\n", -1), "\n")
+
+							for _, stepLogLine := range stepLogLines {
+								if numLogLinesOutput <= numLogLines {
+									fmt.Fprintf(cmd.OutOrStdout(), "\r\n%s", stepLogLine)
+									numLogLinesOutput++
+								}
+
+								numLogLines++
+							}
+						}
+					}
+
 					respJob, _ := apiClient.Job.GetApplicationJob(jobParameters, nil)
-					jobSummary := respJob.Payload
-					if jobSummary.Status == "Succeeded" {
-						fmt.Fprintf(cmd.OutOrStdout(), fmt.Sprintf("%s", green("\nBuild complete\n")))
-						buildComplete = true
-					} else if jobSummary.Status == "Failed" {
-						fmt.Fprintf(cmd.OutOrStdout(), fmt.Sprintf("%s", red("\nBuild failed\n")))
-						buildComplete = true
+					if respJob != nil {
+						jobSummary := respJob.Payload
+						if jobSummary.Status == "Succeeded" {
+							fmt.Fprintf(cmd.OutOrStdout(), fmt.Sprintf("%s", green("\nBuild complete\n")))
+							buildComplete = true
+						} else if jobSummary.Status == "Failed" {
+							fmt.Fprintf(cmd.OutOrStdout(), fmt.Sprintf("%s", red("\nBuild failed\n")))
+							buildComplete = true
+						}
+
+						if buildComplete {
+							return nil
+						}
 					}
-
-					if buildComplete {
-						return nil
-					}
-
-					// Reset timer
-					refreshApplication = time.After(deltaRefreshApplication)
-
-				case <-tick:
-					fmt.Fprintf(cmd.OutOrStdout(), "\r%s %c", m, s[i%len(s)])
-					i++
 				}
 
 			}

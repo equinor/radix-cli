@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	contrib.go.opencensus.io/exporter/ocagent v0.6.0 // indirect
-	github.com/Azure/go-autorest v11.9.0+incompatible // indirect
+	github.com/equinor/radix-operator v1.4.1
 	github.com/fatih/color v1.7.0
 	github.com/go-openapi/errors v0.19.3
 	github.com/go-openapi/runtime v0.19.9
@@ -21,7 +21,6 @@ require (
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
 	k8s.io/apimachinery v0.0.0-20191020214737-6c8691705fc5
 	k8s.io/client-go v12.0.0+incompatible
-	k8s.io/utils v0.0.0-20191010214722-8d271d903fe4 // indirect
 )
 
 replace k8s.io/client-go => k8s.io/client-go v0.0.0-20190620085101-78d2af792bab

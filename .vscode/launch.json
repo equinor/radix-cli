@@ -20,7 +20,17 @@
       "mode": "auto",
       "program": "${workspaceFolder}/main.go",
       "env": {},
-      "args": ["build", "-a", "radix-platform", "-b", "master", "-f"]
+      "args": [
+        "--from-config",
+        "--cluster",
+        "weekly-47",
+        "--environment",
+        "qa",
+        "build",
+        "-b",
+        "master",
+        "-f"
+      ]
     }
   ]
 }
