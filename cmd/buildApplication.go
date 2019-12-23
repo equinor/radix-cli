@@ -145,5 +145,5 @@ func init() {
 	rootCmd.AddCommand(buildApplicationCmd)
 	buildApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build")
 	buildApplicationCmd.Flags().StringP("branch", "b", "", "Branch to build from")
-	buildApplicationCmd.Flags().BoolP("follow", "f", true, "Follow build")
+	buildApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build")
 }

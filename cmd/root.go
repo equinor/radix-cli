@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/equinor/radix-cli/pkg/client"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	v1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/equinor/radix-operator/pkg/apis/utils"
@@ -29,6 +30,7 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().BoolP("from-config", "", false, "Read and use radix config from file as context")
+	rootCmd.PersistentFlags().BoolP("token-environment", "", false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
 	rootCmd.PersistentFlags().BoolP("token-stdin", "", false, "Take the token from stdin")
 	rootCmd.PersistentFlags().StringP("context", "c", "", fmt.Sprintf("Use context %s|%s|%s regardless of current context",
 		radixconfig.ContextProdction, radixconfig.ContextPlayground, radixconfig.ContextDevelopment))

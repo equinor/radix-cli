@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/go-openapi/strfmt"
@@ -18,6 +19,9 @@ import (
 const (
 	apiEndpointPatternForContext = "api.%sradix.equinor.com"
 	apiEndpointPatternForCluster = "server-radix-api-%s.%s.dev.radix.equinor.com"
+
+	// TokenEnvironmentName Name of environment variable to load token from
+	TokenEnvironmentName = "APP_SERVICE_ACCOUNT_TOKEN"
 )
 
 // Get Gets API client for set context
@@ -31,7 +35,10 @@ func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
 	cluster, _ := cmd.Flags().GetString("cluster")
 	environment, _ := cmd.Flags().GetString("environment")
 
-	token, _ := getTokenFromFlagSet(cmd)
+	token, err := getTokenFromFlagSet(cmd)
+	if err != nil {
+		return nil, err
+	}
 
 	if context != "" && cluster != "" {
 		return nil, errors.New("Cannot use both context and cluster as arguments at the same time")
@@ -120,6 +127,11 @@ func getPatternForContext(context string) string {
 func getTokenFromFlagSet(cmd *cobra.Command) (*string, error) {
 	var token string
 	tokenFromStdIn, _ := cmd.Flags().GetBool("token-stdin")
+	tokenFromEnvironment, _ := cmd.Flags().GetBool("token-environment")
+
+	if tokenFromStdIn && tokenFromEnvironment {
+		return nil, errors.New("`token-stdin` and `token-environment` cannot both be set")
+	}
 
 	if tokenFromStdIn {
 		contents, err := ioutil.ReadAll(cmd.InOrStdin())
@@ -129,6 +141,11 @@ func getTokenFromFlagSet(cmd *cobra.Command) (*string, error) {
 
 		token = strings.TrimSuffix(string(contents), "\n")
 		token = strings.TrimSuffix(token, "\r")
+	} else if tokenFromEnvironment {
+		token = os.Getenv(TokenEnvironmentName)
+		if strings.EqualFold(token, "") {
+			return nil, fmt.Errorf("Environment variable`%s` should be set", TokenEnvironmentName)
+		}
 	}
 
 	return &token, nil
