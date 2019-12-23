@@ -18,13 +18,13 @@ Typically your home dir will be `/Users/<username>/` on a Mac, or `<root>\Users\
 
 There are generally two modes of running the CLI:
 
-1. Interactively
+#### Interactively
 
 CLI will use users privileges to access the Radix API server. Context information is stored in the \$HOME/.radix folder. First time you run it (i.e. `rx list applications`) a prompt is provided for you to authenticated with Azure using a device code flow. A message like this appears in your terminal:
 
 `To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code ABCDEFGHI to authenticate.`
 
-2. Using a machine user
+#### Using a machine user
 
 CLI can also use a machine user for authenticating with the API server. This will be done through a bearer token of a service account connected to your application. The service account token will be provided to you under configuration page of your application. There are two ways to feed this token to the CLI. Either using standard input. The should be done like this:
 
