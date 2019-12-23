@@ -53,13 +53,13 @@ These are global arguments for all commands. Default will use context=production
 
 ```
 General flags:
-  -k, --cluster string       Set cluster to override context
-  -c, --context string       Use context production|playground|development regardless of current context
-  -e, --environment string   The API environment to run with (default "prod")
-      --from-config          Read and use radix config from file as context
-  -h, --help                 help for rx
-      --token-environment    Take the token from environment variable APP_SERVICE_ACCOUNT_TOKEN
-      --token-stdin          Take the token from stdin
+  -k, --cluster string           Set cluster to override context
+  -c, --context string           Use context production|playground|development regardless of current context
+  -e, --api-environment string   The API environment to run with (default "prod")
+      --from-config              Read and use radix config from file as context
+  -h, --help                     help for rx
+      --token-environment        Take the token from environment variable APP_SERVICE_ACCOUNT_TOKEN
+      --token-stdin              Take the token from stdin
 ```
 
 ## Generate client stubs

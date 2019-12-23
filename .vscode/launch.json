@@ -19,17 +19,43 @@
       "request": "launch",
       "mode": "auto",
       "program": "${workspaceFolder}/main.go",
-      "env": {},
       "args": [
         "--from-config",
         "--cluster",
         "weekly-47",
-        "--environment",
+        "--api-environment",
         "qa",
         "build-deploy",
         "-b",
+        "master"
+      ]
+    },
+    {
+      "name": "Lauch radix-cli set environment secret",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
+      "args": [
+        "--from-config",
+        "--token-environment",
+        "--cluster",
+        "weekly-47",
+        "--api-environment",
+        "dev",
+        "set",
+        "environment-secret",
+        "-b",
         "master",
-        "-f"
+        "--component",
+        "auth-proxy",
+        "-s",
+        "OAUTH2_PROXY_CLIENT_SECRET",
+        "-v",
+        "my-pass"
       ]
     }
   ]

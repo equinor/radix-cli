@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -29,13 +30,57 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolP("from-config", "", false, "Read and use radix config from file as context")
-	rootCmd.PersistentFlags().BoolP("token-environment", "", false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
-	rootCmd.PersistentFlags().BoolP("token-stdin", "", false, "Take the token from stdin")
-	rootCmd.PersistentFlags().StringP("context", "c", "", fmt.Sprintf("Use context %s|%s|%s regardless of current context",
+	rootCmd.PersistentFlags().Bool("from-config", false, "Read and use radix config from file as context")
+	rootCmd.PersistentFlags().Bool("token-environment", false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
+	rootCmd.PersistentFlags().Bool("token-stdin", false, "Take the token from stdin")
+	rootCmd.PersistentFlags().StringP("context", "c", "", fmt.Sprintf("Use context %s|%s|%s regardless of current context (default production) ",
 		radixconfig.ContextProdction, radixconfig.ContextPlayground, radixconfig.ContextDevelopment))
-	rootCmd.PersistentFlags().StringP("cluster", "k", "", "Set cluster to override context")
-	rootCmd.PersistentFlags().StringP("environment", "e", "prod", "The API environment to run with")
+	rootCmd.PersistentFlags().String("cluster", "", "Set cluster to override context")
+	rootCmd.PersistentFlags().String("api-environment", "prod", "The API api-environment to run with (default prod)")
+}
+
+func getAppNameFromConfigOrFromParameter(cmd *cobra.Command, appNameField string) (*string, error) {
+	var appName string
+	var err error
+
+	fromConfig, _ := cmd.Flags().GetBool("from-config")
+	if fromConfig {
+		radicConfig, err := getRadixApplicationFromFile()
+		if err != nil {
+			return nil, err
+		}
+
+		appName = radicConfig.GetName()
+	} else {
+		appName, err = cmd.Flags().GetString(appNameField)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &appName, nil
+}
+
+func getEnvironmentFromConfig(cmd *cobra.Command, branchName string) (*string, error) {
+	var err error
+
+	fromConfig, _ := cmd.Flags().GetBool("from-config")
+	if !fromConfig {
+		return nil, errors.New("--from-config is required when getting environment from branch")
+	}
+
+	radicConfig, err := getRadixApplicationFromFile()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, environment := range radicConfig.Spec.Environments {
+		if environment.Build.From != "" && environment.Build.From == branchName {
+			return &environment.Name, nil
+		}
+	}
+
+	return nil, fmt.Errorf("No environment found which maps to branch name `%s`", branchName)
 }
 
 func getRadixApplicationFromFile() (*v1.RadixApplication, error) {

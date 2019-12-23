@@ -33,7 +33,7 @@ func Get() *apiclient.Radixapi {
 func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
 	context, _ := cmd.Flags().GetString("context")
 	cluster, _ := cmd.Flags().GetString("cluster")
-	environment, _ := cmd.Flags().GetString("environment")
+	apiEnvironment, _ := cmd.Flags().GetString("api-environment")
 
 	token, err := getTokenFromFlagSet(cmd)
 	if err != nil {
@@ -46,9 +46,9 @@ func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
 
 	var apiClient *apiclient.Radixapi
 	if token != nil && *token != "" {
-		apiClient = GetForToken(context, cluster, environment, *token)
+		apiClient = GetForToken(context, cluster, apiEnvironment, *token)
 	} else if cluster != "" {
-		apiClient = GetForCluster(cluster, environment)
+		apiClient = GetForCluster(cluster, apiEnvironment)
 	} else {
 		apiClient = GetForContext(context)
 	}

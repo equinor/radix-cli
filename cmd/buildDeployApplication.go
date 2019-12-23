@@ -45,19 +45,16 @@ var buildDeployApplicationCmd = &cobra.Command{
 	Short: "Will trigger build-deploy of a Radix application",
 	Long:  `Triggers build-deploy of Radix application, if branch to environment map exists for the branch in the Radix config`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, _ := cmd.Flags().GetString("application")
-		branch, _ := cmd.Flags().GetString("branch")
-		follow, _ := cmd.Flags().GetBool("follow")
-		fromConfig, _ := cmd.Flags().GetBool("from-config")
-
-		if fromConfig {
-			radicConfig, _ := getRadixApplicationFromFile()
-			if appName == "" {
-				appName = radicConfig.GetName()
-			}
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		if err != nil {
+			return err
 		}
 
-		if appName == "" || branch == "" {
+		branch, _ := cmd.Flags().GetString("branch")
+		commitID, _ := cmd.Flags().GetString("commitID")
+		follow, _ := cmd.Flags().GetBool("follow")
+
+		if appName == nil || *appName == "" || branch == "" {
 			return errors.New("Application name and branch are required")
 		}
 
@@ -67,9 +64,10 @@ var buildDeployApplicationCmd = &cobra.Command{
 		}
 
 		triggerPipelineParams := application.NewTriggerPipelineBuildDeployParams()
-		triggerPipelineParams.SetAppName(appName)
+		triggerPipelineParams.SetAppName(*appName)
 		triggerPipelineParams.SetPipelineParametersBuild(&models.PipelineParametersBuild{
-			Branch: branch,
+			Branch:   branch,
+			CommitID: commitID,
 		})
 
 		newJob, err := apiClient.Application.TriggerPipelineBuildDeploy(triggerPipelineParams, nil)
@@ -81,7 +79,7 @@ var buildDeployApplicationCmd = &cobra.Command{
 			jobName := newJob.GetPayload().Name
 
 			jobParameters := job.NewGetApplicationJobParams()
-			jobParameters.SetAppName(appName)
+			jobParameters.SetAppName(*appName)
 			jobParameters.SetJobName(jobName)
 
 			fmt.Fprintf(cmd.OutOrStdout(), "\r%s", fmt.Sprintf("Building %s on branch %s with name %s", cyan(appName), yellow(branch), yellow(jobName)))
@@ -95,7 +93,7 @@ var buildDeployApplicationCmd = &cobra.Command{
 				select {
 				case <-refreshApplication:
 					jobLogParameters := job.NewGetApplicationJobLogsParams()
-					jobLogParameters.SetAppName(appName)
+					jobLogParameters.SetAppName(*appName)
 					jobLogParameters.SetJobName(jobName)
 
 					respJobLog, _ := apiClient.Job.GetApplicationJobLogs(jobLogParameters, nil)
@@ -145,5 +143,6 @@ func init() {
 	rootCmd.AddCommand(buildDeployApplicationCmd)
 	buildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
 	buildDeployApplicationCmd.Flags().StringP("branch", "b", "", "Branch to build-deploy from")
+	buildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
 	buildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
 }
