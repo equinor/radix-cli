@@ -39,11 +39,11 @@ var (
 	red    = color.New(color.FgHiRed, color.BgBlack).Add(color.Italic).SprintFunc()
 )
 
-// buildApplicationCmd represents the buildApplication command
-var buildApplicationCmd = &cobra.Command{
-	Use:   "build",
-	Short: "Will trigger build of a Radix application",
-	Long:  `Triggers build of Radix application, if branch to environment map exists for the branch in the Radix config`,
+// buildDeployApplicationCmd represents the buildApplication command
+var buildDeployApplicationCmd = &cobra.Command{
+	Use:   "build-deploy",
+	Short: "Will trigger build-deploy of a Radix application",
+	Long:  `Triggers build-deploy of Radix application, if branch to environment map exists for the branch in the Radix config`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, _ := cmd.Flags().GetString("application")
 		branch, _ := cmd.Flags().GetString("branch")
@@ -142,8 +142,8 @@ var buildApplicationCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(buildApplicationCmd)
-	buildApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build")
-	buildApplicationCmd.Flags().StringP("branch", "b", "", "Branch to build from")
-	buildApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build")
+	rootCmd.AddCommand(buildDeployApplicationCmd)
+	buildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
+	buildDeployApplicationCmd.Flags().StringP("branch", "b", "", "Branch to build-deploy from")
+	buildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
 }
