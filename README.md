@@ -40,11 +40,11 @@ rx --token-environment list applications
 ### Available commands
 
 ```
-  build       Will trigger build of a Radix application
-  get-context Gets current context (used in interactive mode)
-  help        Help about any command
-  list        Lists Radix resources
-  set-context Sets the context to be either production, playground or development (used in interactive mode)
+  build-deploy       Will trigger build of a Radix application
+  get-context        Gets current context (used in interactive mode)
+  help               Help about any command
+  list               Lists Radix resources
+  set-context        Sets the context to be either production, playground or development (used in interactive mode)
 ```
 
 ### Global command arguments
