@@ -17,27 +17,17 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
-	"github.com/equinor/radix-cli/generated-client/client/job"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
-	"github.com/fatih/color"
+	"github.com/equinor/radix-cli/pkg/utils/log"
 	"github.com/spf13/cobra"
 )
 
 const deltaRefreshApplication = 3 * time.Second
 const deltaRefreshOutput = 50 * time.Millisecond
-
-var (
-	yellow = color.New(color.FgHiYellow, color.BgBlack, color.Bold).SprintFunc()
-	green  = color.New(color.FgHiGreen, color.BgBlack, color.Bold).SprintFunc()
-	blue   = color.New(color.FgHiBlue, color.BgBlack, color.Underline).SprintFunc()
-	cyan   = color.New(color.FgCyan, color.BgBlack).SprintFunc()
-	red    = color.New(color.FgHiRed, color.BgBlack).Add(color.Italic).SprintFunc()
-)
 
 // buildDeployApplicationCmd represents the buildApplication command
 var buildDeployApplicationCmd = &cobra.Command{
@@ -52,7 +42,6 @@ var buildDeployApplicationCmd = &cobra.Command{
 
 		branch, _ := cmd.Flags().GetString("branch")
 		commitID, _ := cmd.Flags().GetString("commitID")
-		follow, _ := cmd.Flags().GetBool("follow")
 
 		if appName == nil || *appName == "" || branch == "" {
 			return errors.New("Application name and branch are required")
@@ -75,66 +64,8 @@ var buildDeployApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		if follow {
-			jobName := newJob.GetPayload().Name
-
-			jobParameters := job.NewGetApplicationJobParams()
-			jobParameters.SetAppName(*appName)
-			jobParameters.SetJobName(jobName)
-
-			fmt.Fprintf(cmd.OutOrStdout(), "\r%s", fmt.Sprintf("Building %s on branch %s with name %s", cyan(appName), yellow(branch), yellow(jobName)))
-
-			buildComplete := false
-
-			numLogLinesOutput := 0
-			refreshApplication := time.Tick(deltaRefreshApplication)
-
-			for {
-				select {
-				case <-refreshApplication:
-					jobLogParameters := job.NewGetApplicationJobLogsParams()
-					jobLogParameters.SetAppName(*appName)
-					jobLogParameters.SetJobName(jobName)
-
-					respJobLog, _ := apiClient.Job.GetApplicationJobLogs(jobLogParameters, nil)
-					if respJobLog != nil {
-						numLogLines := 0
-
-						stepsLog := respJobLog.Payload
-						for _, stepLog := range stepsLog {
-							stepLogLines := strings.Split(strings.Replace(stepLog.Log, "\r\n", "\n", -1), "\n")
-
-							for _, stepLogLine := range stepLogLines {
-								if numLogLinesOutput <= numLogLines {
-									fmt.Fprintf(cmd.OutOrStdout(), "\r\n%s", stepLogLine)
-									numLogLinesOutput++
-								}
-
-								numLogLines++
-							}
-						}
-					}
-
-					respJob, _ := apiClient.Job.GetApplicationJob(jobParameters, nil)
-					if respJob != nil {
-						jobSummary := respJob.Payload
-						if jobSummary.Status == "Succeeded" {
-							fmt.Fprintf(cmd.OutOrStdout(), fmt.Sprintf("%s", green("\nBuild complete\n")))
-							buildComplete = true
-						} else if jobSummary.Status == "Failed" {
-							fmt.Fprintf(cmd.OutOrStdout(), fmt.Sprintf("%s", red("\nBuild failed\n")))
-							buildComplete = true
-						}
-
-						if buildComplete {
-							return nil
-						}
-					}
-				}
-
-			}
-		}
-
+		jobName := newJob.GetPayload().Name
+		fmt.Fprintf(cmd.OutOrStdout(), "%s", fmt.Sprintf("%s", log.Yellow(jobName)))
 		return nil
 	},
 }
@@ -144,5 +75,4 @@ func init() {
 	buildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
 	buildDeployApplicationCmd.Flags().StringP("branch", "b", "", "Branch to build-deploy from")
 	buildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
-	buildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
 }

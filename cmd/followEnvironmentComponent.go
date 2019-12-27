@@ -62,8 +62,6 @@ var followEnvironmentComponentCmd = &cobra.Command{
 		refreshLog := time.Tick(deltaRefreshApplication)
 		loggedForReplica := make(map[string]int)
 
-		replicaColors := []func(a ...interface{}) string{yellow, green, blue, cyan, red}
-
 		for {
 			select {
 			case <-refreshLog:
@@ -91,7 +89,7 @@ var followEnvironmentComponentCmd = &cobra.Command{
 						}
 
 						logLines := strings.Split(strings.Replace(logData.Payload, "\r\n", "\n", -1), "\n")
-						logged := log.From(cmd, replica, totalLinesLogged, logLines, replicaColors[i])
+						logged := log.From(cmd, replica, totalLinesLogged, logLines, log.GetColor(i))
 
 						totalLinesLogged += logged
 						loggedForReplica[replica] = totalLinesLogged

@@ -33,4 +33,5 @@ var followCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(followCmd)
 	followCmd.AddCommand(followEnvironmentComponentCmd)
+	followCmd.AddCommand(followJobCmd)
 }

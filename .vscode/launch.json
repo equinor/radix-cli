@@ -19,13 +19,16 @@
       "request": "launch",
       "mode": "auto",
       "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
       "args": [
-        "--from-config",
-        "--cluster",
-        "weekly-47",
-        "--api-environment",
-        "qa",
+        "--token-environment",
+        "--context",
+        "playground",
         "build-deploy",
+        "--application",
+        "echo",
         "-b",
         "master"
       ]
@@ -77,6 +80,27 @@
         "prod",
         "--component",
         "server"
+      ]
+    },
+    {
+      "name": "Lauch radix-cli follow job",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
+      "args": [
+        "--token-environment",
+        "--context",
+        "playground",
+        "follow",
+        "job",
+        "--application",
+        "echo",
+        "-j",
+        "radix-pipeline-20191227190153-aysdr"
       ]
     }
   ]
