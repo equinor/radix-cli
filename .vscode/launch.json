@@ -40,22 +40,43 @@
         "APP_SERVICE_ACCOUNT_TOKEN": "token"
       },
       "args": [
-        "--from-config",
         "--token-environment",
-        "--cluster",
-        "weekly-47",
-        "--api-environment",
-        "dev",
+        "--from-config",
         "set",
         "environment-secret",
+        "--context",
+        "playground",
         "-b",
         "master",
         "--component",
-        "auth-proxy",
+        "api",
         "-s",
-        "OAUTH2_PROXY_CLIENT_SECRET",
+        "APPINSIGHTS_INSTRUMENTATIONKEY",
         "-v",
-        "my-pass"
+        "iknu-test"
+      ]
+    },
+    {
+      "name": "Lauch radix-cli follow component",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
+      "args": [
+        "--token-environment",
+        "follow",
+        "component",
+        "--application",
+        "radix-api",
+        "--context",
+        "playground",
+        "-e",
+        "prod",
+        "--component",
+        "server"
       ]
     }
   ]
