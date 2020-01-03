@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -53,32 +54,65 @@ var followJobCmd = &cobra.Command{
 			return err
 		}
 
-		refreshLog := time.Tick(deltaRefreshApplication)
-		loggedForStep := make(map[string]int)
+		followJob(cmd, apiClient, *appName, jobName)
+		return nil
+	},
+}
 
-		for {
-			select {
-			case <-refreshLog:
+func followJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobName string) {
+	timeout := time.NewTimer(deltaTimeout)
+	refreshLog := time.Tick(deltaRefreshApplication)
+	loggedForStep := make(map[string]int)
 
-				steps := getSteps(apiClient, *appName, jobName)
+	for {
+		select {
+		case <-refreshLog:
 
-				for i, step := range steps {
-					totalLinesLogged := 0
+			loggedForJob := false
+			steps := getSteps(apiClient, appName, jobName)
 
-					if _, contained := loggedForStep[*step.Name]; contained {
-						totalLinesLogged = loggedForStep[*step.Name]
-					}
+			for i, step := range steps {
+				totalLinesLogged := 0
 
-					logLines := strings.Split(strings.Replace(step.Log, "\r\n", "\n", -1), "\n")
-					logged := log.From(cmd, *step.Name, totalLinesLogged, logLines, log.GetColor(i))
+				if _, contained := loggedForStep[*step.Name]; contained {
+					totalLinesLogged = loggedForStep[*step.Name]
+				}
 
-					totalLinesLogged += logged
-					loggedForStep[*step.Name] = totalLinesLogged
+				logLines := strings.Split(strings.Replace(step.Log, "\r\n", "\n", -1), "\n")
+				logged := log.From(cmd, *step.Name, totalLinesLogged, logLines, log.GetColor(i))
+
+				totalLinesLogged += logged
+				loggedForStep[*step.Name] = totalLinesLogged
+
+				if logged > 0 {
+					loggedForJob = true
 				}
 			}
 
+			if loggedForJob {
+				// Reset timeout
+				timeout = time.NewTimer(deltaTimeout)
+			}
+		case <-timeout.C:
+			jobParameters := job.NewGetApplicationJobParams()
+			jobParameters.SetAppName(appName)
+			jobParameters.SetJobName(jobName)
+
+			respJob, _ := apiClient.Job.GetApplicationJob(jobParameters, nil)
+			if respJob != nil {
+				jobSummary := respJob.Payload
+				if jobSummary.Status == "Succeeded" {
+					log.Print(cmd, "radix-cli", "Build complete", log.Green)
+				} else if jobSummary.Status == "Failed" {
+					log.Print(cmd, "radix-cli", "Build failed", log.Red)
+				} else {
+					log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Timeout", deltaTimeout), log.GetColor(0))
+				}
+			}
+
+			return
 		}
-	},
+	}
 }
 
 func getSteps(apiClient *apiclient.Radixapi, appName, jobName string) []*models.StepLog {

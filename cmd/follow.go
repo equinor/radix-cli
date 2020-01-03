@@ -16,8 +16,15 @@ package cmd
 
 import (
 	"errors"
+	"time"
 
 	"github.com/spf13/cobra"
+)
+
+const (
+	deltaRefreshApplication = 3 * time.Second
+	deltaTimeout            = 30 * time.Second
+	deltaRefreshOutput      = 50 * time.Millisecond
 )
 
 // followCmd represents the list command

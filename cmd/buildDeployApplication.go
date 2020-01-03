@@ -16,18 +16,12 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-	"time"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
-	"github.com/equinor/radix-cli/pkg/utils/log"
 	"github.com/spf13/cobra"
 )
-
-const deltaRefreshApplication = 3 * time.Second
-const deltaRefreshOutput = 50 * time.Millisecond
 
 // buildDeployApplicationCmd represents the buildApplication command
 var buildDeployApplicationCmd = &cobra.Command{
@@ -42,6 +36,7 @@ var buildDeployApplicationCmd = &cobra.Command{
 
 		branch, _ := cmd.Flags().GetString("branch")
 		commitID, _ := cmd.Flags().GetString("commitID")
+		follow, _ := cmd.Flags().GetBool("follow")
 
 		if appName == nil || *appName == "" || branch == "" {
 			return errors.New("Application name and branch are required")
@@ -65,7 +60,10 @@ var buildDeployApplicationCmd = &cobra.Command{
 		}
 
 		jobName := newJob.GetPayload().Name
-		fmt.Fprintf(cmd.OutOrStdout(), "%s", fmt.Sprintf("%s", log.Yellow(jobName)))
+		if follow {
+			followJob(cmd, apiClient, *appName, jobName)
+		}
+
 		return nil
 	},
 }
@@ -75,4 +73,5 @@ func init() {
 	buildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
 	buildDeployApplicationCmd.Flags().StringP("branch", "b", "", "Branch to build-deploy from")
 	buildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
+	buildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
 }

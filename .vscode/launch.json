@@ -30,7 +30,8 @@
         "--application",
         "echo",
         "-b",
-        "master"
+        "master",
+        "-f"
       ]
     },
     {

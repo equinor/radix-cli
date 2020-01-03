@@ -19,6 +19,7 @@ var (
 	Colors = []func(a ...interface{}) string{Yellow, Green, Blue, Cyan, Red, Magenta}
 )
 
+// GetColor Rotates color
 func GetColor(num int) func(a ...interface{}) string {
 	return Colors[num%len(Colors)]
 }
@@ -30,7 +31,7 @@ func From(cmd *cobra.Command, name string, from int, logLines []string, color fu
 	for num, logLine := range logLines {
 		if num >= from {
 			if !strings.EqualFold(strings.TrimSpace(logLine), "") && from > 0 {
-				fmt.Fprintf(cmd.OutOrStdout(), "\r\n[%s] : %s", color(name), color(logLine))
+				Print(cmd, name, logLine, color)
 			}
 
 			logged++
@@ -38,4 +39,9 @@ func From(cmd *cobra.Command, name string, from int, logLines []string, color fu
 	}
 
 	return logged
+}
+
+// Print Output string to standard output
+func Print(cmd *cobra.Command, name, logLine string, color func(a ...interface{}) string) {
+	fmt.Fprintf(cmd.OutOrStdout(), "\r\n[%s] : %s", color(name), color(logLine))
 }
