@@ -50,19 +50,9 @@ var setEnvironmentSecretCmd = &cobra.Command{
 		}
 
 		environmentName, _ := cmd.Flags().GetString("environment")
-		branch, _ := cmd.Flags().GetString("branch")
 
-		if (environmentName != "" && branch != "") || (environmentName == "" && branch == "") {
-			return errors.New("Either `environment` or `branch` is required, but both cannot be provided at the same time")
-		}
-
-		if branch != "" {
-			environmentBranch, err := getEnvironmentFromConfig(cmd, branch)
-			if err != nil {
-				return err
-			}
-
-			environmentName = *environmentBranch
+		if environmentName == "" {
+			return errors.New("`environment` is required")
 		}
 
 		component, _ := cmd.Flags().GetString("component")
@@ -94,7 +84,6 @@ var setEnvironmentSecretCmd = &cobra.Command{
 func init() {
 	setEnvironmentSecretCmd.Flags().StringP("application", "a", "", "Name of the application to set secret for")
 	setEnvironmentSecretCmd.Flags().StringP("environment", "e", "", "Environment to set secret in")
-	setEnvironmentSecretCmd.Flags().StringP("branch", "b", "", "Branch of the repository. Can be used together with --from-config to get the environment")
 	setEnvironmentSecretCmd.Flags().String("component", "", "Component to set the secret for")
 	setEnvironmentSecretCmd.Flags().StringP("secret", "s", "", "Name of the secret to set")
 	setEnvironmentSecretCmd.Flags().StringP("value", "v", "", "Value of the secret to set")

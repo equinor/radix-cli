@@ -103,6 +103,24 @@
         "-j",
         "radix-pipeline-20191227190153-aysdr"
       ]
+    },
+    {
+      "name": "Lauch radix-cli get environment from branch",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
+      "args": [
+        "--token-environment",
+        "--from-config",
+        "get-config",
+        "branch-environment",
+        "-b",
+        "master"
+      ]
     }
   ]
 }

@@ -15,33 +15,22 @@
 package cmd
 
 import (
-	log "github.com/sirupsen/logrus"
+	"errors"
 
-	"github.com/equinor/radix-cli/generated-client/client/platform"
-	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
 
-// listApplicationsCmd represents the listApplications command
-var listApplicationsCmd = &cobra.Command{
-	Use:   "applications",
-	Short: "Lists applications",
-	Long:  ``,
+// getConfigCmd represents the list command
+var getConfigCmd = &cobra.Command{
+	Use:   "get-config",
+	Short: "Get setting from Radix config",
+	Long:  `A longer description .`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		apiClient, err := client.GetForCommand(cmd)
-		if err != nil {
-			return err
-		}
-
-		showApplicationParams := platform.NewShowApplicationsParams()
-		resp, err := apiClient.Platform.ShowApplications(showApplicationParams, nil)
-
-		if err == nil {
-			for _, application := range resp.Payload {
-				log.Infof("App: %s", application.Name)
-			}
-		}
-
-		return nil
+		return errors.New("Please specify the setting you want to get")
 	},
+}
+
+func init() {
+	rootCmd.AddCommand(getConfigCmd)
+	getConfigCmd.AddCommand(getBranchEnvironmentCmd)
 }
