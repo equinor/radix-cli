@@ -17,10 +17,20 @@ package cmd
 import (
 	"errors"
 
+	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	globalSettings "github.com/equinor/radix-cli/pkg/settings"
 	"github.com/spf13/cobra"
+)
+
+const (
+	applicationOption = "application"
+	environmentOption = "environment"
+	componentOption   = "component"
+	secretOption      = "secret"
+	valueOption       = "value"
 )
 
 // setEnvironmentSecretCmd represents the setEnvironmentSecretCmd command
@@ -29,7 +39,7 @@ var setEnvironmentSecretCmd = &cobra.Command{
 	Short: "Will set an environment secret",
 	Long:  `Will set an environment secret`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, applicationOption)
 		if err != nil {
 			return err
 		}
@@ -38,8 +48,8 @@ var setEnvironmentSecretCmd = &cobra.Command{
 			return errors.New("Application name is required")
 		}
 
-		secretName, _ := cmd.Flags().GetString("secret")
-		secretValue, _ := cmd.Flags().GetString("value")
+		secretName, _ := cmd.Flags().GetString(secretOption)
+		secretValue, _ := cmd.Flags().GetString(valueOption)
 
 		if secretName == "" {
 			return errors.New("Secret is required")
@@ -49,17 +59,28 @@ var setEnvironmentSecretCmd = &cobra.Command{
 			return errors.New("Value is required")
 		}
 
-		environmentName, _ := cmd.Flags().GetString("environment")
+		environmentName, _ := cmd.Flags().GetString(environmentOption)
 
 		if environmentName == "" {
 			return errors.New("`environment` is required")
 		}
 
-		component, _ := cmd.Flags().GetString("component")
+		component, _ := cmd.Flags().GetString(componentOption)
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
 			return err
+		}
+
+		awaitReconcile, _ := cmd.Flags().GetBool(globalSettings.AwaitReconcileOption)
+		if awaitReconcile {
+			reconciledOk := awaitReconciliation(func() bool {
+				return isComponentSecretReconciled(apiClient, *appName, environmentName, component, secretName)
+			})
+
+			if !reconciledOk {
+				return errors.New("Component was not reconciled within time")
+			}
 		}
 
 		componentSecret := models.SecretParameters{}
@@ -81,10 +102,38 @@ var setEnvironmentSecretCmd = &cobra.Command{
 	},
 }
 
+func isComponentSecretReconciled(apiClient *apiclient.Radixapi, appName, environmentName, componentName, secretName string) bool {
+	getEnvironmentParameters := environment.NewGetEnvironmentParams()
+	getEnvironmentParameters.SetAppName(appName)
+	getEnvironmentParameters.SetEnvName(environmentName)
+
+	environment, err := apiClient.Environment.GetEnvironment(getEnvironmentParameters, nil)
+	if err != nil {
+		return false
+	}
+
+	if environment.Payload != nil &&
+		environment.Payload.ActiveDeployment != nil &&
+		environment.Payload.ActiveDeployment.Components != nil {
+		for _, component := range environment.Payload.ActiveDeployment.Components {
+			if *component.Name == componentName {
+				for _, secret := range component.Secrets {
+					if secret == secretName {
+						return true
+					}
+				}
+			}
+		}
+
+	}
+
+	return false
+}
+
 func init() {
-	setEnvironmentSecretCmd.Flags().StringP("application", "a", "", "Name of the application to set secret for")
-	setEnvironmentSecretCmd.Flags().StringP("environment", "e", "", "Environment to set secret in")
-	setEnvironmentSecretCmd.Flags().String("component", "", "Component to set the secret for")
-	setEnvironmentSecretCmd.Flags().StringP("secret", "s", "", "Name of the secret to set")
-	setEnvironmentSecretCmd.Flags().StringP("value", "v", "", "Value of the secret to set")
+	setEnvironmentSecretCmd.Flags().StringP(applicationOption, "a", "", "Name of the application to set secret for")
+	setEnvironmentSecretCmd.Flags().StringP(environmentOption, "e", "", "Environment to set secret in")
+	setEnvironmentSecretCmd.Flags().String(componentOption, "", "Component to set the secret for")
+	setEnvironmentSecretCmd.Flags().StringP(secretOption, "s", "", "Name of the secret to set")
+	setEnvironmentSecretCmd.Flags().StringP(valueOption, "v", "", "Value of the secret to set")
 }

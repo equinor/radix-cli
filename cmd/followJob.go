@@ -24,6 +24,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/job"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/log"
 	"github.com/spf13/cobra"
 )
@@ -60,8 +61,8 @@ var followJobCmd = &cobra.Command{
 }
 
 func followJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobName string) {
-	timeout := time.NewTimer(deltaTimeout)
-	refreshLog := time.Tick(deltaRefreshApplication)
+	timeout := time.NewTimer(settings.DeltaTimeout)
+	refreshLog := time.Tick(settings.DeltaRefreshApplication)
 	loggedForStep := make(map[string]int)
 
 	for {
@@ -91,7 +92,7 @@ func followJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobNa
 
 			if loggedForJob {
 				// Reset timeout
-				timeout = time.NewTimer(deltaTimeout)
+				timeout = time.NewTimer(settings.DeltaTimeout)
 			}
 		case <-timeout.C:
 			jobParameters := job.NewGetApplicationJobParams()
@@ -106,7 +107,7 @@ func followJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobNa
 				} else if jobSummary.Status == "Failed" {
 					log.Print(cmd, "radix-cli", "Build failed", log.Red)
 				} else {
-					log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Timeout", deltaTimeout), log.GetColor(0))
+					log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Timeout", settings.DeltaTimeout), log.GetColor(0))
 				}
 			}
 

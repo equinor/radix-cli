@@ -21,11 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	deltaRefreshApplication = 3 * time.Second
-	deltaTimeout            = 30 * time.Second
-	deltaRefreshOutput      = 50 * time.Millisecond
-)
+const deltaRefreshOutput = 50 * time.Millisecond
 
 // followCmd represents the list command
 var followCmd = &cobra.Command{

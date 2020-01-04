@@ -23,6 +23,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/log"
 	"github.com/spf13/cobra"
 )
@@ -59,7 +60,7 @@ var followEnvironmentComponentCmd = &cobra.Command{
 			return err
 		}
 
-		refreshLog := time.Tick(deltaRefreshApplication)
+		refreshLog := time.Tick(settings.DeltaRefreshApplication)
 		loggedForReplica := make(map[string]int)
 
 		for {

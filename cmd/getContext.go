@@ -19,6 +19,7 @@ import (
 	"log"
 
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
+	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +32,7 @@ var getContextCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		radixConfig := radixconfig.RadixConfigAccess{}
 		config := radixConfig.GetStartingConfig().Config
-		log.Printf("Current context is %s", config["context"])
+		log.Printf("Current context is %s", config[settings.ContextOption])
 	},
 }
 

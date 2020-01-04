@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/equinor/radix-cli/pkg/client"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
+	"github.com/equinor/radix-cli/pkg/settings"
 	v1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/equinor/radix-operator/pkg/apis/utils"
 	log "github.com/sirupsen/logrus"
@@ -30,20 +32,45 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().Bool("from-config", false, "Read and use radix config from file as context")
-	rootCmd.PersistentFlags().Bool("token-environment", false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
-	rootCmd.PersistentFlags().Bool("token-stdin", false, "Take the token from stdin")
-	rootCmd.PersistentFlags().StringP("context", "c", "", fmt.Sprintf("Use context %s|%s|%s regardless of current context (default production) ",
+	rootCmd.PersistentFlags().Bool(settings.FromConfigOption, false, "Read and use radix config from file as context")
+	rootCmd.PersistentFlags().Bool(settings.TokenEnvironmentOption, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
+	rootCmd.PersistentFlags().Bool(settings.TokenStdinOption, false, "Take the token from stdin")
+	rootCmd.PersistentFlags().StringP(settings.ContextOption, "c", "", fmt.Sprintf("Use context %s|%s|%s regardless of current context (default production) ",
 		radixconfig.ContextProdction, radixconfig.ContextPlayground, radixconfig.ContextDevelopment))
-	rootCmd.PersistentFlags().String("cluster", "", "Set cluster to override context")
-	rootCmd.PersistentFlags().String("api-environment", "prod", "The API api-environment to run with (default prod)")
+	rootCmd.PersistentFlags().String(settings.ClusterOption, "", "Set cluster to override context")
+	rootCmd.PersistentFlags().String(settings.ApiEnvironmentOption, "prod", "The API api-environment to run with (default prod)")
+	rootCmd.PersistentFlags().Bool(settings.AwaitReconcileOption, false, "Await reconcilliation in Radix")
+}
+
+// CheckFnNew The prototype function for any check function
+type checkFn func() bool
+
+func awaitReconciliation(checkFunc checkFn) bool {
+	timeout := time.NewTimer(settings.DeltaTimeout)
+	checkReconciliation := time.Tick(settings.DeltaRefreshApplication)
+
+	for {
+		select {
+		case <-checkReconciliation:
+			success := checkFunc()
+			if success {
+				return true
+			}
+
+			log.Info("Radix still not appear to be reconciled")
+
+		case <-timeout.C:
+			log.Info("Time out checking reconciled state")
+			return false
+		}
+	}
 }
 
 func getAppNameFromConfigOrFromParameter(cmd *cobra.Command, appNameField string) (*string, error) {
 	var appName string
 	var err error
 
-	fromConfig, _ := cmd.Flags().GetBool("from-config")
+	fromConfig, _ := cmd.Flags().GetBool(settings.FromConfigOption)
 	if fromConfig {
 		radicConfig, err := getRadixApplicationFromFile()
 		if err != nil {
@@ -64,7 +91,7 @@ func getAppNameFromConfigOrFromParameter(cmd *cobra.Command, appNameField string
 func getEnvironmentFromConfig(cmd *cobra.Command, branchName string) (*string, error) {
 	var err error
 
-	fromConfig, _ := cmd.Flags().GetBool("from-config")
+	fromConfig, _ := cmd.Flags().GetBool(settings.FromConfigOption)
 	if !fromConfig {
 		return nil, errors.New("--from-config is required when getting environment from branch")
 	}

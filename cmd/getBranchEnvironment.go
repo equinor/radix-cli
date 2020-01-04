@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 
+	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +27,7 @@ var getBranchEnvironmentCmd = &cobra.Command{
 	Short: "Will get the environment for a given branch",
 	Long:  `Will get the environment for a given branch`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fromConfig, _ := cmd.Flags().GetBool("from-config")
+		fromConfig, _ := cmd.Flags().GetBool(settings.FromConfigOption)
 		if !fromConfig {
 			return errors.New("Config can only come from radixconfig file in current folder")
 		}

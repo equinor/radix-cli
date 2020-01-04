@@ -32,8 +32,8 @@ func Get() *apiclient.Radixapi {
 // GetForCommand Gets client for command
 func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
 	context, _ := cmd.Flags().GetString("context")
-	cluster, _ := cmd.Flags().GetString("cluster")
-	apiEnvironment, _ := cmd.Flags().GetString("api-environment")
+	cluster, _ := cmd.Flags().GetString(settings.ClusterOption)
+	apiEnvironment, _ := cmd.Flags().GetString(settings.ApiEnvironmentOption)
 
 	token, err := getTokenFromFlagSet(cmd)
 	if err != nil {
@@ -126,8 +126,8 @@ func getPatternForContext(context string) string {
 
 func getTokenFromFlagSet(cmd *cobra.Command) (*string, error) {
 	var token string
-	tokenFromStdIn, _ := cmd.Flags().GetBool("token-stdin")
-	tokenFromEnvironment, _ := cmd.Flags().GetBool("token-environment")
+	tokenFromStdIn, _ := cmd.Flags().GetBool(settings.TokenStdinOption)
+	tokenFromEnvironment, _ := cmd.Flags().GetBool(settings.TokenEnvironmentOption)
 
 	if tokenFromStdIn && tokenFromEnvironment {
 		return nil, errors.New("`token-stdin` and `token-environment` cannot both be set")
