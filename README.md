@@ -1,6 +1,6 @@
 # radix-cli
 
-NOTE: This project is currently work in progress
+NOTE: This project is currently a work in progress prototype
 
 The command line interface for Radix, which is to enable users of Radix platform in automation around their application on the platform. This document is for developers of the Radix CLI, or anyone interested in poking around.
 
@@ -40,11 +40,14 @@ rx --token-environment list applications
 ### Available commands
 
 ```
-  build-deploy       Will trigger build of a Radix application
-  get-context        Gets current context (used in interactive mode)
-  help               Help about any command
-  list               Lists Radix resources
-  set-context        Sets the context to be either production, playground or development (used in interactive mode)
+  build-deploy Will trigger build-deploy of a Radix application
+  follow       Follow Radix resources
+  get-config   Get setting from Radix config
+  get-context  Gets current context
+  help         Help about any command
+  list         Lists Radix resources
+  set          Sets values in Radix
+  set-context  Sets the context to be either production, playground or development
 ```
 
 ### Global command arguments
