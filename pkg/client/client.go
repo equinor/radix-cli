@@ -13,6 +13,7 @@ import (
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
+	"github.com/equinor/radix-cli/pkg/settings"
 	httptransport "github.com/go-openapi/runtime/client"
 )
 
