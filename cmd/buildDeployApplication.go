@@ -71,7 +71,7 @@ var buildDeployApplicationCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(buildDeployApplicationCmd)
 	buildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
-	buildDeployApplicationCmd.Flags().StringP("branch", "b", "", "Branch to build-deploy from")
+	buildDeployApplicationCmd.Flags().StringP("branch", "b", "master", "Branch to build-deploy from")
 	buildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
 	buildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
 }

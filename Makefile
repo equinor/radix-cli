@@ -10,5 +10,4 @@ generate-client:
 release:
 	git tag -a v$(VERSION) -m "$(RELEASE_NOTE)"
 	git push origin v$(VERSION)
-	az acr login --name radix$(ENVIRONMENT)
 	goreleaser --rm-dist
