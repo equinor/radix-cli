@@ -9,7 +9,7 @@ The command line interface for Radix, which is to enable users of Radix platform
 ### Run using docker image
 
 ```
-alias rx="docker run -it -v <your home dir>/.radix:/home/radix-cli/.radix radixdev.azurecr.io/rx:latest"
+alias rx="docker run -it -v <your home dir>/.radix:/home/radix-cli/.radix docker.pkg.github.com/equinor/radix-cli/rx:latest"
 ```
 
 Typically your home dir will be `/Users/<username>/` on a Mac, or `<root>\Users\<username>` on a Window machine
