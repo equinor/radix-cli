@@ -106,8 +106,11 @@ func followJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobNa
 					log.Print(cmd, "radix-cli", "Build complete", log.Green)
 				} else if jobSummary.Status == "Failed" {
 					log.Print(cmd, "radix-cli", "Build failed", log.Red)
+				} else if jobSummary.Status == "Running" {
+					// Reset timeout
+					timeout = time.NewTimer(settings.DeltaTimeout)
 				} else {
-					log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Timeout", settings.DeltaTimeout), log.GetColor(0))
+					log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Job summary: %v. Status: %s. Timeout", settings.DeltaTimeout, jobSummary, jobSummary.Status), log.GetColor(0))
 				}
 			}
 

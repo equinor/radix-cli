@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/generated-client/models"
@@ -37,6 +38,7 @@ var createApplicationCmd = &cobra.Command{
 
 		repository, _ := cmd.Flags().GetString("repository")
 		owner, _ := cmd.Flags().GetString("owner")
+		sharedSecret, _ := cmd.Flags().GetString("shared-secret")
 
 		if appName == nil || *appName == "" || repository == "" || owner == "" {
 			return errors.New("Application name, repository and owner are required fields")
@@ -46,10 +48,11 @@ var createApplicationCmd = &cobra.Command{
 
 		registerApplicationParams := platform.NewRegisterApplicationParams()
 		registerApplicationParams.SetApplicationRegistration(&models.ApplicationRegistration{
-			Name:       appName,
-			Repository: &repository,
-			Owner:      &owner,
-			AdGroups:   adGroups,
+			Name:         appName,
+			Repository:   &repository,
+			Owner:        &owner,
+			SharedSecret: &sharedSecret,
+			AdGroups:     adGroups,
 		})
 
 		apiClient, err := client.GetForCommand(cmd)
@@ -60,7 +63,7 @@ var createApplicationCmd = &cobra.Command{
 		resp, err := apiClient.Platform.RegisterApplication(registerApplicationParams, nil)
 
 		if err == nil {
-			print(resp.Payload.PublicKey)
+			print(strings.TrimRight(resp.Payload.PublicKey, "\t \n"))
 		} else {
 			println(fmt.Sprintf("%v", err))
 		}
@@ -71,7 +74,8 @@ var createApplicationCmd = &cobra.Command{
 
 func init() {
 	createApplicationCmd.Flags().StringP("application", "", "", "Name of the application to create")
-	createApplicationCmd.Flags().StringP("repository", "", "", "Repository")
-	createApplicationCmd.Flags().StringP("owner", "", "", "Owner")
+	createApplicationCmd.Flags().StringP("repository", "", "", "Repository path")
+	createApplicationCmd.Flags().StringP("owner", "", "", "Email adress of owner")
+	createApplicationCmd.Flags().StringP("shared-secret", "", "", "Shared secret for the webhook")
 	createApplicationCmd.Flags().StringSliceP("ad-groups", "", []string{}, "Admin groups")
 }
