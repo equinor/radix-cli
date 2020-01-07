@@ -90,9 +90,13 @@ var followEnvironmentComponentCmd = &cobra.Command{
 						}
 
 						logLines := strings.Split(strings.Replace(logData.Payload, "\r\n", "\n", -1), "\n")
-						logged := log.From(cmd, replica, totalLinesLogged, logLines, log.GetColor(i))
+						if totalLinesLogged == 0 {
+							totalLinesLogged = len(logLines)
+						} else {
+							logged := log.From(cmd, replica, totalLinesLogged, logLines, log.GetColor(i))
+							totalLinesLogged += logged
+						}
 
-						totalLinesLogged += logged
 						loggedForReplica[replica] = totalLinesLogged
 					}
 				}
