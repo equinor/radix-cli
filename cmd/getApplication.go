@@ -15,14 +15,12 @@
 package cmd
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
-	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/utils/json"
 	"github.com/spf13/cobra"
 )
 
@@ -50,9 +48,9 @@ var getApplicationCmd = &cobra.Command{
 		getApplicationParams.SetAppName(*appName)
 		resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
 		if err == nil {
-			json, err := getPrettyJSON(resp.Payload)
+			prettyJSON, err := json.Pretty(resp.Payload)
 			if err == nil {
-				fmt.Println(*json)
+				fmt.Println(*prettyJSON)
 			} else {
 				println(fmt.Sprintf("%v", err))
 			}
@@ -63,22 +61,6 @@ var getApplicationCmd = &cobra.Command{
 
 		return nil
 	},
-}
-
-func getPrettyJSON(data *models.Application) (*string, error) {
-	b, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-
-	var prettyJSON bytes.Buffer
-	err = json.Indent(&prettyJSON, b, "", "\t")
-	if err != nil {
-		return nil, err
-	}
-
-	jsonString := string(prettyJSON.Bytes())
-	return &jsonString, nil
 }
 
 func init() {

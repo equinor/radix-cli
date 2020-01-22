@@ -55,3 +55,20 @@ func Load(path string, v interface{}) error {
 var Unmarshal = func(r io.Reader, v interface{}) error {
 	return json.NewDecoder(r).Decode(v)
 }
+
+// Pretty Gets json from data
+func Pretty(data interface{}) (*string, error) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	var prettyJSON bytes.Buffer
+	err = json.Indent(&prettyJSON, b, "", "\t")
+	if err != nil {
+		return nil, err
+	}
+
+	jsonString := string(prettyJSON.Bytes())
+	return &jsonString, nil
+}
