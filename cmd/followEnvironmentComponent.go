@@ -55,32 +55,47 @@ var followEnvironmentComponentCmd = &cobra.Command{
 			return err
 		}
 
-		deploymentName, replicas, err := getReplicasForComponent(apiClient, *appName, environmentName, componentName)
+		_, replicas, err := getReplicasForComponent(apiClient, *appName, environmentName, componentName)
 		if err != nil {
 			return err
 		}
 
-		refreshLog := time.Tick(settings.DeltaRefreshApplication)
-		loggedForReplica := make(map[string]int)
+		componentReplicas := make(map[string][]string)
+		componentReplicas[componentName] = replicas
 
-		for {
-			select {
-			case <-refreshLog:
+		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas)
+		return err
 
-				for i, replica := range replicas {
+	},
+}
+
+func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, environmentName string, componentReplicas map[string][]string) error {
+	refreshLog := time.Tick(settings.DeltaRefreshApplication)
+	loggedForReplica := make(map[string]int)
+
+	for {
+		select {
+		case <-refreshLog:
+
+			i := 0
+			for componentName, replicas := range componentReplicas {
+				for _, replica := range replicas {
 					logParameters := component.NewLogParams()
-					logParameters.WithAppName(*appName)
-					logParameters.WithDeploymentName(*deploymentName)
+					logParameters.WithAppName(appName)
+					logParameters.WithDeploymentName("irrelevant")
 					logParameters.WithComponentName(componentName)
 					logParameters.WithPodName(replica)
 
 					logData, err := apiClient.Component.Log(logParameters, nil)
 					if err != nil {
 						// Replicas may have died
-						deploymentName, replicas, err = getReplicasForComponent(apiClient, *appName, environmentName, componentName)
+						_, newReplicas, err := getReplicasForComponent(apiClient, appName, environmentName, componentName)
 						if err != nil {
 							return err
 						}
+
+						componentReplicas[componentName] = newReplicas
+						break
 
 					} else {
 						totalLinesLogged := 0
@@ -89,7 +104,7 @@ var followEnvironmentComponentCmd = &cobra.Command{
 							totalLinesLogged = loggedForReplica[replica]
 						}
 
-						logLines := strings.Split(strings.Replace(logData.Payload, "\r\n", "\n", -1), "\n")
+						logLines := strings.Split(strings.Replace(strings.TrimRight(logData.Payload, "\r\n"), "\r\n", "\n", -1), "\n")
 						if totalLinesLogged == 0 {
 							totalLinesLogged = len(logLines)
 						} else {
@@ -99,11 +114,13 @@ var followEnvironmentComponentCmd = &cobra.Command{
 
 						loggedForReplica[replica] = totalLinesLogged
 					}
+
+					i++
 				}
 			}
-
 		}
-	},
+
+	}
 }
 
 func getReplicasForComponent(apiClient *apiclient.Radixapi, appName, environmentName, componentName string) (*string, []string, error) {

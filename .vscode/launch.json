@@ -71,17 +71,36 @@
         "APP_SERVICE_ACCOUNT_TOKEN": "token"
       },
       "args": [
-        "--token-environment",
         "follow",
         "component",
         "--application",
-        "radix-api",
+        "xample-2-chat",
         "--context",
         "playground",
         "-e",
-        "prod",
+        "dev",
         "--component",
-        "server"
+        "socket-server"
+      ]
+    },
+    {
+      "name": "Lauch radix-cli follow environment",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
+      "args": [
+        "follow",
+        "environment",
+        "--application",
+        "xample-2-chat",
+        "--context",
+        "playground",
+        "-e",
+        "dev"
       ]
     },
     {
@@ -121,6 +140,50 @@
         "branch-environment",
         "-b",
         "master"
+      ]
+    },
+    {
+      "name": "Lauch radix-cli create application",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
+      "args": [
+        "--token-environment",
+        "create",
+        "application",
+        "--application",
+        "radix-example-arm-template",
+        "--cluster",
+        "iknu-test-machine-user",
+        "--repository",
+        "https://github.com/equinor/radix-example-arm-template",
+        "--owner",
+        "some@hotmail.com",
+        "--shared-secret",
+        "AnySharedSecret"
+      ]
+    },
+    {
+      "name": "Lauch radix-cli get application",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
+      "args": [
+        "--token-environment",
+        "get",
+        "application",
+        "--application",
+        "xample-2-chat",
+        "--cluster",
+        "iknu-test-machine-user"
       ]
     }
   ]

@@ -2,7 +2,6 @@ package log
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -30,9 +29,7 @@ func From(cmd *cobra.Command, name string, from int, logLines []string, color fu
 
 	for num, logLine := range logLines {
 		if num >= from {
-			if !strings.EqualFold(strings.TrimSpace(logLine), "") && from > 0 {
-				Print(cmd, name, logLine, color)
-			}
+			Print(cmd, name, logLine, color)
 
 			logged++
 		}
