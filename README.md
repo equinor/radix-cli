@@ -6,6 +6,18 @@ The command line interface for Radix, which is to enable users of Radix platform
 
 ## How to run
 
+### Install
+
+Mac users (replace `<version number>` with the version of the cli you want to install)
+
+```
+curl -OL https://github.com/equinor/radix-cli/releases/download/v<version number>/radix-cli_<version number>_Darwin_x86_64.tar.gz
+tar -xf radix-cli_<version number>_Darwin_x86_64.tar.gz
+
+mv rx /usr/local/bin/rx
+rm radix-cli_<version number>_Darwin_x86_64.tar.gz
+```
+
 ### Run using docker image
 
 ```
