@@ -22,7 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const setContextEnabled = false
+const setContextEnabled = true
 
 // setContextCmd represents the setContext command
 var setContextCmd = &cobra.Command{

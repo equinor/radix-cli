@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const setEnabled = false
+const setEnabled = true
 
 // setCmd represents the set command
 var setCmd = &cobra.Command{

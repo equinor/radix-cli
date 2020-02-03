@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const listEnabled = false
+const listEnabled = true
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{

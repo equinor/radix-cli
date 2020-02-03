@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const buildDeployApplicationEnabled = false
+const buildDeployApplicationEnabled = true
 
 // buildDeployApplicationCmd represents the buildApplication command
 var buildDeployApplicationCmd = &cobra.Command{

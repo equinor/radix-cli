@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const getContextEnabled = false
+const getContextEnabled = true
 
 // getContextCmd represents the getContext command
 var getContextCmd = &cobra.Command{

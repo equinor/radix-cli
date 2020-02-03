@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const getEnabled = false
+const getEnabled = true
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
