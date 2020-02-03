@@ -23,6 +23,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const getContextEnabled = false
+
 // getContextCmd represents the getContext command
 var getContextCmd = &cobra.Command{
 	Use:   "get-context",
@@ -37,5 +39,7 @@ var getContextCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(getContextCmd)
+	if getContextEnabled {
+		rootCmd.AddCommand(getContextCmd)
+	}
 }

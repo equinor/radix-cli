@@ -20,6 +20,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const getConfigEnabled = false
+
 // getConfigCmd represents the get-config command
 var getConfigCmd = &cobra.Command{
 	Use:   "get-config",
@@ -31,6 +33,8 @@ var getConfigCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(getConfigCmd)
-	getConfigCmd.AddCommand(getBranchEnvironmentCmd)
+	if getConfigEnabled {
+		rootCmd.AddCommand(getConfigCmd)
+		getConfigCmd.AddCommand(getBranchEnvironmentCmd)
+	}
 }
