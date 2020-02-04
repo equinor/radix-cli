@@ -68,7 +68,7 @@ var deployApplicationCmd = &cobra.Command{
 
 func init() {
 	if deployApplicationEnabled {
-		rootCmd.AddCommand(deployApplicationCmd)
+		triggerCmd.AddCommand(deployApplicationCmd)
 		deployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
 		deployApplicationCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
 		deployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
