@@ -57,8 +57,8 @@ var deployApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		jobName := newJob.GetPayload().Name
 		if follow {
+			jobName := newJob.GetPayload().Name
 			followJob(cmd, apiClient, *appName, jobName)
 		}
 
