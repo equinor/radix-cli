@@ -29,7 +29,7 @@ const deltaRefreshOutput = 50 * time.Millisecond
 var followCmd = &cobra.Command{
 	Use:   "follow",
 	Short: "Follow Radix resources",
-	Long:  `A longer description .`,
+	Long:  `Feeds resource output to the console while it runs.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("Please specify the resource you want to follow")
 	},

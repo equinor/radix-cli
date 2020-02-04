@@ -9,12 +9,12 @@ The command line interface for Radix, which is to enable users of Radix platform
 ### Either install...
 
 Pick the appropriate binaries for your machine
-`radix-cli_<version>_Darwin_i386.tar.gz`
-`radix-cli_<version>_Darwin_x86_64.tar.gz`
-`radix-cli_<version>_Linux_arm64.tar.gz`
-`radix-cli_<version>_Linux_armv6.tar.gz`
-`radix-cli_<version>_Linux_i386.tar.gz`
-`radix-cli_<version>_Linux_x86_64.tar.gz`
+
+`radix-cli_<version>_Darwin_i386.tar.gz` `radix-cli_<version>_Darwin_x86_64.tar.gz`
+
+`radix-cli_<version>_Linux_i386.tar.gz` `radix-cli_<version>_Linux_x86_64.tar.gz`
+
+`radix-cli_<version>_Linux_armv6.tar.gz` `radix-cli_<version>_Linux_arm64.tar.gz`
 
 Pick a [version](https://github.com/equinor/radix-cli/releases) of the cli you want to install, then download and extract the tar file into the `bin` folder like the following example (replacing the version and architecture with the one you picked).
 
@@ -74,17 +74,17 @@ docker run -it -v %HOME%:/home/radix-cli docker.pkg.github.com/equinor/radix-cli
 
 (Typically your `HOME` variable will be `C:\Users\<username>`)
 
-### Modes of running
+## Modes of running
 
 There are generally two modes of running the CLI:
 
-#### Interactively
+### Interactively
 
 CLI will use users privileges to access the Radix API server. Context information is stored in the `<home>/.radix` folder. First time you run it (i.e. `rx list applications`) a prompt is provided for you to authenticated with Azure using a device code flow. A message like this appears in your terminal:
 
 `To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code ABCDEFGHI to authenticate.`
 
-#### Using a machine user
+### Using a machine user
 
 CLI can also use a machine user for authenticating with the API server. This will be done through a bearer token of a service account connected to your application. The service account token will be provided to you under configuration page of your application. There are two ways to feed this token to the CLI. Either using standard input. The should be done like this:
 
