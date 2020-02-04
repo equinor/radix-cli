@@ -97,35 +97,6 @@ export APP_SERVICE_ACCOUNT_TOKEN=<your service account token>
 rx --token-environment list applications
 ```
 
-### Available commands
-
-```
-  build-deploy Will trigger build-deploy of a Radix application
-  get          Get Radix resource
-  get-config   Get setting from Radix config
-  get-context  Gets current context
-  help         Help about any command
-  list         Lists Radix resources
-  set          Sets values in Radix
-  set-context  Sets the context to be either production, playground or development
-```
-
-### Global command arguments
-
-These are global arguments for all commands. Default will use context=production, unless otherwise stated. --cluster and --environment are meant for Radix platform developers only, to test against a custom cluster and api environment
-
-```
-General flags:
-      --api-environment string   The API api-environment to run with (default prod) (default "prod")
-      --await-reconcile          Await reconcilliation in Radix
-      --cluster string           Set cluster to override context
-  -c, --context string           Use context production|playground|development regardless of current context (default production)
-      --from-config              Read and use radix config from file as context
-  -h, --help                     help for rx
-      --token-environment        Take the token from environment variable APP_SERVICE_ACCOUNT_TOKEN
-      --token-stdin              Take the token from stdin
-```
-
 ## Generate client stubs
 
 Client code is generated from swagger contract definition of the latest contract of the Radix API server. We use [go-swagger](https://github.com/go-swagger/go-swagger/blob/master/docs/install.md). The generated code should not be checked in, but will be generated on build of the CLI. When go-swagger is installed you can generate code using this command:
