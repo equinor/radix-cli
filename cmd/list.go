@@ -20,6 +20,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const listEnabled = false
+
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
@@ -31,6 +33,8 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(listCmd)
-	listCmd.AddCommand(listApplicationsCmd)
+	if listEnabled {
+		rootCmd.AddCommand(listCmd)
+		listCmd.AddCommand(listApplicationsCmd)
+	}
 }

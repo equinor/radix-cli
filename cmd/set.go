@@ -20,6 +20,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const setEnabled = true
+
 // setCmd represents the set command
 var setCmd = &cobra.Command{
 	Use:   "set",
@@ -31,6 +33,8 @@ var setCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(setCmd)
-	setCmd.AddCommand(setEnvironmentSecretCmd)
+	if setEnabled {
+		rootCmd.AddCommand(setCmd)
+		setCmd.AddCommand(setEnvironmentSecretCmd)
+	}
 }

@@ -20,6 +20,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const createEnabled = false
+
 // createCmd represents the list command
 var createCmd = &cobra.Command{
 	Use:   "create",
@@ -31,6 +33,8 @@ var createCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(createCmd)
-	createCmd.AddCommand(createApplicationCmd)
+	if createEnabled {
+		rootCmd.AddCommand(createCmd)
+		createCmd.AddCommand(createApplicationCmd)
+	}
 }

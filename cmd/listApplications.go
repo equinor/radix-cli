@@ -45,3 +45,5 @@ var listApplicationsCmd = &cobra.Command{
 		return nil
 	},
 }
+
+// see list.go init for command initialization

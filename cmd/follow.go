@@ -21,6 +21,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const followEnabled = true
+
 const deltaRefreshOutput = 50 * time.Millisecond
 
 // followCmd represents the list command
@@ -34,8 +36,10 @@ var followCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(followCmd)
-	followCmd.AddCommand(followEnvironmentComponentCmd)
-	followCmd.AddCommand(followEnvironmentCmd)
-	followCmd.AddCommand(followJobCmd)
+	if followEnabled {
+		rootCmd.AddCommand(followCmd)
+		followCmd.AddCommand(followEnvironmentComponentCmd)
+		followCmd.AddCommand(followEnvironmentCmd)
+		followCmd.AddCommand(followJobCmd)
+	}
 }

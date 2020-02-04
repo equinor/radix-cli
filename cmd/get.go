@@ -20,6 +20,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const getEnabled = false
+
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
@@ -31,6 +33,8 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(getCmd)
-	getCmd.AddCommand(getApplicationCmd)
+	if getEnabled {
+		rootCmd.AddCommand(getCmd)
+		getCmd.AddCommand(getApplicationCmd)
+	}
 }

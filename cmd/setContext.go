@@ -22,6 +22,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const setContextEnabled = true
+
 // setContextCmd represents the setContext command
 var setContextCmd = &cobra.Command{
 	Use: "set-context",
@@ -46,5 +48,7 @@ var setContextCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(setContextCmd)
+	if setContextEnabled {
+		rootCmd.AddCommand(setContextCmd)
+	}
 }
