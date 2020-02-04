@@ -4,27 +4,75 @@ NOTE: This project is currently a work in progress prototype
 
 The command line interface for Radix, which is to enable users of Radix platform in automation around their application on the platform. This document is for developers of the Radix CLI, or anyone interested in poking around.
 
-## How to run
+## How to run on Linux or Mac
 
-### Install
+### Either install...
 
-Mac users (replace `<version number>` with the [version](https://github.com/equinor/radix-cli/releases) of the cli you want to install)
+Pick the appropriate binaries for your machine
+`radix-cli_<version>_Darwin_i386.tar.gz`
+`radix-cli_<version>_Darwin_x86_64.tar.gz`
+`radix-cli_<version>_Linux_arm64.tar.gz`
+`radix-cli_<version>_Linux_armv6.tar.gz`
+`radix-cli_<version>_Linux_i386.tar.gz`
+`radix-cli_<version>_Linux_x86_64.tar.gz`
 
-```
-curl -OL https://github.com/equinor/radix-cli/releases/download/v<version number>/radix-cli_<version number>_Darwin_x86_64.tar.gz
-tar -xf radix-cli_<version number>_Darwin_x86_64.tar.gz
+Pick a [version](https://github.com/equinor/radix-cli/releases) of the cli you want to install, then download and extract the tar file into the `bin` folder like the following example (replacing the version and architecture with the one you picked).
+
+```bash
+local rx_version=0.0.16
+local rx_tar=radix-cli_${rx_version}_Darwin_x86_64.tar.gz
+curl -OL "https://github.com/equinor/radix-cli/releases/download/v${rx_version}/${rx_tar}"
+tar -xf ${rx_tar}
 
 mv rx /usr/local/bin/rx
-rm radix-cli_<version number>_Darwin_x86_64.tar.gz
+rm ${rx_tar}
 ```
 
-### Run using docker image
+### Or run using Docker image
 
-```
-alias rx="docker run -it -v <your home dir>/.radix:/home/radix-cli/.radix docker.pkg.github.com/equinor/radix-cli/rx:latest"
+Authenticate with github via docker using a token with *read:packages* access. Make sure you also enable single sign-on for Equinor after [generating your token](https://github.com/settings/tokens). Replace `<github username>` and `<access token>`.
+```bash
+docker login -u <github username> -p <access token> docker.pkg.github.com
+
+alias rx="docker run -it -v ${HOME}/.radix:/home/radix-cli/.radix docker.pkg.github.com/equinor/radix-cli/rx:latest"
 ```
 
-Typically your home dir will be `/Users/<username>/` on a Mac, or `<root>\Users\<username>` on a Window machine
+(Typically your `HOME` variable will be `/Users/<username>` on a Mac and `/home/<username>` on Linux)
+
+## How to run on Windows
+
+### Either install...
+
+Visit https://github.com/equinor/radix-cli/releases/latest and download the appropriate binaries for your machine.
+
+`radix-cli_<version>_Windows_i386.tar.gz` (32 bit)
+`radix-cli_<version>_Windows_x86_64.tar.gz` (64 bit)
+
+Either run the tar command to extract the contents (replacing the filename with the one you downloaded)
+```batch
+tar -xf radix-cli_0.0.16_Windows_x86_64.tar.gz
+```
+
+or use a third-party tool like *WinZip*, *WinRar* or *7zip* to extract it.
+
+Make sure the directory path you put the executable into is in the global `PATH` environment variable to use the `rx` command anywhere.
+
+
+### Or run using Docker image
+
+See docker for linux/mac above for authentication guide.
+
+If your terminal has a profile or auto-run script, you can add the following to it:
+```batch
+DOSKEY rx=docker run -it -v %HOME%:/home/radix-cli docker.pkg.github.com/equinor/radix-cli/rx:latest $*
+```
+
+If not, you must add a new script file called `rx.bat` in a directory, present in `PATH`, with the following content
+```batch
+docker run -it -v %HOME%:/home/radix-cli docker.pkg.github.com/equinor/radix-cli/rx:latest $*
+```
+
+(Typically your `HOME` variable will be `C:\Users\<username>`)
 
 ### Modes of running
 
@@ -32,7 +80,7 @@ There are generally two modes of running the CLI:
 
 #### Interactively
 
-CLI will use users privileges to access the Radix API server. Context information is stored in the \$HOME/.radix folder. First time you run it (i.e. `rx list applications`) a prompt is provided for you to authenticated with Azure using a device code flow. A message like this appears in your terminal:
+CLI will use users privileges to access the Radix API server. Context information is stored in the `<home>/.radix` folder. First time you run it (i.e. `rx list applications`) a prompt is provided for you to authenticated with Azure using a device code flow. A message like this appears in your terminal:
 
 `To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code ABCDEFGHI to authenticate.`
 
@@ -53,7 +101,7 @@ rx --token-environment list applications
 
 ```
   build-deploy Will trigger build-deploy of a Radix application
-  follow       Follow Radix resources
+  get          Get Radix resource
   get-config   Get setting from Radix config
   get-context  Gets current context
   help         Help about any command
@@ -68,9 +116,10 @@ These are global arguments for all commands. Default will use context=production
 
 ```
 General flags:
-  -k, --cluster string           Set cluster to override context
-  -c, --context string           Use context production|playground|development regardless of current context
-  -e, --api-environment string   The API environment to run with (default "prod")
+      --api-environment string   The API api-environment to run with (default prod) (default "prod")
+      --await-reconcile          Await reconcilliation in Radix
+      --cluster string           Set cluster to override context
+  -c, --context string           Use context production|playground|development regardless of current context (default production)
       --from-config              Read and use radix config from file as context
   -h, --help                     help for rx
       --token-environment        Take the token from environment variable APP_SERVICE_ACCOUNT_TOKEN
