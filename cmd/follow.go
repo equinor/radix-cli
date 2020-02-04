@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const followEnabled = false
+const followEnabled = true
 
 const deltaRefreshOutput = 50 * time.Millisecond
 
