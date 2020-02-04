@@ -26,11 +26,34 @@
         "--token-environment",
         "--context",
         "playground",
+        "trigger",
         "build-deploy",
         "--application",
         "echo",
         "-b",
         "master",
+        "-f"
+      ]
+    },
+    {
+      "name": "Lauch radix-cli deploy application",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
+      "args": [
+        "--token-environment",
+        "--context",
+        "development",
+        "trigger",
+        "deploy",
+        "--application",
+        "xample-deploy-only",
+        "-e",
+        "prod",
         "-f"
       ]
     },

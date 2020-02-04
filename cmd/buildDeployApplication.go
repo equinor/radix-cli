@@ -72,7 +72,7 @@ var buildDeployApplicationCmd = &cobra.Command{
 
 func init() {
 	if buildDeployApplicationEnabled {
-		rootCmd.AddCommand(buildDeployApplicationCmd)
+		triggerCmd.AddCommand(buildDeployApplicationCmd)
 		buildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
 		buildDeployApplicationCmd.Flags().StringP("branch", "b", "master", "Branch to build-deploy from")
 		buildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
