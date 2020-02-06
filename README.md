@@ -19,8 +19,8 @@ Pick the appropriate binaries for your machine
 Pick a [version](https://github.com/equinor/radix-cli/releases) of the cli you want to install, then download and extract the tar file into the `bin` folder like the following example (replacing the version and architecture with the one you picked).
 
 ```bash
-local rx_version=0.0.16
-local rx_tar=radix-cli_${rx_version}_Darwin_x86_64.tar.gz
+rx_version=0.0.16
+rx_tar=radix-cli_${rx_version}_Darwin_x86_64.tar.gz
 curl -OL "https://github.com/equinor/radix-cli/releases/download/v${rx_version}/${rx_tar}"
 tar -xf ${rx_tar}
 
