@@ -4,11 +4,11 @@ NOTE: This project is currently a work in progress prototype
 
 The command line interface for Radix, which is to enable users of Radix platform in automation around their application on the platform. This document is for developers of the Radix CLI, or anyone interested in poking around.
 
-# Installation
+## Installation
 
-## Linux or Mac
+### Linux or Mac
 
-### Binaries
+#### Binaries
 
 Pick the appropriate binaries for your machine
 
@@ -30,7 +30,7 @@ mv rx /usr/local/bin/rx
 rm ${rx_tar}
 ```
 
-### Or run using Docker image
+#### Or run using Docker image
 
 Authenticate with github via docker using a token with *read:packages* access. Make sure you also enable single sign-on for Equinor after [generating your token](https://github.com/settings/tokens). Replace `<github username>` and `<access token>`.
 ```bash
@@ -41,9 +41,9 @@ alias rx="docker run -it -v ${HOME}/.radix:/home/radix-cli/.radix docker.pkg.git
 
 (Typically your `HOME` variable will be `/Users/<username>` on a Mac and `/home/<username>` on Linux)
 
-## Windows
+### Windows
 
-### Binaries
+#### Binaries
 
 Visit https://github.com/equinor/radix-cli/releases/latest and download the appropriate binaries for your machine.
 
@@ -60,7 +60,7 @@ or use a third-party tool like *WinZip*, *WinRar* or *7zip* to extract it.
 Make sure the directory path you put the executable into is in the global `PATH` environment variable to use the `rx` command anywhere.
 
 
-### Or run using Docker image
+#### Or run using Docker image
 
 See docker for linux/mac above for authentication guide.
 
@@ -99,7 +99,7 @@ export APP_SERVICE_ACCOUNT_TOKEN=<your service account token>
 rx --token-environment list applications
 ```
 
-# Development
+## Development
 
 We are using the [cobra framework](https://github.com/spf13/cobra) for handling commands. Add a command by:
 
@@ -107,7 +107,7 @@ We are using the [cobra framework](https://github.com/spf13/cobra) for handling 
 cobra add <commandName>
 ```
 
-## Generate client stubs
+### Generate client stubs
 
 Client code is generated from swagger contract definition of the latest contract of the Radix API server. We use [go-swagger](https://github.com/go-swagger/go-swagger/blob/master/docs/install.md). The generated code should not be checked in, but will be generated on build of the CLI. When go-swagger is installed you can generate code using this command:
 
@@ -115,7 +115,7 @@ Client code is generated from swagger contract definition of the latest contract
 make generate client
 ```
 
-## Building and releasing
+### Building and releasing
 
 We are making releases available as github releases using [go-releaser](https://goreleaser.com/). The release process is controlled by the .goreleaser.yml file. To make a release:
 
@@ -123,6 +123,6 @@ We are making releases available as github releases using [go-releaser](https://
 make release VERSION=0.0.1 RELASE_NOTE="First release"
 ```
 
-## Security
+### Security
 
 There is a app registration associated with the Radix CLI, `Omnia Radix CLI`, with API permissions to `Omnia Radix Web Console - Production Clusters` to allow for the device code flow when running in interactive mode
