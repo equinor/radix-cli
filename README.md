@@ -4,9 +4,11 @@ NOTE: This project is currently a work in progress prototype
 
 The command line interface for Radix, which is to enable users of Radix platform in automation around their application on the platform. This document is for developers of the Radix CLI, or anyone interested in poking around.
 
-## How to run on Linux or Mac
+# Installation
 
-### Either install...
+## Linux or Mac
+
+### Binaries
 
 Pick the appropriate binaries for your machine
 
@@ -21,7 +23,7 @@ Pick a [version](https://github.com/equinor/radix-cli/releases) of the cli you w
 ```bash
 rx_version=0.0.16
 rx_tar=radix-cli_${rx_version}_Darwin_x86_64.tar.gz
-curl -OL "https://github.com/equinor/radix-cli/releases/download/v${rx_version}/${rx_tar}"
+sudo curl -OL "https://github.com/equinor/radix-cli/releases/download/v${rx_version}/${rx_tar}"
 tar -xf ${rx_tar}
 
 mv rx /usr/local/bin/rx
@@ -39,9 +41,9 @@ alias rx="docker run -it -v ${HOME}/.radix:/home/radix-cli/.radix docker.pkg.git
 
 (Typically your `HOME` variable will be `/Users/<username>` on a Mac and `/home/<username>` on Linux)
 
-## How to run on Windows
+## Windows
 
-### Either install...
+### Binaries
 
 Visit https://github.com/equinor/radix-cli/releases/latest and download the appropriate binaries for your machine.
 
@@ -80,7 +82,7 @@ There are generally two modes of running the CLI:
 
 ### Interactively
 
-CLI will use users privileges to access the Radix API server. Context information is stored in the `<home>/.radix` folder. First time you run it (i.e. `rx list applications`) a prompt is provided for you to authenticated with Azure using a device code flow. A message like this appears in your terminal:
+CLI will use users privileges to access the Radix API server. Context information is stored in the `<home>/.radix` folder. First time you run it (i.e. `rx follow environment -a <your application> -e <your environment>`) a prompt is provided for you to authenticated with Azure using a device code flow. A message like this appears in your terminal:
 
 `To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code ABCDEFGHI to authenticate.`
 
@@ -95,6 +97,14 @@ Alternatively, you can use an environment variable for the token:
 ```
 export APP_SERVICE_ACCOUNT_TOKEN=<your service account token>
 rx --token-environment list applications
+```
+
+# Development
+
+We are using the [cobra framework](https://github.com/spf13/cobra) for handling commands. Add a command by:
+
+```
+cobra add <commandName>
 ```
 
 ## Generate client stubs
@@ -113,10 +123,6 @@ We are making releases available as github releases using [go-releaser](https://
 make release VERSION=0.0.1 RELASE_NOTE="First release"
 ```
 
-## Development
+## Security
 
-We are using the [cobra framework](https://github.com/spf13/cobra) for handling commands. Add a command by:
-
-```
-cobra add <commandName>
-```
+There is a app registration associated with the Radix CLI, `Omnia Radix CLI`, with API permissions to `Omnia Radix Web Console - Production Clusters` to allow for the device code flow when running in interactive mode
