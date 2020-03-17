@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const deployApplicationEnabled = false
+const deployApplicationEnabled = true
 
 var deployApplicationCmd = &cobra.Command{
 	Use:   "deploy",

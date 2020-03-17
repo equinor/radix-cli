@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const logsEnvironmentEnabled = false
+const logsEnvironmentEnabled = true
 
 // logsEnvironmentCmd represents the followEnvironmentCmd command
 var logsEnvironmentCmd = &cobra.Command{

@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const logsEnabled = false
+const logsEnabled = true
 
 const deltaRefreshOutput = 50 * time.Millisecond
 

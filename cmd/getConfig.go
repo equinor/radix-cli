@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const getConfigEnabled = false
+const getConfigEnabled = true
 
 // getConfigCmd represents the get-config command
 var getConfigCmd = &cobra.Command{

@@ -31,7 +31,7 @@ const (
 	componentOption             = "component"
 	secretOption                = "secret"
 	valueOption                 = "value"
-	setEnvironmentSecretEnabled = false
+	setEnvironmentSecretEnabled = true
 )
 
 // setEnvironmentSecretCmd represents the setEnvironmentSecretCmd command

@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const getBranchEnvironmentEnabled = false
+const getBranchEnvironmentEnabled = true
 
 // getBranchEnvironmentCmd represents the getBranchEnvironmentCmd command
 var getBranchEnvironmentCmd = &cobra.Command{

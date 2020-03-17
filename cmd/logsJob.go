@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const logsJobEnabled = false
+const logsJobEnabled = true
 
 // logsJobCmd represents the logsJobCmd command
 var logsJobCmd = &cobra.Command{
