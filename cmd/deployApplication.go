@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const deployApplicationEnabled = true
+const deployApplicationEnabled = false
 
 var deployApplicationCmd = &cobra.Command{
 	Use:   "deploy",
@@ -59,7 +59,7 @@ var deployApplicationCmd = &cobra.Command{
 
 		if follow {
 			jobName := newJob.GetPayload().Name
-			followJob(cmd, apiClient, *appName, jobName)
+			getLogsJob(cmd, apiClient, *appName, jobName)
 		}
 
 		return nil
@@ -68,7 +68,7 @@ var deployApplicationCmd = &cobra.Command{
 
 func init() {
 	if deployApplicationEnabled {
-		triggerCmd.AddCommand(deployApplicationCmd)
+		createJobCmd.AddCommand(deployApplicationCmd)
 		deployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
 		deployApplicationCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
 		deployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow deploy")

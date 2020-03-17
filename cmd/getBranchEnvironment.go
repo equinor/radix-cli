@@ -21,6 +21,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const getBranchEnvironmentEnabled = false
+
 // getBranchEnvironmentCmd represents the getBranchEnvironmentCmd command
 var getBranchEnvironmentCmd = &cobra.Command{
 	Use:   "branch-environment",
@@ -54,5 +56,8 @@ var getBranchEnvironmentCmd = &cobra.Command{
 }
 
 func init() {
-	getBranchEnvironmentCmd.Flags().StringP("branch", "b", "", "Branch of the repository. Should be used together with --from-config to get the environment")
+	if getBranchEnvironmentEnabled {
+		getConfigCmd.AddCommand(getBranchEnvironmentCmd)
+		getBranchEnvironmentCmd.Flags().StringP("branch", "b", "", "Branch of the repository. Should be used together with --from-config to get the environment")
+	}
 }

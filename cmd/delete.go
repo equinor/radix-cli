@@ -20,13 +20,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const deleteEnabled = false
+const deleteEnabled = true
 
 // deleteCmd represents the list command
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete Radix resources",
-	Long:  `A longer description .`,
+	Long:  `Will delete a Radix resource.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("Please specify the resource you want to delete")
 	},
@@ -35,6 +35,5 @@ var deleteCmd = &cobra.Command{
 func init() {
 	if deleteEnabled {
 		rootCmd.AddCommand(deleteCmd)
-		deleteCmd.AddCommand(deleteApplicationCmd)
 	}
 }

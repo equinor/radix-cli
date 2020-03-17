@@ -20,13 +20,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const getEnabled = false
+const getEnabled = true
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get Radix resource",
-	Long:  `A longer description .`,
+	Long:  `Will be used to get any Radix resource.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("Please specify the resource you want to get")
 	},
@@ -35,6 +35,5 @@ var getCmd = &cobra.Command{
 func init() {
 	if getEnabled {
 		rootCmd.AddCommand(getCmd)
-		getCmd.AddCommand(getApplicationCmd)
 	}
 }

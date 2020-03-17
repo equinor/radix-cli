@@ -25,11 +25,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const createApplicationEnabled = true
+
 // createApplicationCmd represents the create application command
 var createApplicationCmd = &cobra.Command{
 	Use:   "application",
 	Short: "Create application",
-	Long:  ``,
+	Long:  `Creates a Radix application in the cluster`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -73,9 +75,12 @@ var createApplicationCmd = &cobra.Command{
 }
 
 func init() {
-	createApplicationCmd.Flags().StringP("application", "", "", "Name of the application to create")
-	createApplicationCmd.Flags().StringP("repository", "", "", "Repository path")
-	createApplicationCmd.Flags().StringP("owner", "", "", "Email adress of owner")
-	createApplicationCmd.Flags().StringP("shared-secret", "", "", "Shared secret for the webhook")
-	createApplicationCmd.Flags().StringSliceP("ad-groups", "", []string{}, "Admin groups")
+	if createApplicationEnabled {
+		createCmd.AddCommand(createApplicationCmd)
+		createApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
+		createApplicationCmd.Flags().StringP("repository", "", "", "Repository path")
+		createApplicationCmd.Flags().StringP("owner", "", "", "Email adress of owner")
+		createApplicationCmd.Flags().StringP("shared-secret", "", "", "Shared secret for the webhook")
+		createApplicationCmd.Flags().StringSliceP("ad-groups", "", []string{}, "Admin groups")
+	}
 }

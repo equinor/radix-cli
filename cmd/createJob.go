@@ -16,30 +16,24 @@ package cmd
 
 import (
 	"errors"
-	"time"
 
 	"github.com/spf13/cobra"
 )
 
-const followEnabled = true
+const createJobEnabled = true
 
-const deltaRefreshOutput = 50 * time.Millisecond
-
-// followCmd represents the list command
-var followCmd = &cobra.Command{
-	Use:   "follow",
-	Short: "Follow Radix resources",
-	Long:  `Feeds resource output to the console while it runs.`,
+// createJobCmd represents the triggering of pipeline command
+var createJobCmd = &cobra.Command{
+	Use:   "job",
+	Short: "Create job command",
+	Long:  `Will be the main command for triggering pipelines.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return errors.New("Please specify the resource you want to follow")
+		return errors.New("Please specify the pipeline you want to create")
 	},
 }
 
 func init() {
-	if followEnabled {
-		rootCmd.AddCommand(followCmd)
-		followCmd.AddCommand(followEnvironmentComponentCmd)
-		followCmd.AddCommand(followEnvironmentCmd)
-		followCmd.AddCommand(followJobCmd)
+	if createJobEnabled {
+		createCmd.AddCommand(createJobCmd)
 	}
 }

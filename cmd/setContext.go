@@ -26,7 +26,7 @@ const setContextEnabled = true
 
 // setContextCmd represents the setContext command
 var setContextCmd = &cobra.Command{
-	Use: "set-context",
+	Use: "context",
 	Short: fmt.Sprintf("Sets the context to be either %s, %s or %s",
 		radixconfig.ContextProdction, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
 	Long: fmt.Sprintf("Sets the context to be either %s, %s or %s",
@@ -49,6 +49,6 @@ var setContextCmd = &cobra.Command{
 
 func init() {
 	if setContextEnabled {
-		rootCmd.AddCommand(setContextCmd)
+		setCmd.AddCommand(setContextCmd)
 	}
 }

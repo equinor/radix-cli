@@ -20,13 +20,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const getConfigEnabled = true
+const getConfigEnabled = false
 
 // getConfigCmd represents the get-config command
 var getConfigCmd = &cobra.Command{
-	Use:   "get-config",
+	Use:   "config",
 	Short: "Get setting from Radix config",
-	Long:  `A longer description .`,
+	Long:  `Helper functionality to get data from radixconfig.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("Please specify the setting you want to get")
 	},
@@ -34,7 +34,6 @@ var getConfigCmd = &cobra.Command{
 
 func init() {
 	if getConfigEnabled {
-		rootCmd.AddCommand(getConfigCmd)
-		getConfigCmd.AddCommand(getBranchEnvironmentCmd)
+		getCmd.AddCommand(getConfigCmd)
 	}
 }

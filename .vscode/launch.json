@@ -85,7 +85,7 @@
       ]
     },
     {
-      "name": "Lauch radix-cli follow component",
+      "name": "Lauch radix-cli get logs component",
       "type": "go",
       "request": "launch",
       "mode": "auto",
@@ -94,7 +94,8 @@
         "APP_SERVICE_ACCOUNT_TOKEN": "token"
       },
       "args": [
-        "follow",
+        "get",
+        "logs",
         "component",
         "--application",
         "xample-2-chat",
@@ -107,7 +108,7 @@
       ]
     },
     {
-      "name": "Lauch radix-cli follow environment",
+      "name": "Lauch radix-cli get logs environment",
       "type": "go",
       "request": "launch",
       "mode": "auto",
@@ -116,7 +117,8 @@
         "APP_SERVICE_ACCOUNT_TOKEN": "token"
       },
       "args": [
-        "follow",
+        "get",
+        "logs",
         "environment",
         "--application",
         "xample-2-chat",
@@ -127,7 +129,7 @@
       ]
     },
     {
-      "name": "Lauch radix-cli follow job",
+      "name": "Lauch radix-cli get logs job",
       "type": "go",
       "request": "launch",
       "mode": "auto",
@@ -139,7 +141,8 @@
         "--token-environment",
         "--context",
         "playground",
-        "follow",
+        "get",
+        "logs",
         "job",
         "--application",
         "echo",

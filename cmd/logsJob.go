@@ -29,11 +29,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// followJobCmd represents the followJobCmd command
-var followJobCmd = &cobra.Command{
+const logsJobEnabled = false
+
+// logsJobCmd represents the logsJobCmd command
+var logsJobCmd = &cobra.Command{
 	Use:   "job",
-	Short: "Will follow a job",
-	Long:  `Will follow a job`,
+	Short: "Get logs of job",
+	Long:  `Will get and follow logs of job`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -55,12 +57,12 @@ var followJobCmd = &cobra.Command{
 			return err
 		}
 
-		followJob(cmd, apiClient, *appName, jobName)
+		getLogsJob(cmd, apiClient, *appName, jobName)
 		return nil
 	},
 }
 
-func followJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobName string) {
+func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobName string) {
 	timeout := time.NewTimer(settings.DeltaTimeout)
 	refreshLog := time.Tick(settings.DeltaRefreshApplication)
 	loggedForStep := make(map[string]int)
@@ -134,6 +136,10 @@ func getSteps(apiClient *apiclient.Radixapi, appName, jobName string) []*models.
 }
 
 func init() {
-	followJobCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
-	followJobCmd.Flags().StringP("job", "j", "", "The job to follow")
+	if logsJobEnabled {
+		logsCmd.AddCommand(logsJobCmd)
+
+		logsJobCmd.Flags().StringP("application", "a", "", "Name of the application for the job")
+		logsJobCmd.Flags().StringP("job", "j", "", "The job to get logs for")
+	}
 }

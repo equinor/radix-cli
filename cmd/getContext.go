@@ -27,7 +27,7 @@ const getContextEnabled = true
 
 // getContextCmd represents the getContext command
 var getContextCmd = &cobra.Command{
-	Use:   "get-context",
+	Use:   "context",
 	Short: "Gets current context",
 	Long: fmt.Sprintf("Gets the current context. It can be one of %s, %s or %s",
 		radixconfig.ContextProdction, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
@@ -40,6 +40,6 @@ var getContextCmd = &cobra.Command{
 
 func init() {
 	if getContextEnabled {
-		rootCmd.AddCommand(getContextCmd)
+		getCmd.AddCommand(getContextCmd)
 	}
 }

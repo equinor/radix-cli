@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const buildDeployApplicationEnabled = false
+const buildDeployApplicationEnabled = true
 
 // buildDeployApplicationCmd represents the buildApplication command
 var buildDeployApplicationCmd = &cobra.Command{
@@ -63,7 +63,7 @@ var buildDeployApplicationCmd = &cobra.Command{
 
 		jobName := newJob.GetPayload().Name
 		if follow {
-			followJob(cmd, apiClient, *appName, jobName)
+			getLogsJob(cmd, apiClient, *appName, jobName)
 		}
 
 		return nil
@@ -72,7 +72,7 @@ var buildDeployApplicationCmd = &cobra.Command{
 
 func init() {
 	if buildDeployApplicationEnabled {
-		triggerCmd.AddCommand(buildDeployApplicationCmd)
+		createJobCmd.AddCommand(buildDeployApplicationCmd)
 		buildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
 		buildDeployApplicationCmd.Flags().StringP("branch", "b", "master", "Branch to build-deploy from")
 		buildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
