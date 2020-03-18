@@ -68,7 +68,7 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 	refreshLog := time.Tick(settings.DeltaRefreshApplication)
 
 	// Somtimes, even though we get delta, the log is the same as previous
-	previousLogForStep := make(map[string]string)
+	previousLogForStep := make(map[string][]string)
 
 	for {
 		select {
@@ -82,15 +82,12 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 
 			for i, step := range steps {
 				// Somtimes, even though we get delta, the log is the same as previous
-				if strings.EqualFold(step.Log, previousLogForStep[*step.Name]) {
-					continue
-				}
-
+				previousLogLines := previousLogForStep[*step.Name]
 				logLines := strings.Split(strings.Replace(step.Log, "\r\n", "\n", -1), "\n")
 				if len(logLines) > 0 && !strings.EqualFold(logLines[0], "") {
-					log.Output(cmd, *step.Name, logLines, log.GetColor(i))
+					log.PrintLines(cmd, *step.Name, previousLogLines, logLines, log.GetColor(i))
 					loggedForJob = true
-					previousLogForStep[*step.Name] = step.Log
+					previousLogForStep[*step.Name] = logLines
 				}
 			}
 
@@ -125,7 +122,7 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 }
 
 func getSteps(apiClient *apiclient.Radixapi, appName, jobName string, sinceTime time.Time) []*models.StepLog {
-	since, _ := strfmt.ParseDateTime(sinceTime.Format(time.RFC3339))
+	since := strfmt.DateTime(sinceTime)
 	jobLogParameters := job.NewGetApplicationJobLogsParams()
 	jobLogParameters.SetAppName(appName)
 	jobLogParameters.SetJobName(jobName)

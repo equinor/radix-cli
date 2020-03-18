@@ -87,7 +87,7 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 				for _, replica := range replicas {
 					now := time.Now()
 					sinceTime := now.Add(-settings.DeltaRefreshApplication)
-					since, _ := strfmt.ParseDateTime(sinceTime.Format(time.RFC3339))
+					since := strfmt.DateTime(sinceTime)
 
 					logParameters := component.NewLogParams()
 					logParameters.WithAppName(appName)
@@ -112,7 +112,7 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 						if !strings.EqualFold(logData.Payload, previousLogForReplica[replica]) {
 							logLines := strings.Split(strings.Replace(strings.TrimRight(logData.Payload, "\r\n"), "\r\n", "\n", -1), "\n")
 							if len(logLines) > 0 {
-								log.Output(cmd, replica, logLines, log.GetColor(i))
+								log.PrintLines(cmd, replica, []string{}, logLines, log.GetColor(i))
 								previousLogForReplica[replica] = logData.Payload
 							}
 						}
