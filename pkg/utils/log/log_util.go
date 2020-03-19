@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -23,19 +24,22 @@ func GetColor(num int) func(a ...interface{}) string {
 	return Colors[num%len(Colors)]
 }
 
-// From logs lines exceeding from
-func From(cmd *cobra.Command, name string, from int, logLines []string, color func(a ...interface{}) string) int {
-	logged := 0
-
-	for num, logLine := range logLines {
-		if num >= from {
+// PrintLines logs lines with color
+func PrintLines(cmd *cobra.Command, name string, previousLogLines, logLines []string, color func(a ...interface{}) string) {
+	for _, logLine := range logLines {
+		if !logged(logLine, previousLogLines) {
 			Print(cmd, name, logLine, color)
-
-			logged++
 		}
 	}
+}
 
-	return logged
+func logged(logLine string, previousLogLines []string) bool {
+	for _, previousLogLine := range previousLogLines {
+		if strings.EqualFold(previousLogLine, logLine) {
+			return true
+		}
+	}
+	return false
 }
 
 // Print Output string to standard output

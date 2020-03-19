@@ -32,7 +32,8 @@ rm ${rx_tar}
 
 #### Or run using Docker image
 
-Authenticate with github via docker using a token with *read:packages* access. Make sure you also enable single sign-on for Equinor after [generating your token](https://github.com/settings/tokens). Replace `<github username>` and `<access token>`.
+Authenticate with github via docker using a token with _read:packages_ access. Make sure you also enable single sign-on for Equinor after [generating your token](https://github.com/settings/tokens). Replace `<github username>` and `<access token>`.
+
 ```bash
 docker login -u <github username> -p <access token> docker.pkg.github.com
 
@@ -51,25 +52,27 @@ Visit https://github.com/equinor/radix-cli/releases/latest and download the appr
 `radix-cli_<version>_Windows_x86_64.tar.gz` (64 bit)
 
 Either run the tar command to extract the contents (replacing the filename with the one you downloaded)
+
 ```batch
 tar -xf radix-cli_0.0.16_Windows_x86_64.tar.gz
 ```
 
-or use a third-party tool like *WinZip*, *WinRar* or *7zip* to extract it.
+or use a third-party tool like _WinZip_, _WinRar_ or _7zip_ to extract it.
 
 Make sure the directory path you put the executable into is in the global `PATH` environment variable to use the `rx` command anywhere.
-
 
 #### Or run using Docker image
 
 See docker for linux/mac above for authentication guide.
 
 If your terminal has a profile or auto-run script, you can add the following to it:
+
 ```batch
 DOSKEY rx=docker run -it -v %HOME%:/home/radix-cli docker.pkg.github.com/equinor/radix-cli/rx:latest $*
 ```
 
 If not, you must add a new script file called `rx.bat` in a directory, present in `PATH`, with the following content
+
 ```batch
 docker run -it -v %HOME%:/home/radix-cli docker.pkg.github.com/equinor/radix-cli/rx:latest $*
 ```
@@ -112,7 +115,7 @@ cobra add <commandName>
 Client code is generated from swagger contract definition of the latest contract of the Radix API server. We use [go-swagger](https://github.com/go-swagger/go-swagger/blob/master/docs/install.md). The generated code should not be checked in, but will be generated on build of the CLI. When go-swagger is installed you can generate code using this command:
 
 ```
-make generate client
+make generate-client
 ```
 
 ### Building and releasing

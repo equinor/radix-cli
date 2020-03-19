@@ -15,28 +15,28 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
+	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/utils/json"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
+
+const getApplicationEnabled = true
 
 // getApplicationCmd represents the getApplicationCmd command
 var getApplicationCmd = &cobra.Command{
 	Use:   "application",
-	Short: "Will get the radix application",
-	Long:  `Will get the radix application`,
+	Short: "Will get Radix application",
+	Long:  `Will get a list of Radix applications or a single application if provided`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
 			return err
-		}
-
-		if appName == nil {
-			return errors.New("Application name is a required field")
 		}
 
 		apiClient, err := client.GetForCommand(cmd)
@@ -44,19 +44,31 @@ var getApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		getApplicationParams := application.NewGetApplicationParams()
-		getApplicationParams.SetAppName(*appName)
-		resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
-		if err == nil {
-			prettyJSON, err := json.Pretty(resp.Payload)
+		if appName == nil || strings.EqualFold(*appName, "") {
+			// List applications
+			showApplicationParams := platform.NewShowApplicationsParams()
+			resp, err := apiClient.Platform.ShowApplications(showApplicationParams, nil)
+
 			if err == nil {
-				fmt.Println(*prettyJSON)
+				for _, application := range resp.Payload {
+					log.Infof("App: %s", application.Name)
+				}
+			}
+		} else {
+			getApplicationParams := application.NewGetApplicationParams()
+			getApplicationParams.SetAppName(*appName)
+			resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
+			if err == nil {
+				prettyJSON, err := json.Pretty(resp.Payload)
+				if err == nil {
+					fmt.Println(*prettyJSON)
+				} else {
+					println(fmt.Sprintf("%v", err))
+				}
+
 			} else {
 				println(fmt.Sprintf("%v", err))
 			}
-
-		} else {
-			println(fmt.Sprintf("%v", err))
 		}
 
 		return nil
@@ -64,5 +76,8 @@ var getApplicationCmd = &cobra.Command{
 }
 
 func init() {
-	getApplicationCmd.Flags().StringP("application", "a", "", "Name of the application")
+	if getApplicationEnabled {
+		getCmd.AddCommand(getApplicationCmd)
+		getApplicationCmd.Flags().StringP("application", "a", "", "Name of the application")
+	}
 }

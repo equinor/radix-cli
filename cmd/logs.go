@@ -16,25 +16,27 @@ package cmd
 
 import (
 	"errors"
+	"time"
 
 	"github.com/spf13/cobra"
 )
 
-const listEnabled = false
+const logsEnabled = true
 
-// listCmd represents the list command
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Lists Radix resources",
-	Long:  `A longer description .`,
+const deltaRefreshOutput = 50 * time.Millisecond
+
+// logsCmd represents the list command
+var logsCmd = &cobra.Command{
+	Use:   "logs",
+	Short: "Follow Radix logs for Radix resource",
+	Long:  `Feeds resource output to the console while it runs.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return errors.New("Please specify the resource you want to list")
+		return errors.New("Please specify the resource you want to get logs for")
 	},
 }
 
 func init() {
-	if listEnabled {
-		rootCmd.AddCommand(listCmd)
-		listCmd.AddCommand(listApplicationsCmd)
+	if logsEnabled {
+		getCmd.AddCommand(logsCmd)
 	}
 }

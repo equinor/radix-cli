@@ -26,7 +26,7 @@ const setEnabled = true
 var setCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Sets values in Radix",
-	Long:  `A longer description .`,
+	Long:  `Used for updating resources in Radix.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("Please specify the resource you want to set")
 	},
@@ -35,6 +35,5 @@ var setCmd = &cobra.Command{
 func init() {
 	if setEnabled {
 		rootCmd.AddCommand(setCmd)
-		setCmd.AddCommand(setEnvironmentSecretCmd)
 	}
 }

@@ -23,11 +23,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// followEnvironmentCmd represents the followEnvironmentCmd command
-var followEnvironmentCmd = &cobra.Command{
+const logsEnvironmentEnabled = true
+
+// logsEnvironmentCmd represents the followEnvironmentCmd command
+var logsEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
-	Short: "Will follow components in an environment",
-	Long:  `Will follow components in an environment`,
+	Short: "Get logs of all components in environment",
+	Long:  `Will get and follow logs of all components in an environment`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -86,7 +88,10 @@ func getComponentReplicasForEnvironment(apiClient *apiclient.Radixapi, appName, 
 }
 
 func init() {
-	followEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
-	followEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
-	followEnvironmentCmd.Flags().String("component", "", "The component to follow")
+	if logsEnvironmentEnabled {
+		logsCmd.AddCommand(logsEnvironmentCmd)
+
+		logsEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
+		logsEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
+	}
 }

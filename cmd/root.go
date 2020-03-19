@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/equinor/radix-cli/pkg/client"
@@ -16,11 +17,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var rootLongHelp = strings.TrimSpace(`
+A command line interface which allows you to interact with the Radix platform through automation.
+`)
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "rx",
 	Short: "Command line interface for Radix platform",
-	Long:  `....`,
+	Long:  rootLongHelp,
 }
 
 // Execute the top level command

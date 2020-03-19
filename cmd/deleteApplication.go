@@ -23,11 +23,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const deleteAppllicationEnabled = true
+
 // deleteApplicationCmd represents the create application command
 var deleteApplicationCmd = &cobra.Command{
 	Use:   "application",
 	Short: "Delete application",
-	Long:  ``,
+	Long:  `Will delete an application from the cluster`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -57,8 +59,8 @@ var deleteApplicationCmd = &cobra.Command{
 }
 
 func init() {
-	deleteApplicationCmd.Flags().StringP("application", "", "", "Name of the application to create")
-	deleteApplicationCmd.Flags().StringP("repository", "", "", "Repository")
-	deleteApplicationCmd.Flags().StringP("owner", "", "", "Owner")
-	deleteApplicationCmd.Flags().StringSliceP("ad-groups", "", []string{}, "Admin groups")
+	if deleteAppllicationEnabled {
+		deleteCmd.AddCommand(deleteApplicationCmd)
+		deleteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
+	}
 }

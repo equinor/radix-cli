@@ -26,11 +26,12 @@ import (
 )
 
 const (
-	applicationOption = "application"
-	environmentOption = "environment"
-	componentOption   = "component"
-	secretOption      = "secret"
-	valueOption       = "value"
+	applicationOption           = "application"
+	environmentOption           = "environment"
+	componentOption             = "component"
+	secretOption                = "secret"
+	valueOption                 = "value"
+	setEnvironmentSecretEnabled = true
 )
 
 // setEnvironmentSecretCmd represents the setEnvironmentSecretCmd command
@@ -131,9 +132,12 @@ func isComponentSecretReconciled(apiClient *apiclient.Radixapi, appName, environ
 }
 
 func init() {
-	setEnvironmentSecretCmd.Flags().StringP(applicationOption, "a", "", "Name of the application to set secret for")
-	setEnvironmentSecretCmd.Flags().StringP(environmentOption, "e", "", "Environment to set secret in")
-	setEnvironmentSecretCmd.Flags().String(componentOption, "", "Component to set the secret for")
-	setEnvironmentSecretCmd.Flags().StringP(secretOption, "s", "", "Name of the secret to set")
-	setEnvironmentSecretCmd.Flags().StringP(valueOption, "v", "", "Value of the secret to set")
+	if setEnvironmentSecretEnabled {
+		setCmd.AddCommand(setEnvironmentSecretCmd)
+		setEnvironmentSecretCmd.Flags().StringP(applicationOption, "a", "", "Name of the application to set secret for")
+		setEnvironmentSecretCmd.Flags().StringP(environmentOption, "e", "", "Environment to set secret in")
+		setEnvironmentSecretCmd.Flags().String(componentOption, "", "Component to set the secret for")
+		setEnvironmentSecretCmd.Flags().StringP(secretOption, "s", "", "Name of the secret to set")
+		setEnvironmentSecretCmd.Flags().StringP(valueOption, "v", "", "Value of the secret to set")
+	}
 }
