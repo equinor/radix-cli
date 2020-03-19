@@ -25,6 +25,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/log"
+	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
 )
 
@@ -73,7 +74,9 @@ var logsEnvironmentComponentCmd = &cobra.Command{
 
 func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, environmentName string, componentReplicas map[string][]string) error {
 	refreshLog := time.Tick(settings.DeltaRefreshApplication)
-	loggedForReplica := make(map[string]int)
+
+	// Somtimes, even though we get delta, the log is the same as previous
+	previousLogForReplica := make(map[string]string)
 
 	for {
 		select {
@@ -82,11 +85,16 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 			i := 0
 			for componentName, replicas := range componentReplicas {
 				for _, replica := range replicas {
+					now := time.Now()
+					sinceTime := now.Add(-settings.DeltaRefreshApplication)
+					since := strfmt.DateTime(sinceTime)
+
 					logParameters := component.NewLogParams()
 					logParameters.WithAppName(appName)
 					logParameters.WithDeploymentName("irrelevant")
 					logParameters.WithComponentName(componentName)
 					logParameters.WithPodName(replica)
+					logParameters.SetSinceTime(&since)
 
 					logData, err := apiClient.Component.Log(logParameters, nil)
 					if err != nil {
@@ -100,21 +108,14 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 						break
 
 					} else {
-						totalLinesLogged := 0
-
-						if _, contained := loggedForReplica[replica]; contained {
-							totalLinesLogged = loggedForReplica[replica]
+						// Somtimes, even though we get delta, the log is the same as previous
+						if !strings.EqualFold(logData.Payload, previousLogForReplica[replica]) {
+							logLines := strings.Split(strings.Replace(strings.TrimRight(logData.Payload, "\r\n"), "\r\n", "\n", -1), "\n")
+							if len(logLines) > 0 {
+								log.PrintLines(cmd, replica, []string{}, logLines, log.GetColor(i))
+								previousLogForReplica[replica] = logData.Payload
+							}
 						}
-
-						logLines := strings.Split(strings.Replace(strings.TrimRight(logData.Payload, "\r\n"), "\r\n", "\n", -1), "\n")
-						if totalLinesLogged == 0 {
-							totalLinesLogged = len(logLines)
-						} else {
-							logged := log.From(cmd, replica, totalLinesLogged, logLines, log.GetColor(i))
-							totalLinesLogged += logged
-						}
-
-						loggedForReplica[replica] = totalLinesLogged
 					}
 
 					i++

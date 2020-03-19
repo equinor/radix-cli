@@ -26,6 +26,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/log"
+	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
 )
 
@@ -65,30 +66,28 @@ var logsJobCmd = &cobra.Command{
 func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobName string) {
 	timeout := time.NewTimer(settings.DeltaTimeout)
 	refreshLog := time.Tick(settings.DeltaRefreshApplication)
-	loggedForStep := make(map[string]int)
+
+	// Somtimes, even though we get delta, the log is the same as previous
+	previousLogForStep := make(map[string][]string)
 
 	for {
 		select {
 		case <-refreshLog:
 
+			now := time.Now()
+			sinceTime := now.Add(-settings.DeltaRefreshApplication)
+
 			loggedForJob := false
-			steps := getSteps(apiClient, appName, jobName)
+			steps := getSteps(apiClient, appName, jobName, sinceTime)
 
 			for i, step := range steps {
-				totalLinesLogged := 0
-
-				if _, contained := loggedForStep[*step.Name]; contained {
-					totalLinesLogged = loggedForStep[*step.Name]
-				}
-
+				// Somtimes, even though we get delta, the log is the same as previous
+				previousLogLines := previousLogForStep[*step.Name]
 				logLines := strings.Split(strings.Replace(step.Log, "\r\n", "\n", -1), "\n")
-				logged := log.From(cmd, *step.Name, totalLinesLogged, logLines, log.GetColor(i))
-
-				totalLinesLogged += logged
-				loggedForStep[*step.Name] = totalLinesLogged
-
-				if logged > 0 {
+				if len(logLines) > 0 && !strings.EqualFold(logLines[0], "") {
+					log.PrintLines(cmd, *step.Name, previousLogLines, logLines, log.GetColor(i))
 					loggedForJob = true
+					previousLogForStep[*step.Name] = logLines
 				}
 			}
 
@@ -122,10 +121,12 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 	}
 }
 
-func getSteps(apiClient *apiclient.Radixapi, appName, jobName string) []*models.StepLog {
+func getSteps(apiClient *apiclient.Radixapi, appName, jobName string, sinceTime time.Time) []*models.StepLog {
+	since := strfmt.DateTime(sinceTime)
 	jobLogParameters := job.NewGetApplicationJobLogsParams()
 	jobLogParameters.SetAppName(appName)
 	jobLogParameters.SetJobName(jobName)
+	jobLogParameters.SetSinceTime(&since)
 
 	respJobLog, err := apiClient.Job.GetApplicationJobLogs(jobLogParameters, nil)
 	if err == nil {
