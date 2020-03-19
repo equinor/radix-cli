@@ -1,7 +1,5 @@
 # radix-cli
 
-NOTE: This project is currently a work in progress prototype
-
 The command line interface for Radix, which is to enable users of Radix platform in automation around their application on the platform. This document is for developers of the Radix CLI, or anyone interested in poking around.
 
 ## Installation
@@ -81,7 +79,7 @@ docker run -it -v %HOME%:/home/radix-cli docker.pkg.github.com/equinor/radix-cli
 
 ## Modes of running
 
-There are generally two modes of running the CLI:
+There are generally two modes of running the CLI. Both cases may use configuration in your \$HOME/.radix folder:
 
 ### Interactively
 
@@ -91,7 +89,7 @@ CLI will use users privileges to access the Radix API server. Context informatio
 
 ### Using a machine user
 
-CLI can also use a machine user for authenticating with the API server. This will be done through a bearer token of a service account connected to your application. The service account token will be provided to you under configuration page of your application. There are two ways to feed this token to the CLI. Either using standard input. The should be done like this:
+CLI can also use a machine user for authenticating with the API server. This will be done through a bearer token of a service account connected to your application. The service account token will be provided to you under configuration page of your application. For more information on this see [this](https://www.radix.equinor.com/guides/deploy-only/#machine-user-token) guide. There are two ways to feed this token to the CLI. Either using standard input. The should be done like this:
 
 `echo <your service account token> | rx --token-stdin list applications`
 
@@ -99,7 +97,18 @@ Alternatively, you can use an environment variable for the token:
 
 ```
 export APP_SERVICE_ACCOUNT_TOKEN=<your service account token>
-rx --token-environment list applications
+rx --token-environment get application
+```
+
+Note that using your own token obtained through `az account get-access-token` may not work, because the size of the token may be too big.
+
+## Problems encountered
+
+Problem: Failed to acquire a token: refreshing the expired token: refreshing token: adal: Refresh request failed. Status Code = '400'
+Solution: Remove your .radix folder
+
+```
+rm -rf $HOME/.radix/
 ```
 
 ## Development
@@ -118,12 +127,20 @@ Client code is generated from swagger contract definition of the latest contract
 make generate-client
 ```
 
+NOTE: If there is a change to the API, you make need to point to the API environment which holds the correct swagger definition.
+
 ### Building and releasing
 
 We are making releases available as github releases using [go-releaser](https://goreleaser.com/). The release process is controlled by the .goreleaser.yml file. To make a release:
 
 ```
 make release VERSION=0.0.1 RELASE_NOTE="First release"
+```
+
+To generate a local version for debugging purposes, it can be built using:
+
+```
+CGO_ENABLED=0 GOOS=darwin go build -ldflags "-s -w" -a -installsuffix cgo -o ./rx
 ```
 
 ### Security
