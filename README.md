@@ -16,12 +16,17 @@ Pick the appropriate binaries for your machine
 
 `radix-cli_<version>_Linux_armv6.tar.gz` `radix-cli_<version>_Linux_arm64.tar.gz`
 
-Pick a [version](https://github.com/equinor/radix-cli/releases) of the cli you want to install, then download and extract the tar file into the `bin` folder like the following example (replacing the version and architecture with the one you picked).
+Pick a [version](https://github.com/equinor/radix-cli/releases) of the cli you want to install, or the latest version, then download and extract the tar file into the `bin` folder like the following example (replacing the version and architecture with the one you picked).
 
 ```bash
-rx_version=0.0.16
-rx_tar=radix-cli_${rx_version}_Darwin_x86_64.tar.gz
-sudo curl -OL "https://github.com/equinor/radix-cli/releases/download/v${rx_version}/${rx_tar}"
+LATEST_VERSION=$(
+    curl --silent "https://api.github.com/repos/equinor/radix-cli/releases/latest" |
+        grep '"tag_name":' |
+        sed -E 's/.*"v([^"]+)".*/\1/'
+)
+
+rx_tar=radix-cli_${LATEST_VERSION}_Darwin_x86_64.tar.gz
+sudo curl -OL "https://github.com/equinor/radix-cli/releases/download/v${LATEST_VERSION}/${rx_tar}"
 tar -xf ${rx_tar}
 
 mv rx /usr/local/bin/rx
