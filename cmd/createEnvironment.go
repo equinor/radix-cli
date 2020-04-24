@@ -25,7 +25,7 @@ import (
 
 const createEnvironmentEnabled = true
 
-// createEnvironmentCmd represents the create application command
+// createEnvironmentCmd represents the create environment command
 var createEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Create environment",
