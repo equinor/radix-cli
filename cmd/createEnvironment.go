@@ -45,7 +45,9 @@ var createEnvironmentCmd = &cobra.Command{
 			return errors.New("Environment name and application name are required fields")
 		}
 
-		parameters := environment.NewCreateEnvironmentParams()
+		parameters := environment.NewCreateEnvironmentParams().
+			WithAppName(*appName).
+			WithEnvName(*envName)
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
