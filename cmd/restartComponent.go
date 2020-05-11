@@ -29,7 +29,10 @@ const restartComponentEnabled = true
 var restartComponentCmd = &cobra.Command{
 	Use:   "component",
 	Short: "Restart a component",
-	Long:  `Redeploys and starts a component for the application`,
+	Long: `Restart a component
+  - Stops running the component container
+  - Pulls new image from image hub in radix configuration
+  - Starts the container again using up to date image`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
