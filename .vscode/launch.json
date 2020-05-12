@@ -214,6 +214,25 @@
         "--cluster",
         "iknu-test-machine-user"
       ]
+    },
+    {
+      "name": "Lauch radix-cli restart component",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
+      "args": [
+        "--token-environment",
+        "--context", "playground",
+        "restart",
+        "component",
+        "--application", "echo",
+        "--environment", "master",
+        "--component", "www"
+      ]
     }
   ]
 }
