@@ -35,6 +35,7 @@ var deployApplicationCmd = &cobra.Command{
 			return err
 		}
 		targetEnvironment, _ := cmd.Flags().GetString("environment")
+		triggeredByUser, _ := cmd.Flags().GetString("user")
 		follow, _ := cmd.Flags().GetBool("follow")
 
 		if appName == nil || *appName == "" || targetEnvironment == "" {
@@ -50,6 +51,7 @@ var deployApplicationCmd = &cobra.Command{
 		triggerPipelineParams.SetAppName(*appName)
 		triggerPipelineParams.SetPipelineParametersDeploy(&models.PipelineParametersDeploy{
 			ToEnvironment: targetEnvironment,
+			TriggeredBy:   triggeredByUser,
 		})
 
 		newJob, err := apiClient.Application.TriggerPipelineDeploy(triggerPipelineParams, nil)
@@ -71,6 +73,7 @@ func init() {
 		createJobCmd.AddCommand(deployApplicationCmd)
 		deployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
 		deployApplicationCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
+		deployApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
 		deployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
 	}
 }
