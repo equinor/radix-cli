@@ -96,7 +96,7 @@ CLI will use users privileges to access the Radix API server. Context informatio
 
 CLI can also use a machine user for authenticating with the API server. This will be done through a bearer token of a service account connected to your application. The service account token will be provided to you under configuration page of your application. For more information on this see [this](https://www.radix.equinor.com/guides/deploy-only/#machine-user-token) guide. There are two ways to feed this token to the CLI. Either using standard input. The should be done like this:
 
-`echo <your service account token> | rx --token-stdin list applications`
+`echo <your service account token> | rx --token-stdin get application`
 
 Alternatively, you can use an environment variable for the token:
 
