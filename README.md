@@ -142,10 +142,10 @@ We are making releases available as github releases using [go-releaser](https://
 make release VERSION=0.0.1 RELASE_NOTE="First release"
 ```
 
-To generate a local version for debugging purposes, it can be built using:
+To generate a local version for debugging purposes, it can be built (for Mac) using:
 
 ```
-CGO_ENABLED=0 GOOS=darwin go build -ldflags "-s -w" -a -installsuffix cgo -o ./rx
+GO111MODULE=on CGO_ENABLED=0 GOOS=darwin go build -ldflags "-s -w" -a -installsuffix cgo -o ./rx
 ```
 
 ### Security
