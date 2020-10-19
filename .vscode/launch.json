@@ -234,5 +234,23 @@
         "--component", "www"
       ]
     }
+,
+    {
+      "name": "Launch radix-cli regenerate machine user token",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/main.go",
+      "env": {
+        "APP_SERVICE_ACCOUNT_TOKEN": "token"
+      },
+      "args": [
+        "--token-environment",
+        "--context", "playground",
+        "set",
+        "machine-user-token",
+        "--application", "echo"
+      ]
+    }
   ]
 }
