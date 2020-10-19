@@ -28,8 +28,8 @@ const regenerateMachineUserTokenEnabled = true
 // regenerateMachineUserToken represents the create application command
 var regenerateMachineUserToken = &cobra.Command{
 	Use:   "machine-user-token",
-	Short: "Regenerate machine user token",
-	Long:  `Will regenerate machine user token and return it. Returns empty string, if machine user is not enabled.`,
+	Short: "Generate machine user token",
+	Long:  `Will generate machine user token and return it. Returns empty string, if machine user is not enabled.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -60,7 +60,7 @@ var regenerateMachineUserToken = &cobra.Command{
 
 func init() {
 	if regenerateMachineUserTokenEnabled {
-		setCmd.AddCommand(setEnvironmentSecretCmd)
-		regenerateMachineUserToken.Flags().StringP(applicationOption, "a", "", "Name of the application to regenerate machine user token for")
+		setCmd.AddCommand(regenerateMachineUserToken)
+		regenerateMachineUserToken.Flags().StringP(applicationOption, "a", "", "Name of the application to generate machine user token for")
 	}
 }
