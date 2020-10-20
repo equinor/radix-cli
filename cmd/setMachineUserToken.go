@@ -23,13 +23,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const regenerateMachineUserTokenEnabled = true
+const setMachineUserTokenEnabled = true
 
-// regenerateMachineUserToken represents the create application command
-var regenerateMachineUserToken = &cobra.Command{
+// setMachineUserToken represents generating the machine-user token command
+var setMachineUserToken = &cobra.Command{
 	Use:   "machine-user-token",
 	Short: "Generate machine user token",
-	Long:  `Will generate machine user token and return it. Returns empty string, if machine user is not enabled.`,
+	Long:  `Will generate machine user token and return it.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -59,8 +59,8 @@ var regenerateMachineUserToken = &cobra.Command{
 }
 
 func init() {
-	if regenerateMachineUserTokenEnabled {
-		setCmd.AddCommand(regenerateMachineUserToken)
-		regenerateMachineUserToken.Flags().StringP(applicationOption, "a", "", "Name of the application to generate machine user token for")
+	if setMachineUserTokenEnabled {
+		setCmd.AddCommand(setMachineUserToken)
+		setMachineUserToken.Flags().StringP(applicationOption, "a", "", "Name of the application to generate machine user token for")
 	}
 }
