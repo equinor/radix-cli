@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
@@ -25,7 +26,6 @@ import (
 
 const setMachineUserTokenEnabled = true
 
-// setMachineUserToken represents generating the machine-user token command
 var setMachineUserToken = &cobra.Command{
 	Use:   "machine-user-token",
 	Short: "Generate machine user token",
@@ -48,12 +48,15 @@ var setMachineUserToken = &cobra.Command{
 			return err
 		}
 
-		_, err = apiClient.Application.RegenerateMachineUserToken(regenerateMachineUserTokenParams, nil)
+		token, err := apiClient.Application.RegenerateMachineUserToken(regenerateMachineUserTokenParams, nil)
 
 		if err != nil {
 			println(fmt.Sprintf("%v", err))
+			return err
 		}
-
+		if token.Payload != nil && token.Payload.Token != nil {
+			log.Info(*token.Payload.Token)
+		}
 		return nil
 	},
 }
