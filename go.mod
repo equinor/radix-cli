@@ -18,7 +18,4 @@ require (
 	k8s.io/client-go v12.0.0+incompatible
 )
 
-replace (
-	github.com/prometheus/prometheus => github.com/prometheus/prometheus v0.0.0-20190818123050-43acd0e2e93f
-	k8s.io/client-go => k8s.io/client-go v0.0.0-20190620085101-78d2af792bab
-)
+replace k8s.io/client-go => k8s.io/client-go v0.0.0-20190620085101-78d2af792bab
