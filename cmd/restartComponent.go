@@ -17,7 +17,6 @@ package cmd
 import (
 	"errors"
 	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
