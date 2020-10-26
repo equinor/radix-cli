@@ -136,11 +136,25 @@ NOTE: If there is a change to the API, you make need to point to the API environ
 
 ### Building and releasing
 
-We are making releases available as github releases using [go-releaser](https://goreleaser.com/). The release process is controlled by the .goreleaser.yml file. To make a release:
+We are making releases available as github releases using [go-releaser](https://goreleaser.com/). The release process is controlled by the `.goreleaser.yml` file. 
 
-```
-make release VERSION=0.0.1 RELASE_NOTE="First release"
-```
+To make a release:
+1. Ensure there is no `dist` folder in the project (left from previous release)
+2. Get the [personal access token](https://github.com/settings/tokens) - with access to repository and `write:packages` scope, and with enabled SSO for organisation (or create it)
+3. Login to the docker repository with your user-name, using personal access token as a password (personal user=name/password authentication is or will be deprecated)
+    ```
+    docker login docker.pkg.github.com -u USER_NAME
+    ```
+4. Run the command to create a version with a tag, build a docker image and push them to GitHub repository 
+    ```
+    GITHUB_TOKEN=<PERSONAL_ACCESS_TOKEN> make release VERSION=0.0.1 RELASE_NOTE="<Release notes>"
+    ```
+5. If something goes wrong:
+      - open the GitHub repository and delete [created tag](https://github.com/equinor/radix-cli/releases/) (with release)
+      - delete it locally ` git tag -d v0.0.1`
+      - reset changes `git reset --hard`
+      - delete the `dist` folder
+      - perform the previous step `make release ...` again  
 
 To generate a local version for debugging purposes, it can be built using:
 
