@@ -17,8 +17,6 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
@@ -55,7 +53,7 @@ var setMachineUserToken = &cobra.Command{
 			return err
 		}
 		if token.Payload != nil && token.Payload.Token != nil {
-			log.Info(*token.Payload.Token)
+			fmt.Print(*token.Payload.Token)
 		}
 		return nil
 	},
