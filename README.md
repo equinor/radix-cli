@@ -152,7 +152,7 @@ To make a release:
 5. If something goes wrong:
       - open the GitHub repository and delete [created tag](https://github.com/equinor/radix-cli/releases/) (with release)
       - delete it locally ` git tag -d v0.0.1`
-      - reset changes `cd `
+      - reset changes `git reset --hard`
       - delete the `dist` folder
       - perform the previous step `make release ...` again  
 
