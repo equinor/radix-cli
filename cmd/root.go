@@ -17,6 +17,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const radixCLIError = "Error: Radix CLI executed with error"
+
 var rootLongHelp = strings.TrimSpace(`
 A command line interface which allows you to interact with the Radix platform through automation.
 `)
@@ -31,6 +33,7 @@ var rootCmd = &cobra.Command{
 // Execute the top level command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(radixCLIError)
 		fmt.Println(err)
 		os.Exit(1)
 	}

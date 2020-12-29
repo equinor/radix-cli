@@ -145,7 +145,7 @@ func getTokenFromFlagSet(cmd *cobra.Command) (*string, error) {
 	} else if tokenFromEnvironment {
 		token = os.Getenv(TokenEnvironmentName)
 		if strings.EqualFold(token, "") {
-			return nil, fmt.Errorf("Environment variable`%s` should be set", TokenEnvironmentName)
+			return nil, fmt.Errorf("Environment variable `%s` should be set", TokenEnvironmentName)
 		}
 	}
 
