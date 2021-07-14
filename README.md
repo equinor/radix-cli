@@ -147,7 +147,7 @@ To make a release:
     ```
 4. Run the command to create a version with a tag, build a docker image and push them to GitHub repository 
     ```
-    GITHUB_TOKEN=<PERSONAL_ACCESS_TOKEN> make release VERSION=0.0.1 RELASE_NOTE="<Release notes>"
+    GITHUB_TOKEN=<PERSONAL_ACCESS_TOKEN> make release VERSION=0.0.1 RELEASE_NOTE="<Release notes>"
     ```
 5. If something goes wrong:
       - open the GitHub repository and delete [created tag](https://github.com/equinor/radix-cli/releases/) (with release)

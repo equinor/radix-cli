@@ -125,7 +125,7 @@ func getRadixApplicationFromFile() (*v1.RadixApplication, error) {
 
 // LoadConfigFromFile loads radix config from appFileName
 func loadConfigFromFile(appFileName string) (*v1.RadixApplication, error) {
-	radixApplication, err := utils.GetRadixApplication(appFileName)
+	radixApplication, err := utils.GetRadixApplicationFromFile(appFileName)
 	if err != nil {
 		log.Errorf("Failed to get ra from file (%s) for app Error: %v", appFileName, err)
 		return nil, err
