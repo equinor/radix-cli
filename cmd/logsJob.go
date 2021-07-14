@@ -21,7 +21,7 @@ import (
 	"time"
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
-	"github.com/equinor/radix-cli/generated-client/client/job"
+	"github.com/equinor/radix-cli/generated-client/client/pipeline_job"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/settings"
@@ -96,11 +96,11 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 				timeout = time.NewTimer(settings.DeltaTimeout)
 			}
 		case <-timeout.C:
-			jobParameters := job.NewGetApplicationJobParams()
+			jobParameters := pipeline_job.NewGetApplicationJobParams()
 			jobParameters.SetAppName(appName)
 			jobParameters.SetJobName(jobName)
 
-			respJob, _ := apiClient.Job.GetApplicationJob(jobParameters, nil)
+			respJob, _ := apiClient.PipelineJob.GetApplicationJob(jobParameters, nil)
 			if respJob != nil {
 				jobSummary := respJob.Payload
 				if jobSummary.Status == "Succeeded" {
@@ -123,12 +123,12 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 
 func getSteps(apiClient *apiclient.Radixapi, appName, jobName string, sinceTime time.Time) []*models.StepLog {
 	since := strfmt.DateTime(sinceTime)
-	jobLogParameters := job.NewGetApplicationJobLogsParams()
+	jobLogParameters := pipeline_job.NewGetApplicationJobLogsParams()
 	jobLogParameters.SetAppName(appName)
 	jobLogParameters.SetJobName(jobName)
 	jobLogParameters.SetSinceTime(&since)
 
-	respJobLog, err := apiClient.Job.GetApplicationJobLogs(jobLogParameters, nil)
+	respJobLog, err := apiClient.PipelineJob.GetApplicationJobLogs(jobLogParameters, nil)
 	if err == nil {
 		return respJobLog.Payload
 	}
