@@ -88,7 +88,7 @@ There are generally two modes of running the CLI. Both cases may use configurati
 
 ### Interactively
 
-CLI will use users privileges to access the Radix API server. Context information is stored in the `<home>/.radix` folder. First time you run it (i.e. `rx follow environment -a <your application> -e <your environment>`) a prompt is provided for you to authenticated with Azure using a device code flow. A message like this appears in your terminal:
+CLI will use users privileges to access the Radix API server. Context information is stored in the `<home>/.radix` folder. First time you run it (i.e. `rx get logs environment -a <your application> -e <your environment>`) a prompt is provided for you to authenticated with Azure using a device code flow. A message like this appears in your terminal:
 
 `To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code ABCDEFGHI to authenticate.`
 
