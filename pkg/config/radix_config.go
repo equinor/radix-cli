@@ -23,7 +23,8 @@ const (
 
 	clientID    = "ed6cb804-8193-4e55-9d3d-8b88688482b3"
 	tenantID    = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
-	apiServerID = "a593a59c-8f76-490e-937b-a90779039a90"
+	apiServerID = "6dae42f8-4368-4678-94ff-3960e28e3630"
+	configMode  = "1" // Config mode "1" omits spn prefix from the aud (audience) in the token. "0" includes spn prefix
 
 	defaultContext = ContextProdction
 
@@ -36,6 +37,7 @@ const (
 	cfgExpiresOn    = "expires-on"
 	cfgEnvironment  = "environment"
 	cfgApiserverID  = "apiserver-id"
+	cfgConfigMode   = "config-mode"
 )
 
 var (
@@ -62,6 +64,7 @@ type SessionConfig struct {
 	ExpiresIn    json.Number `json:"expiresIn"`
 	ExpiresOn    json.Number `json:"expiresOn"`
 	Environment  string      `json:"environment"`
+	ConfigMode   string      `json:"configMode"`
 }
 
 type RadixConfigAccess struct {
@@ -92,6 +95,7 @@ func (c RadixConfigAccess) GetStartingConfig() *clientcmdapi.AuthProviderConfig 
 				ClientID:    clientID,
 				TenantID:    tenantID,
 				APIServerID: apiServerID,
+				ConfigMode:  configMode,
 			},
 		}
 	}
@@ -153,6 +157,7 @@ func toMap(radixConfig *RadixConfig) map[string]string {
 	config[cfgExpiresIn] = radixConfig.SessionConfig.ExpiresIn.String()
 	config[cfgExpiresOn] = radixConfig.SessionConfig.ExpiresOn.String()
 	config[cfgEnvironment] = radixConfig.SessionConfig.Environment
+	config[cfgConfigMode] = radixConfig.SessionConfig.ConfigMode
 	return config
 }
 
@@ -175,6 +180,7 @@ func toConfig(config map[string]string) RadixConfig {
 			ExpiresIn:    json.Number(config[cfgExpiresIn]),
 			ExpiresOn:    json.Number(config[cfgExpiresOn]),
 			Environment:  config[cfgEnvironment],
+			ConfigMode:   config[cfgConfigMode],
 		},
 	}
 }
