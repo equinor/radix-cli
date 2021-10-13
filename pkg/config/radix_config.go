@@ -87,25 +87,35 @@ func (c RadixConfigAccess) GetStartingConfig() *clientcmdapi.AuthProviderConfig 
 		radixConfig = &RadixConfig{}
 		jsonutils.Load(RecommendedHomeFile, radixConfig)
 	} else {
-		radixConfig = &RadixConfig{
-			CustomConfig: &CustomConfig{
-				Context: defaultContext,
-			},
-			SessionConfig: &SessionConfig{
-				ClientID:    clientID,
-				TenantID:    tenantID,
-				APIServerID: apiServerID,
-				ConfigMode:  configMode,
-			},
-		}
+		radixConfig = GetDefaultRadixConfig()
 	}
+	return getAzureAuthProvider(radixConfig)
+}
 
-	authProvider := &clientcmdapi.AuthProviderConfig{
+func (c RadixConfigAccess) GetDefaultConfig() *clientcmdapi.AuthProviderConfig {
+	return getAzureAuthProvider(GetDefaultRadixConfig())
+}
+
+//GetDefaultRadixConfig Gets RadixConfig with default properties
+func GetDefaultRadixConfig() *RadixConfig {
+	return &RadixConfig{
+		CustomConfig: &CustomConfig{
+			Context: defaultContext,
+		},
+		SessionConfig: &SessionConfig{
+			ClientID:    clientID,
+			TenantID:    tenantID,
+			APIServerID: apiServerID,
+			ConfigMode:  configMode,
+		},
+	}
+}
+
+func getAzureAuthProvider(radixConfig *RadixConfig) *clientcmdapi.AuthProviderConfig {
+	return &clientcmdapi.AuthProviderConfig{
 		Name:   "azure",
 		Config: toMap(radixConfig),
 	}
-
-	return authProvider
 }
 
 func (c RadixConfigAccess) GetExplicitFile() string {
@@ -136,11 +146,15 @@ func (p *radixConfigPersister) Persist(config map[string]string) error {
 		return nil
 	}
 
+	return Save(newConfig)
+}
+
+//Save Saves RadixConfig
+func Save(radixConfig RadixConfig) error {
 	if _, err := os.Stat(RecommendedConfigDir); os.IsNotExist(err) {
 		os.MkdirAll(RecommendedConfigDir, os.ModePerm)
 	}
-
-	return jsonutils.Save(RecommendedHomeFile, newConfig)
+	return jsonutils.Save(RecommendedHomeFile, radixConfig)
 }
 
 func toMap(radixConfig *RadixConfig) map[string]string {
