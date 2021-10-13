@@ -92,6 +92,7 @@ func (c RadixConfigAccess) GetStartingConfig() *clientcmdapi.AuthProviderConfig 
 	return getAzureAuthProvider(radixConfig)
 }
 
+//GetDefaultConfig Gets AuthProviderConfig with default properties
 func (c RadixConfigAccess) GetDefaultConfig() *clientcmdapi.AuthProviderConfig {
 	return getAzureAuthProvider(GetDefaultRadixConfig())
 }
