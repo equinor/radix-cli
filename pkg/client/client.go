@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+	"net/http"
 	"os"
 	"strings"
 
@@ -32,19 +34,16 @@ func Get() *apiclient.Radixapi {
 
 // GetForCommand Gets client for command
 func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
-	context, _ := cmd.Flags().GetString("context")
-	cluster, _ := cmd.Flags().GetString(settings.ClusterOption)
-	apiEnvironment, _ := cmd.Flags().GetString(settings.ApiEnvironmentOption)
-
 	token, err := getTokenFromFlagSet(cmd)
 	if err != nil {
 		return nil, err
 	}
 
-	if context != "" && cluster != "" {
-		return nil, errors.New("Cannot use both context and cluster as arguments at the same time")
+	context, cluster, err := getContextAndCluster(cmd)
+	if err != nil {
+		return nil, err
 	}
-
+	apiEnvironment, _ := cmd.Flags().GetString(settings.ApiEnvironmentOption)
 	var apiClient *apiclient.Radixapi
 	if token != nil && *token != "" {
 		apiClient = GetForToken(context, cluster, apiEnvironment, *token)
@@ -57,6 +56,36 @@ func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
 	return apiClient, nil
 }
 
+// LoginCommand Login client for command
+func LoginCommand(cmd *cobra.Command) error {
+	context, _, err := getContextAndCluster(cmd)
+	if err != nil {
+		return err
+	}
+	return LoginContext(context)
+}
+
+// LogoutCommand Logout command
+func LogoutCommand(cmd *cobra.Command) error {
+	context, _, err := getContextAndCluster(cmd)
+	if err != nil {
+		return err
+	}
+	config := radixconfig.GetDefaultRadixConfig()
+	config.CustomConfig.Context = context
+	return radixconfig.Save(*config)
+}
+
+func getContextAndCluster(cmd *cobra.Command) (string, string, error) {
+	context, _ := cmd.Flags().GetString("context")
+	cluster, _ := cmd.Flags().GetString(settings.ClusterOption)
+
+	if context != "" && cluster != "" {
+		return "", "", errors.New("Cannot use both context and cluster as arguments at the same time")
+	}
+	return context, cluster, nil
+}
+
 // GetForToken Gets API client with passed token
 func GetForToken(context, cluster, environment, token string) *apiclient.Radixapi {
 	var apiEndpoint string
@@ -65,13 +94,7 @@ func GetForToken(context, cluster, environment, token string) *apiclient.Radixap
 		apiEndpoint = getAPIEndpointForCluster(cluster, environment)
 	} else {
 		radixConfig := radixconfig.RadixConfigAccess{}
-		startingConfig := radixConfig.GetStartingConfig()
-
-		if strings.TrimSpace(context) == "" {
-			context = startingConfig.Config["context"]
-		}
-
-		apiEndpoint = getAPIEndpointForContext(context)
+		apiEndpoint = getAPIEndpointForContext(context, radixConfig.GetStartingConfig())
 	}
 
 	transport := httptransport.New(apiEndpoint, "/api/v1", []string{"https"})
@@ -82,14 +105,21 @@ func GetForToken(context, cluster, environment, token string) *apiclient.Radixap
 // GetForContext Gets API client for set context
 func GetForContext(context string) *apiclient.Radixapi {
 	radixConfig := radixconfig.RadixConfigAccess{}
-	startingConfig := radixConfig.GetStartingConfig()
-
-	if strings.TrimSpace(context) == "" {
-		context = startingConfig.Config["context"]
-	}
-
-	apiEndpoint := getAPIEndpointForContext(context)
+	apiEndpoint := getAPIEndpointForContext(context, radixConfig.GetStartingConfig())
 	return getClientForEndpoint(apiEndpoint)
+}
+
+// LoginContext Performs login
+func LoginContext(context string) error {
+	radixConfig := radixconfig.RadixConfigAccess{}
+	defaultConfig := radixConfig.GetDefaultConfig()
+	apiEndpoint := getAPIEndpointForContext(context, defaultConfig)
+	transport := getTransport(apiEndpoint, radixconfig.RadixConfigAccess{}, defaultConfig)
+	_, err := transport.Transport.RoundTrip(&http.Request{})
+	if err != nil && err.Error() == "http: nil Request.URL" {
+		return nil
+	}
+	return err
 }
 
 // GetForCluster Gets API client for cluster
@@ -101,15 +131,23 @@ func GetForCluster(cluster, environment string) *apiclient.Radixapi {
 func getClientForEndpoint(apiEndpoint string) *apiclient.Radixapi {
 	radixConfig := radixconfig.RadixConfigAccess{}
 	startingConfig := radixConfig.GetStartingConfig()
+	transport := getTransport(apiEndpoint, radixConfig, startingConfig)
+	return apiclient.New(transport, strfmt.Default)
+}
+
+func getTransport(apiEndpoint string, radixConfig radixconfig.RadixConfigAccess, startingConfig *clientcmdapi.AuthProviderConfig) *httptransport.Runtime {
 	persister := radixconfig.PersisterForRadix(radixConfig)
 	provider, _ := rest.GetAuthProvider("", startingConfig, persister)
 
 	transport := httptransport.New(apiEndpoint, "/api/v1", []string{"https"})
 	transport.Transport = provider.WrapTransport(transport.Transport)
-	return apiclient.New(transport, strfmt.Default)
+	return transport
 }
 
-func getAPIEndpointForContext(context string) string {
+func getAPIEndpointForContext(context string, config *clientcmdapi.AuthProviderConfig) string {
+	if strings.TrimSpace(context) == "" {
+		context = config.Config["context"]
+	}
 	return fmt.Sprintf(apiEndpointPatternForContext, getPatternForContext(context))
 }
 
@@ -145,7 +183,7 @@ func getTokenFromFlagSet(cmd *cobra.Command) (*string, error) {
 	} else if tokenFromEnvironment {
 		token = os.Getenv(TokenEnvironmentName)
 		if strings.EqualFold(token, "") {
-			return nil, fmt.Errorf("Environment variable `%s` should be set", TokenEnvironmentName)
+			return nil, fmt.Errorf("environment variable `%s` should be set", TokenEnvironmentName)
 		}
 	}
 
