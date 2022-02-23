@@ -44,7 +44,7 @@ var logsJobCmd = &cobra.Command{
 		}
 
 		if appName == nil || *appName == "" {
-			return errors.New("Application name is required")
+			return errors.New("application name is required")
 		}
 
 		jobName, _ := cmd.Flags().GetString("job")

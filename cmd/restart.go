@@ -28,7 +28,7 @@ var restartCmd = &cobra.Command{
 	Short: "Restart Radix resources",
 	Long:  `Restart Radix resources.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return errors.New("Please specify the resource you want to restart")
+		return errors.New("please specify the resource you want to restart")
 	},
 }
 

@@ -46,18 +46,18 @@ var setEnvironmentSecretCmd = &cobra.Command{
 		}
 
 		if appName == nil || *appName == "" {
-			return errors.New("Application name is required")
+			return errors.New("application name is required")
 		}
 
 		secretName, _ := cmd.Flags().GetString(secretOption)
 		secretValue, _ := cmd.Flags().GetString(valueOption)
 
 		if secretName == "" {
-			return errors.New("Secret is required")
+			return errors.New("secret is required")
 		}
 
 		if secretValue == "" {
-			return errors.New("Value is required")
+			return errors.New("value is required")
 		}
 
 		environmentName, _ := cmd.Flags().GetString(environmentOption)
@@ -80,21 +80,21 @@ var setEnvironmentSecretCmd = &cobra.Command{
 			})
 
 			if !reconciledOk {
-				return errors.New("Component was not reconciled within time")
+				return errors.New("component was not reconciled within time")
 			}
 		}
 
 		componentSecret := models.SecretParameters{}
 		componentSecret.SecretValue = &secretValue
 
-		changeComponentSecretParameters := environment.NewChangeEnvironmentComponentSecretParams()
+		changeComponentSecretParameters := environment.NewChangeComponentSecretParams()
 		changeComponentSecretParameters.SetAppName(*appName)
 		changeComponentSecretParameters.SetEnvName(environmentName)
 		changeComponentSecretParameters.SetComponentName(component)
 		changeComponentSecretParameters.SetSecretName(secretName)
 		changeComponentSecretParameters.SetComponentSecret(&componentSecret)
 
-		_, err = apiClient.Environment.ChangeEnvironmentComponentSecret(changeComponentSecretParameters, nil)
+		_, err = apiClient.Environment.ChangeComponentSecret(changeComponentSecretParameters, nil)
 		if err != nil {
 			return err
 		}

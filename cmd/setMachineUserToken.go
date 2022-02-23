@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
@@ -35,7 +36,7 @@ var setMachineUserToken = &cobra.Command{
 		}
 
 		if appName == nil || *appName == "" {
-			return errors.New("Application name is a required field")
+			return errors.New("application name is a required field")
 		}
 
 		regenerateMachineUserTokenParams := application.NewRegenerateMachineUserTokenParams()

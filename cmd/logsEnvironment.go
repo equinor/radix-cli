@@ -37,13 +37,13 @@ var logsEnvironmentCmd = &cobra.Command{
 		}
 
 		if appName == nil || *appName == "" {
-			return errors.New("Application name is required")
+			return errors.New("application name is required")
 		}
 
 		environmentName, _ := cmd.Flags().GetString("environment")
 
 		if environmentName == "" {
-			return errors.New("Both `environment` and `component` are required")
+			return errors.New("both `environment` and `component` are required")
 		}
 
 		apiClient, err := client.GetForCommand(cmd)
@@ -74,7 +74,7 @@ func getComponentReplicasForEnvironment(apiClient *apiclient.Radixapi, appName, 
 	}
 
 	if environmentDetails == nil || environmentDetails.Payload.ActiveDeployment == nil {
-		return nil, errors.New("Active deployment was not found in environment")
+		return nil, errors.New("active deployment was not found in environment")
 	}
 
 	componentReplicas := make(map[string][]string)

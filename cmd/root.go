@@ -115,7 +115,7 @@ func getEnvironmentFromConfig(cmd *cobra.Command, branchName string) (*string, e
 		}
 	}
 
-	return nil, fmt.Errorf("No environment found which maps to branch name `%s`", branchName)
+	return nil, fmt.Errorf("no environment found which maps to branch name `%s`", branchName)
 }
 
 func getRadixApplicationFromFile() (*v1.RadixApplication, error) {

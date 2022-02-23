@@ -45,7 +45,7 @@ var createApplicationCmd = &cobra.Command{
 		wbs, _ := cmd.Flags().GetString("wbs")
 
 		if appName == nil || *appName == "" || repository == "" || owner == "" || configBranch == "" || wbs == "" {
-			return errors.New("Application name, repository, owner, WBS and config branch are required fields")
+			return errors.New("application name, repository, owner, WBS and config branch are required fields")
 		}
 
 		adGroups, _ := cmd.Flags().GetStringSlice("ad-groups")

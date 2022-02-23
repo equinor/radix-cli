@@ -29,8 +29,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const logsEnvironmentComponentEnabled = false
-
 // logsEnvironmentComponentCmd represents the logsEnvironmentComponentCmd command
 var logsEnvironmentComponentCmd = &cobra.Command{
 	Use:   "component",
@@ -43,14 +41,14 @@ var logsEnvironmentComponentCmd = &cobra.Command{
 		}
 
 		if appName == nil || *appName == "" {
-			return errors.New("Application name is required")
+			return errors.New("application name is required")
 		}
 
 		environmentName, _ := cmd.Flags().GetString("environment")
 		componentName, _ := cmd.Flags().GetString("component")
 
 		if environmentName == "" || componentName == "" {
-			return errors.New("Both `environment` and `component` are required")
+			return errors.New("both `environment` and `component` are required")
 		}
 
 		apiClient, err := client.GetForCommand(cmd)
@@ -78,52 +76,48 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 	// Somtimes, even though we get delta, the log is the same as previous
 	previousLogForReplica := make(map[string]string)
 
-	for {
-		select {
-		case <-refreshLog:
+	for range refreshLog {
+		i := 0
+		for componentName, replicas := range componentReplicas {
+			for _, replica := range replicas {
+				now := time.Now()
+				sinceTime := now.Add(-settings.DeltaRefreshApplication)
+				since := strfmt.DateTime(sinceTime)
 
-			i := 0
-			for componentName, replicas := range componentReplicas {
-				for _, replica := range replicas {
-					now := time.Now()
-					sinceTime := now.Add(-settings.DeltaRefreshApplication)
-					since := strfmt.DateTime(sinceTime)
+				logParameters := component.NewLogParams()
+				logParameters.WithAppName(appName)
+				logParameters.WithDeploymentName("irrelevant")
+				logParameters.WithComponentName(componentName)
+				logParameters.WithPodName(replica)
+				logParameters.SetSinceTime(&since)
 
-					logParameters := component.NewLogParams()
-					logParameters.WithAppName(appName)
-					logParameters.WithDeploymentName("irrelevant")
-					logParameters.WithComponentName(componentName)
-					logParameters.WithPodName(replica)
-					logParameters.SetSinceTime(&since)
-
-					logData, err := apiClient.Component.Log(logParameters, nil)
+				logData, err := apiClient.Component.Log(logParameters, nil)
+				if err != nil {
+					// Replicas may have died
+					_, newReplicas, err := getReplicasForComponent(apiClient, appName, environmentName, componentName)
 					if err != nil {
-						// Replicas may have died
-						_, newReplicas, err := getReplicasForComponent(apiClient, appName, environmentName, componentName)
-						if err != nil {
-							return err
-						}
-
-						componentReplicas[componentName] = newReplicas
-						break
-
-					} else {
-						// Somtimes, even though we get delta, the log is the same as previous
-						if !strings.EqualFold(logData.Payload, previousLogForReplica[replica]) {
-							logLines := strings.Split(strings.Replace(strings.TrimRight(logData.Payload, "\r\n"), "\r\n", "\n", -1), "\n")
-							if len(logLines) > 0 {
-								log.PrintLines(cmd, replica, []string{}, logLines, log.GetColor(i))
-								previousLogForReplica[replica] = logData.Payload
-							}
-						}
+						return err
 					}
 
-					i++
+					componentReplicas[componentName] = newReplicas
+					break
+
+				} else {
+					// Somtimes, even though we get delta, the log is the same as previous
+					if len(logData.Payload) > 0 && !strings.EqualFold(logData.Payload, previousLogForReplica[replica]) {
+						logLines := strings.Split(strings.Replace(strings.TrimRight(logData.Payload, "\r\n"), "\r\n", "\n", -1), "\n")
+						if len(logLines) > 0 {
+							log.PrintLines(cmd, replica, []string{}, logLines, log.GetColor(i))
+							previousLogForReplica[replica] = logData.Payload
+						}
+					}
 				}
+
+				i++
 			}
 		}
-
 	}
+	return nil
 }
 
 func getReplicasForComponent(apiClient *apiclient.Radixapi, appName, environmentName, componentName string) (*string, []string, error) {
@@ -139,7 +133,7 @@ func getReplicasForComponent(apiClient *apiclient.Radixapi, appName, environment
 
 	var deploymentName string
 	if environmentDetails == nil || environmentDetails.Payload.ActiveDeployment == nil {
-		return nil, nil, errors.New("Active deployment was not found in environment")
+		return nil, nil, errors.New("active deployment was not found in environment")
 	}
 
 	var replicas []string

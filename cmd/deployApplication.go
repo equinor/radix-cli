@@ -39,7 +39,7 @@ var deployApplicationCmd = &cobra.Command{
 		follow, _ := cmd.Flags().GetBool("follow")
 
 		if appName == nil || *appName == "" || targetEnvironment == "" {
-			return errors.New("Application name and target environment are required")
+			return errors.New("application name and target environment are required")
 		}
 
 		apiClient, err := client.GetForCommand(cmd)

@@ -28,7 +28,7 @@ var createCmd = &cobra.Command{
 	Short: "Create Radix resources",
 	Long:  `A longer description .`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return errors.New("Please specify the resource you want to create")
+		return errors.New("please specify the resource you want to create")
 	},
 }
 

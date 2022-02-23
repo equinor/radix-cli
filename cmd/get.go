@@ -28,7 +28,7 @@ var getCmd = &cobra.Command{
 	Short: "Get Radix resource",
 	Long:  `Will be used to get any Radix resource.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return errors.New("Please specify the resource you want to get")
+		return errors.New("please specify the resource you want to get")
 	},
 }
 

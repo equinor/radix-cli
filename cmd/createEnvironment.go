@@ -39,7 +39,7 @@ var createEnvironmentCmd = &cobra.Command{
 		envName, err := cmd.Flags().GetString("environment")
 
 		if err != nil || appName == nil || *appName == "" {
-			return errors.New("Environment name and application name are required fields")
+			return errors.New("environment name and application name are required fields")
 		}
 
 		parameters := environment.NewCreateEnvironmentParams().
