@@ -16,14 +16,11 @@ package cmd
 
 import (
 	"errors"
-	"time"
 
 	"github.com/spf13/cobra"
 )
 
 const logsEnabled = true
-
-const deltaRefreshOutput = 50 * time.Millisecond
 
 // logsCmd represents the list command
 var logsCmd = &cobra.Command{
@@ -31,7 +28,7 @@ var logsCmd = &cobra.Command{
 	Short: "Follow Radix logs for Radix resource",
 	Long:  `Feeds resource output to the console while it runs.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return errors.New("Please specify the resource you want to get logs for")
+		return errors.New("please specify the resource you want to get logs for")
 	},
 }
 

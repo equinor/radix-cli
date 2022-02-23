@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
@@ -41,12 +42,12 @@ var restartComponentCmd = &cobra.Command{
 		envName, err := cmd.Flags().GetString("environment")
 
 		if err != nil || appName == nil || *appName == "" {
-			return errors.New("Environment name and application name are required fields")
+			return errors.New("environment name and application name are required fields")
 		}
 
 		cmpName, err := cmd.Flags().GetString("component")
 		if err != nil {
-			return errors.New("Component name is a required field")
+			return errors.New("component name is a required field")
 		}
 
 		parameters := component.NewRestartComponentParams().

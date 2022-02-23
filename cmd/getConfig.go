@@ -28,7 +28,7 @@ var getConfigCmd = &cobra.Command{
 	Short: "Get setting from Radix config",
 	Long:  `Helper functionality to get data from radixconfig.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return errors.New("Please specify the setting you want to get")
+		return errors.New("please specify the setting you want to get")
 	},
 }
 

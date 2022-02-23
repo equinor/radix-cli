@@ -28,7 +28,7 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete Radix resources",
 	Long:  `Will delete a Radix resource.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return errors.New("Please specify the resource you want to delete")
+		return errors.New("please specify the resource you want to delete")
 	},
 }
 

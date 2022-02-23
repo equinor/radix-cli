@@ -31,7 +31,7 @@ var getBranchEnvironmentCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fromConfig, _ := cmd.Flags().GetBool(settings.FromConfigOption)
 		if !fromConfig {
-			return errors.New("Config can only come from radixconfig file in current folder")
+			return errors.New("config can only come from radixconfig file in current folder")
 		}
 
 		_, err := getRadixApplicationFromFile()

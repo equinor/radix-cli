@@ -28,7 +28,7 @@ var setCmd = &cobra.Command{
 	Short: "Sets values in Radix",
 	Long:  `Used for updating resources in Radix.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return errors.New("Please specify the resource you want to set")
+		return errors.New("please specify the resource you want to set")
 	},
 }
 

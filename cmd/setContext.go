@@ -35,7 +35,7 @@ var setContextCmd = &cobra.Command{
 		name, _ := cmd.Flags().GetString(settings.ContextOption)
 
 		if !radixconfig.IsValidContext(name) {
-			return fmt.Errorf("Context '%s' is not a valid context", name)
+			return fmt.Errorf("context '%s' is not a valid context", name)
 		}
 
 		radixConfig := radixconfig.RadixConfigAccess{}

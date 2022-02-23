@@ -37,7 +37,7 @@ var deleteApplicationCmd = &cobra.Command{
 		}
 
 		if appName == nil || *appName == "" {
-			return errors.New("Application name is a required field")
+			return errors.New("application name is a required field")
 		}
 
 		deleteApplicationParams := application.NewDeleteApplicationParams()

@@ -41,7 +41,7 @@ var buildDeployApplicationCmd = &cobra.Command{
 		follow, _ := cmd.Flags().GetBool("follow")
 
 		if appName == nil || *appName == "" || branch == "" {
-			return errors.New("Application name and branch are required")
+			return errors.New("application name and branch are required")
 		}
 
 		apiClient, err := client.GetForCommand(cmd)
