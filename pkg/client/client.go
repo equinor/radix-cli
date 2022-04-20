@@ -158,8 +158,10 @@ func getAPIEndpointForCluster(cluster, environment string) string {
 func getPatternForContext(context string) string {
 	contextToPattern := make(map[string]string)
 	contextToPattern[radixconfig.ContextDevelopment] = "dev."
-	contextToPattern[radixconfig.ContextPlayground] = fmt.Sprintf("%s.", radixconfig.ContextPlayground)
-	contextToPattern[radixconfig.ContextProdction] = ""
+	contextToPattern[radixconfig.ContextPlayground] = "playground."
+	contextToPattern[radixconfig.ContextPlatform2] = "c2."
+	contextToPattern[radixconfig.ContextProduction] = ""
+	contextToPattern[radixconfig.ContextPlatform] = ""
 	return contextToPattern[context]
 }
 

@@ -16,11 +16,10 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 const getContextEnabled = true
@@ -29,12 +28,16 @@ const getContextEnabled = true
 var getContextCmd = &cobra.Command{
 	Use:   "context",
 	Short: "Gets current context",
-	Long: fmt.Sprintf("Gets the current context. It can be one of %s, %s or %s",
-		radixconfig.ContextProdction, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
+	Long: fmt.Sprintf("Gets the current context. It can be one of %s, %s, %s or %s",
+		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
 	Run: func(cmd *cobra.Command, args []string) {
 		radixConfig := radixconfig.RadixConfigAccess{}
 		config := radixConfig.GetStartingConfig().Config
-		log.Printf("Current context is %s", config[settings.ContextOption])
+		context := config[settings.ContextOption]
+		if context == "" {
+			context = radixconfig.ContextPlatform
+		}
+		log.Printf("Current context is '%s'", context)
 	},
 }
 
