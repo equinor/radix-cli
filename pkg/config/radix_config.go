@@ -14,9 +14,11 @@ import (
 )
 
 const (
-	ContextProdction   = "production"
+	ContextProduction  = "production"
+	ContextPlatform    = "platform"
 	ContextPlayground  = "playground"
 	ContextDevelopment = "development"
+	ContextPlatform2   = "platform2"
 
 	recommendedHomeDir  = ".radix"
 	recommendedFileName = "config"
@@ -26,7 +28,7 @@ const (
 	apiServerID = "6dae42f8-4368-4678-94ff-3960e28e3630"
 	configMode  = "1" // Config mode "1" omits spn prefix from the aud (audience) in the token. "0" includes spn prefix
 
-	defaultContext = ContextProdction
+	defaultContext = ContextPlatform
 
 	cfgContext      = "context"
 	cfgClientID     = "client-id"
@@ -43,7 +45,7 @@ const (
 var (
 	RecommendedConfigDir = path.Join(homedir.HomeDir(), recommendedHomeDir)
 	RecommendedHomeFile  = path.Join(RecommendedConfigDir, recommendedFileName)
-	ValidContexts        = []string{ContextProdction, ContextPlayground, ContextDevelopment}
+	ValidContexts        = []string{ContextProduction, ContextPlatform, ContextPlatform2, ContextPlayground, ContextDevelopment}
 )
 
 type RadixConfig struct {
@@ -71,9 +73,7 @@ type RadixConfigAccess struct {
 }
 
 func IsValidContext(context string) bool {
-	validContexts := []string{ContextProdction, ContextPlayground, ContextDevelopment}
-
-	for _, validContext := range validContexts {
+	for _, validContext := range ValidContexts {
 		if validContext == context {
 			return true
 		}

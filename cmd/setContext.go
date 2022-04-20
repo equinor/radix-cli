@@ -27,10 +27,10 @@ const setContextEnabled = true
 // setContextCmd represents the setContext command
 var setContextCmd = &cobra.Command{
 	Use: "context",
-	Short: fmt.Sprintf("Sets the context to be either %s, %s or %s",
-		radixconfig.ContextProdction, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
-	Long: fmt.Sprintf("Sets the context to be either %s, %s or %s",
-		radixconfig.ContextProdction, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
+	Short: fmt.Sprintf("Sets the context to be either %s, %s, %s or %s",
+		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
+	Long: fmt.Sprintf("Sets the context to be either %s, %s, %s or %s",
+		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		name, _ := cmd.Flags().GetString(settings.ContextOption)
 

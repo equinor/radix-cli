@@ -43,8 +43,8 @@ func init() {
 	rootCmd.PersistentFlags().Bool(settings.FromConfigOption, false, "Read and use radix config from file as context")
 	rootCmd.PersistentFlags().Bool(settings.TokenEnvironmentOption, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
 	rootCmd.PersistentFlags().Bool(settings.TokenStdinOption, false, "Take the token from stdin")
-	rootCmd.PersistentFlags().StringP(settings.ContextOption, "c", "", fmt.Sprintf("Use context %s|%s|%s regardless of current context (default production) ",
-		radixconfig.ContextProdction, radixconfig.ContextPlayground, radixconfig.ContextDevelopment))
+	rootCmd.PersistentFlags().StringP(settings.ContextOption, "c", "", fmt.Sprintf("Use context %s|%s|%s|%s regardless of current context (default production) ",
+		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment))
 	rootCmd.PersistentFlags().String(settings.ClusterOption, "", "Set cluster to override context")
 	rootCmd.PersistentFlags().String(settings.ApiEnvironmentOption, "prod", "The API api-environment to run with (default prod)")
 	rootCmd.PersistentFlags().Bool(settings.AwaitReconcileOption, false, "Await reconcilliation in Radix")
