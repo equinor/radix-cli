@@ -1,4 +1,4 @@
-FROM alpine:3.15.4
+FROM alpine:3.16
 RUN apk update && apk add ca-certificates && apk add bash && rm -rf /var/cache/apk/*
 
 RUN addgroup -S radix-cli && adduser -S radix-cli -G radix-cli
