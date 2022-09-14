@@ -1,4 +1,4 @@
-// Copyright © 2019 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2022
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,11 +22,9 @@ import (
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/pipeline_job"
-	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/log"
-	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
 )
 
@@ -58,36 +56,46 @@ var logsJobCmd = &cobra.Command{
 			return err
 		}
 
-		getLogsJob(cmd, apiClient, *appName, jobName)
-		return nil
+		return getLogsJob(cmd, apiClient, *appName, jobName)
 	},
 }
 
-func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobName string) {
+func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobName string) error {
 	timeout := time.NewTimer(settings.DeltaTimeout)
 	refreshLog := time.Tick(settings.DeltaRefreshApplication)
 
-	// Somtimes, even though we get delta, the log is the same as previous
+	// Sometimes, even though we get delta, the log is the same as previous
 	previousLogForStep := make(map[string][]string)
+	jobParameters := pipeline_job.NewGetApplicationJobParams()
+	jobParameters.SetAppName(appName)
+	jobParameters.SetJobName(jobName)
 
 	for {
 		select {
 		case <-refreshLog:
-
-			now := time.Now()
-			sinceTime := now.Add(-settings.DeltaRefreshApplication)
-
+			respJob, _ := apiClient.PipelineJob.GetApplicationJob(jobParameters, nil)
+			if respJob == nil {
+				continue
+			}
 			loggedForJob := false
-			steps := getSteps(apiClient, appName, jobName, sinceTime)
 
-			for i, step := range steps {
-				// Somtimes, even though we get delta, the log is the same as previous
-				previousLogLines := previousLogForStep[*step.Name]
-				logLines := strings.Split(strings.Replace(step.Log, "\r\n", "\n", -1), "\n")
+			for i, step := range respJob.Payload.Steps {
+				// Sometimes, even though we get delta, the log is the same as previous
+				previousLogLines := previousLogForStep[step.Name]
+				stepLogsParams := pipeline_job.NewGetPipelineJobStepLogsParams()
+				stepLogsParams.SetAppName(jobParameters.AppName)
+				stepLogsParams.SetJobName(jobParameters.JobName)
+				stepLogsParams.SetStepName(step.Name)
+
+				jobStepLog, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil)
+				if err != nil {
+					return err
+				}
+				logLines := strings.Split(strings.Replace(jobStepLog.Payload, "\r\n", "\n", -1), "\n")
 				if len(logLines) > 0 && !strings.EqualFold(logLines[0], "") {
-					log.PrintLines(cmd, *step.Name, previousLogLines, logLines, log.GetColor(i))
+					log.PrintLines(cmd, step.Name, previousLogLines, logLines, log.GetColor(i))
 					loggedForJob = true
-					previousLogForStep[*step.Name] = logLines
+					previousLogForStep[step.Name] = logLines
 				}
 			}
 
@@ -96,44 +104,28 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 				timeout = time.NewTimer(settings.DeltaTimeout)
 			}
 		case <-timeout.C:
-			jobParameters := pipeline_job.NewGetApplicationJobParams()
-			jobParameters.SetAppName(appName)
-			jobParameters.SetJobName(jobName)
-
-			respJob, _ := apiClient.PipelineJob.GetApplicationJob(jobParameters, nil)
-			if respJob != nil {
-				jobSummary := respJob.Payload
-				if jobSummary.Status == "Succeeded" {
-					log.Print(cmd, "radix-cli", "Build complete", log.Green)
-				} else if jobSummary.Status == "Failed" {
-					log.Print(cmd, "radix-cli", "Build failed", log.Red)
-				} else if jobSummary.Status == "Running" {
-					// Reset timeout
-					timeout = time.NewTimer(settings.DeltaTimeout)
-					break
-				} else {
-					log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Job summary: %v. Status: %s. Timeout", settings.DeltaTimeout, jobSummary, jobSummary.Status), log.GetColor(0))
-				}
+			respJob, err := apiClient.PipelineJob.GetApplicationJob(jobParameters, nil)
+			if err != nil {
+				return err
 			}
-
-			return
+			if respJob == nil {
+				continue
+			}
+			jobSummary := respJob.Payload
+			if jobSummary.Status == "Succeeded" {
+				log.Print(cmd, "radix-cli", "Build complete", log.Green)
+			} else if jobSummary.Status == "Failed" {
+				log.Print(cmd, "radix-cli", "Build failed", log.Red)
+			} else if jobSummary.Status == "Running" {
+				// Reset timeout
+				timeout = time.NewTimer(settings.DeltaTimeout)
+				break
+			} else {
+				log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Job summary: %v. Status: %s. Timeout", settings.DeltaTimeout, jobSummary, jobSummary.Status), log.GetColor(0))
+			}
+			return nil
 		}
 	}
-}
-
-func getSteps(apiClient *apiclient.Radixapi, appName, jobName string, sinceTime time.Time) []*models.StepLog {
-	since := strfmt.DateTime(sinceTime)
-	jobLogParameters := pipeline_job.NewGetApplicationJobLogsParams()
-	jobLogParameters.SetAppName(appName)
-	jobLogParameters.SetJobName(jobName)
-	jobLogParameters.SetSinceTime(&since)
-
-	respJobLog, err := apiClient.PipelineJob.GetApplicationJobLogs(jobLogParameters, nil)
-	if err == nil {
-		return respJobLog.Payload
-	}
-
-	return nil
 }
 
 func init() {
