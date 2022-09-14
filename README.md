@@ -110,10 +110,10 @@ Note that using your own token obtained through `az account get-access-token` ma
 ### Using docker image
 
 * Login to the packages: `docker login ghcr.io/equinor`
-* Set the machine-user token to the environment variable: `export TOKEN=<Radix-application-machine-yser-token>`
-* Run the command within the container (example to watch pipeline job logs): 
+* Set the machine-user token to the environment variable: `export APP_SERVICE_ACCOUNT_TOKEN=<your service account token>`
+* Run the command within the container (example to watch pipeline job logs with a command `rx get logs job -a your-application-name -c playground -j your-job-name`): 
 ```shell
-docker run -it -e APP_SERVICE_ACCOUNT_TOKEN=$TOKEN  ghcr.io/equinor/radix/rx:latest get logs job -a your-application-name -c playground -j your-job-name --token-environment
+docker run -it -e APP_SERVICE_ACCOUNT_TOKEN=$APP_SERVICE_ACCOUNT_TOKEN  ghcr.io/equinor/radix/rx:latest --token-environment get logs job -a your-application-name -c playground -j your-job-name
 ```
 
 ## Problems encountered
