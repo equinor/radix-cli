@@ -107,6 +107,15 @@ rx --token-environment get application
 
 Note that using your own token obtained through `az account get-access-token` may not work, because the size of the token may be too big.
 
+### Using docker image
+
+* Login to the packages: `docker login ghcr.io/equinor`
+* Set the machine-user token to the environment variable: `export TOKEN=<Radix-application-machine-yser-token>`
+* Run the command within the container (example to watch pipeline job logs): 
+```shell
+docker run -it -e APP_SERVICE_ACCOUNT_TOKEN=$TOKEN  ghcr.io/equinor/radix/rx:latest get logs job -a your-application-name -c playground -j your-job-name --token-environment
+```
+
 ## Problems encountered
 
 Problem: Failed to acquire a token: refreshing the expired token: refreshing token: adal: Refresh request failed. Status Code = '400'

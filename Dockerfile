@@ -24,19 +24,17 @@ RUN staticcheck ./... && \
     go vet ./... && \
     CGO_ENABLED=0 GOOS=linux go test ./...
 
+RUN addgroup -S -g 1000 radix && adduser -S -u 1000 -G radix radix
+
 # Build
-WORKDIR /app
-CMD sh
-#RUN make release
-#RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o ./rootfs/radix-cli
-#RUN addgroup -S -g 1000 radix
-#RUN adduser -S -u 1000 -G radix radix
-#
+RUN swagger generate client -t ./generated-client -f https://api.radix.equinor.com/swaggerui/swagger.json -A radixapi && \
+    go mod tidy && \
+    CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o ./rootfs/rx
+
 ## Run operator
-#FROM scratch
-#COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-#COPY --from=builder /etc/passwd /etc/passwd
-#COPY --from=builder /app/rootfs/radix-cli /usr/local/bin/rx
-#USER 1000
-#CMD sh
-##ENTRYPOINT ["/usr/local/bin/radix-operator"]
+FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /etc/passwd /etc/passwd
+COPY --from=builder /app/rootfs/rx /usr/local/bin/rx
+USER 1000
+ENTRYPOINT ["/usr/local/bin/rx"]
