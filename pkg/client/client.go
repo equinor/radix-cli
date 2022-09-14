@@ -81,7 +81,7 @@ func getContextAndCluster(cmd *cobra.Command) (string, string, error) {
 	cluster, _ := cmd.Flags().GetString(settings.ClusterOption)
 
 	if context != "" && cluster != "" {
-		return "", "", errors.New("Cannot use both context and cluster as arguments at the same time")
+		return "", "", errors.New("cannot use both context and cluster as arguments at the same time")
 	}
 	return context, cluster, nil
 }

@@ -69,6 +69,6 @@ func Pretty(data interface{}) (*string, error) {
 		return nil, err
 	}
 
-	jsonString := string(prettyJSON.Bytes())
+	jsonString := prettyJSON.String()
 	return &jsonString, nil
 }
