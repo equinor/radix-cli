@@ -30,9 +30,8 @@ var restartApplicationCmd = &cobra.Command{
 	Use:   "application",
 	Short: "Restart an application",
 	Long: `Restart an application
-  - Stops running the application containers
-  - Pulls new images from image hub in radix configuration
-  - Starts the application containers again using up to date images`,
+  - Starts the application's containers, using up to date images
+  - Stops the application's old containers`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
