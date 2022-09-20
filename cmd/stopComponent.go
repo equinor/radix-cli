@@ -23,15 +23,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const restartComponentEnabled = true
+const stopComponentEnabled = true
 
-// restartComponentCmd represents the restart component command
-var restartComponentCmd = &cobra.Command{
+// stopComponentCmd represents the stop component command
+var stopComponentCmd = &cobra.Command{
 	Use:   "component",
-	Short: "Restart a component",
-	Long: `Restart a component
-  - Starts the component's container, using up to date image
-  - Stops the application component's old containers`,
+	Short: "Stop a component",
+	Long: `Stop a component
+  - Stops the component running container`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -40,7 +39,7 @@ var restartComponentCmd = &cobra.Command{
 
 		envName, err := cmd.Flags().GetString("environment")
 
-		if err != nil || appName == nil || *appName == "" {
+		if err != nil || appName == nil || *appName == "" || envName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
@@ -49,7 +48,7 @@ var restartComponentCmd = &cobra.Command{
 			return errors.New("component name is a required field")
 		}
 
-		parameters := component.NewRestartComponentParams().
+		parameters := component.NewStopComponentParams().
 			WithAppName(*appName).
 			WithEnvName(envName).
 			WithComponentName(cmpName)
@@ -59,7 +58,7 @@ var restartComponentCmd = &cobra.Command{
 			return err
 		}
 
-		_, err = apiClient.Component.RestartComponent(parameters, nil)
+		_, err = apiClient.Component.StopComponent(parameters, nil)
 
 		println(fmt.Sprintf("%v", err))
 
@@ -68,10 +67,10 @@ var restartComponentCmd = &cobra.Command{
 }
 
 func init() {
-	if restartComponentEnabled {
-		restartCmd.AddCommand(restartComponentCmd)
-		restartComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		restartComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		restartComponentCmd.Flags().StringP("component", "n", "", "Name of the component to restart")
+	if stopComponentEnabled {
+		stopCmd.AddCommand(stopComponentCmd)
+		stopComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+		stopComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+		stopComponentCmd.Flags().StringP("component", "n", "", "Name of the component to stop")
 	}
 }

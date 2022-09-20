@@ -18,20 +18,20 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/equinor/radix-cli/generated-client/client/component"
+	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
 
-const restartComponentEnabled = true
+const restartEnvironmentEnabled = true
 
-// restartComponentCmd represents the restart component command
-var restartComponentCmd = &cobra.Command{
-	Use:   "component",
-	Short: "Restart a component",
-	Long: `Restart a component
-  - Starts the component's container, using up to date image
-  - Stops the application component's old containers`,
+// restartEnvironmentCmd represents the restart environment command
+var restartEnvironmentCmd = &cobra.Command{
+	Use:   "environment",
+	Short: "Restart an environment",
+	Long: `Restart an environment
+  - Starts the environment's containers, using up to date images
+  - Stops the application environment's old containers`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -40,26 +40,20 @@ var restartComponentCmd = &cobra.Command{
 
 		envName, err := cmd.Flags().GetString("environment")
 
-		if err != nil || appName == nil || *appName == "" {
+		if err != nil || appName == nil || *appName == "" || envName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
-		cmpName, err := cmd.Flags().GetString("component")
-		if err != nil {
-			return errors.New("component name is a required field")
-		}
-
-		parameters := component.NewRestartComponentParams().
+		parameters := environment.NewRestartEnvironmentParams().
 			WithAppName(*appName).
-			WithEnvName(envName).
-			WithComponentName(cmpName)
+			WithEnvName(envName)
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
 			return err
 		}
 
-		_, err = apiClient.Component.RestartComponent(parameters, nil)
+		_, err = apiClient.Environment.RestartEnvironment(parameters, nil)
 
 		println(fmt.Sprintf("%v", err))
 
@@ -68,10 +62,9 @@ var restartComponentCmd = &cobra.Command{
 }
 
 func init() {
-	if restartComponentEnabled {
-		restartCmd.AddCommand(restartComponentCmd)
-		restartComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		restartComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		restartComponentCmd.Flags().StringP("component", "n", "", "Name of the component to restart")
+	if restartEnvironmentEnabled {
+		restartCmd.AddCommand(restartEnvironmentCmd)
+		restartEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+		restartEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
 	}
 }
