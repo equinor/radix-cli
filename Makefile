@@ -14,9 +14,8 @@ release:
 	git config --global credential.helper cache
 	goreleaser --rm-dist
 
-
 .PHONY: push
 push:
-	docker build . -t ghcr.io/equinor/radix/rx:latest
+	docker build . -t ghcr.io/equinor/radix-cli/rx:latest
 	docker login ghcr.io/equinor
-	docker push ghcr.io/equinor/radix/rx:latest
+	docker push ghcr.io/equinor/radix-cli/rx:latest
