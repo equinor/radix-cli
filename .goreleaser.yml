@@ -16,8 +16,8 @@ builds:
       - arm64
 dockers:
   - image_templates:
-      - "docker.pkg.github.com/equinor/radix-cli/rx:latest"
-    dockerfile: Dockerfile
+      - "ghcr.io/equinor/radix/rx:latest"
+    dockerfile: Dockerfile.goreleaser
     ids:
       - rx
 archives:
