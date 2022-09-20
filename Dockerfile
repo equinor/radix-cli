@@ -12,12 +12,9 @@ RUN go install honnef.co/go/tools/cmd/staticcheck@v0.3.3 && \
 
 WORKDIR /app
 
-# Install project dependencies
-COPY ./go.mod ./go.sum ./
-RUN go mod download
-
 # Copy project code
-COPY . /app
+COPY . .
+RUN go mod download
 
 # lint and unit tests
 RUN staticcheck ./... && \
