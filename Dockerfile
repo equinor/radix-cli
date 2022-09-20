@@ -1,37 +1,9 @@
-FROM golang:1.18.5-alpine3.16 as builder
-
-ENV GO111MODULE=on
-
-RUN apk update && \
-    apk add bash jq alpine-sdk sed gawk git ca-certificates curl mc && \
-    apk add --no-cache gcc musl-dev
-RUN go install honnef.co/go/tools/cmd/staticcheck@v0.3.3 && \
-    go install github.com/rakyll/statik@v0.1.7 && \
-    go install github.com/golang/mock/mockgen@v1.6.0 && \
-    go install github.com/go-swagger/go-swagger/cmd/swagger@v0.30.2
-
-WORKDIR /app
-
-# Copy project code
-COPY . .
-RUN go mod download
-
-# lint and unit tests
-RUN staticcheck ./... && \
-    go vet ./... && \
-    CGO_ENABLED=0 GOOS=linux go test ./...
+FROM alpine:3.16.2
+RUN apk update && apk add ca-certificates && apk add bash && rm -rf /var/cache/apk/*
 
 RUN addgroup -S -g 1000 radix && adduser -S -u 1000 -G radix radix
 
-# Build
-RUN swagger generate client -t ./generated-client -f https://api.radix.equinor.com/swaggerui/swagger.json -A radixapi && \
-    go mod tidy && \
-    CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o ./rootfs/rx
-
-## Run operator
-FROM scratch
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /app/rootfs/rx /usr/local/bin/rx
+WORKDIR /app
+COPY rx /app/rx
 USER 1000
-ENTRYPOINT ["/usr/local/bin/rx"]
+ENTRYPOINT ["/app/rx"]
