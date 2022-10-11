@@ -3,7 +3,7 @@ module github.com/equinor/radix-cli
 go 1.18
 
 require (
-	github.com/equinor/radix-operator v1.25.4
+	github.com/equinor/radix-operator v1.27.2
 	github.com/fatih/color v1.13.0
 	github.com/go-openapi/errors v0.20.3
 	github.com/go-openapi/runtime v0.24.1
