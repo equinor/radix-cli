@@ -16,6 +16,6 @@ release:
 
 .PHONY: push
 push:
-	docker build . -t ghcr.io/equinor/radix-cli/rx:latest
+	docker build . -t ghcr.io/equinor/radix/rx:latest
 	docker login ghcr.io/equinor
-	docker push ghcr.io/equinor/radix-cli/rx:latest
+	docker push ghcr.io/equinor/radix/rx:latest

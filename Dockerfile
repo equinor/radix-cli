@@ -13,7 +13,7 @@ RUN go install honnef.co/go/tools/cmd/staticcheck@v0.3.3 && \
 WORKDIR /app
 
 # Install project dependencies
-COPY ./go.mod ./go.sum ./
+COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy project code
@@ -38,3 +38,4 @@ COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /app/rootfs/rx /usr/local/bin/rx
 USER 1000
 ENTRYPOINT ["/usr/local/bin/rx"]
+
