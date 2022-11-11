@@ -20,3 +20,4 @@ rx-test
 /generated-client/client/*
 /generated-client/models/*
 .idea/
+.dccache

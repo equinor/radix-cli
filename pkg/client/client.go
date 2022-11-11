@@ -3,11 +3,12 @@ package client
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
-	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+	"io"
 	"net/http"
 	"os"
 	"strings"
+
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 
 	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
@@ -175,7 +176,7 @@ func getTokenFromFlagSet(cmd *cobra.Command) (*string, error) {
 	}
 
 	if tokenFromStdIn {
-		contents, err := ioutil.ReadAll(cmd.InOrStdin())
+		contents, err := io.ReadAll(cmd.InOrStdin())
 		if err != nil {
 			return nil, err
 		}
