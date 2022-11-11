@@ -39,18 +39,18 @@ var createApplicationCmd = &cobra.Command{
 		}
 
 		repository, _ := cmd.Flags().GetString("repository")
-		owner, _ := cmd.Flags().GetString("owner")
 		sharedSecret, _ := cmd.Flags().GetString("shared-secret")
 		configBranch, _ := cmd.Flags().GetString("config-branch")
-		wbs, _ := cmd.Flags().GetString("wbs")
+		configFile, _ := cmd.Flags().GetString("config-file")
+		configurationItem, _ := cmd.Flags().GetString("configuration-item")
 		acknowledgeWarnings, err := cmd.Flags().GetBool("acknowledge-warnings")
 		if err != nil {
 			println(fmt.Sprintf("invalid argument %s: %v", "acknowledge-warnings", err))
 			return err
 		}
 
-		if appName == nil || *appName == "" || repository == "" || owner == "" || configBranch == "" || wbs == "" {
-			return errors.New("application name, repository, owner, WBS and config branch are required fields")
+		if appName == nil || *appName == "" || repository == "" || configBranch == "" || configurationItem == "" {
+			return errors.New("application name, repository, configuration item and config branch are required fields")
 		}
 
 		adGroups, _ := cmd.Flags().GetStringSlice("ad-groups")
@@ -59,13 +59,13 @@ var createApplicationCmd = &cobra.Command{
 		registerApplicationParams.SetApplicationRegistration(&models.ApplicationRegistrationRequest{
 			AcknowledgeWarnings: acknowledgeWarnings,
 			ApplicationRegistration: &models.ApplicationRegistration{
-				Name:         appName,
-				Repository:   &repository,
-				Owner:        &owner,
-				SharedSecret: &sharedSecret,
-				AdGroups:     adGroups,
-				ConfigBranch: &configBranch,
-				WBS:          wbs,
+				Name:                appName,
+				Repository:          &repository,
+				SharedSecret:        &sharedSecret,
+				AdGroups:            adGroups,
+				ConfigBranch:        &configBranch,
+				RadixConfigFullName: configFile,
+				ConfigurationItem:   configurationItem,
 			},
 		})
 
@@ -102,11 +102,11 @@ func init() {
 		createCmd.AddCommand(createApplicationCmd)
 		createApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
 		createApplicationCmd.Flags().StringP("repository", "", "", "Repository path")
-		createApplicationCmd.Flags().StringP("owner", "", "", "Email address of owner")
 		createApplicationCmd.Flags().StringP("shared-secret", "", "", "Shared secret for the webhook")
 		createApplicationCmd.Flags().StringP("config-branch", "", "", "Name of the branch where Radix will read your radixconfig.yaml from")
-		createApplicationCmd.Flags().StringP("wbs", "", "", "WBS of the application for cost allocation")
+		createApplicationCmd.Flags().StringP("config-file", "", "", "Name of the radix config file. Optional, defaults to radixconfig.yaml")
 		createApplicationCmd.Flags().StringSliceP("ad-groups", "", []string{}, "Admin groups")
+		createApplicationCmd.Flags().StringP("configuration-item", "", "", "Configuration item")
 		createApplicationCmd.Flags().Bool("acknowledge-warnings", false, "Acknowledge warnings and proceed")
 	}
 }
