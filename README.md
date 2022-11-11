@@ -38,9 +38,9 @@ rm ${rx_tar}
 Authenticate with github via docker using a token with _read:packages_ access. Make sure you also enable single sign-on for Equinor after [generating your token](https://github.com/settings/tokens). Replace `<github username>` and `<access token>`.
 
 ```bash
-docker login -u <github username> -p <access token> docker.pkg.github.com
+docker login -u <github username> -p <access token> ghcr.io
 
-alias rx="docker run -it -v ${HOME}/.radix:/home/radix-cli/.radix docker.pkg.github.com/equinor/radix-cli/rx:latest"
+alias rx="docker run -it -v ${HOME}/.radix:/home/radix-cli/.radix ghcr.io/equinor/radix/rx:latest"
 ```
 
 (Typically your `HOME` variable will be `/Users/<username>` on a Mac and `/home/<username>` on Linux)
@@ -71,13 +71,13 @@ See docker for linux/mac above for authentication guide.
 If your terminal has a profile or auto-run script, you can add the following to it:
 
 ```batch
-DOSKEY rx=docker run -it -v %HOME%:/home/radix-cli docker.pkg.github.com/equinor/radix-cli/rx:latest $*
+DOSKEY rx=docker run -it -v %HOME%:/home/radix-cli ghcr.io/equinor/radix/rx:latest $*
 ```
 
 If not, you must add a new script file called `rx.bat` in a directory, present in `PATH`, with the following content
 
 ```batch
-docker run -it -v %HOME%:/home/radix-cli docker.pkg.github.com/equinor/radix-cli/rx:latest $*
+docker run -it -v %HOME%:/home/radix-cli ghcr.io/equinor/radix/rx:latest $*
 ```
 
 (Typically your `HOME` variable will be `C:\Users\<username>`)
@@ -153,7 +153,7 @@ To make a release:
 3. Get the [personal access token](https://github.com/settings/tokens) - with access to repository and `write:packages` scope, and with enabled SSO for organisation (or create it)
 4. Login to the docker repository with your user-name, using personal access token as a password (personal user=name/password authentication is or will be deprecated)
     ```
-    docker login docker.pkg.github.com -u USER_NAME
+    docker login ghcr.io -u USER_NAME
     ```
 5. Run the command to create a version with a tag, build a docker image and push them to GitHub repository 
     ```
