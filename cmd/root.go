@@ -17,7 +17,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const radixCLIError = "Error: Radix CLI executed with error"
+const (
+	radixCLIError = "Error: Radix CLI executed with error"
+	version       = "1.4.0"
+)
 
 var rootLongHelp = strings.TrimSpace(`
 A command line interface which allows you to interact with the Radix platform through automation.
@@ -25,9 +28,10 @@ A command line interface which allows you to interact with the Radix platform th
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "rx",
-	Short: "Command line interface for Radix platform",
-	Long:  rootLongHelp,
+	Use:     "rx",
+	Short:   "Command line interface for Radix platform",
+	Long:    rootLongHelp,
+	Version: version,
 }
 
 // Execute the top level command
