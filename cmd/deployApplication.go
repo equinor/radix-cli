@@ -28,7 +28,7 @@ const deployApplicationEnabled = true
 var deployApplicationCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Will trigger deploy of a Radix application",
-	Long:  `Triggers deploy of a Radix application according to the radix config in its repository's main branch.`,
+	Long:  `Triggers deploy of a Radix application according to the radix config in its repository's master branch.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
