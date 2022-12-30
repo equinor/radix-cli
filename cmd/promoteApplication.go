@@ -79,7 +79,7 @@ func init() {
 		promoteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to be promoted")
 		promoteApplicationCmd.Flags().StringP("deployment", "d", "", "Name of a deployment to be promoted")
 		promoteApplicationCmd.Flags().StringP("from-environment", "", "", "The deployment source environment")
-		promoteApplicationCmd.Flags().StringP("to", "", "", "The deployment target environment")
+		promoteApplicationCmd.Flags().StringP("to-environment", "", "", "The deployment target environment")
 		promoteApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the promote pipeline job")
 		promoteApplicationCmd.Flags().BoolP("follow", "f", false, "Follow the promote pipeline job log")
 	}
