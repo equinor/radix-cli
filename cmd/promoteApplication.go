@@ -37,7 +37,7 @@ var promoteApplicationCmd = &cobra.Command{
 		}
 
 		deploymentName, _ := cmd.Flags().GetString("deployment")
-		fromEnvironment, _ := cmd.Flags().GetString("from")
+		fromEnvironment, _ := cmd.Flags().GetString("from-environment")
 		toEnvironment, _ := cmd.Flags().GetString("to")
 		triggeredByUser, _ := cmd.Flags().GetString("user")
 		follow, _ := cmd.Flags().GetBool("follow")
