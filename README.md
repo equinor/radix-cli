@@ -148,7 +148,7 @@ NOTE: If there is a change to the API, you make need to point to the API environ
 We are making releases available as github releases using [go-releaser](https://goreleaser.com/). The release process is controlled by the `.goreleaser.yml` file. 
 
 To make a release:
-1. Set the version number in the constant `version` in the file `cmd/version.go`
+1. Set the version number in the constant `version` in the file `cmd/root.go`. The version will be shown with the command `rx --version`
 2. Ensure there is no `dist` folder in the project (left from previous release)
 3. Get the [personal access token](https://github.com/settings/tokens) - with access to repository and `write:packages` scope, and with enabled SSO for organisation (or create it)
 4. Login to the docker repository with your user-name, using personal access token as a password (personal user=name/password authentication is or will be deprecated)
