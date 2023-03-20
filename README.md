@@ -2,6 +2,8 @@
 
 The command line interface for Radix, which is to enable users of Radix platform in automation around their application on the platform. This document is for developers of the Radix CLI, or anyone interested in poking around.
 
+Radix CLI in the [Radix documentation](https://radix.equinor.com/docs/topic-radix-cli/)
+
 ## Installation
 
 ### Linux or Mac

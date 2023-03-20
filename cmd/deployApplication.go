@@ -31,7 +31,21 @@ const deployApplicationEnabled = true
 var deployApplicationCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Will trigger deploy of a Radix application",
-	Long:  `Triggers deploy of a Radix application according to the radix config in its repository's master branch.`,
+	Long: `Triggers deploy of a Radix application according to the radix config in its repository's master branch.
+
+Examples:
+  # Create a Radix pipeline deploy-only job to deploy an application "radix-test" to an environment "dev" 
+  rx create job deploy --application radix-test --environment dev
+
+  # Create a Radix pipeline deploy-only job, short option versions 
+  rx create job deploy -a radix-test -e dev
+
+  # Create a Radix pipeline deploy-only job to deploy an application with re-defined image-tags. These image tags will re-define  
+  rx create job deploy --application radix-test --environment dev --image-tag web-app=web-app-v2.1
+
+  # Create a Radix pipeline deploy-only job with re-defined image-tags for components, short option versions 
+  rx create job deploy -a radix-test -e dev -t web-app=web-app-v2.1 -t api-server=api-v1.0
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
@@ -55,11 +69,11 @@ var deployApplicationCmd = &cobra.Command{
 			return commonErrors.Concat(errs)
 		}
 
-		componentTagsMap := slice.Reduce(componentImageTags, make(map[string]string), func(componentTags map[string]string, componentTagPair string) map[string]string {
+		componentTags := slice.Reduce(componentImageTags, nil, func(pairs []string, componentTagPair string) []string {
 			if pair := strings.Split(componentTagPair, "="); len(pair) == 2 {
-				componentTags[pair[0]] = pair[1] //component-name:tag-name
+				pairs = append(pairs, componentTagPair)
 			}
-			return componentTags
+			return pairs
 		})
 
 		if appName == nil || *appName == "" || targetEnvironment == "" {
@@ -75,7 +89,7 @@ var deployApplicationCmd = &cobra.Command{
 		triggerPipelineParams.SetAppName(*appName)
 		triggerPipelineParams.SetPipelineParametersDeploy(&models.PipelineParametersDeploy{
 			ToEnvironment: targetEnvironment,
-			ImageTags:     componentTagsMap,
+			ImageTags:     strings.Join(componentTags, ","),
 			TriggeredBy:   triggeredByUser,
 		})
 
