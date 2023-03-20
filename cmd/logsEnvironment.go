@@ -41,6 +41,7 @@ var logsEnvironmentCmd = &cobra.Command{
 		}
 
 		environmentName, _ := cmd.Flags().GetString("environment")
+		previouseLog, _ := cmd.Flags().GetBool("previous")
 
 		if environmentName == "" {
 			return errors.New("both `environment` and `component` are required")
@@ -56,7 +57,7 @@ var logsEnvironmentCmd = &cobra.Command{
 			return err
 		}
 
-		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas)
+		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previouseLog)
 		return err
 
 	},
@@ -93,5 +94,6 @@ func init() {
 
 		logsEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
 		logsEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
+		logsEnvironmentCmd.Flags().BoolP("previous", "p", false, "If true, print the logs for the previous instance of the container in a pod if it exists")
 	}
 }
