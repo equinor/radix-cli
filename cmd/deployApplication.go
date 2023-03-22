@@ -16,9 +16,6 @@ package cmd
 
 import (
 	"errors"
-	"github.com/equinor/radix-common/utils/slice"
-	"strings"
-
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
@@ -64,18 +61,10 @@ Examples:
 		if err != nil {
 			errs = append(errs, err)
 		}
-		componentImageTags, err := cmd.Flags().GetStringSlice("image-tag")
+		imageTagNames, err := cmd.Flags().GetStringToString("image-tag-name")
 		if len(errs) > 0 {
 			return commonErrors.Concat(errs)
 		}
-
-		componentTags := slice.Reduce(componentImageTags, nil, func(pairs []string, componentTagPair string) []string {
-			if pair := strings.Split(componentTagPair, "="); len(pair) == 2 {
-				pairs = append(pairs, componentTagPair)
-			}
-			return pairs
-		})
-
 		if appName == nil || *appName == "" || targetEnvironment == "" {
 			return errors.New("application name and target environment are required")
 		}
@@ -89,7 +78,7 @@ Examples:
 		triggerPipelineParams.SetAppName(*appName)
 		triggerPipelineParams.SetPipelineParametersDeploy(&models.PipelineParametersDeploy{
 			ToEnvironment: targetEnvironment,
-			ImageTags:     strings.Join(componentTags, ","),
+			ImageTagNames: imageTagNames,
 			TriggeredBy:   triggeredByUser,
 		})
 
@@ -113,7 +102,7 @@ func init() {
 		deployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
 		deployApplicationCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
 		deployApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
-		deployApplicationCmd.Flags().StringSliceP("image-tag", "t", nil, "Image tag for a component: component-name=tag-name. Multiple pairs can be specified.")
+		deployApplicationCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
 		deployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
 	}
 }
