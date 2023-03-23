@@ -140,7 +140,12 @@ func getTransport(apiEndpoint string, radixConfig radixconfig.RadixConfigAccess,
 	persister := radixconfig.PersisterForRadix(radixConfig)
 	provider, _ := rest.GetAuthProvider("", startingConfig, persister)
 
-	transport := httptransport.New(apiEndpoint, "/api/v1", []string{"https"})
+	schema := "https"
+	if os.Getenv("USE_LOCAL_RADIX_API") == "true" {
+		schema = "http"
+		apiEndpoint = "localhost:3002"
+	}
+	transport := httptransport.New(apiEndpoint, "/api/v1", []string{schema})
 	transport.Transport = provider.WrapTransport(transport.Transport)
 	return transport
 }

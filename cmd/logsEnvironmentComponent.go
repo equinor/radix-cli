@@ -34,7 +34,20 @@ import (
 var logsEnvironmentComponentCmd = &cobra.Command{
 	Use:   "component",
 	Short: "Get logs of specific components in environment",
-	Long:  `Will get and follow logs of component in an environment`,
+	Long: `Will get and follow logs of component in an environment.
+
+It may take few seconds to get the log.
+
+Examples:
+  # Get logs for a component 
+  rx get logs component --application radix-test --environment dev --component web-app
+
+  # Get logs for a component previous (terminated or restarted) container
+  rx get logs component --application radix-test --environment dev --component web-app --previous
+
+  # Short version of get logs for a component previous (terminated or restarted) container
+  rx get logs component -a radix-test -e dev --component web-app -p
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -92,7 +105,9 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 				logParameters.WithDeploymentName("irrelevant")
 				logParameters.WithComponentName(componentName)
 				logParameters.WithPodName(replica)
-				logParameters.SetSinceTime(&since)
+				if !previousLog {
+					logParameters.SetSinceTime(&since)
+				}
 				logParameters.WithPrevious(&previous)
 
 				logData, err := apiClient.Component.Log(logParameters, nil)
@@ -159,6 +174,6 @@ func init() {
 		logsEnvironmentComponentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
 		logsEnvironmentComponentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
 		logsEnvironmentComponentCmd.Flags().String("component", "", "The component to follow")
-		logsEnvironmentComponentCmd.Flags().BoolP("previous", "p", false, "If true, print the logs for the previous instance of the container in a pod if it exists")
+		logsEnvironmentComponentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instance of the container in a component pod, if it exists")
 	}
 }

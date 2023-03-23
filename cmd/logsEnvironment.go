@@ -29,7 +29,14 @@ const logsEnvironmentEnabled = true
 var logsEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Get logs of all components in environment",
-	Long:  `Will get and follow logs of all components in an environment`,
+	Long: `Will get and follow logs of all components in an environment.
+
+It may take few seconds to get the log.
+
+Example:
+  # Get logs for all components in an environment. Log lines from different components have different colors
+  rx get logs environment --application radix-test --environment dev
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -41,7 +48,7 @@ var logsEnvironmentCmd = &cobra.Command{
 		}
 
 		environmentName, _ := cmd.Flags().GetString("environment")
-		previouseLog, _ := cmd.Flags().GetBool("previous")
+		previousLog, _ := cmd.Flags().GetBool("previous")
 
 		if environmentName == "" {
 			return errors.New("both `environment` and `component` are required")
@@ -57,7 +64,7 @@ var logsEnvironmentCmd = &cobra.Command{
 			return err
 		}
 
-		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previouseLog)
+		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
 		return err
 
 	},
@@ -94,6 +101,6 @@ func init() {
 
 		logsEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
 		logsEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
-		logsEnvironmentCmd.Flags().BoolP("previous", "p", false, "If true, print the logs for the previous instance of the container in a pod if it exists")
+		logsEnvironmentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
 	}
 }
