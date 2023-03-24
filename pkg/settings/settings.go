@@ -13,4 +13,5 @@ const (
 	ClusterOption          = "cluster"
 	ApiEnvironmentOption   = "api-environment"
 	AwaitReconcileOption   = "await-reconcile"
+	VerboseOption          = "verbose"
 )

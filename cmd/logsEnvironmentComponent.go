@@ -154,6 +154,6 @@ func init() {
 		logsCmd.AddCommand(logsEnvironmentComponentCmd)
 		logsEnvironmentComponentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
 		logsEnvironmentComponentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
-		logsEnvironmentComponentCmd.Flags().String("component", "", "The component to follow")
+		logsEnvironmentComponentCmd.Flags().String("component", "n", "The component to follow")
 	}
 }
