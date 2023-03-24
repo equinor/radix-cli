@@ -33,8 +33,15 @@ const logsJobEnabled = true
 // logsJobCmd represents the logsJobCmd command
 var logsJobCmd = &cobra.Command{
 	Use:   "job",
-	Short: "Get logs of job",
-	Long:  `Will get and follow logs of job`,
+	Short: "Get logs of a pipeline job",
+	Long: `Will get and follow logs of a pipeline job.
+
+It may take few seconds to get the log.
+
+Example:
+  # Get logs for a pipeline job 
+  rx get logs job --application radix-test --job radix-pipeline-20230323185013-ehvnz
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
