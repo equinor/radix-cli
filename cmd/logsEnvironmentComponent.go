@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 	"time"
 
@@ -33,7 +34,20 @@ import (
 var logsEnvironmentComponentCmd = &cobra.Command{
 	Use:   "component",
 	Short: "Get logs of specific components in environment",
-	Long:  `Will get and follow logs of component in an environment`,
+	Long: `Will get and follow logs of component in an environment.
+
+It may take few seconds to get the log.
+
+Examples:
+  # Get logs for a component 
+  rx get logs component --application radix-test --environment dev --component web-app
+
+  # Get logs for a component previous (terminated or restarted) container
+  rx get logs component --application radix-test --environment dev --component web-app --previous
+
+  # Short version of get logs for a component previous (terminated or restarted) container
+  rx get logs component -a radix-test -e dev --component web-app -p
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -46,6 +60,7 @@ var logsEnvironmentComponentCmd = &cobra.Command{
 
 		environmentName, _ := cmd.Flags().GetString("environment")
 		componentName, _ := cmd.Flags().GetString("component")
+		previousLog, _ := cmd.Flags().GetBool("previous")
 
 		if environmentName == "" || componentName == "" {
 			return errors.New("both `environment` and `component` are required")
@@ -64,17 +79,18 @@ var logsEnvironmentComponentCmd = &cobra.Command{
 		componentReplicas := make(map[string][]string)
 		componentReplicas[componentName] = replicas
 
-		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas)
+		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
 		return err
 
 	},
 }
 
-func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, environmentName string, componentReplicas map[string][]string) error {
+func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, environmentName string, componentReplicas map[string][]string, previousLog bool) error {
 	refreshLog := time.Tick(settings.DeltaRefreshApplication)
 
-	// Somtimes, even though we get delta, the log is the same as previous
+	// Sometimes, even though we get delta, the log is the same as previous
 	previousLogForReplica := make(map[string]string)
+	previous := strconv.FormatBool(previousLog)
 
 	for range refreshLog {
 		i := 0
@@ -89,7 +105,10 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 				logParameters.WithDeploymentName("irrelevant")
 				logParameters.WithComponentName(componentName)
 				logParameters.WithPodName(replica)
-				logParameters.SetSinceTime(&since)
+				if !previousLog {
+					logParameters.SetSinceTime(&since)
+				}
+				logParameters.WithPrevious(&previous)
 
 				logData, err := apiClient.Component.Log(logParameters, nil)
 				if err != nil {
@@ -154,6 +173,7 @@ func init() {
 		logsCmd.AddCommand(logsEnvironmentComponentCmd)
 		logsEnvironmentComponentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
 		logsEnvironmentComponentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
-		logsEnvironmentComponentCmd.Flags().String("component", "n", "The component to follow")
+		logsEnvironmentComponentCmd.Flags().String("component", "", "The component to follow")
+		logsEnvironmentComponentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instance of the container in a component pod, if it exists")
 	}
 }

@@ -3,7 +3,7 @@ module github.com/equinor/radix-cli
 go 1.18
 
 require (
-	github.com/equinor/radix-operator v1.31.9
+	github.com/equinor/radix-operator v1.35.0
 	github.com/fatih/color v1.13.0
 	github.com/go-openapi/errors v0.20.3
 	github.com/go-openapi/runtime v0.24.1
@@ -28,7 +28,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/equinor/radix-common v1.2.5 // indirect
+	github.com/equinor/radix-common v1.2.9 // indirect
 	github.com/go-logr/logr v1.2.2 // indirect
 	github.com/go-openapi/analysis v0.21.2 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
