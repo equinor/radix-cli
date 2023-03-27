@@ -16,10 +16,10 @@ package cmd
 
 import (
 	"errors"
-
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	commonErrors "github.com/equinor/radix-common/utils/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -28,16 +28,43 @@ const deployApplicationEnabled = true
 var deployApplicationCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Will trigger deploy of a Radix application",
-	Long:  `Triggers deploy of a Radix application according to the radix config in its repository's master branch.`,
+	Long: `Triggers deploy of a Radix application according to the radix config in its repository's master branch.
+
+Examples:
+  # Create a Radix pipeline deploy-only job to deploy an application "radix-test" to an environment "dev" 
+  rx create job deploy --application radix-test --environment dev
+
+  # Create a Radix pipeline deploy-only job, short option versions 
+  rx create job deploy -a radix-test -e dev
+
+  # Create a Radix pipeline deploy-only job to deploy an application with re-defined image-tags. These image tags will re-define  
+  rx create job deploy --application radix-test --environment dev --image-tag web-app=web-app-v2.1
+
+  # Create a Radix pipeline deploy-only job with re-defined image-tags for components, short option versions 
+  rx create job deploy -a radix-test -e dev -t web-app=web-app-v2.1 -t api-server=api-v1.0
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		var errs []error
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
-			return err
+			errs = append(errs, err)
 		}
-		targetEnvironment, _ := cmd.Flags().GetString("environment")
-		triggeredByUser, _ := cmd.Flags().GetString("user")
-		follow, _ := cmd.Flags().GetBool("follow")
-
+		targetEnvironment, err := cmd.Flags().GetString("environment")
+		if err != nil {
+			errs = append(errs, err)
+		}
+		triggeredByUser, err := cmd.Flags().GetString("user")
+		if err != nil {
+			errs = append(errs, err)
+		}
+		follow, err := cmd.Flags().GetBool("follow")
+		if err != nil {
+			errs = append(errs, err)
+		}
+		imageTagNames, err := cmd.Flags().GetStringToString("image-tag-name")
+		if len(errs) > 0 {
+			return commonErrors.Concat(errs)
+		}
 		if appName == nil || *appName == "" || targetEnvironment == "" {
 			return errors.New("application name and target environment are required")
 		}
@@ -51,6 +78,7 @@ var deployApplicationCmd = &cobra.Command{
 		triggerPipelineParams.SetAppName(*appName)
 		triggerPipelineParams.SetPipelineParametersDeploy(&models.PipelineParametersDeploy{
 			ToEnvironment: targetEnvironment,
+			ImageTagNames: imageTagNames,
 			TriggeredBy:   triggeredByUser,
 		})
 
@@ -74,6 +102,7 @@ func init() {
 		deployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
 		deployApplicationCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
 		deployApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
+		deployApplicationCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
 		deployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
 	}
 }
