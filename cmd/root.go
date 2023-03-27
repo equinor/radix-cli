@@ -19,7 +19,7 @@ import (
 
 const (
 	radixCLIError = "Error: Radix CLI executed with error"
-	version       = "1.5.0"
+	version       = "1.7.0"
 )
 
 var rootLongHelp = strings.TrimSpace(`
@@ -52,6 +52,7 @@ func init() {
 	rootCmd.PersistentFlags().String(settings.ClusterOption, "", "Set cluster to override context")
 	rootCmd.PersistentFlags().String(settings.ApiEnvironmentOption, "prod", "The API api-environment to run with (default prod)")
 	rootCmd.PersistentFlags().Bool(settings.AwaitReconcileOption, false, "Await reconcilliation in Radix")
+	rootCmd.PersistentFlags().Bool(settings.VerboseOption, false, "Verbose output")
 }
 
 // CheckFnNew The prototype function for any check function

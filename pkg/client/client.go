@@ -8,16 +8,14 @@ import (
 	"os"
 	"strings"
 
-	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
-
-	"github.com/go-openapi/strfmt"
-	"github.com/spf13/cobra"
-	"k8s.io/client-go/rest"
-
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/settings"
 	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
+	"github.com/spf13/cobra"
+	"k8s.io/client-go/rest"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
 const (
@@ -30,7 +28,7 @@ const (
 
 // Get Gets API client for set context
 func Get() *apiclient.Radixapi {
-	return GetForContext("")
+	return GetForContext("", false)
 }
 
 // GetForCommand Gets client for command
@@ -45,13 +43,14 @@ func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
 		return nil, err
 	}
 	apiEnvironment, _ := cmd.Flags().GetString(settings.ApiEnvironmentOption)
+	verboseOutput, _ := cmd.Flags().GetBool(settings.VerboseOption)
 	var apiClient *apiclient.Radixapi
 	if token != nil && *token != "" {
-		apiClient = GetForToken(context, cluster, apiEnvironment, *token)
+		apiClient = GetForToken(context, cluster, apiEnvironment, *token, verboseOutput)
 	} else if cluster != "" {
-		apiClient = GetForCluster(cluster, apiEnvironment)
+		apiClient = GetForCluster(cluster, apiEnvironment, verboseOutput)
 	} else {
-		apiClient = GetForContext(context)
+		apiClient = GetForContext(context, verboseOutput)
 	}
 
 	return apiClient, nil
@@ -88,7 +87,7 @@ func getContextAndCluster(cmd *cobra.Command) (string, string, error) {
 }
 
 // GetForToken Gets API client with passed token
-func GetForToken(context, cluster, environment, token string) *apiclient.Radixapi {
+func GetForToken(context, cluster, environment, token string, verboseOutput bool) *apiclient.Radixapi {
 	var apiEndpoint string
 
 	if cluster != "" {
@@ -100,14 +99,15 @@ func GetForToken(context, cluster, environment, token string) *apiclient.Radixap
 
 	transport := httptransport.New(apiEndpoint, "/api/v1", []string{"https"})
 	transport.DefaultAuthentication = httptransport.BearerToken(token)
+	transport.Debug = verboseOutput
 	return apiclient.New(transport, strfmt.Default)
 }
 
 // GetForContext Gets API client for set context
-func GetForContext(context string) *apiclient.Radixapi {
+func GetForContext(context string, verbose bool) *apiclient.Radixapi {
 	radixConfig := radixconfig.RadixConfigAccess{}
 	apiEndpoint := getAPIEndpointForContext(context, radixConfig.GetStartingConfig())
-	return getClientForEndpoint(apiEndpoint)
+	return getClientForEndpoint(apiEndpoint, verbose)
 }
 
 // LoginContext Performs login
@@ -124,15 +124,16 @@ func LoginContext(context string) error {
 }
 
 // GetForCluster Gets API client for cluster
-func GetForCluster(cluster, environment string) *apiclient.Radixapi {
+func GetForCluster(cluster, environment string, verboseOutput bool) *apiclient.Radixapi {
 	apiEndpoint := getAPIEndpointForCluster(cluster, environment)
-	return getClientForEndpoint(apiEndpoint)
+	return getClientForEndpoint(apiEndpoint, verboseOutput)
 }
 
-func getClientForEndpoint(apiEndpoint string) *apiclient.Radixapi {
+func getClientForEndpoint(apiEndpoint string, verbose bool) *apiclient.Radixapi {
 	radixConfig := radixconfig.RadixConfigAccess{}
 	startingConfig := radixConfig.GetStartingConfig()
 	transport := getTransport(apiEndpoint, radixConfig, startingConfig)
+	transport.Debug = verbose
 	return apiclient.New(transport, strfmt.Default)
 }
 
