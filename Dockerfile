@@ -1,11 +1,11 @@
-FROM golang:1.18.5-alpine3.16 as builder
+FROM golang:1.19-alpine3.17 as builder
 
 ENV GO111MODULE=on
 
 RUN apk update && \
     apk add bash jq alpine-sdk sed gawk git ca-certificates curl mc && \
     apk add --no-cache gcc musl-dev
-RUN go install honnef.co/go/tools/cmd/staticcheck@v0.3.3 && \
+RUN go install honnef.co/go/tools/cmd/staticcheck@v0.4.2 && \
     go install github.com/rakyll/statik@v0.1.7 && \
     go install github.com/golang/mock/mockgen@v1.6.0 && \
     go install github.com/go-swagger/go-swagger/cmd/swagger@v0.30.2

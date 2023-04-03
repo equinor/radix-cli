@@ -92,12 +92,12 @@ func (c RadixConfigAccess) GetStartingConfig() *clientcmdapi.AuthProviderConfig 
 	return getAzureAuthProvider(radixConfig)
 }
 
-//GetDefaultConfig Gets AuthProviderConfig with default properties
+// GetDefaultConfig Gets AuthProviderConfig with default properties
 func (c RadixConfigAccess) GetDefaultConfig() *clientcmdapi.AuthProviderConfig {
 	return getAzureAuthProvider(GetDefaultRadixConfig())
 }
 
-//GetDefaultRadixConfig Gets RadixConfig with default properties
+// GetDefaultRadixConfig Gets RadixConfig with default properties
 func GetDefaultRadixConfig() *RadixConfig {
 	return &RadixConfig{
 		CustomConfig: &CustomConfig{
@@ -150,7 +150,7 @@ func (p *radixConfigPersister) Persist(config map[string]string) error {
 	return Save(newConfig)
 }
 
-//Save Saves RadixConfig
+// Save Saves RadixConfig
 func Save(radixConfig RadixConfig) error {
 	if _, err := os.Stat(RecommendedConfigDir); os.IsNotExist(err) {
 		os.MkdirAll(RecommendedConfigDir, os.ModePerm)

@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
@@ -62,6 +63,9 @@ Examples:
 			errs = append(errs, err)
 		}
 		imageTagNames, err := cmd.Flags().GetStringToString("image-tag-name")
+		if err != nil {
+			errs = append(errs, err)
+		}
 		if len(errs) > 0 {
 			return commonErrors.Concat(errs)
 		}
