@@ -17,12 +17,14 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"strings"
-
+	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
+	"log"
+	"strings"
+	"time"
 )
 
 const createApplicationEnabled = true
@@ -81,19 +83,36 @@ var createApplicationCmd = &cobra.Command{
 			return err
 		}
 		registrationUpsertResponse := resp.Payload
-		if len(registrationUpsertResponse.Warnings) == 0 {
-			if registrationUpsertResponse.ApplicationRegistration != nil {
-				print(strings.TrimRight(registrationUpsertResponse.ApplicationRegistration.PublicKey, "\t \n"))
-				return nil
+		if len(registrationUpsertResponse.Warnings) > 0 {
+			println("Warnings:")
+			for _, warning := range registrationUpsertResponse.Warnings {
+				println(fmt.Sprintf("- %s", warning))
 			}
+			println("If you agree to proceed with warnings - please add an option --acknowledge-warnings")
+			return nil
+		}
+		if registrationUpsertResponse.ApplicationRegistration == nil {
 			return errors.New("unspecified error")
+
 		}
-		println("Warnings:")
-		for _, warning := range registrationUpsertResponse.Warnings {
-			println(fmt.Sprintf("- %s", warning))
+		deployKeyAndSecretParams := application.NewGetDeployKeyAndSecretParams()
+		deployKeyAndSecretParams.SetAppName(*appName)
+		log.Printf("Waiting for public deploy key to be generated...")
+		for {
+			deployKeyResp, err := apiClient.Application.GetDeployKeyAndSecret(deployKeyAndSecretParams, nil)
+			if err != nil {
+				log.Printf("Error getting public deploy key: %v", err)
+				time.Sleep(5 * time.Second) // Sleep 5 seconds before trying again
+				continue
+			}
+			if deployKeyResp.Payload.PublicDeployKey == nil || len(*deployKeyResp.Payload.PublicDeployKey) == 0 {
+				log.Print(".")
+				time.Sleep(5 * time.Second) // Sleep 5 seconds before trying again
+				continue
+			}
+			print(strings.TrimRight(*deployKeyResp.Payload.PublicDeployKey, "\t \n"))
+			return nil
 		}
-		println("If you agree to proceed with warnings - please add an option --acknowledge-warnings")
-		return nil
 	},
 }
 
