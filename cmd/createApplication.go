@@ -22,7 +22,6 @@ import (
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
-	"log"
 	"strings"
 	"time"
 )
@@ -97,17 +96,13 @@ var createApplicationCmd = &cobra.Command{
 		}
 		deployKeyAndSecretParams := application.NewGetDeployKeyAndSecretParams()
 		deployKeyAndSecretParams.SetAppName(*appName)
-		log.Printf("Waiting for public deploy key to be generated...")
 		for {
 			deployKeyResp, err := apiClient.Application.GetDeployKeyAndSecret(deployKeyAndSecretParams, nil)
 			if err != nil {
-				log.Printf("Error getting public deploy key: %v", err)
-				time.Sleep(5 * time.Second) // Sleep 5 seconds before trying again
-				continue
+				return errors.New(fmt.Sprintf("Error getting public deploy key: %v", err))
 			}
 			if deployKeyResp.Payload.PublicDeployKey == nil || len(*deployKeyResp.Payload.PublicDeployKey) == 0 {
-				log.Print(".")
-				time.Sleep(5 * time.Second) // Sleep 5 seconds before trying again
+				time.Sleep(2 * time.Second) // Sleep 5 seconds before trying again
 				continue
 			}
 			print(strings.TrimRight(*deployKeyResp.Payload.PublicDeployKey, "\t \n"))
