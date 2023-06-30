@@ -134,6 +134,7 @@ func getClientForEndpoint(apiEndpoint string, verbose bool) *apiclient.Radixapi 
 	startingConfig := radixConfig.GetStartingConfig()
 	transport := getTransport(apiEndpoint, radixConfig, startingConfig)
 	transport.Debug = verbose
+
 	return apiclient.New(transport, strfmt.Default)
 }
 
