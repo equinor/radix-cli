@@ -106,8 +106,9 @@ var createApplicationCmd = &cobra.Command{
 					return errors.New(fmt.Sprintf("Error getting public deploy key: %v", err))
 				}
 				time.Sleep(getRadixRegistrationNoAccessErrorPause) // Sleep before trying again
+				continue
 			}
-			if deployKeyResp.Payload.PublicDeployKey == nil || len(*deployKeyResp.Payload.PublicDeployKey) == 0 {
+			if deployKeyResp.Payload == nil || deployKeyResp.Payload.PublicDeployKey == nil || len(*deployKeyResp.Payload.PublicDeployKey) == 0 {
 				time.Sleep(2 * time.Second) // Sleep before trying again
 				continue
 			}
