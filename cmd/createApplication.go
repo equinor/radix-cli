@@ -96,13 +96,20 @@ var createApplicationCmd = &cobra.Command{
 		}
 		deployKeyAndSecretParams := application.NewGetDeployKeyAndSecretParams()
 		deployKeyAndSecretParams.SetAppName(*appName)
+		getRadixRegistrationNoAccessErrorCount := 3
+		getRadixRegistrationNoAccessErrorPause := 2 * time.Second
 		for {
 			deployKeyResp, err := apiClient.Application.GetDeployKeyAndSecret(deployKeyAndSecretParams, nil)
 			if err != nil {
-				return errors.New(fmt.Sprintf("Error getting public deploy key: %v", err))
+				getRadixRegistrationNoAccessErrorCount--
+				if getRadixRegistrationNoAccessErrorCount == 0 {
+					return errors.New(fmt.Sprintf("Error getting public deploy key: %v", err))
+				}
+				time.Sleep(getRadixRegistrationNoAccessErrorPause) // Sleep before trying again
+				continue
 			}
-			if deployKeyResp.Payload.PublicDeployKey == nil || len(*deployKeyResp.Payload.PublicDeployKey) == 0 {
-				time.Sleep(2 * time.Second) // Sleep 5 seconds before trying again
+			if deployKeyResp.Payload == nil || deployKeyResp.Payload.PublicDeployKey == nil || len(*deployKeyResp.Payload.PublicDeployKey) == 0 {
+				time.Sleep(2 * time.Second) // Sleep before trying again
 				continue
 			}
 			print(strings.TrimRight(*deployKeyResp.Payload.PublicDeployKey, "\t \n"))
