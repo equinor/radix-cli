@@ -28,7 +28,11 @@ const (
 
 // Get Gets API client for set context
 func Get() *apiclient.Radixapi {
-	return GetForContext("", false)
+	context, err := GetForContext("", false)
+	if err != nil {
+		panic(err)
+	}
+	return context
 }
 
 // GetForCommand Gets client for command
@@ -44,16 +48,13 @@ func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
 	}
 	apiEnvironment, _ := cmd.Flags().GetString(settings.ApiEnvironmentOption)
 	verboseOutput, _ := cmd.Flags().GetBool(settings.VerboseOption)
-	var apiClient *apiclient.Radixapi
 	if token != nil && *token != "" {
-		apiClient = GetForToken(context, cluster, apiEnvironment, *token, verboseOutput)
-	} else if cluster != "" {
-		apiClient = GetForCluster(cluster, apiEnvironment, verboseOutput)
-	} else {
-		apiClient = GetForContext(context, verboseOutput)
+		return GetForToken(context, cluster, apiEnvironment, *token, verboseOutput), nil
 	}
-
-	return apiClient, nil
+	if cluster != "" {
+		return GetForCluster(cluster, apiEnvironment, verboseOutput)
+	}
+	return GetForContext(context, verboseOutput)
 }
 
 // LoginCommand Login client for command
@@ -104,7 +105,7 @@ func GetForToken(context, cluster, environment, token string, verboseOutput bool
 }
 
 // GetForContext Gets API client for set context
-func GetForContext(context string, verbose bool) *apiclient.Radixapi {
+func GetForContext(context string, verbose bool) (*apiclient.Radixapi, error) {
 	radixConfig := radixconfig.RadixConfigAccess{}
 	apiEndpoint := getAPIEndpointForContext(context, radixConfig.GetStartingConfig())
 	return getClientForEndpoint(apiEndpoint, verbose)
@@ -115,7 +116,7 @@ func LoginContext(context string) error {
 	radixConfig := radixconfig.RadixConfigAccess{}
 	defaultConfig := radixConfig.GetDefaultConfig()
 	apiEndpoint := getAPIEndpointForContext(context, defaultConfig)
-	transport := getTransport(apiEndpoint, radixconfig.RadixConfigAccess{}, defaultConfig)
+	transport, _ := getTransport(apiEndpoint, radixconfig.RadixConfigAccess{}, defaultConfig)
 	_, err := transport.Transport.RoundTrip(&http.Request{})
 	if err != nil && err.Error() == "http: nil Request.URL" {
 		return nil
@@ -124,23 +125,29 @@ func LoginContext(context string) error {
 }
 
 // GetForCluster Gets API client for cluster
-func GetForCluster(cluster, environment string, verboseOutput bool) *apiclient.Radixapi {
+func GetForCluster(cluster, environment string, verboseOutput bool) (*apiclient.Radixapi, error) {
 	apiEndpoint := getAPIEndpointForCluster(cluster, environment)
 	return getClientForEndpoint(apiEndpoint, verboseOutput)
 }
 
-func getClientForEndpoint(apiEndpoint string, verbose bool) *apiclient.Radixapi {
+func getClientForEndpoint(apiEndpoint string, verbose bool) (*apiclient.Radixapi, error) {
 	radixConfig := radixconfig.RadixConfigAccess{}
 	startingConfig := radixConfig.GetStartingConfig()
-	transport := getTransport(apiEndpoint, radixConfig, startingConfig)
+	transport, err := getTransport(apiEndpoint, radixConfig, startingConfig)
+	if err != nil {
+		return nil, err
+	}
 	transport.Debug = verbose
 
-	return apiclient.New(transport, strfmt.Default)
+	return apiclient.New(transport, strfmt.Default), nil
 }
 
-func getTransport(apiEndpoint string, radixConfig radixconfig.RadixConfigAccess, startingConfig *clientcmdapi.AuthProviderConfig) *httptransport.Runtime {
+func getTransport(apiEndpoint string, radixConfig radixconfig.RadixConfigAccess, startingConfig *clientcmdapi.AuthProviderConfig) (*httptransport.Runtime, error) {
 	persister := radixconfig.PersisterForRadix(radixConfig)
-	provider, _ := rest.GetAuthProvider("", startingConfig, persister)
+	provider, err := rest.GetAuthProvider("", startingConfig, persister)
+	if err != nil {
+		return nil, err
+	}
 
 	schema := "https"
 	if os.Getenv("USE_LOCAL_RADIX_API") == "true" {
@@ -149,7 +156,7 @@ func getTransport(apiEndpoint string, radixConfig radixconfig.RadixConfigAccess,
 	}
 	transport := httptransport.New(apiEndpoint, "/api/v1", []string{schema})
 	transport.Transport = provider.WrapTransport(transport.Transport)
-	return transport
+	return transport, nil
 }
 
 func getAPIEndpointForContext(context string, config *clientcmdapi.AuthProviderConfig) string {
