@@ -114,7 +114,7 @@ func GetDefaultRadixConfig() *RadixConfig {
 
 func getAzureAuthProvider(radixConfig *RadixConfig) *clientcmdapi.AuthProviderConfig {
 	return &clientcmdapi.AuthProviderConfig{
-		Name:   "azure",
+		Name:   "msal-radix",
 		Config: toMap(radixConfig),
 	}
 }
@@ -135,8 +135,8 @@ type radixConfigPersister struct {
 
 // Persist Persists config to file
 func (p *radixConfigPersister) Persist(config map[string]string) error {
-	startingConfig := toConfig(p.radixConfig.GetStartingConfig().Config)
-	newConfig := toConfig(config)
+	startingConfig := ToConfig(p.radixConfig.GetStartingConfig().Config)
+	newConfig := ToConfig(config)
 
 	if newConfig.CustomConfig == nil {
 		// When token is expired the newconfig doesn't come with the custom config set
@@ -176,7 +176,8 @@ func toMap(radixConfig *RadixConfig) map[string]string {
 	return config
 }
 
-func toConfig(config map[string]string) RadixConfig {
+// ToConfig create RadixConfig from a map
+func ToConfig(config map[string]string) RadixConfig {
 	var customConfig *CustomConfig
 	if _, ok := config[cfgContext]; ok {
 		customConfig = &CustomConfig{

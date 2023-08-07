@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
+	"github.com/equinor/radix-cli/pkg/client/oauth"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/settings"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -144,6 +145,7 @@ func getClientForEndpoint(apiEndpoint string, verbose bool) (*apiclient.Radixapi
 
 func getTransport(apiEndpoint string, radixConfig radixconfig.RadixConfigAccess, startingConfig *clientcmdapi.AuthProviderConfig) (*httptransport.Runtime, error) {
 	persister := radixconfig.PersisterForRadix(radixConfig)
+	rest.RegisterAuthProviderPlugin("msal-radix", oauth.NewMsalAuthProviderPlugin())
 	provider, err := rest.GetAuthProvider("", startingConfig, persister)
 	if err != nil {
 		return nil, err

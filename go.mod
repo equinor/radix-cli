@@ -3,6 +3,7 @@ module github.com/equinor/radix-cli
 go 1.20
 
 require (
+	github.com/AzureAD/microsoft-authentication-library-for-go v1.1.0
 	github.com/equinor/radix-common v1.4.0
 	github.com/equinor/radix-operator v1.40.1
 	github.com/fatih/color v1.15.0
@@ -33,6 +34,7 @@ require (
 	github.com/go-openapi/loads v0.21.2 // indirect
 	github.com/go-openapi/spec v0.20.8 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/golang-jwt/jwt/v5 v5.0.0 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/gnostic v0.6.9 // indirect
@@ -43,6 +45,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
@@ -53,6 +56,7 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.64.1 // indirect
 	github.com/prometheus-operator/prometheus-operator/pkg/client v0.64.1 // indirect
 	github.com/prometheus/client_golang v1.16.0 // indirect
