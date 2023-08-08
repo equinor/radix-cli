@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/AzureAD/microsoft-authentication-library-for-go/apps/public"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"k8s.io/client-go/rest"
-	"net/http"
-	"time"
 )
 
 func NewMsalAuthProviderPlugin() rest.Factory {
@@ -45,7 +46,7 @@ func (p *malAuthProvider) Login() error {
 }
 
 func (p *malAuthProvider) GetToken() (string, error) {
-	cacheAccessor := &TokenCache{file: "~/.radix/config2"}
+	cacheAccessor := &TokenCache{file: "/Users/SSMOL/.radix/config2"}
 	cache := public.WithCache(cacheAccessor)
 	app, err := public.New(p.cfg.SessionConfig.ClientID, cache, public.WithAuthority(getAuthority(p.cfg.SessionConfig)))
 	if err != nil {
