@@ -19,19 +19,20 @@ func NewMsalAuthProviderPlugin() rest.Factory {
 }
 
 func NewMsalAuthProvider(name string, config map[string]string, persister rest.AuthProviderConfigPersister) (rest.AuthProvider, error) {
+	radixConfig := radixconfig.ToConfig(config)
 	return &malAuthProvider{
-		name:      name,
-		client:    http.DefaultClient,
-		cfg:       radixconfig.ToConfig(config),
-		persister: persister,
+		name:        name,
+		client:      http.DefaultClient,
+		radixConfig: &radixConfig,
+		persister:   persister,
 	}, nil
 }
 
 type malAuthProvider struct {
-	client    *http.Client
-	cfg       radixconfig.RadixConfig
-	persister rest.AuthProviderConfigPersister
-	name      string
+	client      *http.Client
+	radixConfig *radixconfig.RadixConfig
+	persister   rest.AuthProviderConfigPersister
+	name        string
 }
 
 func (p *malAuthProvider) WrapTransport(rt http.RoundTripper) http.RoundTripper {
@@ -46,9 +47,9 @@ func (p *malAuthProvider) Login() error {
 }
 
 func (p *malAuthProvider) GetToken() (string, error) {
-	cacheAccessor := &TokenCache{file: "/Users/SSMOL/.radix/config2"}
+	cacheAccessor := &TokenCache{file: "/Users/SSMOL/.radix/config2", radixConfig: p.radixConfig}
 	cache := public.WithCache(cacheAccessor)
-	app, err := public.New(p.cfg.SessionConfig.ClientID, cache, public.WithAuthority(getAuthority(p.cfg.SessionConfig)))
+	app, err := public.New(p.radixConfig.SessionConfig.ClientID, cache, public.WithAuthority(getAuthority(p.radixConfig.SessionConfig)))
 	if err != nil {
 		return "", err
 	}
