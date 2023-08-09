@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-package storage
+package config
 
 import (
 	"reflect"
@@ -99,9 +99,9 @@ func NewAccessToken(homeID, env, realm, clientID string, cachedAt, expiresOn, ex
 		ClientID:          clientID,
 		Secret:            token,
 		Scopes:            scopes,
-		CachedAt:          string(cachedAt.UnixMilli()),
-		ExpiresOn:         string(expiresOn.UnixMilli()),
-		ExtendedExpiresOn: string(extendedExpiresOn.UnixMilli()),
+		CachedAt:          string(cachedAt.Unix()),
+		ExpiresOn:         string(expiresOn.Unix()),
+		ExtendedExpiresOn: string(extendedExpiresOn.Unix()),
 	}
 }
 

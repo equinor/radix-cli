@@ -23,7 +23,7 @@ func NewMsalAuthProvider(name string, config map[string]string, persister rest.A
 	return &malAuthProvider{
 		name:        name,
 		client:      http.DefaultClient,
-		radixConfig: &radixConfig,
+		radixConfig: radixConfig,
 		persister:   persister,
 	}, nil
 }
@@ -47,9 +47,9 @@ func (p *malAuthProvider) Login() error {
 }
 
 func (p *malAuthProvider) GetToken() (string, error) {
-	cacheAccessor := &TokenCache{file: "/Users/SSMOL/.radix/config2", radixConfig: p.radixConfig}
+	cacheAccessor := NewTokenCache(p.radixConfig)
 	cache := public.WithCache(cacheAccessor)
-	app, err := public.New(p.radixConfig.SessionConfig.ClientID, cache, public.WithAuthority(getAuthority(p.radixConfig.SessionConfig)))
+	app, err := public.New(p.radixConfig.ClientID, cache, public.WithAuthority(p.getAuthority()))
 	if err != nil {
 		return "", err
 	}
@@ -81,6 +81,6 @@ func getScopes() []string {
 	return []string{"6dae42f8-4368-4678-94ff-3960e28e3630/.default"}
 }
 
-func getAuthority(config *radixconfig.SessionConfig) string {
-	return fmt.Sprintf("https://login.microsoftonline.com/%s", config.TenantID)
+func (p *malAuthProvider) getAuthority() string {
+	return fmt.Sprintf("https://login.microsoftonline.com/%s", p.radixConfig.TenantID)
 }

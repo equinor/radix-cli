@@ -75,7 +75,7 @@ func LogoutCommand(cmd *cobra.Command) error {
 	}
 	config := radixconfig.GetDefaultRadixConfig()
 	config.CustomConfig.Context = context
-	return radixconfig.Save(*config)
+	return radixconfig.Save(config)
 }
 
 func getContextAndCluster(cmd *cobra.Command) (string, string, error) {

@@ -20,8 +20,9 @@ const (
 	ContextDevelopment = "development"
 	ContextPlatform2   = "platform2"
 
-	recommendedHomeDir  = ".radix"
-	recommendedFileName = "config"
+	recommendedHomeDir           = ".radix"
+	recommendedFileName          = "config"
+	recommendedMsalCredsFileName = "creds"
 
 	clientID    = "ed6cb804-8193-4e55-9d3d-8b88688482b3"
 	tenantID    = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
@@ -31,26 +32,28 @@ const (
 	defaultContext = ContextPlatform
 
 	cfgContext      = "context"
-	cfgClientID     = "client-id"
-	cfgTenantID     = "tenant-id"
 	cfgAccessToken  = "access-token"
 	cfgRefreshToken = "refresh-token"
 	cfgExpiresIn    = "expires-in"
 	cfgExpiresOn    = "expires-on"
 	cfgEnvironment  = "environment"
-	cfgApiserverID  = "apiserver-id"
 	cfgConfigMode   = "config-mode"
 )
 
 var (
-	RecommendedConfigDir = path.Join(homedir.HomeDir(), recommendedHomeDir)
-	RecommendedHomeFile  = path.Join(RecommendedConfigDir, recommendedFileName)
-	ValidContexts        = []string{ContextProduction, ContextPlatform, ContextPlatform2, ContextPlayground, ContextDevelopment}
+	RecommendedConfigDir         = path.Join(homedir.HomeDir(), recommendedHomeDir)
+	RecommendedHomeFile          = path.Join(RecommendedConfigDir, recommendedFileName)
+	RecommendedHomeMsalCredsFile = path.Join(RecommendedConfigDir, recommendedMsalCredsFileName)
+	ValidContexts                = []string{ContextProduction, ContextPlatform, ContextPlatform2, ContextPlayground, ContextDevelopment}
 )
 
 type RadixConfig struct {
 	CustomConfig  *CustomConfig  `json:"customConfig"`
 	SessionConfig *SessionConfig `json:"sessionConfig"`
+	ClientID      string         `json:"-"`
+	TenantID      string         `json:"-"`
+	APIServerID   string         `json:"-"`
+	MsalContract  *Contract      `json:"-"`
 }
 
 type CustomConfig struct {
@@ -58,9 +61,6 @@ type CustomConfig struct {
 }
 
 type SessionConfig struct {
-	ClientID     string      `json:"clientID"`
-	TenantID     string      `json:"tenantID"`
-	APIServerID  string      `json:"apiServerID"`
 	RefreshToken string      `json:"refreshToken"`
 	AccessToken  string      `json:"accessToken"`
 	ExpiresIn    json.Number `json:"expiresIn"`
@@ -103,11 +103,12 @@ func GetDefaultRadixConfig() *RadixConfig {
 		CustomConfig: &CustomConfig{
 			Context: defaultContext,
 		},
+		ClientID:     clientID,
+		TenantID:     tenantID,
+		APIServerID:  apiServerID,
+		MsalContract: NewContract(),
 		SessionConfig: &SessionConfig{
-			ClientID:    clientID,
-			TenantID:    tenantID,
-			APIServerID: apiServerID,
-			ConfigMode:  configMode,
+			ConfigMode: configMode,
 		},
 	}
 }
@@ -151,11 +152,11 @@ func (p *radixConfigPersister) Persist(config map[string]string) error {
 }
 
 // Save Saves RadixConfig
-func Save(radixConfig RadixConfig) error {
+func Save(radixConfig *RadixConfig) error {
 	if _, err := os.Stat(RecommendedConfigDir); os.IsNotExist(err) {
 		os.MkdirAll(RecommendedConfigDir, os.ModePerm)
 	}
-	return jsonutils.Save(RecommendedHomeFile, radixConfig)
+	return jsonutils.Save(RecommendedHomeFile, *radixConfig)
 }
 
 func toMap(radixConfig *RadixConfig) map[string]string {
@@ -164,9 +165,6 @@ func toMap(radixConfig *RadixConfig) map[string]string {
 		config[cfgContext] = radixConfig.CustomConfig.Context
 	}
 
-	config[cfgClientID] = radixConfig.SessionConfig.ClientID
-	config[cfgTenantID] = radixConfig.SessionConfig.TenantID
-	config[cfgApiserverID] = radixConfig.SessionConfig.APIServerID
 	config[cfgRefreshToken] = radixConfig.SessionConfig.RefreshToken
 	config[cfgAccessToken] = radixConfig.SessionConfig.AccessToken
 	config[cfgExpiresIn] = radixConfig.SessionConfig.ExpiresIn.String()
@@ -177,7 +175,7 @@ func toMap(radixConfig *RadixConfig) map[string]string {
 }
 
 // ToConfig create RadixConfig from a map
-func ToConfig(config map[string]string) RadixConfig {
+func ToConfig(config map[string]string) *RadixConfig {
 	var customConfig *CustomConfig
 	if _, ok := config[cfgContext]; ok {
 		customConfig = &CustomConfig{
@@ -185,18 +183,24 @@ func ToConfig(config map[string]string) RadixConfig {
 		}
 	}
 
-	return RadixConfig{
-		CustomConfig: customConfig,
-		SessionConfig: &SessionConfig{
-			ClientID:     config[cfgClientID],
-			TenantID:     config[cfgTenantID],
-			APIServerID:  config[cfgApiserverID],
+	return NewRadixConfig(customConfig,
+		&SessionConfig{
 			RefreshToken: config[cfgRefreshToken],
 			AccessToken:  config[cfgAccessToken],
 			ExpiresIn:    json.Number(config[cfgExpiresIn]),
 			ExpiresOn:    json.Number(config[cfgExpiresOn]),
 			Environment:  config[cfgEnvironment],
 			ConfigMode:   config[cfgConfigMode],
-		},
+		})
+}
+
+func NewRadixConfig(config *CustomConfig, sessionConfig *SessionConfig) *RadixConfig {
+	return &RadixConfig{
+		CustomConfig:  config,
+		SessionConfig: sessionConfig,
+		ClientID:      clientID,
+		TenantID:      tenantID,
+		APIServerID:   apiServerID,
+		MsalContract:  NewContract(),
 	}
 }
