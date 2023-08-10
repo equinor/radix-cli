@@ -5,8 +5,6 @@ import (
 	"path"
 	"reflect"
 
-	"encoding/json"
-
 	jsonutils "github.com/equinor/radix-cli/pkg/utils/json"
 	restclient "k8s.io/client-go/rest"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
@@ -27,17 +25,10 @@ const (
 	clientID    = "ed6cb804-8193-4e55-9d3d-8b88688482b3"
 	tenantID    = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
 	apiServerID = "6dae42f8-4368-4678-94ff-3960e28e3630"
-	configMode  = "1" // Config mode "1" omits spn prefix from the aud (audience) in the token. "0" includes spn prefix
 
 	defaultContext = ContextPlatform
 
-	cfgContext      = "context"
-	cfgAccessToken  = "access-token"
-	cfgRefreshToken = "refresh-token"
-	cfgExpiresIn    = "expires-in"
-	cfgExpiresOn    = "expires-on"
-	cfgEnvironment  = "environment"
-	cfgConfigMode   = "config-mode"
+	cfgContext = "context"
 )
 
 var (
@@ -48,25 +39,15 @@ var (
 )
 
 type RadixConfig struct {
-	CustomConfig  *CustomConfig  `json:"customConfig"`
-	SessionConfig *SessionConfig `json:"sessionConfig"`
-	ClientID      string         `json:"-"`
-	TenantID      string         `json:"-"`
-	APIServerID   string         `json:"-"`
-	MsalContract  *Contract      `json:"-"`
+	CustomConfig *CustomConfig `json:"customConfig"`
+	ClientID     string        `json:"-"`
+	TenantID     string        `json:"-"`
+	APIServerID  string        `json:"-"`
+	MsalContract *Contract     `json:"-"`
 }
 
 type CustomConfig struct {
 	Context string `json:"Context"`
-}
-
-type SessionConfig struct {
-	RefreshToken string      `json:"refreshToken"`
-	AccessToken  string      `json:"accessToken"`
-	ExpiresIn    json.Number `json:"expiresIn"`
-	ExpiresOn    json.Number `json:"expiresOn"`
-	Environment  string      `json:"environment"`
-	ConfigMode   string      `json:"configMode"`
 }
 
 type RadixConfigAccess struct {
@@ -107,9 +88,6 @@ func GetDefaultRadixConfig() *RadixConfig {
 		TenantID:     tenantID,
 		APIServerID:  apiServerID,
 		MsalContract: NewContract(),
-		SessionConfig: &SessionConfig{
-			ConfigMode: configMode,
-		},
 	}
 }
 
@@ -164,13 +142,6 @@ func toMap(radixConfig *RadixConfig) map[string]string {
 	if radixConfig.CustomConfig != nil {
 		config[cfgContext] = radixConfig.CustomConfig.Context
 	}
-
-	config[cfgRefreshToken] = radixConfig.SessionConfig.RefreshToken
-	config[cfgAccessToken] = radixConfig.SessionConfig.AccessToken
-	config[cfgExpiresIn] = radixConfig.SessionConfig.ExpiresIn.String()
-	config[cfgExpiresOn] = radixConfig.SessionConfig.ExpiresOn.String()
-	config[cfgEnvironment] = radixConfig.SessionConfig.Environment
-	config[cfgConfigMode] = radixConfig.SessionConfig.ConfigMode
 	return config
 }
 
@@ -183,24 +154,15 @@ func ToConfig(config map[string]string) *RadixConfig {
 		}
 	}
 
-	return NewRadixConfig(customConfig,
-		&SessionConfig{
-			RefreshToken: config[cfgRefreshToken],
-			AccessToken:  config[cfgAccessToken],
-			ExpiresIn:    json.Number(config[cfgExpiresIn]),
-			ExpiresOn:    json.Number(config[cfgExpiresOn]),
-			Environment:  config[cfgEnvironment],
-			ConfigMode:   config[cfgConfigMode],
-		})
+	return NewRadixConfig(customConfig)
 }
 
-func NewRadixConfig(config *CustomConfig, sessionConfig *SessionConfig) *RadixConfig {
+func NewRadixConfig(config *CustomConfig) *RadixConfig {
 	return &RadixConfig{
-		CustomConfig:  config,
-		SessionConfig: sessionConfig,
-		ClientID:      clientID,
-		TenantID:      tenantID,
-		APIServerID:   apiServerID,
-		MsalContract:  NewContract(),
+		CustomConfig: config,
+		ClientID:     clientID,
+		TenantID:     tenantID,
+		APIServerID:  apiServerID,
+		MsalContract: NewContract(),
 	}
 }

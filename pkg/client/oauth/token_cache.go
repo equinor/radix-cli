@@ -44,5 +44,9 @@ func (t *TokenCache) Export(ctx context.Context, cache cache.Marshaler, hints ca
 		return err
 	}
 	t.radixConfig.MsalContract = contract
+	err = radixconfig.Save(t.radixConfig)
+	if err != nil {
+		return err
+	}
 	return os.WriteFile(t.file, data, 0600)
 }

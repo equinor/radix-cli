@@ -6,7 +6,7 @@ import (
 )
 
 type roundTripper struct {
-	provider *malAuthProvider
+	provider *msalAuthProvider
 	wrapped  http.RoundTripper
 }
 
@@ -14,7 +14,7 @@ func (r *roundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	if len(req.Header.Get("Authorization")) != 0 {
 		return r.wrapped.RoundTrip(req)
 	}
-	token, err := r.provider.GetToken()
+	token, err := r.provider.GetToken(req.Context())
 	if err != nil {
 		return nil, err
 	}

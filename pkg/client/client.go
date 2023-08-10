@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
-	"github.com/equinor/radix-cli/pkg/client/oauth"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/settings"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -143,22 +142,28 @@ func getClientForEndpoint(apiEndpoint string, verbose bool) (*apiclient.Radixapi
 	return apiclient.New(transport, strfmt.Default), nil
 }
 
-func getTransport(apiEndpoint string, radixConfig radixconfig.RadixConfigAccess, startingConfig *clientcmdapi.AuthProviderConfig) (*httptransport.Runtime, error) {
-	persister := radixconfig.PersisterForRadix(radixConfig)
-	rest.RegisterAuthProviderPlugin("msal-radix", oauth.NewMsalAuthProviderPlugin())
-	provider, err := rest.GetAuthProvider("", startingConfig, persister)
-	if err != nil {
-		return nil, err
-	}
-
+func getTransport(apiEndpoint string, radixConfig radixconfig.RadixConfigAccess, authProviderConfig *clientcmdapi.AuthProviderConfig) (*httptransport.Runtime, error) {
 	schema := "https"
 	if os.Getenv("USE_LOCAL_RADIX_API") == "true" {
 		schema = "http"
 		apiEndpoint = "localhost:3002"
 	}
+	provider, err := getAuthProvider(radixConfig, authProviderConfig)
+	if err != nil {
+		return nil, err
+	}
 	transport := httptransport.New(apiEndpoint, "/api/v1", []string{schema})
 	transport.Transport = provider.WrapTransport(transport.Transport)
 	return transport, nil
+}
+
+func getAuthProvider(radixConfig radixconfig.RadixConfigAccess, authProviderConfig *clientcmdapi.AuthProviderConfig) (rest.AuthProvider, error) {
+	persister := radixconfig.PersisterForRadix(radixConfig)
+	provider, err := rest.GetAuthProvider("", authProviderConfig, persister)
+	if err != nil {
+		return nil, err
+	}
+	return provider, nil
 }
 
 func getAPIEndpointForContext(context string, config *clientcmdapi.AuthProviderConfig) string {
