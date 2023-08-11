@@ -11,12 +11,14 @@ import (
 	"k8s.io/client-go/rest"
 )
 
+// MSALAuthProvider is an AuthProvider that uses MSAL
 type MSALAuthProvider interface {
 	Login() error
 	Logout() error
 	WrapTransport(rt http.RoundTripper) http.RoundTripper
 }
 
+// NewMSALAuthProvider creates a new MSALAuthProvider
 func NewMSALAuthProvider(radixConfig *radixconfig.RadixConfig, persister rest.AuthProviderConfigPersister) (MSALAuthProvider, error) {
 	return &msalAuthProvider{
 		name:        "msal",
@@ -33,78 +35,82 @@ type msalAuthProvider struct {
 	name        string
 }
 
-func (p *msalAuthProvider) WrapTransport(rt http.RoundTripper) http.RoundTripper {
+// WrapTransport allows the plugin to create a modified RoundTripper that
+// attaches authorization headers (or other info) to requests.
+func (provider *msalAuthProvider) WrapTransport(rt http.RoundTripper) http.RoundTripper {
 	return &roundTripper{
 		wrapped:  rt,
-		provider: p,
+		provider: provider,
 	}
 }
 
-func (p *msalAuthProvider) Login() error {
+// Login allows the plugin to initialize its configuration. It must not
+// require direct user interaction.
+func (provider *msalAuthProvider) Login() error {
 	// login not supported for this AuthProvider
 	return nil
 }
 
-func (p *msalAuthProvider) Logout() error {
-	client, err := NewClient(p.radixConfig)
+// Logout removes all cached accounts with tokens
+func (provider *msalAuthProvider) Logout() error {
+	client, err := New(provider.radixConfig)
 	if err != nil {
 		return err
 	}
 	ctx := context.Background()
-	for {
-		account, err := getExistingAccount(ctx, client)
-		if err != nil {
-			return err
-		}
-		if account.IsZero() {
-			break
-		}
-		err = client.RemoveAccount(ctx, account)
-		if err != nil {
+	accounts, err := client.Accounts(ctx)
+	if err != nil {
+		return err
+	}
+	for _, account := range accounts {
+		if err := client.RemoveAccount(ctx, account); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (p *msalAuthProvider) GetToken(ctx context.Context) (string, error) {
-	client, err := NewClient(p.radixConfig)
+// GetToken returns a valid token for the given scopes
+func (provider *msalAuthProvider) GetToken(ctx context.Context) (string, error) {
+	client, err := New(provider.radixConfig)
 	if err != nil {
 		return "", err
 	}
-	account, err := getExistingAccount(ctx, client)
+
+	accounts, err := client.Accounts(ctx)
 	if err != nil {
 		return "", err
 	}
-	// found a cached account, now see if an applicable token has been cached
-	// NOTE: this API conflates error states, i.e. err is non-nil if an applicable token isn't
-	//       cached or if something goes wrong (making the HTTP request, unmarshalling, etc).
-	authResult, err := client.AcquireTokenSilent(ctx, getScopes(), public.WithSilentAccount(account))
-	if err == nil {
-		return authResult.AccessToken, nil
+	if len(accounts) > 0 {
+		// found a cached account, now see if an applicable token has been cached
+		// NOTE: this API conflates error states, i.e. err is non-nil if an applicable token isn't
+		//       cached or if something goes wrong (making the HTTP request, unmarshalling, etc).
+		authResult, err := client.AcquireTokenSilent(ctx, getScopes(), public.WithSilentAccount(accounts[0]))
+		if err == nil {
+			return authResult.AccessToken, nil
+		}
 	}
+
 	// either there was no cached account/token or the call to AcquireTokenSilent() failed
 	// make a new request to AAD
-	result, err := p.loginWithDeviceCode(ctx, client)
-	if err != nil {
-		return "", err
-	}
-	return result.AccessToken, nil
+	return provider.loginWithDeviceCode(ctx, client)
 }
 
-func (p *msalAuthProvider) loginWithDeviceCode(ctx context.Context, client *public.Client) (*public.AuthResult, error) {
+func (provider *msalAuthProvider) loginWithDeviceCode(ctx context.Context, client *public.Client) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 100*time.Second)
 	defer cancel()
 	devCode, err := client.AcquireTokenByDeviceCode(ctx, getScopes())
 	if err != nil {
-		return nil, fmt.Errorf("got error while waiting for user to input the device code: %s", err)
+		return "", fmt.Errorf("got error while waiting for user to input the device code: %s", err)
 	}
-	fmt.Printf("Device Code is: %s\n", devCode.Result.Message)
+
+	fmt.Println(devCode.Result.Message) // show authentication link with device code
+
 	result, err := devCode.AuthenticationResult(ctx)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return &result, nil
+	return result.AccessToken, nil
 }
 
 func getScopes() []string {

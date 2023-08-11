@@ -2,19 +2,21 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/AzureAD/microsoft-authentication-library-for-go/apps/cache"
-	customJSON "github.com/equinor/radix-cli/pkg/client/auth/internal/json"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	jsonutils "github.com/equinor/radix-cli/pkg/utils/json"
 	log "github.com/sirupsen/logrus"
 	"os"
 )
 
+// TokenCache is a token cache
 type TokenCache struct {
 	file        string
 	radixConfig *radixconfig.RadixConfig
 }
 
+// NewTokenCache creates a new token cache
 func NewTokenCache(radixConfig *radixconfig.RadixConfig) *TokenCache {
 	return &TokenCache{
 		file:        radixconfig.RecommendedHomeMsalContractFile,
@@ -22,26 +24,30 @@ func NewTokenCache(radixConfig *radixconfig.RadixConfig) *TokenCache {
 	}
 }
 
+// Replace replaces the cache with what is in external storage. Implementors should honor
+// Context cancellations and return context.Canceled or context.DeadlineExceeded in those cases.
 func (t *TokenCache) Replace(ctx context.Context, cache cache.Unmarshaler, hints cache.ReplaceHints) error {
 	data, err := os.ReadFile(t.file)
 	if err != nil {
 		log.Println(err)
 	}
 	contract := radixconfig.NewContract()
-	if err := customJSON.Unmarshal(data, contract); err != nil {
+	if err := json.Unmarshal(data, contract); err != nil {
 		return err
 	}
 	t.radixConfig.MSALContract = contract
 	return cache.Unmarshal(data)
 }
 
+// Export writes the binary representation of the cache (cache.Marshal()) to external storage.
+// This is considered opaque. Context cancellations should be honored as in Replace.
 func (t *TokenCache) Export(ctx context.Context, cache cache.Marshaler, hints cache.ExportHints) error {
 	data, err := cache.Marshal()
 	if err != nil {
 		log.Println(err)
 	}
 	msalContract := radixconfig.NewContract()
-	if err := customJSON.Unmarshal(data, msalContract); err != nil {
+	if err := json.Unmarshal(data, msalContract); err != nil {
 		return err
 	}
 	t.radixConfig.MSALContract = msalContract
@@ -58,8 +64,7 @@ func (t *TokenCache) Export(ctx context.Context, cache cache.Marshaler, hints ca
 
 func ensureMsalContractFileExists() error {
 	if _, err := os.Stat(radixconfig.RecommendedConfigDir); os.IsNotExist(err) {
-		err := os.MkdirAll(radixconfig.RecommendedConfigDir, os.ModePerm)
-		if err != nil {
+		if err := os.MkdirAll(radixconfig.RecommendedConfigDir, os.ModePerm); err != nil {
 			return err
 		}
 	}

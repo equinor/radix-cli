@@ -10,6 +10,8 @@ type roundTripper struct {
 	wrapped  http.RoundTripper
 }
 
+// RoundTrip executes a single HTTP transaction, returning
+// a Response for the provided Request.
 func (r *roundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	if len(req.Header.Get("Authorization")) != 0 {
 		return r.wrapped.RoundTrip(req)
@@ -20,17 +22,18 @@ func (r *roundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	}
 
 	// shallow copy of the struct
-	r2 := new(http.Request)
-	*r2 = *req
+	copyReq := new(http.Request)
+	*copyReq = *req
 	// deep copy of the Header, so we don't modify the original
 	// request's Header (as per RoundTripper contract).
-	r2.Header = make(http.Header)
-	for k, s := range req.Header {
-		r2.Header[k] = s
+	copyReq.Header = make(http.Header)
+	for key, val := range req.Header {
+		copyReq.Header[key] = val
 	}
-	r2.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	copyReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 
-	return r.wrapped.RoundTrip(r2)
+	return r.wrapped.RoundTrip(copyReq)
 }
 
+// WrappedRoundTripper returns the underlying RoundTripper
 func (r *roundTripper) WrappedRoundTripper() http.RoundTripper { return r.wrapped }
