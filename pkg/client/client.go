@@ -104,8 +104,8 @@ func GetForToken(context, cluster, environment, token string, verboseOutput bool
 
 // GetForContext Gets API client for set context
 func GetForContext(context string, verbose bool) (*apiclient.Radixapi, error) {
-	radixConfig := radixconfig.RadixConfigAccess{}
-	apiEndpoint := getAPIEndpointForContext(context, radixConfig.GetStartingConfig())
+	radixConfigAccess := radixconfig.RadixConfigAccess{}
+	apiEndpoint := getAPIEndpointForContext(context, radixConfigAccess.GetStartingConfig())
 	return getClientForEndpoint(apiEndpoint, verbose)
 }
 

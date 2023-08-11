@@ -86,7 +86,7 @@ docker run -it -v %HOME%:/home/radix-cli ghcr.io/equinor/radix/rx:latest $*
 
 ## Modes of running
 
-There are generally two modes of running the CLI. Both cases may use configuration in your \$HOME/.radix folder:
+There are generally two modes of running the CLI. Both cases may use configuration in your `<home>/.radix` folder:
 
 ### Interactively
 
@@ -96,7 +96,7 @@ CLI will use users privileges to access the Radix API server. Context informatio
 
 ### Using a machine user
 
-CLI can also use a machine user for authenticating with the API server. This will be done through a bearer token of a service account connected to your application. The service account token will be provided to you under configuration page of your application. For more information on this see [this](https://www.radix.equinor.com/guides/deploy-only/#machine-user-token) guide. There are two ways to feed this token to the CLI. Either using standard input. The should be done like this:
+CLI can also use a machine user for authenticating with the API server. This will be done through a bearer token of a service account connected to your application. The service account token will be provided to you under configuration page of your application. For more information on this see [this](https://www.radix.equinor.com/guides/deploy-only/#machine-user-token) guide. There are two ways to feed this token to the CLI. Either using standard input. This should be done like this:
 
 `echo <your service account token> | rx --token-stdin list applications`
 
@@ -120,8 +120,8 @@ docker run -it -e APP_SERVICE_ACCOUNT_TOKEN=$APP_SERVICE_ACCOUNT_TOKEN  ghcr.io/
 
 ## Problems encountered
 
-Problem: Failed to acquire a token: refreshing the expired token: refreshing token: adal: Refresh request failed. Status Code = '400'
-Solution: Remove your .radix folder
+Problem: Failed to acquire a token from Azure AD
+Solution: Remove your `<home>/.radix` folder
 
 ```
 rm -rf $HOME/.radix/
@@ -137,8 +137,11 @@ cobra add <commandName>
 
 ### Generate client stubs
 
-Client code is generated from swagger contract definition of the latest contract of the Radix API server. We use [go-swagger](https://github.com/go-swagger/go-swagger/blob/master/docs/install.md). The generated code should not be checked in, but will be generated on build of the CLI. When go-swagger is installed you can generate code using this command:
-
+Client code is generated from swagger contract definition of the latest contract of the Radix API server. We use [go-swagger](https://github.com/go-swagger/go-swagger/blob/master/docs/install.md). Install it by:
+```
+go install github.com/go-swagger/go-swagger/cmd/swagger@v0.30.5
+```
+The generated code should not be checked in, but will be generated on build of the CLI. When go-swagger is installed you can generate code using this command:
 ```
 make generate-client
 ```
@@ -147,7 +150,7 @@ NOTE: If there is a change to the API, you make need to point to the API environ
 
 ### Building and releasing
 
-We are making releases available as github releases using [go-releaser](https://goreleaser.com/). The release process is controlled by the `.goreleaser.yml` file. 
+We are making releases available as GitHub releases using [go-releaser](https://goreleaser.com/). The release process is controlled by the `.goreleaser.yml` file. 
 
 To make a release:
 1. Set the version number in the constant `version` in the file `cmd/root.go`. The version will be shown with the command `rx --version`

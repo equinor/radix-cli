@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
+// Copy of an internal structure https://github.com/AzureAD/microsoft-authentication-library-for-go/blob/main/apps/internal/base/internal/storage/items.go
 
 package config
 
@@ -39,6 +40,7 @@ func NewContract() *Contract {
 	}
 }
 
+// Account is the JSON representation of a MSAL account for encoding to storage.
 type Account struct {
 	HomeAccountID     string `json:"home_account_id,omitempty"`
 	Environment       string `json:"environment,omitempty"`

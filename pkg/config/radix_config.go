@@ -167,6 +167,7 @@ func ToConfig(config map[string]string) *RadixConfig {
 	return radixConfig
 }
 
+// NewRadixConfig Gets RadixConfig with default properties
 func NewRadixConfig() *RadixConfig {
 	return &RadixConfig{
 		CustomConfig: &CustomConfig{},
