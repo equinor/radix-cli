@@ -1,8 +1,9 @@
-package oauth
+package auth
 
 import (
 	"context"
 	"fmt"
+
 	"github.com/AzureAD/microsoft-authentication-library-for-go/apps/public"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 )

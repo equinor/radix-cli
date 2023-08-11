@@ -9,12 +9,12 @@ import (
 	"strings"
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
+	"github.com/equinor/radix-cli/pkg/client/auth"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/settings"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
-	"k8s.io/client-go/rest"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -67,14 +67,12 @@ func LoginCommand(cmd *cobra.Command) error {
 }
 
 // LogoutCommand Logout command
-func LogoutCommand(cmd *cobra.Command) error {
-	context, _, err := getContextAndCluster(cmd)
+func LogoutCommand() error {
+	provider, err := getAuthProvider(radixconfig.GetDefaultRadixConfig(), radixconfig.RadixConfigAccess{})
 	if err != nil {
 		return err
 	}
-	config := radixconfig.GetDefaultRadixConfig()
-	config.CustomConfig.Context = context
-	return radixconfig.Save(config)
+	return provider.Logout()
 }
 
 func getContextAndCluster(cmd *cobra.Command) (string, string, error) {
@@ -117,11 +115,10 @@ func LoginContext(context string) error {
 	defaultConfig := radixConfig.GetDefaultConfig()
 	apiEndpoint := getAPIEndpointForContext(context, defaultConfig)
 	transport, _ := getTransport(apiEndpoint, radixconfig.RadixConfigAccess{}, defaultConfig)
-	_, err := transport.Transport.RoundTrip(&http.Request{})
-	if err != nil && err.Error() == "http: nil Request.URL" {
-		return nil
+	if _, err := transport.Transport.RoundTrip(&http.Request{}); err != nil && err.Error() != "http: nil Request.URL" {
+		return err
 	}
-	return err
+	return nil
 }
 
 // GetForCluster Gets API client for cluster
@@ -131,9 +128,9 @@ func GetForCluster(cluster, environment string, verboseOutput bool) (*apiclient.
 }
 
 func getClientForEndpoint(apiEndpoint string, verbose bool) (*apiclient.Radixapi, error) {
-	radixConfig := radixconfig.RadixConfigAccess{}
-	startingConfig := radixConfig.GetStartingConfig()
-	transport, err := getTransport(apiEndpoint, radixConfig, startingConfig)
+	radixConfigAccess := radixconfig.RadixConfigAccess{}
+	startingConfig := radixConfigAccess.GetStartingConfig()
+	transport, err := getTransport(apiEndpoint, radixConfigAccess, startingConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -142,24 +139,24 @@ func getClientForEndpoint(apiEndpoint string, verbose bool) (*apiclient.Radixapi
 	return apiclient.New(transport, strfmt.Default), nil
 }
 
-func getTransport(apiEndpoint string, radixConfig radixconfig.RadixConfigAccess, authProviderConfig *clientcmdapi.AuthProviderConfig) (*httptransport.Runtime, error) {
+func getTransport(apiEndpoint string, radixConfigAccess radixconfig.RadixConfigAccess, authProviderConfig *clientcmdapi.AuthProviderConfig) (*httptransport.Runtime, error) {
+	provider, err := getAuthProvider(radixconfig.ToConfig(authProviderConfig.Config), radixConfigAccess)
+	if err != nil {
+		return nil, err
+	}
 	schema := "https"
 	if os.Getenv("USE_LOCAL_RADIX_API") == "true" {
 		schema = "http"
 		apiEndpoint = "localhost:3002"
-	}
-	provider, err := getAuthProvider(radixConfig, authProviderConfig)
-	if err != nil {
-		return nil, err
 	}
 	transport := httptransport.New(apiEndpoint, "/api/v1", []string{schema})
 	transport.Transport = provider.WrapTransport(transport.Transport)
 	return transport, nil
 }
 
-func getAuthProvider(radixConfig radixconfig.RadixConfigAccess, authProviderConfig *clientcmdapi.AuthProviderConfig) (rest.AuthProvider, error) {
-	persister := radixconfig.PersisterForRadix(radixConfig)
-	provider, err := rest.GetAuthProvider("", authProviderConfig, persister)
+func getAuthProvider(radixConfig *radixconfig.RadixConfig, radixConfigAccess radixconfig.RadixConfigAccess) (auth.MSALAuthProvider, error) {
+	persister := radixconfig.PersisterForRadix(radixConfigAccess)
+	provider, err := auth.NewMSALAuthProvider(radixConfig, persister)
 	if err != nil {
 		return nil, err
 	}

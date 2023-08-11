@@ -18,7 +18,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/equinor/radix-cli/generated-client/client/deployment"
+	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/utils/json"
@@ -58,13 +58,13 @@ Examples:
 }
 
 func getDeploymentForAllEnvironments(cmd *cobra.Command, appName string) error {
-	params := deployment.NewGetDeploymentParams()
+	params := application.NewGetDeploymentsParams()
 	params.WithAppName(appName)
 	apiClient, err := client.GetForCommand(cmd)
 	if err != nil {
 		return err
 	}
-	resp, err := apiClient.Deployment.GetDeployment(params, nil)
+	resp, err := apiClient.Application.GetDeployments(params, nil)
 	if err != nil {
 		println(fmt.Sprintf("%v", err))
 		return err

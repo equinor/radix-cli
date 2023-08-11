@@ -77,12 +77,12 @@ func (c RadixConfigAccess) GetStartingConfig() *clientcmdapi.AuthProviderConfig 
 	} else {
 		radixConfig = GetDefaultRadixConfig()
 	}
-	return getAzureAuthProvider(radixConfig)
+	return GetAuthProviderConfig(radixConfig)
 }
 
 // GetDefaultConfig Gets AuthProviderConfig with default properties
 func (c RadixConfigAccess) GetDefaultConfig() *clientcmdapi.AuthProviderConfig {
-	return getAzureAuthProvider(GetDefaultRadixConfig())
+	return GetAuthProviderConfig(GetDefaultRadixConfig())
 }
 
 // GetDefaultRadixConfig Gets RadixConfig with default properties
@@ -98,9 +98,10 @@ func GetDefaultRadixConfig() *RadixConfig {
 	}
 }
 
-func getAzureAuthProvider(radixConfig *RadixConfig) *clientcmdapi.AuthProviderConfig {
+// GetAuthProviderConfig Gets AuthProviderConfig with properties from RadixConfig
+func GetAuthProviderConfig(radixConfig *RadixConfig) *clientcmdapi.AuthProviderConfig {
 	return &clientcmdapi.AuthProviderConfig{
-		Name:   "msal-radix",
+		Name:   "msal",
 		Config: toMap(radixConfig),
 	}
 }

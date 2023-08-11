@@ -1,9 +1,9 @@
-package oauth
+package auth
 
 import (
 	"context"
 	"github.com/AzureAD/microsoft-authentication-library-for-go/apps/cache"
-	customJSON "github.com/equinor/radix-cli/pkg/client/oauth/internal/json"
+	customJSON "github.com/equinor/radix-cli/pkg/client/auth/internal/json"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	jsonutils "github.com/equinor/radix-cli/pkg/utils/json"
 	log "github.com/sirupsen/logrus"

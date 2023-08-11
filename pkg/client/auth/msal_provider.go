@@ -1,4 +1,4 @@
-package oauth
+package auth
 
 import (
 	"context"
@@ -11,16 +11,15 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func NewMsalAuthProviderPlugin() rest.Factory {
-	return func(name string, config map[string]string, persister rest.AuthProviderConfigPersister) (rest.AuthProvider, error) {
-		return NewMsalAuthProvider(name, config, persister)
-	}
+type MSALAuthProvider interface {
+	Login() error
+	Logout() error
+	WrapTransport(rt http.RoundTripper) http.RoundTripper
 }
 
-func NewMsalAuthProvider(name string, config map[string]string, persister rest.AuthProviderConfigPersister) (rest.AuthProvider, error) {
-	radixConfig := radixconfig.ToConfig(config)
+func NewMSALAuthProvider(radixConfig *radixconfig.RadixConfig, persister rest.AuthProviderConfigPersister) (MSALAuthProvider, error) {
 	return &msalAuthProvider{
-		name:        name,
+		name:        "msal",
 		client:      http.DefaultClient,
 		radixConfig: radixConfig,
 		persister:   persister,
@@ -46,11 +45,12 @@ func (p *msalAuthProvider) Login() error {
 	return nil
 }
 
-func (p *msalAuthProvider) Logout(ctx context.Context) error {
+func (p *msalAuthProvider) Logout() error {
 	client, err := NewClient(p.radixConfig)
 	if err != nil {
 		return err
 	}
+	ctx := context.Background()
 	for {
 		account, err := getExistingAccount(ctx, client)
 		if err != nil {

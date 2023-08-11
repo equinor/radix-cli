@@ -3,8 +3,6 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/equinor/radix-cli/pkg/client/oauth"
-	"k8s.io/client-go/rest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -38,7 +36,6 @@ var rootCmd = &cobra.Command{
 
 // Execute the top level command
 func Execute() {
-	rest.RegisterAuthProviderPlugin("msal-radix", oauth.NewMsalAuthProviderPlugin())
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(radixCLIError)
 		fmt.Println(err)
