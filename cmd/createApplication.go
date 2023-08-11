@@ -55,18 +55,20 @@ var createApplicationCmd = &cobra.Command{
 		}
 
 		adGroups, _ := cmd.Flags().GetStringSlice("ad-groups")
+		readerAdGroups, _ := cmd.Flags().GetStringSlice("reader-ad-groups")
 
 		registerApplicationParams := platform.NewRegisterApplicationParams()
 		registerApplicationParams.SetApplicationRegistration(&models.ApplicationRegistrationRequest{
 			AcknowledgeWarnings: acknowledgeWarnings,
 			ApplicationRegistration: &models.ApplicationRegistration{
-				Name:                appName,
-				Repository:          &repository,
-				SharedSecret:        &sharedSecret,
 				AdGroups:            adGroups,
 				ConfigBranch:        &configBranch,
-				RadixConfigFullName: configFile,
 				ConfigurationItem:   configurationItem,
+				Name:                appName,
+				RadixConfigFullName: configFile,
+				ReaderAdGroups:      readerAdGroups,
+				Repository:          &repository,
+				SharedSecret:        &sharedSecret,
 			},
 		})
 
@@ -127,6 +129,7 @@ func init() {
 		createApplicationCmd.Flags().StringP("config-branch", "", "", "Name of the branch where Radix will read your radixconfig.yaml from")
 		createApplicationCmd.Flags().StringP("config-file", "", "", "Name of the radix config file. Optional, defaults to radixconfig.yaml")
 		createApplicationCmd.Flags().StringSliceP("ad-groups", "", []string{}, "Admin groups")
+		createApplicationCmd.Flags().StringSliceP("reader-ad-groups", "", []string{}, "Reader groups")
 		createApplicationCmd.Flags().StringP("configuration-item", "", "", "Configuration item")
 		createApplicationCmd.Flags().Bool("acknowledge-warnings", false, "Acknowledge warnings and proceed")
 	}
