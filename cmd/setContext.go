@@ -32,17 +32,18 @@ var setContextCmd = &cobra.Command{
 	Long: fmt.Sprintf("Sets the context to be either %s, %s, %s or %s",
 		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		name, _ := cmd.Flags().GetString(settings.ContextOption)
+		context, _ := cmd.Flags().GetString(settings.ContextOption)
 
-		if !radixconfig.IsValidContext(name) {
-			return fmt.Errorf("context '%s' is not a valid context", name)
+		if !radixconfig.IsValidContext(context) {
+			return fmt.Errorf("context '%s' is not a valid context", context)
 		}
 
-		radixConfig := radixconfig.RadixConfigAccess{}
-		config := radixConfig.GetStartingConfig().Config
-		config[settings.ContextOption] = name
-		persister := radixconfig.PersisterForRadix(radixConfig)
-		persister.Persist(config)
+		radixConfig, err := radixconfig.GetRadixConfig()
+		if err != nil {
+			return err
+		}
+		radixConfig.CustomConfig.Context = context
+		radixconfig.Save(radixConfig)
 		return nil
 	},
 }

@@ -8,7 +8,6 @@ import (
 
 	"github.com/AzureAD/microsoft-authentication-library-for-go/apps/public"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
-	"k8s.io/client-go/rest"
 )
 
 // MSALAuthProvider is an AuthProvider that uses MSAL
@@ -19,20 +18,16 @@ type MSALAuthProvider interface {
 }
 
 // NewMSALAuthProvider creates a new MSALAuthProvider
-func NewMSALAuthProvider(radixConfig *radixconfig.RadixConfig, persister rest.AuthProviderConfigPersister) (MSALAuthProvider, error) {
+func NewMSALAuthProvider(radixConfig *radixconfig.RadixConfig) (MSALAuthProvider, error) {
 	return &msalAuthProvider{
-		name:        "msal",
 		client:      http.DefaultClient,
 		radixConfig: radixConfig,
-		persister:   persister,
 	}, nil
 }
 
 type msalAuthProvider struct {
 	client      *http.Client
 	radixConfig *radixconfig.RadixConfig
-	persister   rest.AuthProviderConfigPersister
-	name        string
 }
 
 // WrapTransport allows the plugin to create a modified RoundTripper that

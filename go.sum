@@ -39,8 +39,8 @@ github.com/envoyproxy/go-control-plane v0.9.9-0.20210512163311-63b5d3c536b0/go.m
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
 github.com/equinor/radix-common v1.4.0 h1:oje63oYtecMn8DHzhIH5Vmb6yMPEHrU8vBi+u0By3/k=
 github.com/equinor/radix-common v1.4.0/go.mod h1:07cHvEwidhkjNfqNlryatLYDTPrB7gtTMUI07IBv1kg=
-github.com/equinor/radix-operator v1.40.1 h1:3wqBk6mhVelXf9VTT5WZZYrz4/ENrIktMzfflNTAd40=
-github.com/equinor/radix-operator v1.40.1/go.mod h1:lCg/7ZtK/KiUDsS2DVL4zSHeENk6idE9tFC1CyPJXm4=
+github.com/equinor/radix-operator v1.40.2 h1:0KBHkzL01MlI58xlAm7GPenZES5eF/bfYn/K6YHPL+g=
+github.com/equinor/radix-operator v1.40.2/go.mod h1:lCg/7ZtK/KiUDsS2DVL4zSHeENk6idE9tFC1CyPJXm4=
 github.com/evanphx/json-patch v5.6.0+incompatible h1:jBYDEEiFBPxA0v50tFdvOzQQTCvpL6mnFh5mB2/l16U=
 github.com/fatih/color v1.15.0 h1:kOqh6YHBtK8aywxGerMG2Eq3H6Qgoqeo13Bk2Mv/nBs=
 github.com/fatih/color v1.15.0/go.mod h1:0h5ZqXfHYED7Bhv2ZJamyIOUej9KtShiJESRwBDUSsw=

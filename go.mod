@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.1.0
 	github.com/equinor/radix-common v1.4.0
-	github.com/equinor/radix-operator v1.40.1
+	github.com/equinor/radix-operator v1.40.2
 	github.com/fatih/color v1.15.0
 	github.com/go-openapi/errors v0.20.4
 	github.com/go-openapi/runtime v0.26.0
@@ -14,7 +14,6 @@ require (
 	github.com/go-openapi/validate v0.22.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.7.0
-	k8s.io/client-go v0.26.7
 	k8s.io/klog/v2 v2.100.1
 	sigs.k8s.io/controller-runtime v0.14.6
 )
@@ -83,6 +82,7 @@ require (
 	k8s.io/api v0.26.7 // indirect
 	k8s.io/apiextensions-apiserver v0.26.7 // indirect
 	k8s.io/apimachinery v0.26.7 // indirect
+	k8s.io/client-go v0.26.7 // indirect
 	k8s.io/kube-openapi v0.0.0-20230501164219-8b0f38b5fd1f // indirect
 	k8s.io/utils v0.0.0-20230505201702-9f6742963106 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
