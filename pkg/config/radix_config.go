@@ -15,9 +15,8 @@ const (
 	ContextDevelopment = "development"
 	ContextPlatform2   = "platform2"
 
-	radixConfigDir       = ".radix"
-	radixConfigFileName  = "config"
-	msalContractFileName = "contract"
+	radixConfigDir      = ".radix"
+	radixConfigFileName = "config"
 
 	clientID    = "ed6cb804-8193-4e55-9d3d-8b88688482b3"
 	tenantID    = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
@@ -27,10 +26,9 @@ const (
 )
 
 var (
-	RadixConfigDir           = path.Join(getUserHomeDir(), radixConfigDir)
-	RadixConfigFileFullName  = path.Join(RadixConfigDir, radixConfigFileName)
-	MsalContractFileFullName = path.Join(RadixConfigDir, msalContractFileName)
-	ValidContexts            = []string{ContextProduction, ContextPlatform, ContextPlatform2, ContextPlayground, ContextDevelopment}
+	RadixConfigDir          = path.Join(getUserHomeDir(), radixConfigDir)
+	RadixConfigFileFullName = path.Join(RadixConfigDir, radixConfigFileName)
+	ValidContexts           = []string{ContextProduction, ContextPlatform, ContextPlatform2, ContextPlayground, ContextDevelopment}
 )
 
 func getUserHomeDir() string {
@@ -51,7 +49,7 @@ type RadixConfig struct {
 	// APIServerID is the ID of the API server that the client will use to get tokens
 	APIServerID string `json:"-"`
 	// MSALContract is the MSAL internal structure that is written to any storage medium when serializing the cache
-	MSALContract *Contract `json:"-"`
+	MSALContract *Contract `json:"contract"`
 }
 
 // CustomConfig is the custom environment config
@@ -75,7 +73,7 @@ func GetRadixConfig() (*RadixConfig, error) {
 	if err == nil {
 		return radixConfig, nil
 	}
-	fmt.Println("Cannot load a RadixConfig, creating a new one.")
+	fmt.Println("Cannot load a RadixConfig, creating a new one with the context 'platform'.")
 	radixConfig = getDefaultRadixConfig()
 	if err = jsonutils.Save(RadixConfigFileFullName, radixConfig); err != nil {
 		return nil, err
@@ -96,6 +94,6 @@ func getDefaultRadixConfig() *RadixConfig {
 }
 
 // Save Saves RadixConfig
-func Save(radixConfig *RadixConfig) error {
+func (radixConfig *RadixConfig) Save() error {
 	return jsonutils.Save(RadixConfigFileFullName, *radixConfig)
 }

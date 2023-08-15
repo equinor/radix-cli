@@ -1,11 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/equinor/radix-cli/cmd"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
-	jsonutils "github.com/equinor/radix-cli/pkg/utils/json"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
@@ -20,24 +20,22 @@ func init() {
 
 func main() {
 	klog.SetLogger(klog.New(log.NullLogSink{})) // HACK: Temporarily disable client-go warning https://github.com/kubernetes/client-go/blob/c2f61ae20ae1b13893992f7ceadd6304ba7025e3/plugin/pkg/client/auth/azure/azure.go#L91
-	ensureRadixConfigFilesExist()
+
+	err := ensureRadixConfigFolderExists()
+	if err != nil {
+		fmt.Printf("Error creating radix config folder: %v\n", err)
+		os.Exit(1)
+	}
+
 	cmd.Execute()
 }
 
-func ensureRadixConfigFilesExist() error {
+func ensureRadixConfigFolderExists() error {
 	if _, err := os.Stat(radixconfig.RadixConfigDir); err != nil {
 		if !os.IsNotExist(err) {
 			return err
 		}
 		if err = os.MkdirAll(radixconfig.RadixConfigDir, os.ModePerm); err != nil {
-			return err
-		}
-	}
-	if _, err := os.Stat(radixconfig.MsalContractFileFullName); err != nil {
-		if !os.IsNotExist(err) {
-			return err
-		}
-		if err = jsonutils.Save(radixconfig.MsalContractFileFullName, radixconfig.NewContract()); err != nil {
 			return err
 		}
 	}
