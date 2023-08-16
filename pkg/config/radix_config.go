@@ -23,8 +23,7 @@ const (
 var (
 	RadixConfigDir          = path.Join(getUserHomeDir(), radixConfigDir)
 	RadixConfigFileFullName = path.Join(RadixConfigDir, radixConfigFileName)
-	// MsalContractFileFullName = path.Join(RadixConfigDir, msalContractFileName)
-	ValidContexts = []string{ContextProduction, ContextPlatform, ContextPlatform2, ContextPlayground, ContextDevelopment}
+	ValidContexts           = []string{ContextProduction, ContextPlatform, ContextPlatform2, ContextPlayground, ContextDevelopment}
 )
 
 func getUserHomeDir() string {
@@ -38,7 +37,7 @@ func getUserHomeDir() string {
 type RadixConfig struct {
 	// CustomConfig is the custom environment config
 	CustomConfig *CustomConfig `json:"customConfig"`
-	// MSAL is the base64 encoded internal cache structure used by the MSAL module
+	// MSAL is the internal cache structure used by the MSAL module. The content is base64 encoded
 	MSAL string `json:"msal,omitempty"`
 }
 

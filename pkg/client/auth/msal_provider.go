@@ -42,15 +42,6 @@ func (provider *msalAuthProvider) AuthenticateRequest(r runtime.ClientRequest, _
 	return r.SetHeaderParam(runtime.HeaderAuthorization, "Bearer "+token)
 }
 
-// // WrapTransport allows the plugin to create a modified RoundTripper that
-// // attaches authorization headers (or other info) to requests.
-// func (provider *msalAuthProvider) WrapTransport(rt http.RoundTripper) http.RoundTripper {
-// 	return &roundTripper{
-// 		wrapped:  rt,
-// 		provider: provider,
-// 	}
-// }
-
 // Login allows the plugin to initialize its configuration. It must not
 // require direct user interaction.
 func (provider *msalAuthProvider) Login(ctx context.Context) error {
