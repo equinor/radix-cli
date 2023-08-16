@@ -72,5 +72,6 @@ func init() {
 		stopComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
 		stopComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
 		stopComponentCmd.Flags().StringP("component", "n", "", "Name of the component to stop")
+		setContextSpecificPersistentFlags(stopComponentCmd)
 	}
 }

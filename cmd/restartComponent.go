@@ -73,5 +73,6 @@ func init() {
 		restartComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
 		restartComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
 		restartComponentCmd.Flags().StringP("component", "n", "", "Name of the component to restart")
+		setContextSpecificPersistentFlags(restartComponentCmd)
 	}
 }

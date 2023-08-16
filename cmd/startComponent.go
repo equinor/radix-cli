@@ -73,5 +73,6 @@ func init() {
 		startComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
 		startComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
 		startComponentCmd.Flags().StringP("component", "n", "", "Name of the component to start")
+		setContextSpecificPersistentFlags(startComponentCmd)
 	}
 }

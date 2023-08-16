@@ -79,5 +79,6 @@ func init() {
 	if getApplicationEnabled {
 		getCmd.AddCommand(getApplicationCmd)
 		getApplicationCmd.Flags().StringP("application", "a", "", "Name of the application")
+		setContextSpecificPersistentFlags(getApplicationCmd)
 	}
 }

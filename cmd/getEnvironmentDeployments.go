@@ -105,5 +105,6 @@ func init() {
 		getCmd.AddCommand(getEnvironmentDeploymentsCmd)
 		getEnvironmentDeploymentsCmd.Flags().StringP("application", "a", "", "Name of the application")
 		getEnvironmentDeploymentsCmd.Flags().StringP("environment", "e", "", "Optional, name of the environment")
+		setContextSpecificPersistentFlags(getEnvironmentDeploymentsCmd)
 	}
 }

@@ -65,5 +65,6 @@ func init() {
 		stopCmd.AddCommand(stopEnvironmentCmd)
 		stopEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
 		stopEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+		setContextSpecificPersistentFlags(stopEnvironmentCmd)
 	}
 }

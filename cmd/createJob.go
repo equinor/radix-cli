@@ -35,5 +35,6 @@ var createJobCmd = &cobra.Command{
 func init() {
 	if createJobEnabled {
 		createCmd.AddCommand(createJobCmd)
+		setContextSpecificPersistentFlags(createJobCmd)
 	}
 }

@@ -62,5 +62,6 @@ func init() {
 	if startApplicationEnabled {
 		startCmd.AddCommand(startApplicationCmd)
 		startApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+		setContextSpecificPersistentFlags(startApplicationCmd)
 	}
 }

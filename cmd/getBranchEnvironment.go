@@ -59,5 +59,6 @@ func init() {
 	if getBranchEnvironmentEnabled {
 		getConfigCmd.AddCommand(getBranchEnvironmentCmd)
 		getBranchEnvironmentCmd.Flags().StringP("branch", "b", "", "Branch of the repository. Should be used together with --from-config to get the environment")
+		setContextSpecificPersistentFlags(getBranchEnvironmentCmd)
 	}
 }

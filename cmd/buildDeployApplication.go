@@ -77,5 +77,6 @@ func init() {
 		buildDeployApplicationCmd.Flags().StringP("branch", "b", "master", "Branch to build-deploy from")
 		buildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
 		buildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
+		setContextSpecificPersistentFlags(buildDeployApplicationCmd)
 	}
 }

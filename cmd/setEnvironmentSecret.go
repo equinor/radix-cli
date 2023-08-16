@@ -139,5 +139,6 @@ func init() {
 		setEnvironmentSecretCmd.Flags().String(componentOption, "", "Component to set the secret for")
 		setEnvironmentSecretCmd.Flags().StringP(secretOption, "s", "", "Name of the secret to set")
 		setEnvironmentSecretCmd.Flags().StringP(valueOption, "v", "", "Value of the secret to set")
+		setContextSpecificPersistentFlags(setEnvironmentSecretCmd)
 	}
 }

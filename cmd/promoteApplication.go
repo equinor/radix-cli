@@ -82,5 +82,6 @@ func init() {
 		promoteApplicationCmd.Flags().StringP("to-environment", "", "", "The deployment target environment")
 		promoteApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the promote pipeline job")
 		promoteApplicationCmd.Flags().BoolP("follow", "f", false, "Follow the promote pipeline job log")
+		setContextSpecificPersistentFlags(promoteApplicationCmd)
 	}
 }

@@ -137,5 +137,6 @@ func init() {
 		createApplicationCmd.Flags().StringSliceP("reader-ad-groups", "", []string{}, "Reader groups")
 		createApplicationCmd.Flags().StringP("configuration-item", "", "", "Configuration item")
 		createApplicationCmd.Flags().Bool("acknowledge-warnings", false, "Acknowledge warnings and proceed")
+		setContextSpecificPersistentFlags(createApplicationCmd)
 	}
 }

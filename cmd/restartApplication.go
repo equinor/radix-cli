@@ -62,5 +62,6 @@ func init() {
 	if restartApplicationEnabled {
 		restartCmd.AddCommand(restartApplicationCmd)
 		restartApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+		setContextSpecificPersistentFlags(restartApplicationCmd)
 	}
 }

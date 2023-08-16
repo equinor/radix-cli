@@ -36,4 +36,5 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
+	setVerbosePersistentFlag(loginCmd)
 }

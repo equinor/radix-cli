@@ -141,5 +141,6 @@ func init() {
 
 		logsJobCmd.Flags().StringP("application", "a", "", "Name of the application for the job")
 		logsJobCmd.Flags().StringP("job", "j", "", "The job to get logs for")
+		setContextSpecificPersistentFlags(logsJobCmd)
 	}
 }

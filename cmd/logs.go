@@ -35,5 +35,6 @@ var logsCmd = &cobra.Command{
 func init() {
 	if logsEnabled {
 		getCmd.AddCommand(logsCmd)
+		setContextSpecificPersistentFlags(logsCmd)
 	}
 }

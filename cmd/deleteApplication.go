@@ -62,5 +62,6 @@ func init() {
 	if deleteApplicationEnabled {
 		deleteCmd.AddCommand(deleteApplicationCmd)
 		deleteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
+		setContextSpecificPersistentFlags(deleteApplicationCmd)
 	}
 }

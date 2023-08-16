@@ -64,5 +64,6 @@ func init() {
 		deleteCmd.AddCommand(deleteEnvironmentCmd)
 		deleteEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
 		deleteEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment to delete")
+		setContextSpecificPersistentFlags(deleteEnvironmentCmd)
 	}
 }

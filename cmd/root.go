@@ -43,19 +43,24 @@ func Execute() {
 	}
 }
 
-func init() {
-	rootCmd.PersistentFlags().Bool(settings.VerboseOption, false, "Verbose output")
+func setVerbosePersistentFlag(cmd *cobra.Command) *bool {
+	return cmd.PersistentFlags().Bool(settings.VerboseOption, false, "Verbose output")
 }
 
-func setContextPersistentFlags(cmd *cobra.Command) {
+func setContextSpecificPersistentFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().Bool(settings.FromConfigOption, false, "Read and use radix config from file as context")
 	cmd.PersistentFlags().Bool(settings.TokenEnvironmentOption, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
 	cmd.PersistentFlags().Bool(settings.TokenStdinOption, false, "Take the token from stdin")
-	cmd.PersistentFlags().StringP(settings.ContextOption, "c", "", fmt.Sprintf("Use context %s|%s|%s|%s regardless of current context (default production) ",
-		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment))
+	setContextPersistentFlags(cmd)
 	cmd.PersistentFlags().String(settings.ClusterOption, "", "Set cluster to override context")
 	cmd.PersistentFlags().String(settings.ApiEnvironmentOption, "prod", "The API api-environment to run with (default prod)")
 	cmd.PersistentFlags().Bool(settings.AwaitReconcileOption, false, "Await reconciliation in Radix")
+	setVerbosePersistentFlag(cmd)
+}
+
+func setContextPersistentFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringP(settings.ContextOption, "c", "", fmt.Sprintf("Use context %s|%s|%s|%s regardless of current context (default production) ",
+		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment))
 }
 
 // CheckFnNew The prototype function for any check function

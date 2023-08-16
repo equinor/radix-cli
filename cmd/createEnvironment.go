@@ -64,5 +64,6 @@ func init() {
 		createCmd.AddCommand(createEnvironmentCmd)
 		createEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
 		createEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment to create")
+		setContextSpecificPersistentFlags(createEnvironmentCmd)
 	}
 }

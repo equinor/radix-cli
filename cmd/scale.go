@@ -85,5 +85,6 @@ func init() {
 		scaleCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
 		scaleCmd.Flags().StringP("component", "n", "", "Name of the component to scale")
 		scaleCmd.Flags().IntP("replicas", "r", 1, "The new desired number of replicas")
+		setContextSpecificPersistentFlags(scaleCmd)
 	}
 }

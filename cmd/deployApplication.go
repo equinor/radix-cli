@@ -108,5 +108,6 @@ func init() {
 		deployApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
 		deployApplicationCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
 		deployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
+		setContextSpecificPersistentFlags(deployApplicationCmd)
 	}
 }

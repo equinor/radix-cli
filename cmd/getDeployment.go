@@ -77,5 +77,6 @@ func init() {
 		getCmd.AddCommand(getDeploymentCmd)
 		getDeploymentCmd.Flags().StringP("application", "a", "", "Name of the application")
 		getDeploymentCmd.Flags().StringP("deployment", "d", "", "Optional, name of a deployment")
+		setContextSpecificPersistentFlags(getDeploymentCmd)
 	}
 }

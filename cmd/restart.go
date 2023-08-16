@@ -35,5 +35,6 @@ var restartCmd = &cobra.Command{
 func init() {
 	if restartEnabled {
 		rootCmd.AddCommand(restartCmd)
+		setContextSpecificPersistentFlags(restartCmd)
 	}
 }

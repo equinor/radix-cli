@@ -51,5 +51,6 @@ var setContextCmd = &cobra.Command{
 func init() {
 	if setContextEnabled {
 		setCmd.AddCommand(setContextCmd)
+		setContextPersistentFlags(setContextCmd)
 	}
 }

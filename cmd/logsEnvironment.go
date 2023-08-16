@@ -102,5 +102,6 @@ func init() {
 		logsEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
 		logsEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
 		logsEnvironmentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
+		setContextSpecificPersistentFlags(logsEnvironmentCmd)
 	}
 }

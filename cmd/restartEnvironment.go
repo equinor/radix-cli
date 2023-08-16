@@ -66,5 +66,6 @@ func init() {
 		restartCmd.AddCommand(restartEnvironmentCmd)
 		restartEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
 		restartEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+		setContextSpecificPersistentFlags(restartEnvironmentCmd)
 	}
 }
