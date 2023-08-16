@@ -28,7 +28,7 @@ func (t *TokenCache) Replace(ctx context.Context, cache cache.Unmarshaler, hints
 		err  error
 	)
 	if len(t.radixConfig.MSAL) > 0 {
-		data, err = base64.RawStdEncoding.DecodeString(t.radixConfig.MSAL)
+		data, err = base64.StdEncoding.DecodeString(t.radixConfig.MSAL)
 		// TODO: Should we print the error of decoing fails?
 		if err != nil {
 			data = nil // DecodeString can return a non-empty slice on error. Need to set it to nil to avoid errors in cache.Unmarshal

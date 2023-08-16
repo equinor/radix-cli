@@ -15,7 +15,6 @@ import (
 type MSALAuthProvider interface {
 	Login(ctx context.Context) error
 	Logout(ctx context.Context) error
-	// WrapTransport(rt http.RoundTripper) http.RoundTripper
 	runtime.ClientAuthInfoWriter
 }
 
