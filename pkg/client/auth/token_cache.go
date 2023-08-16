@@ -2,7 +2,7 @@ package auth
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/base64"
 
 	"github.com/AzureAD/microsoft-authentication-library-for-go/apps/cache"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
@@ -10,14 +10,12 @@ import (
 
 // TokenCache is a token cache
 type TokenCache struct {
-	// file        string
 	radixConfig *radixconfig.RadixConfig
 }
 
 // NewTokenCache creates a new token cache
 func NewTokenCache(radixConfig *radixconfig.RadixConfig) *TokenCache {
 	return &TokenCache{
-		// file:        radixconfig.MsalContractFileFullName,
 		radixConfig: radixConfig,
 	}
 }
@@ -25,28 +23,17 @@ func NewTokenCache(radixConfig *radixconfig.RadixConfig) *TokenCache {
 // Replace replaces the cache with what is in external storage. Implementors should honor
 // Context cancellations and return context.Canceled or context.DeadlineExceeded in those cases.
 func (t *TokenCache) Replace(ctx context.Context, cache cache.Unmarshaler, hints cache.ReplaceHints) error {
-	// data, err := os.ReadFile(t.file)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
 	var (
 		data []byte
 		err  error
 	)
-	if t.radixConfig.MSALContract != nil {
-		data, err = json.Marshal(t.radixConfig.MSALContract)
+	if len(t.radixConfig.MSAL) > 0 {
+		data, err = base64.RawStdEncoding.DecodeString(t.radixConfig.MSAL)
+		// TODO: Should we print the error of decoing fails?
 		if err != nil {
-			return err
+			data = nil // DecodeString can return a non-empty slice on error. Need to set it to nil to avoid errors in cache.Unmarshal
 		}
 	}
-	// contract := radixconfig.NewContract()
-	// if err := json.Unmarshal(data, contract); err != nil {
-	// 	fmt.Printf("error loading the MSAL contract: %v\nClean it.\n", err)
-	// 	if err = jsonutils.Save(radixconfig.MsalContractFileFullName, radixconfig.NewContract()); err != nil {
-	// 		return err
-	// 	}
-	// }
-	// t.radixConfig.MSALContract = contract
 	return cache.Unmarshal(data)
 }
 
@@ -55,21 +42,9 @@ func (t *TokenCache) Replace(ctx context.Context, cache cache.Unmarshaler, hints
 func (t *TokenCache) Export(ctx context.Context, cache cache.Marshaler, hints cache.ExportHints) error {
 	data, err := cache.Marshal()
 	if err != nil {
-		// log.Println(err)
 		return err
 	}
-	var contract radixconfig.Contract
-	// msalContract := radixconfig.NewContract()
-	if err := json.Unmarshal(data, &contract); err != nil {
-		return err
-	}
-	t.radixConfig.MSALContract = &contract
+
+	t.radixConfig.MSAL = base64.StdEncoding.EncodeToString(data)
 	return radixconfig.Save(t.radixConfig)
-	// radixConfigData, err := json.Marshal(t.radixConfig)
-	// t.radixConfig.MSALContract = msalContract
-	// err = radixconfig.Save(t.radixConfig)
-	// if err != nil {
-	// 	return err
-	// }
-	// return os.WriteFile(t.file, data, 0600)
 }

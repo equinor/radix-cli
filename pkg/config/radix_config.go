@@ -38,8 +38,8 @@ func getUserHomeDir() string {
 type RadixConfig struct {
 	// CustomConfig is the custom environment config
 	CustomConfig *CustomConfig `json:"customConfig"`
-	// MSALContract is the MSAL internal structure that is written to any storage medium when serializing the cache
-	MSALContract *Contract `json:"msal,omitempty"`
+	// MSAL is the base64 encoded internal cache structure used by the MSAL module
+	MSAL string `json:"msal,omitempty"`
 }
 
 // CustomConfig is the custom environment config
@@ -76,7 +76,7 @@ func GetDefaultRadixConfig() *RadixConfig {
 		CustomConfig: &CustomConfig{
 			Context: defaultContext,
 		},
-		MSALContract: NewContract(),
+		// MSALContract: NewContract(),
 	}
 }
 
