@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"path"
 
@@ -17,10 +16,6 @@ const (
 
 	radixConfigDir      = ".radix"
 	radixConfigFileName = "config"
-
-	clientID    = "ed6cb804-8193-4e55-9d3d-8b88688482b3"
-	tenantID    = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
-	apiServerID = "6dae42f8-4368-4678-94ff-3960e28e3630"
 
 	defaultContext = ContextPlatform
 )
@@ -42,14 +37,9 @@ func getUserHomeDir() string {
 type RadixConfig struct {
 	// CustomConfig is the custom environment config
 	CustomConfig *CustomConfig `json:"customConfig"`
-	// ClientID is the ID of the Azure AD app registration
-	ClientID string `json:"-"`
-	// TenantID is the ID of the tenant that the client will authenticate with
-	TenantID string `json:"-"`
-	// APIServerID is the ID of the API server that the client will use to get tokens
-	APIServerID string `json:"-"`
-	// MSALContract is the MSAL internal structure that is written to any storage medium when serializing the cache
-	MSALContract *Contract `json:"contract"`
+
+	// MSAL is the internal cache structure used by the MSAL module. The content is base64 encoded
+	MSAL string `json:"msal,omitempty"`
 }
 
 // CustomConfig is the custom environment config
@@ -68,32 +58,28 @@ func IsValidContext(context string) bool {
 }
 
 func GetRadixConfig() (*RadixConfig, error) {
-	radixConfig := getDefaultRadixConfig()
+	radixConfig := &RadixConfig{}
 	err := jsonutils.Load(RadixConfigFileFullName, radixConfig)
 	if err == nil {
 		return radixConfig, nil
 	}
-	fmt.Println("Cannot load a RadixConfig, creating a new one with the context 'platform'.")
-	radixConfig = getDefaultRadixConfig()
+
+	radixConfig = GetDefaultRadixConfig()
 	if err = jsonutils.Save(RadixConfigFileFullName, radixConfig); err != nil {
 		return nil, err
 	}
 	return radixConfig, nil
 }
 
-func getDefaultRadixConfig() *RadixConfig {
+func GetDefaultRadixConfig() *RadixConfig {
 	return &RadixConfig{
 		CustomConfig: &CustomConfig{
 			Context: defaultContext,
 		},
-		ClientID:     clientID,
-		TenantID:     tenantID,
-		APIServerID:  apiServerID,
-		MSALContract: NewContract(),
 	}
 }
 
 // Save Saves RadixConfig
-func (radixConfig *RadixConfig) Save() error {
+func Save(radixConfig *RadixConfig) error {
 	return jsonutils.Save(RadixConfigFileFullName, *radixConfig)
 }

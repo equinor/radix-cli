@@ -7,12 +7,12 @@ import (
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 )
 
-// New creates a new authentication client
-func New(radixConfig *radixconfig.RadixConfig) (*public.Client, error) {
+// newPublicClient creates a new authentication client
+func newPublicClient(radixConfig *radixconfig.RadixConfig, clientID, tenantID string) (*public.Client, error) {
 	cacheAccessor := NewTokenCache(radixConfig)
 	cache := public.WithCache(cacheAccessor)
-	authority := fmt.Sprintf("https://login.microsoftonline.com/%s", radixConfig.TenantID)
-	client, err := public.New(radixConfig.ClientID, cache, public.WithAuthority(authority))
+	authority := fmt.Sprintf("https://login.microsoftonline.com/%s", tenantID)
+	client, err := public.New(clientID, cache, public.WithAuthority(authority))
 	if err != nil {
 		return nil, err
 	}

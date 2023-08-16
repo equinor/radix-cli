@@ -43,7 +43,7 @@ var setContextCmd = &cobra.Command{
 			return err
 		}
 		radixConfig.CustomConfig.Context = context
-		radixConfig.Save()
+		radixconfig.Save(radixConfig)
 		return nil
 	},
 }

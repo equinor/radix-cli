@@ -2,22 +2,20 @@ package auth
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/base64"
+
 	"github.com/AzureAD/microsoft-authentication-library-for-go/apps/cache"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
-	log "github.com/sirupsen/logrus"
 )
 
 // TokenCache is a token cache
 type TokenCache struct {
-	file        string
 	radixConfig *radixconfig.RadixConfig
 }
 
 // NewTokenCache creates a new token cache
 func NewTokenCache(radixConfig *radixconfig.RadixConfig) *TokenCache {
 	return &TokenCache{
-		file:        radixconfig.RadixConfigFileFullName,
 		radixConfig: radixConfig,
 	}
 }
@@ -25,28 +23,28 @@ func NewTokenCache(radixConfig *radixconfig.RadixConfig) *TokenCache {
 // Replace replaces the cache with what is in external storage. Implementors should honor
 // Context cancellations and return context.Canceled or context.DeadlineExceeded in those cases.
 func (t *TokenCache) Replace(ctx context.Context, cache cache.Unmarshaler, hints cache.ReplaceHints) error {
-	radixConfig, err := radixconfig.GetRadixConfig()
-	if err != nil {
-		return err
+	var (
+		data []byte
+		err  error
+	)
+	if len(t.radixConfig.MSAL) > 0 {
+		data, err = base64.StdEncoding.DecodeString(t.radixConfig.MSAL)
+		// TODO: Should we print the error of decoing fails?
+		if err != nil {
+			data = nil // DecodeString can return a non-empty slice on error. Need to set it to nil to avoid errors in cache.Unmarshal
+		}
 	}
-	contractData, err := json.Marshal(radixConfig.MSALContract)
-	if err != nil {
-		return err
-	}
-	return cache.Unmarshal(contractData)
+	return cache.Unmarshal(data)
 }
 
 // Export writes the binary representation of the cache (cache.Marshal()) to external storage.
 // This is considered opaque. Context cancellations should be honored as in Replace.
 func (t *TokenCache) Export(ctx context.Context, cache cache.Marshaler, hints cache.ExportHints) error {
-	contractData, err := cache.Marshal()
+	data, err := cache.Marshal()
 	if err != nil {
-		log.Println(err)
-	}
-	msalContract := radixconfig.NewContract()
-	if err := json.Unmarshal(contractData, msalContract); err != nil {
 		return err
 	}
-	t.radixConfig.MSALContract = msalContract
-	return t.radixConfig.Save()
+
+	t.radixConfig.MSAL = base64.StdEncoding.EncodeToString(data)
+	return radixconfig.Save(t.radixConfig)
 }

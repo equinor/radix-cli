@@ -17,13 +17,14 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
-	"strings"
-	"time"
 )
 
 const createApplicationEnabled = true
@@ -109,7 +110,7 @@ rx create application --application your-application-name --repository https://g
 			if err != nil {
 				getRadixRegistrationNoAccessErrorCount--
 				if getRadixRegistrationNoAccessErrorCount == 0 {
-					return errors.New(fmt.Sprintf("Error getting public deploy key: %v", err))
+					return fmt.Errorf("error getting public deploy key: %w", err)
 				}
 				time.Sleep(getRadixRegistrationNoAccessErrorPause) // Sleep before trying again
 				continue
