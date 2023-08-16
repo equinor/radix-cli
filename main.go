@@ -5,7 +5,6 @@ import (
 
 	"github.com/equinor/radix-cli/cmd"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
-	jsonutils "github.com/equinor/radix-cli/pkg/utils/json"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
@@ -30,14 +29,6 @@ func ensureRadixConfigFilesExist() error {
 			return err
 		}
 		if err = os.MkdirAll(radixconfig.RadixConfigDir, os.ModePerm); err != nil {
-			return err
-		}
-	}
-	if _, err := os.Stat(radixconfig.MsalContractFileFullName); err != nil {
-		if !os.IsNotExist(err) {
-			return err
-		}
-		if err = jsonutils.Save(radixconfig.MsalContractFileFullName, radixconfig.NewContract()); err != nil {
 			return err
 		}
 	}
