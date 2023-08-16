@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const restartEnvironmentEnabled = true
-
 // restartEnvironmentCmd represents the restart environment command
 var restartEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
@@ -62,10 +60,8 @@ var restartEnvironmentCmd = &cobra.Command{
 }
 
 func init() {
-	if restartEnvironmentEnabled {
-		restartCmd.AddCommand(restartEnvironmentCmd)
-		restartEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		restartEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		setContextSpecificPersistentFlags(restartEnvironmentCmd)
-	}
+	restartCmd.AddCommand(restartEnvironmentCmd)
+	restartEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	restartEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	setContextSpecificPersistentFlags(restartEnvironmentCmd)
 }

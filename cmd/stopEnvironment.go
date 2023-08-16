@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const stopEnvironmentEnabled = true
-
 // stopEnvironmentCmd represents the stop environment command
 var stopEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
@@ -61,10 +59,8 @@ var stopEnvironmentCmd = &cobra.Command{
 }
 
 func init() {
-	if stopEnvironmentEnabled {
-		stopCmd.AddCommand(stopEnvironmentCmd)
-		stopEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		stopEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		setContextSpecificPersistentFlags(stopEnvironmentCmd)
-	}
+	stopCmd.AddCommand(stopEnvironmentCmd)
+	stopEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	stopEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	setContextSpecificPersistentFlags(stopEnvironmentCmd)
 }

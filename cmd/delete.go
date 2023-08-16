@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const deleteEnabled = true
-
 // deleteCmd represents the list command
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
@@ -33,7 +31,5 @@ var deleteCmd = &cobra.Command{
 }
 
 func init() {
-	if deleteEnabled {
-		rootCmd.AddCommand(deleteCmd)
-	}
+	rootCmd.AddCommand(deleteCmd)
 }

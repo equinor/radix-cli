@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const stopEnabled = true
-
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
@@ -33,7 +31,5 @@ var stopCmd = &cobra.Command{
 }
 
 func init() {
-	if stopEnabled {
-		rootCmd.AddCommand(stopCmd)
-	}
+	rootCmd.AddCommand(stopCmd)
 }

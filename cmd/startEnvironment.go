@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const startEnvironmentEnabled = true
-
 // startEnvironmentCmd represents the start environment command
 var startEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
@@ -62,10 +60,8 @@ var startEnvironmentCmd = &cobra.Command{
 }
 
 func init() {
-	if startEnvironmentEnabled {
-		startCmd.AddCommand(startEnvironmentCmd)
-		startEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		startEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		setContextSpecificPersistentFlags(startEnvironmentCmd)
-	}
+	startCmd.AddCommand(startEnvironmentCmd)
+	startEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	startEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	setContextSpecificPersistentFlags(startEnvironmentCmd)
 }

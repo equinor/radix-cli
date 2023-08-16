@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const startEnabled = true
-
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
@@ -33,7 +31,5 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
-	if startEnabled {
-		rootCmd.AddCommand(startCmd)
-	}
+	rootCmd.AddCommand(startCmd)
 }

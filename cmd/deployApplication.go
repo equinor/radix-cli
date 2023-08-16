@@ -24,8 +24,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const deployApplicationEnabled = true
-
 var deployApplicationCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Will trigger deploy of a Radix application",
@@ -91,23 +89,20 @@ Examples:
 			return err
 		}
 
-		if follow {
-			jobName := newJob.GetPayload().Name
-			getLogsJob(cmd, apiClient, *appName, jobName)
+		if !follow {
+			return nil
 		}
-
-		return nil
+		jobName := newJob.GetPayload().Name
+		return getLogsJob(cmd, apiClient, *appName, jobName)
 	},
 }
 
 func init() {
-	if deployApplicationEnabled {
-		createJobCmd.AddCommand(deployApplicationCmd)
-		deployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
-		deployApplicationCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
-		deployApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
-		deployApplicationCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
-		deployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
-		setContextSpecificPersistentFlags(deployApplicationCmd)
-	}
+	createJobCmd.AddCommand(deployApplicationCmd)
+	deployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
+	deployApplicationCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
+	deployApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
+	deployApplicationCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
+	deployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
+	setContextSpecificPersistentFlags(deployApplicationCmd)
 }

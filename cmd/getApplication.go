@@ -26,8 +26,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const getApplicationEnabled = true
-
 // getApplicationCmd represents the getApplicationCmd command
 var getApplicationCmd = &cobra.Command{
 	Use:   "application",
@@ -76,9 +74,7 @@ var getApplicationCmd = &cobra.Command{
 }
 
 func init() {
-	if getApplicationEnabled {
-		getCmd.AddCommand(getApplicationCmd)
-		getApplicationCmd.Flags().StringP("application", "a", "", "Name of the application")
-		setContextSpecificPersistentFlags(getApplicationCmd)
-	}
+	getCmd.AddCommand(getApplicationCmd)
+	getApplicationCmd.Flags().StringP("application", "a", "", "Name of the application")
+	setContextSpecificPersistentFlags(getApplicationCmd)
 }

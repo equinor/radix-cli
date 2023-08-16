@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const logsEnabled = true
-
 // logsCmd represents the list command
 var logsCmd = &cobra.Command{
 	Use:   "logs",
@@ -33,8 +31,6 @@ var logsCmd = &cobra.Command{
 }
 
 func init() {
-	if logsEnabled {
-		getCmd.AddCommand(logsCmd)
-		setContextSpecificPersistentFlags(logsCmd)
-	}
+	getCmd.AddCommand(logsCmd)
+	setContextSpecificPersistentFlags(logsCmd)
 }

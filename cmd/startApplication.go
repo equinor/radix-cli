@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const startApplicationEnabled = true
-
 // startApplicationCmd represents the start application command
 var startApplicationCmd = &cobra.Command{
 	Use:   "application",
@@ -59,9 +57,7 @@ var startApplicationCmd = &cobra.Command{
 }
 
 func init() {
-	if startApplicationEnabled {
-		startCmd.AddCommand(startApplicationCmd)
-		startApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		setContextSpecificPersistentFlags(startApplicationCmd)
-	}
+	startCmd.AddCommand(startApplicationCmd)
+	startApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	setContextSpecificPersistentFlags(startApplicationCmd)
 }

@@ -22,8 +22,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const setContextEnabled = true
-
 // setContextCmd represents the setContext command
 var setContextCmd = &cobra.Command{
 	Use: "context",
@@ -43,14 +41,11 @@ var setContextCmd = &cobra.Command{
 			return err
 		}
 		radixConfig.CustomConfig.Context = context
-		radixconfig.Save(radixConfig)
-		return nil
+		return radixconfig.Save(radixConfig)
 	},
 }
 
 func init() {
-	if setContextEnabled {
-		setCmd.AddCommand(setContextCmd)
-		setContextPersistentFlags(setContextCmd)
-	}
+	setCmd.AddCommand(setContextCmd)
+	setContextPersistentFlags(setContextCmd)
 }

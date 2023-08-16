@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const restartComponentEnabled = true
-
 // restartComponentCmd represents the restart component command
 var restartComponentCmd = &cobra.Command{
 	Use:   "component",
@@ -68,11 +66,9 @@ var restartComponentCmd = &cobra.Command{
 }
 
 func init() {
-	if restartComponentEnabled {
-		restartCmd.AddCommand(restartComponentCmd)
-		restartComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		restartComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		restartComponentCmd.Flags().StringP("component", "n", "", "Name of the component to restart")
-		setContextSpecificPersistentFlags(restartComponentCmd)
-	}
+	restartCmd.AddCommand(restartComponentCmd)
+	restartComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	restartComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	restartComponentCmd.Flags().StringP("component", "n", "", "Name of the component to restart")
+	setContextSpecificPersistentFlags(restartComponentCmd)
 }

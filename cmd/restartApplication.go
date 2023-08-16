@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const restartApplicationEnabled = true
-
 // restartApplicationCmd represents the restart application command
 var restartApplicationCmd = &cobra.Command{
 	Use:   "application",
@@ -59,9 +57,7 @@ var restartApplicationCmd = &cobra.Command{
 }
 
 func init() {
-	if restartApplicationEnabled {
-		restartCmd.AddCommand(restartApplicationCmd)
-		restartApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		setContextSpecificPersistentFlags(restartApplicationCmd)
-	}
+	restartCmd.AddCommand(restartApplicationCmd)
+	restartApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	setContextSpecificPersistentFlags(restartApplicationCmd)
 }

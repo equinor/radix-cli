@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const stopApplicationEnabled = true
-
 // stopApplicationCmd represents the stop application command
 var stopApplicationCmd = &cobra.Command{
 	Use:   "application",
@@ -58,9 +56,7 @@ var stopApplicationCmd = &cobra.Command{
 }
 
 func init() {
-	if stopApplicationEnabled {
-		stopCmd.AddCommand(stopApplicationCmd)
-		stopApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		setContextSpecificPersistentFlags(stopApplicationCmd)
-	}
+	stopCmd.AddCommand(stopApplicationCmd)
+	stopApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	setContextSpecificPersistentFlags(stopApplicationCmd)
 }

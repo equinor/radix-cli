@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const stopComponentEnabled = true
-
 // stopComponentCmd represents the stop component command
 var stopComponentCmd = &cobra.Command{
 	Use:   "component",
@@ -67,11 +65,9 @@ var stopComponentCmd = &cobra.Command{
 }
 
 func init() {
-	if stopComponentEnabled {
-		stopCmd.AddCommand(stopComponentCmd)
-		stopComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		stopComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		stopComponentCmd.Flags().StringP("component", "n", "", "Name of the component to stop")
-		setContextSpecificPersistentFlags(stopComponentCmd)
-	}
+	stopCmd.AddCommand(stopComponentCmd)
+	stopComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	stopComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	stopComponentCmd.Flags().StringP("component", "n", "", "Name of the component to stop")
+	setContextSpecificPersistentFlags(stopComponentCmd)
 }

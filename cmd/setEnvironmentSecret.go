@@ -26,12 +26,11 @@ import (
 )
 
 const (
-	applicationOption           = "application"
-	environmentOption           = "environment"
-	componentOption             = "component"
-	secretOption                = "secret"
-	valueOption                 = "value"
-	setEnvironmentSecretEnabled = true
+	applicationOption = "application"
+	environmentOption = "environment"
+	componentOption   = "component"
+	secretOption      = "secret"
+	valueOption       = "value"
 )
 
 // setEnvironmentSecretCmd represents the setEnvironmentSecretCmd command
@@ -108,15 +107,15 @@ func isComponentSecretReconciled(apiClient *apiclient.Radixapi, appName, environ
 	getEnvironmentParameters.SetAppName(appName)
 	getEnvironmentParameters.SetEnvName(environmentName)
 
-	environment, err := apiClient.Environment.GetEnvironment(getEnvironmentParameters, nil)
+	env, err := apiClient.Environment.GetEnvironment(getEnvironmentParameters, nil)
 	if err != nil {
 		return false
 	}
 
-	if environment.Payload != nil &&
-		environment.Payload.ActiveDeployment != nil &&
-		environment.Payload.ActiveDeployment.Components != nil {
-		for _, component := range environment.Payload.ActiveDeployment.Components {
+	if env.Payload != nil &&
+		env.Payload.ActiveDeployment != nil &&
+		env.Payload.ActiveDeployment.Components != nil {
+		for _, component := range env.Payload.ActiveDeployment.Components {
 			if *component.Name == componentName {
 				for _, secret := range component.Secrets {
 					if secret == secretName {
@@ -132,13 +131,11 @@ func isComponentSecretReconciled(apiClient *apiclient.Radixapi, appName, environ
 }
 
 func init() {
-	if setEnvironmentSecretEnabled {
-		setCmd.AddCommand(setEnvironmentSecretCmd)
-		setEnvironmentSecretCmd.Flags().StringP(applicationOption, "a", "", "Name of the application to set secret for")
-		setEnvironmentSecretCmd.Flags().StringP(environmentOption, "e", "", "Environment to set secret in")
-		setEnvironmentSecretCmd.Flags().String(componentOption, "", "Component to set the secret for")
-		setEnvironmentSecretCmd.Flags().StringP(secretOption, "s", "", "Name of the secret to set")
-		setEnvironmentSecretCmd.Flags().StringP(valueOption, "v", "", "Value of the secret to set")
-		setContextSpecificPersistentFlags(setEnvironmentSecretCmd)
-	}
+	setCmd.AddCommand(setEnvironmentSecretCmd)
+	setEnvironmentSecretCmd.Flags().StringP(applicationOption, "a", "", "Name of the application to set secret for")
+	setEnvironmentSecretCmd.Flags().StringP(environmentOption, "e", "", "Environment to set secret in")
+	setEnvironmentSecretCmd.Flags().String(componentOption, "", "Component to set the secret for")
+	setEnvironmentSecretCmd.Flags().StringP(secretOption, "s", "", "Name of the secret to set")
+	setEnvironmentSecretCmd.Flags().StringP(valueOption, "v", "", "Value of the secret to set")
+	setContextSpecificPersistentFlags(setEnvironmentSecretCmd)
 }

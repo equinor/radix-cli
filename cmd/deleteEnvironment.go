@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const deleteEnvironmentEnabled = true
-
 // deleteEnvironmentCmd represents the delete environment command
 var deleteEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
@@ -60,10 +58,8 @@ var deleteEnvironmentCmd = &cobra.Command{
 }
 
 func init() {
-	if deleteEnvironmentEnabled {
-		deleteCmd.AddCommand(deleteEnvironmentCmd)
-		deleteEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		deleteEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment to delete")
-		setContextSpecificPersistentFlags(deleteEnvironmentCmd)
-	}
+	deleteCmd.AddCommand(deleteEnvironmentCmd)
+	deleteEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	deleteEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment to delete")
+	setContextSpecificPersistentFlags(deleteEnvironmentCmd)
 }

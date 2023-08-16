@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const deleteApplicationEnabled = true
-
 // deleteApplicationCmd represents the create application command
 var deleteApplicationCmd = &cobra.Command{
 	Use:   "application",
@@ -59,9 +57,7 @@ var deleteApplicationCmd = &cobra.Command{
 }
 
 func init() {
-	if deleteApplicationEnabled {
-		deleteCmd.AddCommand(deleteApplicationCmd)
-		deleteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
-		setContextSpecificPersistentFlags(deleteApplicationCmd)
-	}
+	deleteCmd.AddCommand(deleteApplicationCmd)
+	deleteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
+	setContextSpecificPersistentFlags(deleteApplicationCmd)
 }

@@ -28,8 +28,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const logsJobEnabled = true
-
 // logsJobCmd represents the logsJobCmd command
 var logsJobCmd = &cobra.Command{
 	Use:   "job",
@@ -136,11 +134,9 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 }
 
 func init() {
-	if logsJobEnabled {
-		logsCmd.AddCommand(logsJobCmd)
+	logsCmd.AddCommand(logsJobCmd)
 
-		logsJobCmd.Flags().StringP("application", "a", "", "Name of the application for the job")
-		logsJobCmd.Flags().StringP("job", "j", "", "The job to get logs for")
-		setContextSpecificPersistentFlags(logsJobCmd)
-	}
+	logsJobCmd.Flags().StringP("application", "a", "", "Name of the application for the job")
+	logsJobCmd.Flags().StringP("job", "j", "", "The job to get logs for")
+	setContextSpecificPersistentFlags(logsJobCmd)
 }

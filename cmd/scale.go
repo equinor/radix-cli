@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const scaleEnabled = true
-
 // scaleCmd represents the scale command
 var scaleCmd = &cobra.Command{
 	Use:   "scale",
@@ -79,12 +77,10 @@ rx scale -a radix-test -e dev -n component-abc -r 2
 }
 
 func init() {
-	if scaleEnabled {
-		rootCmd.AddCommand(scaleCmd)
-		scaleCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		scaleCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		scaleCmd.Flags().StringP("component", "n", "", "Name of the component to scale")
-		scaleCmd.Flags().IntP("replicas", "r", 1, "The new desired number of replicas")
-		setContextSpecificPersistentFlags(scaleCmd)
-	}
+	rootCmd.AddCommand(scaleCmd)
+	scaleCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	scaleCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	scaleCmd.Flags().StringP("component", "n", "", "Name of the component to scale")
+	scaleCmd.Flags().IntP("replicas", "r", 1, "The new desired number of replicas")
+	setContextSpecificPersistentFlags(scaleCmd)
 }

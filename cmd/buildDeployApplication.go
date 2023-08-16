@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const buildDeployApplicationEnabled = true
-
 // buildDeployApplicationCmd represents the buildApplication command
 var buildDeployApplicationCmd = &cobra.Command{
 	Use:   "build-deploy",
@@ -61,22 +59,19 @@ var buildDeployApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		jobName := newJob.GetPayload().Name
-		if follow {
-			getLogsJob(cmd, apiClient, *appName, jobName)
+		if !follow {
+			return nil
 		}
-
-		return nil
+		jobName := newJob.GetPayload().Name
+		return getLogsJob(cmd, apiClient, *appName, jobName)
 	},
 }
 
 func init() {
-	if buildDeployApplicationEnabled {
-		createJobCmd.AddCommand(buildDeployApplicationCmd)
-		buildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
-		buildDeployApplicationCmd.Flags().StringP("branch", "b", "master", "Branch to build-deploy from")
-		buildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
-		buildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
-		setContextSpecificPersistentFlags(buildDeployApplicationCmd)
-	}
+	createJobCmd.AddCommand(buildDeployApplicationCmd)
+	buildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
+	buildDeployApplicationCmd.Flags().StringP("branch", "b", "master", "Branch to build-deploy from")
+	buildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
+	buildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
+	setContextSpecificPersistentFlags(buildDeployApplicationCmd)
 }

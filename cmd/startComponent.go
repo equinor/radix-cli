@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const startComponentEnabled = true
-
 // startComponentCmd represents the start component command
 var startComponentCmd = &cobra.Command{
 	Use:   "component",
@@ -68,11 +66,9 @@ var startComponentCmd = &cobra.Command{
 }
 
 func init() {
-	if startComponentEnabled {
-		startCmd.AddCommand(startComponentCmd)
-		startComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		startComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		startComponentCmd.Flags().StringP("component", "n", "", "Name of the component to start")
-		setContextSpecificPersistentFlags(startComponentCmd)
-	}
+	startCmd.AddCommand(startComponentCmd)
+	startComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	startComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	startComponentCmd.Flags().StringP("component", "n", "", "Name of the component to start")
+	setContextSpecificPersistentFlags(startComponentCmd)
 }

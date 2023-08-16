@@ -21,8 +21,6 @@ import (
 	"log"
 )
 
-const getContextEnabled = true
-
 var getContextCmd = &cobra.Command{
 	Use:   "context",
 	Short: "Gets current context",
@@ -39,7 +37,5 @@ var getContextCmd = &cobra.Command{
 }
 
 func init() {
-	if getContextEnabled {
-		getCmd.AddCommand(getContextCmd)
-	}
+	getCmd.AddCommand(getContextCmd)
 }

@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const restartEnabled = true
-
 // restartCmd represents the restart command
 var restartCmd = &cobra.Command{
 	Use:   "restart",
@@ -33,8 +31,6 @@ var restartCmd = &cobra.Command{
 }
 
 func init() {
-	if restartEnabled {
-		rootCmd.AddCommand(restartCmd)
-		setContextSpecificPersistentFlags(restartCmd)
-	}
+	rootCmd.AddCommand(restartCmd)
+	setContextSpecificPersistentFlags(restartCmd)
 }

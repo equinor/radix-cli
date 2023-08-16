@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const promoteApplicationEnabled = true
-
 // promoteApplicationCmd represents the buildApplication command
 var promoteApplicationCmd = &cobra.Command{
 	Use:   "promote",
@@ -64,24 +62,22 @@ var promoteApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		jobName := newJob.GetPayload().Name
-		if follow {
-			getLogsJob(cmd, apiClient, *appName, jobName)
+		if !follow {
+			return nil
 		}
 
-		return nil
+		jobName := newJob.GetPayload().Name
+		return getLogsJob(cmd, apiClient, *appName, jobName)
 	},
 }
 
 func init() {
-	if promoteApplicationEnabled {
-		createJobCmd.AddCommand(promoteApplicationCmd)
-		promoteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to be promoted")
-		promoteApplicationCmd.Flags().StringP("deployment", "d", "", "Name of a deployment to be promoted")
-		promoteApplicationCmd.Flags().StringP("from-environment", "", "", "The deployment source environment")
-		promoteApplicationCmd.Flags().StringP("to-environment", "", "", "The deployment target environment")
-		promoteApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the promote pipeline job")
-		promoteApplicationCmd.Flags().BoolP("follow", "f", false, "Follow the promote pipeline job log")
-		setContextSpecificPersistentFlags(promoteApplicationCmd)
-	}
+	createJobCmd.AddCommand(promoteApplicationCmd)
+	promoteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to be promoted")
+	promoteApplicationCmd.Flags().StringP("deployment", "d", "", "Name of a deployment to be promoted")
+	promoteApplicationCmd.Flags().StringP("from-environment", "", "", "The deployment source environment")
+	promoteApplicationCmd.Flags().StringP("to-environment", "", "", "The deployment target environment")
+	promoteApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the promote pipeline job")
+	promoteApplicationCmd.Flags().BoolP("follow", "f", false, "Follow the promote pipeline job log")
+	setContextSpecificPersistentFlags(promoteApplicationCmd)
 }

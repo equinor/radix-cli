@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const logsEnvironmentEnabled = true
-
 // logsEnvironmentCmd represents the followEnvironmentCmd command
 var logsEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
@@ -96,12 +94,9 @@ func getComponentReplicasForEnvironment(apiClient *apiclient.Radixapi, appName, 
 }
 
 func init() {
-	if logsEnvironmentEnabled {
-		logsCmd.AddCommand(logsEnvironmentCmd)
-
-		logsEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
-		logsEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
-		logsEnvironmentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
-		setContextSpecificPersistentFlags(logsEnvironmentCmd)
-	}
+	logsCmd.AddCommand(logsEnvironmentCmd)
+	logsEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
+	logsEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
+	logsEnvironmentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
+	setContextSpecificPersistentFlags(logsEnvironmentCmd)
 }

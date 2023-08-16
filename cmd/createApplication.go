@@ -27,8 +27,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const createApplicationEnabled = true
-
 // createApplicationCmd represents the create application command
 var createApplicationCmd = &cobra.Command{
 	Use:   "application",
@@ -126,17 +124,15 @@ rx create application --application your-application-name --repository https://g
 }
 
 func init() {
-	if createApplicationEnabled {
-		createCmd.AddCommand(createApplicationCmd)
-		createApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
-		createApplicationCmd.Flags().StringP("repository", "", "", "Repository path")
-		createApplicationCmd.Flags().StringP("shared-secret", "", "", "Shared secret for the webhook")
-		createApplicationCmd.Flags().StringP("config-branch", "", "", "Name of the branch where Radix will read your radixconfig.yaml from")
-		createApplicationCmd.Flags().StringP("config-file", "", "", "Name of the radix config file. Optional, defaults to radixconfig.yaml")
-		createApplicationCmd.Flags().StringSliceP("ad-groups", "", []string{}, "Admin groups")
-		createApplicationCmd.Flags().StringSliceP("reader-ad-groups", "", []string{}, "Reader groups")
-		createApplicationCmd.Flags().StringP("configuration-item", "", "", "Configuration item")
-		createApplicationCmd.Flags().Bool("acknowledge-warnings", false, "Acknowledge warnings and proceed")
-		setContextSpecificPersistentFlags(createApplicationCmd)
-	}
+	createCmd.AddCommand(createApplicationCmd)
+	createApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
+	createApplicationCmd.Flags().StringP("repository", "", "", "Repository path")
+	createApplicationCmd.Flags().StringP("shared-secret", "", "", "Shared secret for the webhook")
+	createApplicationCmd.Flags().StringP("config-branch", "", "", "Name of the branch where Radix will read your radixconfig.yaml from")
+	createApplicationCmd.Flags().StringP("config-file", "", "", "Name of the radix config file. Optional, defaults to radixconfig.yaml")
+	createApplicationCmd.Flags().StringSliceP("ad-groups", "", []string{}, "Admin groups")
+	createApplicationCmd.Flags().StringSliceP("reader-ad-groups", "", []string{}, "Reader groups")
+	createApplicationCmd.Flags().StringP("configuration-item", "", "", "Configuration item")
+	createApplicationCmd.Flags().Bool("acknowledge-warnings", false, "Acknowledge warnings and proceed")
+	setContextSpecificPersistentFlags(createApplicationCmd)
 }

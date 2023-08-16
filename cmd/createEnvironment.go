@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const createEnvironmentEnabled = true
-
 // createEnvironmentCmd represents the create environment command
 var createEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
@@ -60,10 +58,8 @@ var createEnvironmentCmd = &cobra.Command{
 }
 
 func init() {
-	if createEnvironmentEnabled {
-		createCmd.AddCommand(createEnvironmentCmd)
-		createEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		createEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment to create")
-		setContextSpecificPersistentFlags(createEnvironmentCmd)
-	}
+	createCmd.AddCommand(createEnvironmentCmd)
+	createEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	createEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment to create")
+	setContextSpecificPersistentFlags(createEnvironmentCmd)
 }

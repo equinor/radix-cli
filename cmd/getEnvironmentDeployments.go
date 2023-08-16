@@ -101,10 +101,8 @@ func getDeploymentForEnvironment(cmd *cobra.Command, appName, envName string) er
 }
 
 func init() {
-	if getBranchEnvironmentEnabled {
-		getCmd.AddCommand(getEnvironmentDeploymentsCmd)
-		getEnvironmentDeploymentsCmd.Flags().StringP("application", "a", "", "Name of the application")
-		getEnvironmentDeploymentsCmd.Flags().StringP("environment", "e", "", "Optional, name of the environment")
-		setContextSpecificPersistentFlags(getEnvironmentDeploymentsCmd)
-	}
+	getCmd.AddCommand(getEnvironmentDeploymentsCmd)
+	getEnvironmentDeploymentsCmd.Flags().StringP("application", "a", "", "Name of the application")
+	getEnvironmentDeploymentsCmd.Flags().StringP("environment", "e", "", "Optional, name of the environment")
+	setContextSpecificPersistentFlags(getEnvironmentDeploymentsCmd)
 }

@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const createJobEnabled = true
-
 // createJobCmd represents the triggering of pipeline command
 var createJobCmd = &cobra.Command{
 	Use:   "job",
@@ -33,8 +31,6 @@ var createJobCmd = &cobra.Command{
 }
 
 func init() {
-	if createJobEnabled {
-		createCmd.AddCommand(createJobCmd)
-		setContextSpecificPersistentFlags(createJobCmd)
-	}
+	createCmd.AddCommand(createJobCmd)
+	setContextSpecificPersistentFlags(createJobCmd)
 }
