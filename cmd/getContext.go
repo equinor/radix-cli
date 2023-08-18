@@ -27,6 +27,9 @@ var getContextCmd = &cobra.Command{
 	Long: fmt.Sprintf("Gets the current context. It can be one of %s, %s, %s or %s",
 		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		cmd.SilenceUsage = true
+
 		radixConfig, err := radixconfig.GetRadixConfig()
 		if err != nil {
 			return err

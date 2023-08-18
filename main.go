@@ -6,8 +6,6 @@ import (
 
 	"github.com/equinor/radix-cli/cmd"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
-	"k8s.io/klog/v2"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 func init() {
@@ -19,8 +17,6 @@ func init() {
 }
 
 func main() {
-	klog.SetLogger(klog.New(log.NullLogSink{})) // HACK: Temporarily disable client-go warning https://github.com/kubernetes/client-go/blob/c2f61ae20ae1b13893992f7ceadd6304ba7025e3/plugin/pkg/client/auth/azure/azure.go#L91
-
 	err := ensureRadixConfigFolderExists()
 	if err != nil {
 		fmt.Printf("Error creating radix config folder: %v\n", err)

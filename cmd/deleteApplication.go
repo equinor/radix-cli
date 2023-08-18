@@ -16,8 +16,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
@@ -38,6 +36,8 @@ var deleteApplicationCmd = &cobra.Command{
 			return errors.New("application name is a required field")
 		}
 
+		cmd.SilenceUsage = true
+
 		deleteApplicationParams := application.NewDeleteApplicationParams()
 		deleteApplicationParams.SetAppName(*appName)
 
@@ -47,12 +47,7 @@ var deleteApplicationCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Application.DeleteApplication(deleteApplicationParams, nil)
-
-		if err != nil {
-			println(fmt.Sprintf("%v", err))
-		}
-
-		return nil
+		return err
 	},
 }
 

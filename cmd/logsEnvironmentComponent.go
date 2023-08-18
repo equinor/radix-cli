@@ -66,6 +66,8 @@ Examples:
 			return errors.New("both `environment` and `component` are required")
 		}
 
+		cmd.SilenceUsage = true
+
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
 			return err
@@ -79,9 +81,7 @@ Examples:
 		componentReplicas := make(map[string][]string)
 		componentReplicas[componentName] = replicas
 
-		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
-		return err
-
+		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
 	},
 }
 
@@ -109,7 +109,6 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 					logParameters.SetSinceTime(&since)
 				}
 				logParameters.WithPrevious(&previous)
-
 				logData, err := apiClient.Component.Log(logParameters, nil)
 				if err != nil {
 					// Replicas may have died

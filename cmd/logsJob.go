@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"k8s.io/utils/strings/slices"
 	"strings"
 	"time"
 
@@ -27,6 +28,8 @@ import (
 	"github.com/equinor/radix-cli/pkg/utils/log"
 	"github.com/spf13/cobra"
 )
+
+var completedJobStatuses = []string{"Succeeded", "Failed", "Stopped"}
 
 // logsJobCmd represents the logsJobCmd command
 var logsJobCmd = &cobra.Command{
@@ -56,6 +59,8 @@ Example:
 			return errors.New("`job` is required")
 		}
 
+		cmd.SilenceUsage = true
+
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
 			return err
@@ -74,6 +79,8 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 	jobParameters := pipeline_job.NewGetApplicationJobParams()
 	jobParameters.SetAppName(appName)
 	jobParameters.SetJobName(jobName)
+	getLogAttempts := 5
+	getLogStartTime := time.Now()
 
 	for {
 		select {
@@ -81,6 +88,10 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 			respJob, _ := apiClient.PipelineJob.GetApplicationJob(jobParameters, nil)
 			if respJob == nil {
 				continue
+			}
+			if slices.Contains(completedJobStatuses, respJob.Payload.Status) {
+				log.Print(cmd, "radix-cli", fmt.Sprintf("Job is completed with status %s\n", respJob.Payload.Status), log.Red)
+				return nil
 			}
 			loggedForJob := false
 
@@ -94,7 +105,8 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 
 				jobStepLog, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil)
 				if err != nil {
-					return err
+					log.Print(cmd, "radix-cli", fmt.Sprintf("Failed to jet pipeline job logs. %v", err), log.Red)
+					break
 				}
 				logLines := strings.Split(strings.Replace(jobStepLog.Payload, "\r\n", "\n", -1), "\n")
 				if len(logLines) > 0 && !strings.EqualFold(logLines[0], "") {
@@ -118,16 +130,29 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 			}
 			jobSummary := respJob.Payload
 			if jobSummary.Status == "Succeeded" {
-				log.Print(cmd, "radix-cli", "Build complete", log.Green)
-			} else if jobSummary.Status == "Failed" {
-				log.Print(cmd, "radix-cli", "Build failed", log.Red)
-			} else if jobSummary.Status == "Running" {
+				log.Print(cmd, "radix-cli", "Job complete", log.Green)
+				return nil
+			}
+			if jobSummary.Status == "Failed" {
+				log.Print(cmd, "radix-cli", "Job failed", log.Red)
+				return nil
+			}
+			if jobSummary.Status == "Stopped" {
+				log.Print(cmd, "radix-cli", "Job stopped", log.Red)
+				return nil
+			}
+			if jobSummary.Status == "Running" {
 				// Reset timeout
 				timeout = time.NewTimer(settings.DeltaTimeout)
 				break
-			} else {
-				log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Job summary: %v. Status: %s. Timeout", settings.DeltaTimeout, jobSummary, jobSummary.Status), log.GetColor(0))
 			}
+			getLogAttempts--
+			if getLogAttempts > 0 {
+				getLogAwaitingTime := int(time.Now().Sub(getLogStartTime))
+				log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %d seconds. Job summary: %v. Status: %s. Contihue waiting", getLogAwaitingTime, jobSummary, jobSummary.Status), log.GetColor(0))
+				break
+			}
+			log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Job summary: %v. Status: %s. Timeout", settings.DeltaTimeout, jobSummary, jobSummary.Status), log.GetColor(0))
 			return nil
 		}
 	}

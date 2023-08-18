@@ -52,6 +52,8 @@ Example:
 			return errors.New("both `environment` and `component` are required")
 		}
 
+		cmd.SilenceUsage = true
+
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
 			return err
@@ -62,9 +64,7 @@ Example:
 			return err
 		}
 
-		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
-		return err
-
+		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
 	},
 }
 

@@ -52,6 +52,8 @@ Examples:
 			return errors.New("application and deployment names are required fields")
 		}
 
+		cmd.SilenceUsage = true
+
 		params := deployment.NewGetDeploymentParams()
 		params.WithAppName(*appName)
 		if deploymentName != "" {
@@ -59,12 +61,10 @@ Examples:
 		}
 		resp, err := apiClient.Deployment.GetDeployment(params, nil)
 		if err != nil {
-			println(fmt.Sprintf("%v", err))
 			return err
 		}
 		prettyJSON, err := json.Pretty(resp.Payload)
 		if err != nil {
-			println(fmt.Sprintf("%v", err))
 			return err
 		}
 		fmt.Println(*prettyJSON)

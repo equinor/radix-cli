@@ -21,16 +21,16 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
-	globalSettings "github.com/equinor/radix-cli/pkg/settings"
 	"github.com/spf13/cobra"
 )
 
 const (
-	applicationOption = "application"
-	environmentOption = "environment"
-	componentOption   = "component"
-	secretOption      = "secret"
-	valueOption       = "value"
+	applicationOption    = "application"
+	environmentOption    = "environment"
+	componentOption      = "component"
+	secretOption         = "secret"
+	valueOption          = "value"
+	awaitReconcileOption = "await-reconcile"
 )
 
 // setEnvironmentSecretCmd represents the setEnvironmentSecretCmd command
@@ -66,13 +66,15 @@ var setEnvironmentSecretCmd = &cobra.Command{
 		}
 
 		component, _ := cmd.Flags().GetString(componentOption)
+		awaitReconcile, _ := cmd.Flags().GetBool(awaitReconcileOption)
+
+		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
 			return err
 		}
 
-		awaitReconcile, _ := cmd.Flags().GetBool(globalSettings.AwaitReconcileOption)
 		if awaitReconcile {
 			reconciledOk := awaitReconciliation(func() bool {
 				return isComponentSecretReconciled(apiClient, *appName, environmentName, component, secretName)
@@ -94,11 +96,7 @@ var setEnvironmentSecretCmd = &cobra.Command{
 		changeComponentSecretParameters.SetComponentSecret(&componentSecret)
 
 		_, err = apiClient.Environment.ChangeComponentSecret(changeComponentSecretParameters, nil)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return err
 	},
 }
 
@@ -137,5 +135,6 @@ func init() {
 	setEnvironmentSecretCmd.Flags().String(componentOption, "", "Component to set the secret for")
 	setEnvironmentSecretCmd.Flags().StringP(secretOption, "s", "", "Name of the secret to set")
 	setEnvironmentSecretCmd.Flags().StringP(valueOption, "v", "", "Value of the secret to set")
+	setEnvironmentSecretCmd.Flags().Bool(awaitReconcileOption, true, "Await reconciliation in Radix. Default is true")
 	setContextSpecificPersistentFlags(setEnvironmentSecretCmd)
 }

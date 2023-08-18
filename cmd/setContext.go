@@ -36,6 +36,8 @@ var setContextCmd = &cobra.Command{
 			return fmt.Errorf("context '%s' is not a valid context", context)
 		}
 
+		cmd.SilenceUsage = true
+
 		radixConfig, err := radixconfig.GetRadixConfig()
 		if err != nil {
 			return err

@@ -60,6 +60,8 @@ rx create application --application your-application-name --repository https://g
 		adGroups, _ := cmd.Flags().GetStringSlice("ad-groups")
 		readerAdGroups, _ := cmd.Flags().GetStringSlice("reader-ad-groups")
 
+		cmd.SilenceUsage = true
+
 		registerApplicationParams := platform.NewRegisterApplicationParams()
 		registerApplicationParams.SetApplicationRegistration(&models.ApplicationRegistrationRequest{
 			AcknowledgeWarnings: acknowledgeWarnings,
@@ -83,7 +85,6 @@ rx create application --application your-application-name --repository https://g
 		resp, err := apiClient.Platform.RegisterApplication(registerApplicationParams, nil)
 
 		if err != nil {
-			println(fmt.Sprintf("%v", err))
 			return err
 		}
 		registrationUpsertResponse := resp.Payload
@@ -92,8 +93,7 @@ rx create application --application your-application-name --repository https://g
 			for _, warning := range registrationUpsertResponse.Warnings {
 				println(fmt.Sprintf("- %s", warning))
 			}
-			println("If you agree to proceed with warnings - please add an option --acknowledge-warnings")
-			return nil
+			return fmt.Errorf("if you agree to proceed with warnings - please add an option --acknowledge-warnings")
 		}
 		if registrationUpsertResponse.ApplicationRegistration == nil {
 			return errors.New("unspecified error")

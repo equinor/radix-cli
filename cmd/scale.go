@@ -61,6 +61,8 @@ rx scale -a radix-test -e dev -n component-abc -r 2
 			return errors.New("required field replicas must be between 0 and 20")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := component.NewScaleComponentParams().
 			WithAppName(*appName).
 			WithEnvName(envName).

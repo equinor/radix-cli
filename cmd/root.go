@@ -37,8 +37,8 @@ var rootCmd = &cobra.Command{
 // Execute the top level command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(radixCLIError)
-		fmt.Println(err)
+		// fmt.Println(radixCLIError)
+		// fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
@@ -54,7 +54,6 @@ func setContextSpecificPersistentFlags(cmd *cobra.Command) {
 	setContextPersistentFlags(cmd)
 	cmd.PersistentFlags().String(settings.ClusterOption, "", "Set cluster to override context")
 	cmd.PersistentFlags().String(settings.ApiEnvironmentOption, "prod", "The API api-environment to run with (default prod)")
-	cmd.PersistentFlags().Bool(settings.AwaitReconcileOption, false, "Await reconciliation in Radix")
 	setVerbosePersistentFlag(cmd)
 }
 
@@ -117,6 +116,8 @@ func getEnvironmentFromConfig(cmd *cobra.Command, branchName string) (*string, e
 		return nil, errors.New("--from-config is required when getting environment from branch")
 	}
 
+	cmd.SilenceUsage = true
+
 	radicConfig, err := getRadixApplicationFromFile()
 	if err != nil {
 		return nil, err
@@ -140,8 +141,7 @@ func getRadixApplicationFromFile() (*v1.RadixApplication, error) {
 func loadConfigFromFile(appFileName string) (*v1.RadixApplication, error) {
 	radixApplication, err := utils.GetRadixApplicationFromFile(appFileName)
 	if err != nil {
-		log.Errorf("Failed to get ra from file (%s) for app Error: %v", appFileName, err)
-		return nil, err
+		return nil, fmt.Errorf("failed to get ra from file (%s) for app Error: %v", appFileName, err)
 	}
 
 	return radixApplication, nil

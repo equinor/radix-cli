@@ -16,8 +16,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
@@ -39,6 +37,8 @@ var stopApplicationCmd = &cobra.Command{
 			return errors.New("application name is required fields")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := application.NewStopApplicationParams().
 			WithAppName(*appName)
 
@@ -48,10 +48,7 @@ var stopApplicationCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Application.StopApplication(parameters, nil)
-
-		println(fmt.Sprintf("%v", err))
-
-		return nil
+		return err
 	},
 }
 

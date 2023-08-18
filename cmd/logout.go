@@ -25,6 +25,9 @@ var logoutCmd = &cobra.Command{
 	Short: "Logout from Radix",
 	Long:  `Logout from Radix.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		cmd.SilenceUsage = true
+
 		err := client.LogoutCommand()
 		if err != nil {
 			return err

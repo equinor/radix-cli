@@ -50,6 +50,9 @@ Examples:
 		if err != nil {
 			return err
 		}
+
+		cmd.SilenceUsage = true
+
 		if envName != "" {
 			return getDeploymentForEnvironment(cmd, *appName, envName)
 		}
@@ -66,12 +69,10 @@ func getDeploymentForAllEnvironments(cmd *cobra.Command, appName string) error {
 	}
 	resp, err := apiClient.Application.GetDeployments(params, nil)
 	if err != nil {
-		println(fmt.Sprintf("%v", err))
 		return err
 	}
 	prettyJSON, err := json.Pretty(resp.Payload)
 	if err != nil {
-		println(fmt.Sprintf("%v", err))
 		return err
 	}
 	fmt.Println(*prettyJSON)
@@ -88,12 +89,10 @@ func getDeploymentForEnvironment(cmd *cobra.Command, appName, envName string) er
 	}
 	resp, err := apiClient.Environment.GetApplicationEnvironmentDeployments(params, nil)
 	if err != nil {
-		println(fmt.Sprintf("%v", err))
 		return err
 	}
 	prettyJSON, err := json.Pretty(resp.Payload)
 	if err != nil {
-		println(fmt.Sprintf("%v", err))
 		return err
 	}
 	fmt.Println(*prettyJSON)

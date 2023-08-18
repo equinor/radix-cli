@@ -16,8 +16,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
@@ -46,6 +44,8 @@ var stopComponentCmd = &cobra.Command{
 			return errors.New("component name is a required field")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := component.NewStopComponentParams().
 			WithAppName(*appName).
 			WithEnvName(envName).
@@ -57,10 +57,7 @@ var stopComponentCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Component.StopComponent(parameters, nil)
-
-		println(fmt.Sprintf("%v", err))
-
-		return nil
+		return err
 	},
 }
 

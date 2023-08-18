@@ -16,8 +16,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
@@ -42,6 +40,8 @@ var restartEnvironmentCmd = &cobra.Command{
 			return errors.New("environment name and application name are required fields")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := environment.NewRestartEnvironmentParams().
 			WithAppName(*appName).
 			WithEnvName(envName)
@@ -52,10 +52,7 @@ var restartEnvironmentCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Environment.RestartEnvironment(parameters, nil)
-
-		println(fmt.Sprintf("%v", err))
-
-		return nil
+		return err
 	},
 }
 

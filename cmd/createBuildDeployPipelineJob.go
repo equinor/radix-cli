@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
@@ -23,8 +24,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// buildDeployApplicationCmd represents the buildApplication command
-var buildDeployApplicationCmd = &cobra.Command{
+// createBuildDeployApplicationCmd represents the buildApplication command
+var createBuildDeployApplicationCmd = &cobra.Command{
 	Use:   "build-deploy",
 	Short: "Will trigger build-deploy of a Radix application",
 	Long:  `Triggers build-deploy of Radix application, if branch to environment map exists for the branch in the Radix config`,
@@ -41,6 +42,8 @@ var buildDeployApplicationCmd = &cobra.Command{
 		if appName == nil || *appName == "" || branch == "" {
 			return errors.New("application name and branch are required")
 		}
+
+		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
@@ -59,19 +62,20 @@ var buildDeployApplicationCmd = &cobra.Command{
 			return err
 		}
 
+		jobName := newJob.GetPayload().Name
+		log.Infof("Build-deploy pipeline job triggered with the name %s\n", jobName)
 		if !follow {
 			return nil
 		}
-		jobName := newJob.GetPayload().Name
 		return getLogsJob(cmd, apiClient, *appName, jobName)
 	},
 }
 
 func init() {
-	createJobCmd.AddCommand(buildDeployApplicationCmd)
-	buildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
-	buildDeployApplicationCmd.Flags().StringP("branch", "b", "master", "Branch to build-deploy from")
-	buildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
-	buildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
-	setContextSpecificPersistentFlags(buildDeployApplicationCmd)
+	createJobCmd.AddCommand(createBuildDeployApplicationCmd)
+	createBuildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
+	createBuildDeployApplicationCmd.Flags().StringP("branch", "b", "master", "Branch to build-deploy from")
+	createBuildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
+	createBuildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
+	setContextSpecificPersistentFlags(createBuildDeployApplicationCmd)
 }

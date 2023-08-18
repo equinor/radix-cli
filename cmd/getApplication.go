@@ -37,6 +37,8 @@ var getApplicationCmd = &cobra.Command{
 			return err
 		}
 
+		cmd.SilenceUsage = true
+
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
 			return err
@@ -52,23 +54,19 @@ var getApplicationCmd = &cobra.Command{
 					log.Infof("App: %s", application.Name)
 				}
 			}
-		} else {
-			getApplicationParams := application.NewGetApplicationParams()
-			getApplicationParams.SetAppName(*appName)
-			resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
-			if err == nil {
-				prettyJSON, err := json.Pretty(resp.Payload)
-				if err == nil {
-					fmt.Println(*prettyJSON)
-				} else {
-					println(fmt.Sprintf("%v", err))
-				}
-
-			} else {
-				println(fmt.Sprintf("%v", err))
-			}
+			return err
 		}
-
+		getApplicationParams := application.NewGetApplicationParams()
+		getApplicationParams.SetAppName(*appName)
+		resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
+		if err != nil {
+			return err
+		}
+		prettyJSON, err := json.Pretty(resp.Payload)
+		if err != nil {
+			return err
+		}
+		fmt.Println(*prettyJSON)
 		return nil
 	},
 }

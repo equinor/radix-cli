@@ -25,6 +25,9 @@ var loginCmd = &cobra.Command{
 	Short: "Login to Radix",
 	Long:  `Login to Radix.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		cmd.SilenceUsage = true
+
 		err := client.LoginCommand(cmd)
 		if err != nil {
 			return err
