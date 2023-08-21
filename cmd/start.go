@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const startEnabled = true
-
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
@@ -33,7 +31,5 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
-	if startEnabled {
-		rootCmd.AddCommand(startCmd)
-	}
+	rootCmd.AddCommand(startCmd)
 }

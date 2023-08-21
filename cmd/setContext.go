@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const setContextEnabled = true
-
 // setContextCmd represents the setContext command
 var setContextCmd = &cobra.Command{
 	Use: "context",
@@ -32,23 +30,24 @@ var setContextCmd = &cobra.Command{
 	Long: fmt.Sprintf("Sets the context to be either %s, %s, %s or %s",
 		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		name, _ := cmd.Flags().GetString(settings.ContextOption)
+		context, _ := cmd.Flags().GetString(settings.ContextOption)
 
-		if !radixconfig.IsValidContext(name) {
-			return fmt.Errorf("context '%s' is not a valid context", name)
+		if !radixconfig.IsValidContext(context) {
+			return fmt.Errorf("context '%s' is not a valid context", context)
 		}
 
-		radixConfig := radixconfig.RadixConfigAccess{}
-		config := radixConfig.GetStartingConfig().Config
-		config[settings.ContextOption] = name
-		persister := radixconfig.PersisterForRadix(radixConfig)
-		persister.Persist(config)
-		return nil
+		cmd.SilenceUsage = true
+
+		radixConfig, err := radixconfig.GetRadixConfig()
+		if err != nil {
+			return err
+		}
+		radixConfig.CustomConfig.Context = context
+		return radixconfig.Save(radixConfig)
 	},
 }
 
 func init() {
-	if setContextEnabled {
-		setCmd.AddCommand(setContextCmd)
-	}
+	setCmd.AddCommand(setContextCmd)
+	setContextPersistentFlags(setContextCmd)
 }

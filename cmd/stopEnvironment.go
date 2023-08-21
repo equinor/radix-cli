@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
-
-const stopEnvironmentEnabled = true
 
 // stopEnvironmentCmd represents the stop environment command
 var stopEnvironmentCmd = &cobra.Command{
@@ -43,6 +39,8 @@ var stopEnvironmentCmd = &cobra.Command{
 			return errors.New("environment name and application name are required fields")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := environment.NewStopEnvironmentParams().
 			WithAppName(*appName).
 			WithEnvName(envName)
@@ -53,17 +51,13 @@ var stopEnvironmentCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Environment.StopEnvironment(parameters, nil)
-
-		println(fmt.Sprintf("%v", err))
-
-		return nil
+		return err
 	},
 }
 
 func init() {
-	if stopEnvironmentEnabled {
-		stopCmd.AddCommand(stopEnvironmentCmd)
-		stopEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		stopEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-	}
+	stopCmd.AddCommand(stopEnvironmentCmd)
+	stopEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	stopEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	setContextSpecificPersistentFlags(stopEnvironmentCmd)
 }

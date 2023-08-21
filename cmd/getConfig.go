@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const getConfigEnabled = true
-
 // getConfigCmd represents the get-config command
 var getConfigCmd = &cobra.Command{
 	Use:   "config",
@@ -33,7 +31,5 @@ var getConfigCmd = &cobra.Command{
 }
 
 func init() {
-	if getConfigEnabled {
-		getCmd.AddCommand(getConfigCmd)
-	}
+	getCmd.AddCommand(getConfigCmd)
 }

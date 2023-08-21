@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,9 @@ var loginCmd = &cobra.Command{
 	Short: "Login to Radix",
 	Long:  `Login to Radix.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		cmd.SilenceUsage = true
+
 		err := client.LoginCommand(cmd)
 		if err != nil {
 			return err
@@ -36,4 +39,5 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
+	setVerbosePersistentFlag(loginCmd)
 }

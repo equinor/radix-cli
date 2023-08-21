@@ -19,3 +19,6 @@ push:
 	docker build . -t ghcr.io/equinor/radix/rx:latest
 	docker login ghcr.io/equinor
 	docker push ghcr.io/equinor/radix/rx:latest
+
+staticcheck:
+	staticcheck ./...

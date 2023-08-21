@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
-
-const restartApplicationEnabled = true
 
 // restartApplicationCmd represents the restart application command
 var restartApplicationCmd = &cobra.Command{
@@ -42,6 +38,8 @@ var restartApplicationCmd = &cobra.Command{
 			return errors.New("application name is required fields")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := application.NewRestartApplicationParams().
 			WithAppName(*appName)
 
@@ -51,16 +49,12 @@ var restartApplicationCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Application.RestartApplication(parameters, nil)
-
-		println(fmt.Sprintf("%v", err))
-
-		return nil
+		return err
 	},
 }
 
 func init() {
-	if restartApplicationEnabled {
-		restartCmd.AddCommand(restartApplicationCmd)
-		restartApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-	}
+	restartCmd.AddCommand(restartApplicationCmd)
+	restartApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	setContextSpecificPersistentFlags(restartApplicationCmd)
 }

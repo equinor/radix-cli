@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
-
-const startComponentEnabled = true
 
 // startComponentCmd represents the start component command
 var startComponentCmd = &cobra.Command{
@@ -49,6 +45,8 @@ var startComponentCmd = &cobra.Command{
 			return errors.New("component name is a required field")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := component.NewStartComponentParams().
 			WithAppName(*appName).
 			WithEnvName(envName).
@@ -60,18 +58,14 @@ var startComponentCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Component.StartComponent(parameters, nil)
-
-		println(fmt.Sprintf("%v", err))
-
-		return nil
+		return err
 	},
 }
 
 func init() {
-	if startComponentEnabled {
-		startCmd.AddCommand(startComponentCmd)
-		startComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		startComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		startComponentCmd.Flags().StringP("component", "n", "", "Name of the component to start")
-	}
+	startCmd.AddCommand(startComponentCmd)
+	startComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	startComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	startComponentCmd.Flags().StringP("component", "n", "", "Name of the component to start")
+	setContextSpecificPersistentFlags(startComponentCmd)
 }

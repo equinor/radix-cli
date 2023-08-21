@@ -19,7 +19,7 @@ import (
 
 const (
 	radixCLIError = "Error: Radix CLI executed with error"
-	version       = "1.7.4"
+	version       = "1.8.0"
 )
 
 var rootLongHelp = strings.TrimSpace(`
@@ -37,22 +37,29 @@ var rootCmd = &cobra.Command{
 // Execute the top level command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(radixCLIError)
-		fmt.Println(err)
+		// fmt.Println(radixCLIError)
+		// fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func init() {
-	rootCmd.PersistentFlags().Bool(settings.FromConfigOption, false, "Read and use radix config from file as context")
-	rootCmd.PersistentFlags().Bool(settings.TokenEnvironmentOption, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
-	rootCmd.PersistentFlags().Bool(settings.TokenStdinOption, false, "Take the token from stdin")
-	rootCmd.PersistentFlags().StringP(settings.ContextOption, "c", "", fmt.Sprintf("Use context %s|%s|%s|%s regardless of current context (default production) ",
+func setVerbosePersistentFlag(cmd *cobra.Command) *bool {
+	return cmd.PersistentFlags().Bool(settings.VerboseOption, false, "Verbose output")
+}
+
+func setContextSpecificPersistentFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().Bool(settings.FromConfigOption, false, "Read and use radix config from file as context")
+	cmd.PersistentFlags().Bool(settings.TokenEnvironmentOption, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
+	cmd.PersistentFlags().Bool(settings.TokenStdinOption, false, "Take the token from stdin")
+	setContextPersistentFlags(cmd)
+	cmd.PersistentFlags().String(settings.ClusterOption, "", "Set cluster to override context")
+	cmd.PersistentFlags().String(settings.ApiEnvironmentOption, "prod", "The API api-environment to run with (default prod)")
+	setVerbosePersistentFlag(cmd)
+}
+
+func setContextPersistentFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringP(settings.ContextOption, "c", "", fmt.Sprintf("Use context %s|%s|%s|%s regardless of current context (default production) ",
 		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment))
-	rootCmd.PersistentFlags().String(settings.ClusterOption, "", "Set cluster to override context")
-	rootCmd.PersistentFlags().String(settings.ApiEnvironmentOption, "prod", "The API api-environment to run with (default prod)")
-	rootCmd.PersistentFlags().Bool(settings.AwaitReconcileOption, false, "Await reconcilliation in Radix")
-	rootCmd.PersistentFlags().Bool(settings.VerboseOption, false, "Verbose output")
 }
 
 // CheckFnNew The prototype function for any check function
@@ -109,6 +116,8 @@ func getEnvironmentFromConfig(cmd *cobra.Command, branchName string) (*string, e
 		return nil, errors.New("--from-config is required when getting environment from branch")
 	}
 
+	cmd.SilenceUsage = true
+
 	radicConfig, err := getRadixApplicationFromFile()
 	if err != nil {
 		return nil, err
@@ -132,8 +141,7 @@ func getRadixApplicationFromFile() (*v1.RadixApplication, error) {
 func loadConfigFromFile(appFileName string) (*v1.RadixApplication, error) {
 	radixApplication, err := utils.GetRadixApplicationFromFile(appFileName)
 	if err != nil {
-		log.Errorf("Failed to get ra from file (%s) for app Error: %v", appFileName, err)
-		return nil, err
+		return nil, fmt.Errorf("failed to get ra from file (%s) for app Error: %v", appFileName, err)
 	}
 
 	return radixApplication, nil

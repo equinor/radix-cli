@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
@@ -23,10 +24,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const promoteApplicationEnabled = true
-
-// promoteApplicationCmd represents the buildApplication command
-var promoteApplicationCmd = &cobra.Command{
+// createPromotePipelineJobCmd represents the buildApplication command
+var createPromotePipelineJobCmd = &cobra.Command{
 	Use:   "promote",
 	Short: "Will trigger promote of a Radix application",
 	Long:  `Triggers promote of a Radix application deployment`,
@@ -45,6 +44,8 @@ var promoteApplicationCmd = &cobra.Command{
 		if appName == nil || *appName == "" || deploymentName == "" || fromEnvironment == "" || toEnvironment == "" {
 			return errors.New("application name, deployment name, from and to environments are required")
 		}
+
+		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
@@ -65,22 +66,22 @@ var promoteApplicationCmd = &cobra.Command{
 		}
 
 		jobName := newJob.GetPayload().Name
-		if follow {
-			getLogsJob(cmd, apiClient, *appName, jobName)
+		log.Infof("Promote pipeline job triggered with the name %s\n", jobName)
+		if !follow {
+			return nil
 		}
 
-		return nil
+		return getLogsJob(cmd, apiClient, *appName, jobName)
 	},
 }
 
 func init() {
-	if promoteApplicationEnabled {
-		createJobCmd.AddCommand(promoteApplicationCmd)
-		promoteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to be promoted")
-		promoteApplicationCmd.Flags().StringP("deployment", "d", "", "Name of a deployment to be promoted")
-		promoteApplicationCmd.Flags().StringP("from-environment", "", "", "The deployment source environment")
-		promoteApplicationCmd.Flags().StringP("to-environment", "", "", "The deployment target environment")
-		promoteApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the promote pipeline job")
-		promoteApplicationCmd.Flags().BoolP("follow", "f", false, "Follow the promote pipeline job log")
-	}
+	createJobCmd.AddCommand(createPromotePipelineJobCmd)
+	createPromotePipelineJobCmd.Flags().StringP("application", "a", "", "Name of the application to be promoted")
+	createPromotePipelineJobCmd.Flags().StringP("deployment", "d", "", "Name of a deployment to be promoted")
+	createPromotePipelineJobCmd.Flags().StringP("from-environment", "", "", "The deployment source environment")
+	createPromotePipelineJobCmd.Flags().StringP("to-environment", "", "", "The deployment target environment")
+	createPromotePipelineJobCmd.Flags().StringP("user", "u", "", "The user who triggered the promote pipeline job")
+	createPromotePipelineJobCmd.Flags().BoolP("follow", "f", false, "Follow the promote pipeline job log")
+	setContextSpecificPersistentFlags(createPromotePipelineJobCmd)
 }

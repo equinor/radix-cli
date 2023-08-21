@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
-
-const scaleEnabled = true
 
 // scaleCmd represents the scale command
 var scaleCmd = &cobra.Command{
@@ -63,6 +61,8 @@ rx scale -a radix-test -e dev -n component-abc -r 2
 			return errors.New("required field replicas must be between 0 and 20")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := component.NewScaleComponentParams().
 			WithAppName(*appName).
 			WithEnvName(envName).
@@ -79,11 +79,10 @@ rx scale -a radix-test -e dev -n component-abc -r 2
 }
 
 func init() {
-	if scaleEnabled {
-		rootCmd.AddCommand(scaleCmd)
-		scaleCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		scaleCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		scaleCmd.Flags().StringP("component", "n", "", "Name of the component to scale")
-		scaleCmd.Flags().IntP("replicas", "r", 1, "The new desired number of replicas")
-	}
+	rootCmd.AddCommand(scaleCmd)
+	scaleCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	scaleCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	scaleCmd.Flags().StringP("component", "n", "", "Name of the component to scale")
+	scaleCmd.Flags().IntP("replicas", "r", 1, "The new desired number of replicas")
+	setContextSpecificPersistentFlags(scaleCmd)
 }

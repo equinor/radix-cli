@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
@@ -24,9 +25,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const deployApplicationEnabled = true
-
-var deployApplicationCmd = &cobra.Command{
+var createDeployPipelineJobCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Will trigger deploy of a Radix application",
 	Long: `Triggers deploy of a Radix application according to the radix config in its repository's master branch.
@@ -73,6 +72,8 @@ Examples:
 			return errors.New("application name and target environment are required")
 		}
 
+		cmd.SilenceUsage = true
+
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
 			return err
@@ -91,22 +92,21 @@ Examples:
 			return err
 		}
 
-		if follow {
-			jobName := newJob.GetPayload().Name
-			getLogsJob(cmd, apiClient, *appName, jobName)
+		jobName := newJob.GetPayload().Name
+		log.Infof("Deploy pipeline job triggered with the name %s\n", jobName)
+		if !follow {
+			return nil
 		}
-
-		return nil
+		return getLogsJob(cmd, apiClient, *appName, jobName)
 	},
 }
 
 func init() {
-	if deployApplicationEnabled {
-		createJobCmd.AddCommand(deployApplicationCmd)
-		deployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
-		deployApplicationCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
-		deployApplicationCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
-		deployApplicationCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
-		deployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
-	}
+	createJobCmd.AddCommand(createDeployPipelineJobCmd)
+	createDeployPipelineJobCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
+	createDeployPipelineJobCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
+	createDeployPipelineJobCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
+	createDeployPipelineJobCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
+	createDeployPipelineJobCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
+	setContextSpecificPersistentFlags(createDeployPipelineJobCmd)
 }

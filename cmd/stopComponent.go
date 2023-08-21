@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
-
-const stopComponentEnabled = true
 
 // stopComponentCmd represents the stop component command
 var stopComponentCmd = &cobra.Command{
@@ -48,6 +44,8 @@ var stopComponentCmd = &cobra.Command{
 			return errors.New("component name is a required field")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := component.NewStopComponentParams().
 			WithAppName(*appName).
 			WithEnvName(envName).
@@ -59,18 +57,14 @@ var stopComponentCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Component.StopComponent(parameters, nil)
-
-		println(fmt.Sprintf("%v", err))
-
-		return nil
+		return err
 	},
 }
 
 func init() {
-	if stopComponentEnabled {
-		stopCmd.AddCommand(stopComponentCmd)
-		stopComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		stopComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		stopComponentCmd.Flags().StringP("component", "n", "", "Name of the component to stop")
-	}
+	stopCmd.AddCommand(stopComponentCmd)
+	stopComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	stopComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	stopComponentCmd.Flags().StringP("component", "n", "", "Name of the component to stop")
+	setContextSpecificPersistentFlags(stopComponentCmd)
 }

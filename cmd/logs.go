@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const logsEnabled = true
-
 // logsCmd represents the list command
 var logsCmd = &cobra.Command{
 	Use:   "logs",
@@ -33,7 +31,6 @@ var logsCmd = &cobra.Command{
 }
 
 func init() {
-	if logsEnabled {
-		getCmd.AddCommand(logsCmd)
-	}
+	getCmd.AddCommand(logsCmd)
+	setContextSpecificPersistentFlags(logsCmd)
 }

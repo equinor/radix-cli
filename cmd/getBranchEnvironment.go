@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import (
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/spf13/cobra"
 )
-
-const getBranchEnvironmentEnabled = true
 
 // getBranchEnvironmentCmd represents the getBranchEnvironmentCmd command
 var getBranchEnvironmentCmd = &cobra.Command{
@@ -56,8 +54,7 @@ var getBranchEnvironmentCmd = &cobra.Command{
 }
 
 func init() {
-	if getBranchEnvironmentEnabled {
-		getConfigCmd.AddCommand(getBranchEnvironmentCmd)
-		getBranchEnvironmentCmd.Flags().StringP("branch", "b", "", "Branch of the repository. Should be used together with --from-config to get the environment")
-	}
+	getConfigCmd.AddCommand(getBranchEnvironmentCmd)
+	getBranchEnvironmentCmd.Flags().StringP("branch", "b", "", "Branch of the repository. Should be used together with --from-config to get the environment")
+	setContextSpecificPersistentFlags(getBranchEnvironmentCmd)
 }

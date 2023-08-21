@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
-
-const restartComponentEnabled = true
 
 // restartComponentCmd represents the restart component command
 var restartComponentCmd = &cobra.Command{
@@ -49,6 +45,8 @@ var restartComponentCmd = &cobra.Command{
 			return errors.New("component name is a required field")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := component.NewRestartComponentParams().
 			WithAppName(*appName).
 			WithEnvName(envName).
@@ -60,18 +58,14 @@ var restartComponentCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Component.RestartComponent(parameters, nil)
-
-		println(fmt.Sprintf("%v", err))
-
-		return nil
+		return err
 	},
 }
 
 func init() {
-	if restartComponentEnabled {
-		restartCmd.AddCommand(restartComponentCmd)
-		restartComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		restartComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-		restartComponentCmd.Flags().StringP("component", "n", "", "Name of the component to restart")
-	}
+	restartCmd.AddCommand(restartComponentCmd)
+	restartComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	restartComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
+	restartComponentCmd.Flags().StringP("component", "n", "", "Name of the component to restart")
+	setContextSpecificPersistentFlags(restartComponentCmd)
 }

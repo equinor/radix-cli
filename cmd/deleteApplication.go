@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
-
-const deleteApplicationEnabled = true
 
 // deleteApplicationCmd represents the create application command
 var deleteApplicationCmd = &cobra.Command{
@@ -40,6 +36,8 @@ var deleteApplicationCmd = &cobra.Command{
 			return errors.New("application name is a required field")
 		}
 
+		cmd.SilenceUsage = true
+
 		deleteApplicationParams := application.NewDeleteApplicationParams()
 		deleteApplicationParams.SetAppName(*appName)
 
@@ -49,18 +47,12 @@ var deleteApplicationCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Application.DeleteApplication(deleteApplicationParams, nil)
-
-		if err != nil {
-			println(fmt.Sprintf("%v", err))
-		}
-
-		return nil
+		return err
 	},
 }
 
 func init() {
-	if deleteApplicationEnabled {
-		deleteCmd.AddCommand(deleteApplicationCmd)
-		deleteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
-	}
+	deleteCmd.AddCommand(deleteApplicationCmd)
+	deleteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
+	setContextSpecificPersistentFlags(deleteApplicationCmd)
 }

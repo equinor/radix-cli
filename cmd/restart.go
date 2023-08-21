@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const restartEnabled = true
-
 // restartCmd represents the restart command
 var restartCmd = &cobra.Command{
 	Use:   "restart",
@@ -33,7 +31,6 @@ var restartCmd = &cobra.Command{
 }
 
 func init() {
-	if restartEnabled {
-		rootCmd.AddCommand(restartCmd)
-	}
+	rootCmd.AddCommand(restartCmd)
+	setContextSpecificPersistentFlags(restartCmd)
 }

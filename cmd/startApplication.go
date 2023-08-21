@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
-
-const startApplicationEnabled = true
 
 // startApplicationCmd represents the start application command
 var startApplicationCmd = &cobra.Command{
@@ -42,6 +38,8 @@ var startApplicationCmd = &cobra.Command{
 			return errors.New("application name is required fields")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := application.NewStartApplicationParams().
 			WithAppName(*appName)
 
@@ -51,16 +49,12 @@ var startApplicationCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Application.StartApplication(parameters, nil)
-
-		println(fmt.Sprintf("%v", err))
-
-		return nil
+		return err
 	},
 }
 
 func init() {
-	if startApplicationEnabled {
-		startCmd.AddCommand(startApplicationCmd)
-		startApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-	}
+	startCmd.AddCommand(startApplicationCmd)
+	startApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	setContextSpecificPersistentFlags(startApplicationCmd)
 }

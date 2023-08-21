@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const createJobEnabled = true
-
 // createJobCmd represents the triggering of pipeline command
 var createJobCmd = &cobra.Command{
 	Use:   "job",
@@ -33,7 +31,6 @@ var createJobCmd = &cobra.Command{
 }
 
 func init() {
-	if createJobEnabled {
-		createCmd.AddCommand(createJobCmd)
-	}
+	createCmd.AddCommand(createJobCmd)
+	setContextSpecificPersistentFlags(createJobCmd)
 }

@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,10 @@ var logoutCmd = &cobra.Command{
 	Short: "Logout from Radix",
 	Long:  `Logout from Radix.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := client.LogoutCommand(cmd)
+
+		cmd.SilenceUsage = true
+
+		err := client.LogoutCommand()
 		if err != nil {
 			return err
 		}
@@ -36,4 +39,5 @@ var logoutCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(logoutCmd)
+	setVerbosePersistentFlag(logoutCmd)
 }

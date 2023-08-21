@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const getApplicationEnabled = true
-
 // getApplicationCmd represents the getApplicationCmd command
 var getApplicationCmd = &cobra.Command{
 	Use:   "application",
@@ -38,6 +36,8 @@ var getApplicationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
+		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
@@ -54,30 +54,25 @@ var getApplicationCmd = &cobra.Command{
 					log.Infof("App: %s", application.Name)
 				}
 			}
-		} else {
-			getApplicationParams := application.NewGetApplicationParams()
-			getApplicationParams.SetAppName(*appName)
-			resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
-			if err == nil {
-				prettyJSON, err := json.Pretty(resp.Payload)
-				if err == nil {
-					fmt.Println(*prettyJSON)
-				} else {
-					println(fmt.Sprintf("%v", err))
-				}
-
-			} else {
-				println(fmt.Sprintf("%v", err))
-			}
+			return err
 		}
-
+		getApplicationParams := application.NewGetApplicationParams()
+		getApplicationParams.SetAppName(*appName)
+		resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
+		if err != nil {
+			return err
+		}
+		prettyJSON, err := json.Pretty(resp.Payload)
+		if err != nil {
+			return err
+		}
+		fmt.Println(*prettyJSON)
 		return nil
 	},
 }
 
 func init() {
-	if getApplicationEnabled {
-		getCmd.AddCommand(getApplicationCmd)
-		getApplicationCmd.Flags().StringP("application", "a", "", "Name of the application")
-	}
+	getCmd.AddCommand(getApplicationCmd)
+	getApplicationCmd.Flags().StringP("application", "a", "", "Name of the application")
+	setContextSpecificPersistentFlags(getApplicationCmd)
 }

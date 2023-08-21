@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -66,6 +66,8 @@ Examples:
 			return errors.New("both `environment` and `component` are required")
 		}
 
+		cmd.SilenceUsage = true
+
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
 			return err
@@ -79,9 +81,7 @@ Examples:
 		componentReplicas := make(map[string][]string)
 		componentReplicas[componentName] = replicas
 
-		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
-		return err
-
+		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
 	},
 }
 
@@ -109,7 +109,6 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 					logParameters.SetSinceTime(&since)
 				}
 				logParameters.WithPrevious(&previous)
-
 				logData, err := apiClient.Component.Log(logParameters, nil)
 				if err != nil {
 					// Replicas may have died
@@ -122,7 +121,7 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 					break
 
 				} else {
-					// Somtimes, even though we get delta, the log is the same as previous
+					// Sometimes, even though we get delta, the log is the same as previous
 					if len(logData.Payload) > 0 && !strings.EqualFold(logData.Payload, previousLogForReplica[replica]) {
 						logLines := strings.Split(strings.Replace(strings.TrimRight(logData.Payload, "\r\n"), "\r\n", "\n", -1), "\n")
 						if len(logLines) > 0 {
@@ -157,10 +156,10 @@ func getReplicasForComponent(apiClient *apiclient.Radixapi, appName, environment
 
 	var replicas []string
 	deploymentName = environmentDetails.Payload.ActiveDeployment.Name
-	for _, component := range environmentDetails.Payload.ActiveDeployment.Components {
-		if component.Name != nil &&
-			*component.Name == componentName {
-			replicas = component.Replicas
+	for _, comp := range environmentDetails.Payload.ActiveDeployment.Components {
+		if comp.Name != nil &&
+			*comp.Name == componentName {
+			replicas = comp.Replicas
 			break
 		}
 	}
@@ -169,11 +168,10 @@ func getReplicasForComponent(apiClient *apiclient.Radixapi, appName, environment
 }
 
 func init() {
-	if logsEnvironmentEnabled {
-		logsCmd.AddCommand(logsEnvironmentComponentCmd)
-		logsEnvironmentComponentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
-		logsEnvironmentComponentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
-		logsEnvironmentComponentCmd.Flags().String("component", "", "The component to follow")
-		logsEnvironmentComponentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instance of the container in a component pod, if it exists")
-	}
+	logsCmd.AddCommand(logsEnvironmentComponentCmd)
+	logsEnvironmentComponentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
+	logsEnvironmentComponentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
+	logsEnvironmentComponentCmd.Flags().String("component", "", "The component to follow")
+	logsEnvironmentComponentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instance of the container in a component pod, if it exists")
+	setContextSpecificPersistentFlags(logsEnvironmentComponentCmd)
 }

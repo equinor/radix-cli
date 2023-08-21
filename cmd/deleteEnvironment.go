@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
-
-const deleteEnvironmentEnabled = true
 
 // deleteEnvironmentCmd represents the delete environment command
 var deleteEnvironmentCmd = &cobra.Command{
@@ -42,6 +38,8 @@ var deleteEnvironmentCmd = &cobra.Command{
 			return errors.New("environment name and application name are required fields")
 		}
 
+		cmd.SilenceUsage = true
+
 		parameters := environment.NewDeleteEnvironmentParams().
 			WithAppName(*appName).
 			WithEnvName(envName)
@@ -52,17 +50,13 @@ var deleteEnvironmentCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Environment.DeleteEnvironment(parameters, nil)
-
-		println(fmt.Sprintf("%v", err))
-
-		return nil
+		return err
 	},
 }
 
 func init() {
-	if deleteEnvironmentEnabled {
-		deleteCmd.AddCommand(deleteEnvironmentCmd)
-		deleteEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-		deleteEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment to delete")
-	}
+	deleteCmd.AddCommand(deleteEnvironmentCmd)
+	deleteEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	deleteEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment to delete")
+	setContextSpecificPersistentFlags(deleteEnvironmentCmd)
 }

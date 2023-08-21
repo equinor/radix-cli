@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,22 +17,25 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
-	"strings"
-	"time"
 )
-
-const createApplicationEnabled = true
 
 // createApplicationCmd represents the create application command
 var createApplicationCmd = &cobra.Command{
 	Use:   "application",
 	Short: "Create application",
-	Long:  `Creates a Radix application in the cluster`,
+	Long: `Creates a Radix application in the cluster
+
+Example:
+rx create application --application your-application-name --repository https://github.com/your-repository --config-branch main --ad-groups abcdef-1234-5678-9aaa-abcdefgf --reader-ad-groups=23456789--9123-4567-8901-23456701 --shared-secret someSecretPhrase12345 --acknowledge-warnings --configuration-item "YOUR PROJECT CONFIG ITEM" --context playground
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -55,18 +58,22 @@ var createApplicationCmd = &cobra.Command{
 		}
 
 		adGroups, _ := cmd.Flags().GetStringSlice("ad-groups")
+		readerAdGroups, _ := cmd.Flags().GetStringSlice("reader-ad-groups")
+
+		cmd.SilenceUsage = true
 
 		registerApplicationParams := platform.NewRegisterApplicationParams()
 		registerApplicationParams.SetApplicationRegistration(&models.ApplicationRegistrationRequest{
 			AcknowledgeWarnings: acknowledgeWarnings,
 			ApplicationRegistration: &models.ApplicationRegistration{
-				Name:                appName,
-				Repository:          &repository,
-				SharedSecret:        &sharedSecret,
 				AdGroups:            adGroups,
 				ConfigBranch:        &configBranch,
-				RadixConfigFullName: configFile,
 				ConfigurationItem:   configurationItem,
+				Name:                appName,
+				RadixConfigFullName: configFile,
+				ReaderAdGroups:      readerAdGroups,
+				Repository:          &repository,
+				SharedSecret:        &sharedSecret,
 			},
 		})
 
@@ -78,7 +85,6 @@ var createApplicationCmd = &cobra.Command{
 		resp, err := apiClient.Platform.RegisterApplication(registerApplicationParams, nil)
 
 		if err != nil {
-			println(fmt.Sprintf("%v", err))
 			return err
 		}
 		registrationUpsertResponse := resp.Payload
@@ -87,8 +93,7 @@ var createApplicationCmd = &cobra.Command{
 			for _, warning := range registrationUpsertResponse.Warnings {
 				println(fmt.Sprintf("- %s", warning))
 			}
-			println("If you agree to proceed with warnings - please add an option --acknowledge-warnings")
-			return nil
+			return fmt.Errorf("if you agree to proceed with warnings - please add an option --acknowledge-warnings")
 		}
 		if registrationUpsertResponse.ApplicationRegistration == nil {
 			return errors.New("unspecified error")
@@ -103,7 +108,7 @@ var createApplicationCmd = &cobra.Command{
 			if err != nil {
 				getRadixRegistrationNoAccessErrorCount--
 				if getRadixRegistrationNoAccessErrorCount == 0 {
-					return errors.New(fmt.Sprintf("Error getting public deploy key: %v", err))
+					return fmt.Errorf("error getting public deploy key: %w", err)
 				}
 				time.Sleep(getRadixRegistrationNoAccessErrorPause) // Sleep before trying again
 				continue
@@ -119,15 +124,15 @@ var createApplicationCmd = &cobra.Command{
 }
 
 func init() {
-	if createApplicationEnabled {
-		createCmd.AddCommand(createApplicationCmd)
-		createApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
-		createApplicationCmd.Flags().StringP("repository", "", "", "Repository path")
-		createApplicationCmd.Flags().StringP("shared-secret", "", "", "Shared secret for the webhook")
-		createApplicationCmd.Flags().StringP("config-branch", "", "", "Name of the branch where Radix will read your radixconfig.yaml from")
-		createApplicationCmd.Flags().StringP("config-file", "", "", "Name of the radix config file. Optional, defaults to radixconfig.yaml")
-		createApplicationCmd.Flags().StringSliceP("ad-groups", "", []string{}, "Admin groups")
-		createApplicationCmd.Flags().StringP("configuration-item", "", "", "Configuration item")
-		createApplicationCmd.Flags().Bool("acknowledge-warnings", false, "Acknowledge warnings and proceed")
-	}
+	createCmd.AddCommand(createApplicationCmd)
+	createApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
+	createApplicationCmd.Flags().StringP("repository", "", "", "Repository path")
+	createApplicationCmd.Flags().StringP("shared-secret", "", "", "Shared secret for the webhook")
+	createApplicationCmd.Flags().StringP("config-branch", "", "", "Name of the branch where Radix will read your radixconfig.yaml from")
+	createApplicationCmd.Flags().StringP("config-file", "", "", "Name of the radix config file. Optional, defaults to radixconfig.yaml")
+	createApplicationCmd.Flags().StringSliceP("ad-groups", "", []string{}, "Admin groups")
+	createApplicationCmd.Flags().StringSliceP("reader-ad-groups", "", []string{}, "Reader groups")
+	createApplicationCmd.Flags().StringP("configuration-item", "", "", "Configuration item")
+	createApplicationCmd.Flags().Bool("acknowledge-warnings", false, "Acknowledge warnings and proceed")
+	setContextSpecificPersistentFlags(createApplicationCmd)
 }

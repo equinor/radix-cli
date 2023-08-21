@@ -1,4 +1,4 @@
-// Copyright © 2022
+// Copyright © 2023
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
-
-const logsEnvironmentEnabled = true
 
 // logsEnvironmentCmd represents the followEnvironmentCmd command
 var logsEnvironmentCmd = &cobra.Command{
@@ -54,6 +52,8 @@ Example:
 			return errors.New("both `environment` and `component` are required")
 		}
 
+		cmd.SilenceUsage = true
+
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
 			return err
@@ -64,9 +64,7 @@ Example:
 			return err
 		}
 
-		err = logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
-		return err
-
+		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
 	},
 }
 
@@ -96,11 +94,9 @@ func getComponentReplicasForEnvironment(apiClient *apiclient.Radixapi, appName, 
 }
 
 func init() {
-	if logsEnvironmentEnabled {
-		logsCmd.AddCommand(logsEnvironmentCmd)
-
-		logsEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
-		logsEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
-		logsEnvironmentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
-	}
+	logsCmd.AddCommand(logsEnvironmentCmd)
+	logsEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
+	logsEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
+	logsEnvironmentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
+	setContextSpecificPersistentFlags(logsEnvironmentCmd)
 }
