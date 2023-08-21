@@ -35,7 +35,7 @@ var completedJobStatuses = []string{"Succeeded", "Failed", "Stopped"}
 var logsJobCmd = &cobra.Command{
 	Use:   "job",
 	Short: "Gets logs for a pipeline job",
-	Long: `Gets and follows logs of a pipeline job.
+	Long: `Gets and follows logs for a pipeline job.
 
 It may take few seconds to get the log.
 
