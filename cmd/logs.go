@@ -23,7 +23,7 @@ import (
 // logsCmd represents the list command
 var logsCmd = &cobra.Command{
 	Use:   "logs",
-	Short: "Follow Radix logs for Radix resource",
+	Short: "Follows Radix logs for Radix resource",
 	Long:  `Feeds resource output to the console while it runs.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("please specify the resource you want to get logs for")

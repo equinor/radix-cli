@@ -29,8 +29,8 @@ import (
 // getApplicationCmd represents the getApplicationCmd command
 var getApplicationCmd = &cobra.Command{
 	Use:   "application",
-	Short: "Will get Radix application",
-	Long:  `Will get a list of Radix applications or a single application if provided`,
+	Short: "Gets Radix application",
+	Long:  `Gets a list of Radix applications or a single application if provided`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {

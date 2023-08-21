@@ -33,8 +33,8 @@ import (
 // logsEnvironmentComponentCmd represents the logsEnvironmentComponentCmd command
 var logsEnvironmentComponentCmd = &cobra.Command{
 	Use:   "component",
-	Short: "Get logs of specific components in environment",
-	Long: `Will get and follow logs of component in an environment.
+	Short: "Gets logs for a specific components in an environment",
+	Long: `Gets and follows logs for a component in an environment.
 
 It may take few seconds to get the log.
 
