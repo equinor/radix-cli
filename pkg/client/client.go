@@ -85,11 +85,7 @@ func getAuthWriter(cmd *cobra.Command, config *radixconfig.RadixConfig) (runtime
 
 // LoginCommand Login client for command
 func LoginCommand(cmd *cobra.Command) error {
-	context, _, err := getContextAndCluster(cmd)
-	if err != nil {
-		return err
-	}
-	return LoginContext(context)
+	return LoginContext()
 }
 
 // LogoutCommand Logout command
@@ -116,8 +112,13 @@ func getContextAndCluster(cmd *cobra.Command) (string, string, error) {
 }
 
 // LoginContext Performs login
-func LoginContext(contextName string) error {
-	radixConfig := radixconfig.GetDefaultRadixConfig()
+func LoginContext() error {
+	radixConfig, err := radixconfig.GetRadixConfig()
+	if err != nil {
+		return err
+	}
+	contextName := radixConfig.CustomConfig.Context
+	radixConfig = radixconfig.GetDefaultRadixConfig()
 	radixConfig.CustomConfig.Context = contextName
 	provider, err := getAuthProvider(radixConfig)
 	if err != nil {
