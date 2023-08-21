@@ -23,7 +23,7 @@ import (
 // getConfigCmd represents the get-config command
 var getConfigCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Get setting from Radix config",
+	Short: "Gets setting from Radix config",
 	Long:  `Helper functionality to get data from radixconfig.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("please specify the setting you want to get")

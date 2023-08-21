@@ -26,8 +26,8 @@ import (
 // logsEnvironmentCmd represents the followEnvironmentCmd command
 var logsEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
-	Short: "Get logs of all components in environment",
-	Long: `Will get and follow logs of all components in an environment.
+	Short: "Gets logs of all components in environment",
+	Long: `Gets and follows logs of all components in an environment.
 
 It may take few seconds to get the log.
 

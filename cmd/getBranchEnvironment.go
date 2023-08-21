@@ -24,8 +24,8 @@ import (
 // getBranchEnvironmentCmd represents the getBranchEnvironmentCmd command
 var getBranchEnvironmentCmd = &cobra.Command{
 	Use:   "branch-environment",
-	Short: "Will get the environment for a given branch",
-	Long:  `Will get the environment for a given branch`,
+	Short: "Gets the environment for a given branch",
+	Long:  `Gets the environment for a given branch`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fromConfig, _ := cmd.Flags().GetBool(settings.FromConfigOption)
 		if !fromConfig {
