@@ -1,11 +1,13 @@
 module github.com/equinor/radix-cli
 
-go 1.20
+go 1.21
+
+toolchain go1.21.0
 
 require (
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.1.0
-	github.com/equinor/radix-common v1.4.0
-	github.com/equinor/radix-operator v1.40.2
+	github.com/equinor/radix-common v1.5.0
+	github.com/equinor/radix-operator v1.43.0
 	github.com/fatih/color v1.15.0
 	github.com/go-openapi/errors v0.20.4
 	github.com/go-openapi/runtime v0.26.0
@@ -77,10 +79,10 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.26.7 // indirect
-	k8s.io/apiextensions-apiserver v0.26.7 // indirect
-	k8s.io/apimachinery v0.26.7 // indirect
-	k8s.io/client-go v0.26.7 // indirect
+	k8s.io/api v0.27.6 // indirect
+	k8s.io/apiextensions-apiserver v0.27.6 // indirect
+	k8s.io/apimachinery v0.27.6 // indirect
+	k8s.io/client-go v0.27.6 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230501164219-8b0f38b5fd1f // indirect
 	k8s.io/utils v0.0.0-20230505201702-9f6742963106 // indirect
