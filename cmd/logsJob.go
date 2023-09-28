@@ -17,9 +17,10 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"k8s.io/utils/strings/slices"
 	"strings"
 	"time"
+
+	"k8s.io/utils/strings/slices"
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/pipeline_job"
@@ -148,7 +149,7 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 			}
 			getLogAttempts--
 			if getLogAttempts > 0 {
-				getLogAwaitingTime := int(time.Now().Sub(getLogStartTime))
+				getLogAwaitingTime := int(time.Since(getLogStartTime))
 				log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %d seconds. Job summary: %v. Status: %s. Contihue waiting", getLogAwaitingTime, jobSummary, jobSummary.Status), log.GetColor(0))
 				break
 			}
