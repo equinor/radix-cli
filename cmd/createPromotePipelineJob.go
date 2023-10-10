@@ -48,7 +48,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 			return errors.New("Specifying deployment name or setting use-active-deployment is required")
 		}
 		if useActiveDeployment && deploymentName != "" {
-			return errors.New("You must specify either deployment name or set use-active-deployment")
+			return errors.New("You cannot set use-active-deployment and specify deployment name at the same time")
 		}
 
 		if appName == nil || *appName == "" || fromEnvironment == "" || toEnvironment == "" {
