@@ -14,6 +14,7 @@ require (
 	github.com/go-openapi/strfmt v0.21.7
 	github.com/go-openapi/swag v0.22.4
 	github.com/go-openapi/validate v0.22.1
+	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.7.0
 	k8s.io/utils v0.0.0-20230505201702-9f6742963106

@@ -15,7 +15,9 @@
 package cmd
 
 import (
-	"errors"
+	apiclient "github.com/equinor/radix-cli/generated-client/client"
+	"github.com/equinor/radix-cli/generated-client/client/environment"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
@@ -35,13 +37,21 @@ var createPromotePipelineJobCmd = &cobra.Command{
 			return err
 		}
 
+		useActiveDeployment, _ := cmd.Flags().GetBool("use-active-deployment")
 		deploymentName, _ := cmd.Flags().GetString("deployment")
 		fromEnvironment, _ := cmd.Flags().GetString("from-environment")
 		toEnvironment, _ := cmd.Flags().GetString("to-environment")
 		triggeredByUser, _ := cmd.Flags().GetString("user")
 		follow, _ := cmd.Flags().GetBool("follow")
 
-		if appName == nil || *appName == "" || deploymentName == "" || fromEnvironment == "" || toEnvironment == "" {
+		if !useActiveDeployment && deploymentName == "" {
+			return errors.New("Specifying deployment name or setting use-active-deployment is required")
+		}
+		if useActiveDeployment && deploymentName != "" {
+			return errors.New("You must specify either deployment name or set use-active-deployment")
+		}
+
+		if appName == nil || *appName == "" || fromEnvironment == "" || toEnvironment == "" {
 			return errors.New("application name, deployment name, from and to environments are required")
 		}
 
@@ -51,6 +61,16 @@ var createPromotePipelineJobCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
+		if useActiveDeployment {
+			d, err := getActiveDeploymentName(apiClient, *appName, fromEnvironment)
+			if err != nil {
+				return err
+			}
+
+			deploymentName = d
+		}
+
 		triggerPipelineParams := application.NewTriggerPipelinePromoteParams()
 		triggerPipelineParams.SetAppName(*appName)
 		triggerPipelineParams.SetPipelineParametersPromote(&models.PipelineParametersPromote{
@@ -75,6 +95,23 @@ var createPromotePipelineJobCmd = &cobra.Command{
 	},
 }
 
+func getActiveDeploymentName(apiClient *apiclient.Radixapi, appName, envName string) (string, error) {
+	params := environment.NewGetEnvironmentParams()
+	params.SetAppName(appName)
+	params.SetEnvName(envName)
+
+	resp, err := apiClient.Environment.GetEnvironment(params, nil)
+	if err != nil {
+		return "", errors.Wrap(err, "Failed to get environment details")
+	}
+
+	if resp.Payload.ActiveDeployment == nil || resp.Payload.ActiveDeployment.Name == "" {
+		return "", errors.Errorf("Environment '%s' does not have any active deployments", envName)
+	}
+
+	return resp.Payload.ActiveDeployment.Name, nil
+}
+
 func init() {
 	createJobCmd.AddCommand(createPromotePipelineJobCmd)
 	createPromotePipelineJobCmd.Flags().StringP("application", "a", "", "Name of the application to be promoted")
@@ -83,5 +120,6 @@ func init() {
 	createPromotePipelineJobCmd.Flags().StringP("to-environment", "", "", "The deployment target environment")
 	createPromotePipelineJobCmd.Flags().StringP("user", "u", "", "The user who triggered the promote pipeline job")
 	createPromotePipelineJobCmd.Flags().BoolP("follow", "f", false, "Follow the promote pipeline job log")
+	createPromotePipelineJobCmd.Flags().BoolP("use-active-deployment", "", false, "Promote the active deployment")
 	setContextSpecificPersistentFlags(createPromotePipelineJobCmd)
 }
