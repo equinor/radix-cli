@@ -52,7 +52,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 		}
 
 		if appName == nil || *appName == "" || fromEnvironment == "" || toEnvironment == "" {
-			return errors.New("application name, deployment name, from and to environments are required")
+			return errors.New("application name, from and to environments are required")
 		}
 
 		cmd.SilenceUsage = true
