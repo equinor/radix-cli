@@ -26,7 +26,7 @@ func main() {
 
 	ioutil.ReadFile(".goreleaser.yml")
 
-	cmd.Execute(
+	cmd.Execute()
 }
 
 func ensureRadixConfigFolderExists() error {
