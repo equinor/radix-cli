@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/spf13/cobra"
@@ -48,7 +49,7 @@ var getBranchEnvironmentCmd = &cobra.Command{
 			return err
 		}
 
-		println(*environment)
+		fmt.Print(*environment)
 		return nil
 	},
 }
