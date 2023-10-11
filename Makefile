@@ -8,7 +8,6 @@ generate-client:
 
 .PHONY: release
 release:
-	swagger generate client -t ./generated-client -f https://api.radix.equinor.com/swaggerui/swagger.json -A radixapi
 	git tag -a v$(VERSION) -m "$(RELEASE_NOTE)"
 	git push origin v$(VERSION)
 	git config --global credential.helper cache
