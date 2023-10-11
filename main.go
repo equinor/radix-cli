@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/equinor/radix-cli/cmd"
@@ -23,7 +24,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	cmd.Execute()
+	ioutil.ReadFile(".goreleaser.yml")
+
+	cmd.Execute(
 }
 
 func ensureRadixConfigFolderExists() error {

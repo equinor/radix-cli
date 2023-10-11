@@ -17,6 +17,7 @@ builds:
 dockers:
   - image_templates:
       - "ghcr.io/equinor/radix/rx:latest"
+      - "ghcr.io/equinor/radix/rx:{{ .Version}}"
     dockerfile: Dockerfile.goreleaser
     ids:
       - rx
