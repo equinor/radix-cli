@@ -27,7 +27,7 @@ jobs:
       with:
         distribution: goreleaser
         version: v1.21.2
-        args: build --clean --single-target
+        args: build --clean --single-target --snapshot
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -44,4 +44,5 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.54
+
 
