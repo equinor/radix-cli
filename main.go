@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/equinor/radix-cli/cmd"
@@ -23,8 +22,6 @@ func main() {
 		fmt.Printf("Error creating radix config folder: %v\n", err)
 		os.Exit(1)
 	}
-
-	ioutil.ReadFile(".goreleaser.yml")
 
 	cmd.Execute()
 }
