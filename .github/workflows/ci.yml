@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   pull_request:
 
+permissions:
+  content: read
+  pull-requests: read
+
 jobs:
 
   build:
@@ -45,6 +49,6 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.54
-          args: --timeout=5m
+          args: --timeout=5m --out-format=github-actions
 
 
