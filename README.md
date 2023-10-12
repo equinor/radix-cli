@@ -154,22 +154,12 @@ We are making releases available as GitHub releases using [go-releaser](https://
 
 To make a release:
 1. Set the version number in the constant `version` in the file `cmd/root.go`. The version will be shown with the command `rx --version`
-2. Ensure there is no `dist` folder in the project (left from previous release)
-3. Get the [personal access token](https://github.com/settings/tokens) - with access to repository and `write:packages` scope, and with enabled SSO for organisation (or create it)
-4. Login to the docker repository with your user-name, using personal access token as a password (personal user=name/password authentication is or will be deprecated)
-    ```
-    docker login ghcr.io -u USER_NAME
-    ```
-5. Run the command to create a version with a tag, build a docker image and push them to GitHub repository 
-    ```
-    GITHUB_TOKEN=<PERSONAL_ACCESS_TOKEN> make release VERSION=0.0.1 RELEASE_NOTE="<Release notes>"
-    ```
-6. If something goes wrong:
-      - open the GitHub repository and delete [created tag](https://github.com/equinor/radix-cli/releases/) (with release)
-      - delete it locally ` git tag -d v0.0.1`
-      - reset changes `git reset --hard`
-      - delete the `dist` folder
-      - perform the previous step `make release ...` again  
+2. Create and push the new version as a tag: `git tag v0.0.1` and `git push origin v0.0.1`
+3. If something goes wrong:
+   - open the GitHub repository and delete [created tag](https://github.com/equinor/radix-cli/tags/) (with release)
+   - delete it locally ` git tag -d v0.0.1`
+   - reset changes `git reset --hard`
+   - tag the commit againg and push: `git tag v0.0.1` and `git push origin v0.0.1`
 
 To generate a local version for debugging purposes, it can be built using:
 
