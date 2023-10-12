@@ -16,6 +16,8 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
+	"os"
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
@@ -66,6 +68,10 @@ var setEnvironmentSecretCmd = &cobra.Command{
 		}
 
 		component, _ := cmd.Flags().GetString(componentOption)
+		if component == "" {
+			return errors.New("`component` is required")
+		}
+
 		awaitReconcile, _ := cmd.Flags().GetBool(awaitReconcileOption)
 
 		cmd.SilenceUsage = true
@@ -81,7 +87,8 @@ var setEnvironmentSecretCmd = &cobra.Command{
 			})
 
 			if !reconciledOk {
-				return errors.New("component was not reconciled within time")
+				return fmt.Errorf("component was not reconciled within time: either component %s does not exist in the environment %s or the component has not secret %s",
+					component, environmentName, secretName)
 			}
 		}
 
@@ -107,6 +114,7 @@ func isComponentSecretReconciled(apiClient *apiclient.Radixapi, appName, environ
 
 	env, err := apiClient.Environment.GetEnvironment(getEnvironmentParameters, nil)
 	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
 		return false
 	}
 
