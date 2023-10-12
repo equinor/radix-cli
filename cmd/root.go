@@ -17,10 +17,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	radixCLIError = "Error: Radix CLI executed with error"
-)
-
 var Version = "dev"
 var rootLongHelp = strings.TrimSpace(`
 A command line interface which allows you to interact with the Radix platform through automation.
