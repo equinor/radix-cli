@@ -14,6 +14,8 @@ builds:
       - amd64
       - arm
       - arm64
+    ldflags:
+      -  "-X 'github.com/equinor/radix-cli/cmd.Version={{ .Version }}'"
 dockers:
   - image_templates:
       - "ghcr.io/equinor/radix/rx:latest"

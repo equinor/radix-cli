@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	_ "embed"
 	"errors"
 	"fmt"
 	"os"
@@ -19,9 +20,9 @@ import (
 
 const (
 	radixCLIError = "Error: Radix CLI executed with error"
-	version       = "1.9.1"
 )
 
+var Version = "dev"
 var rootLongHelp = strings.TrimSpace(`
 A command line interface which allows you to interact with the Radix platform through automation.
 `)
@@ -31,7 +32,7 @@ var rootCmd = &cobra.Command{
 	Use:     "rx",
 	Short:   "Command line interface for Radix platform",
 	Long:    rootLongHelp,
-	Version: version,
+	Version: Version,
 }
 
 // Execute the top level command

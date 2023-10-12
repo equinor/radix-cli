@@ -42,7 +42,7 @@ Authenticate with github via docker using a token with _read:packages_ access. M
 ```bash
 docker login -u <github username> -p <access token> ghcr.io
 
-alias rx="docker run -it -v ${HOME}/.radix:/home/radix-cli/.radix ghcr.io/equinor/radix/rx:latest"
+alias rx="docker run -it -v ${HOME}/.radix:/home/radix/.radix ghcr.io/equinor/radix/rx:latest"
 ```
 
 (Typically your `HOME` variable will be `/Users/<username>` on a Mac and `/home/<username>` on Linux)
@@ -73,13 +73,13 @@ See docker for linux/mac above for authentication guide.
 If your terminal has a profile or auto-run script, you can add the following to it:
 
 ```batch
-DOSKEY rx=docker run -it -v %HOME%:/home/radix-cli ghcr.io/equinor/radix/rx:latest $*
+DOSKEY rx=docker run -it -v %HOME%:/home/radix ghcr.io/equinor/radix/rx:latest $*
 ```
 
 If not, you must add a new script file called `rx.bat` in a directory, present in `PATH`, with the following content
 
 ```batch
-docker run -it -v %HOME%:/home/radix-cli ghcr.io/equinor/radix/rx:latest $*
+docker run -it -v %HOME%:/home/radix ghcr.io/equinor/radix/rx:latest $*
 ```
 
 (Typically your `HOME` variable will be `C:\Users\<username>`)
@@ -115,7 +115,7 @@ Note that using your own token obtained through `az account get-access-token` ma
 * Set the machine-user token to the environment variable: `export APP_SERVICE_ACCOUNT_TOKEN=<your service account token>`
 * Run the command within the container (example to watch pipeline job logs with a command `rx get logs job -a your-application-name -c playground -j your-job-name`): 
 ```shell
-docker run -it -e APP_SERVICE_ACCOUNT_TOKEN=$APP_SERVICE_ACCOUNT_TOKEN  ghcr.io/equinor/radix-cli/rx:latest --token-environment get logs job -a your-application-name -c playground -j your-job-name
+docker run -it -e APP_SERVICE_ACCOUNT_TOKEN=$APP_SERVICE_ACCOUNT_TOKEN  ghcr.io/equinor/radix/rx:latest --token-environment get logs job -a your-application-name -c playground -j your-job-name
 ```
 
 ## Problems encountered
@@ -153,23 +153,12 @@ NOTE: If there is a change to the API, you make need to point to the API environ
 We are making releases available as GitHub releases using [go-releaser](https://goreleaser.com/). The release process is controlled by the `.goreleaser.yml` file. 
 
 To make a release:
-1. Set the version number in the constant `version` in the file `cmd/root.go`. The version will be shown with the command `rx --version`
-2. Ensure there is no `dist` folder in the project (left from previous release)
-3. Get the [personal access token](https://github.com/settings/tokens) - with access to repository and `write:packages` scope, and with enabled SSO for organisation (or create it)
-4. Login to the docker repository with your user-name, using personal access token as a password (personal user=name/password authentication is or will be deprecated)
-    ```
-    docker login ghcr.io -u USER_NAME
-    ```
-5. Run the command to create a version with a tag, build a docker image and push them to GitHub repository 
-    ```
-    GITHUB_TOKEN=<PERSONAL_ACCESS_TOKEN> make release VERSION=0.0.1 RELEASE_NOTE="<Release notes>"
-    ```
-6. If something goes wrong:
-      - open the GitHub repository and delete [created tag](https://github.com/equinor/radix-cli/releases/) (with release)
-      - delete it locally ` git tag -d v0.0.1`
-      - reset changes `git reset --hard`
-      - delete the `dist` folder
-      - perform the previous step `make release ...` again  
+1. Create and push the new version as a tag: `git tag v0.0.1` and `git push origin v0.0.1`
+2. If something goes wrong:
+   - open the GitHub repository and delete [created tag](https://github.com/equinor/radix-cli/tags/) (with release)
+   - delete it locally ` git tag -d v0.0.1`
+   - reset changes `git reset --hard`
+   - tag the commit againg and push: `git tag v0.0.1` and `git push origin v0.0.1`
 
 To generate a local version for debugging purposes, it can be built using:
 
