@@ -19,7 +19,7 @@ import (
 
 const (
 	radixCLIError = "Error: Radix CLI executed with error"
-	version       = "1.9.0"
+	version       = "1.9.1"
 )
 
 var rootLongHelp = strings.TrimSpace(`
