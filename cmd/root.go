@@ -22,9 +22,7 @@ const (
 	radixCLIError = "Error: Radix CLI executed with error"
 )
 
-//go:generate sh -c "printf %s $(git describe --tags) > tag.txt"
-//go:embed tag.txt
-var version string
+var Version = "dev"
 var rootLongHelp = strings.TrimSpace(`
 A command line interface which allows you to interact with the Radix platform through automation.
 `)
@@ -34,7 +32,7 @@ var rootCmd = &cobra.Command{
 	Use:     "rx",
 	Short:   "Command line interface for Radix platform",
 	Long:    rootLongHelp,
-	Version: "version: " + version,
+	Version: Version,
 }
 
 // Execute the top level command
