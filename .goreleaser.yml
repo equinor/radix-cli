@@ -10,12 +10,12 @@ builds:
       - darwin
       - windows
     goarch:
-      - 386
+      - "386"
       - amd64
       - arm
       - arm64
     ldflags:
-      -  "-X 'github.com/equinor/radix-cli/cmd.Version={{ .Version }}'"
+      -  "-s -w -X 'github.com/equinor/radix-cli/cmd.Version={{ .Version }}'"
 dockers:
   - image_templates:
       - "ghcr.io/equinor/radix/rx:latest"

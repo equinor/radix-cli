@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	_ "embed"
 	"errors"
 	"fmt"
 	"os"
@@ -16,10 +15,6 @@ import (
 	"github.com/equinor/radix-operator/pkg/apis/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-)
-
-const (
-	radixCLIError = "Error: Radix CLI executed with error"
 )
 
 var Version = "dev"
