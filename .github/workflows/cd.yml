@@ -37,6 +37,7 @@ jobs:
         go-version: '1.21'
 
     - name: Run GoReleaser
+      id: goreleaser
       uses: goreleaser/goreleaser-action@v5
       with:
         distribution: goreleaser
@@ -44,3 +45,8 @@ jobs:
         args: release --clean
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Triggr github-aciton release
+      uses: equinor/radix-github-action/.github/workflows/ci.yaml
+      with:
+        semver: ${{ fromJSON(steps.goreleaser.outputs.metadata).version }}
