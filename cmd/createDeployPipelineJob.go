@@ -130,7 +130,7 @@ func init() {
 	createDeployPipelineJobCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
 	createDeployPipelineJobCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
 	createDeployPipelineJobCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
-	createDeployPipelineJobCmd.Flags().StringP("commitID", "i", "", "Commit id")
+	createDeployPipelineJobCmd.Flags().StringP("commitID", "i", "", "An optional 40 character commit id to tag the new pipeline job")
 	createDeployPipelineJobCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
 	setContextSpecificPersistentFlags(createDeployPipelineJobCmd)
 }
