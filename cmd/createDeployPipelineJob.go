@@ -16,6 +16,9 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
+	"regexp"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
@@ -71,6 +74,11 @@ Examples:
 		if appName == nil || *appName == "" || targetEnvironment == "" {
 			return errors.New("application name and target environment are required")
 		}
+		commitID, _ := cmd.Flags().GetString("commitID")
+		err2 := validateCommitID(commitID)
+		if err2 != nil {
+			return err2
+		}
 
 		cmd.SilenceUsage = true
 
@@ -85,6 +93,7 @@ Examples:
 			ToEnvironment: targetEnvironment,
 			ImageTagNames: imageTagNames,
 			TriggeredBy:   triggeredByUser,
+			CommitID:      commitID,
 		})
 
 		newJob, err := apiClient.Application.TriggerPipelineDeploy(triggerPipelineParams, nil)
@@ -101,12 +110,27 @@ Examples:
 	},
 }
 
+func validateCommitID(commitID string) error {
+	if len(commitID) == 0 {
+		return nil
+	}
+	re, err := regexp.Compile("^[a-f0-9]{40}$")
+	if err != nil {
+		return fmt.Errorf("error compiling the regex for the GitHub CommitID: %w", err)
+	}
+	if !re.MatchString(commitID) {
+		return fmt.Errorf("invalid GitHub CommitID format")
+	}
+	return nil
+}
+
 func init() {
 	createJobCmd.AddCommand(createDeployPipelineJobCmd)
 	createDeployPipelineJobCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
 	createDeployPipelineJobCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
 	createDeployPipelineJobCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
 	createDeployPipelineJobCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
+	createDeployPipelineJobCmd.Flags().StringP("commitID", "i", "", "Commit id")
 	createDeployPipelineJobCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
 	setContextSpecificPersistentFlags(createDeployPipelineJobCmd)
 }

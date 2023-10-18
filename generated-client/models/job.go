@@ -66,6 +66,10 @@ type Job struct {
 	// Example: qa
 	PromotedToEnvironment string `json:"promotedToEnvironment,omitempty"`
 
+	// RerunFromJob The source name of the job if this job was restarted from it
+	// Example: radix-pipeline-20231011104617-urynf
+	RerunFromJob string `json:"rerunFromJob,omitempty"`
+
 	// Started timestamp
 	// Example: 2006-01-02T15:04:05Z
 	Started string `json:"started,omitempty"`

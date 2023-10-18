@@ -36,9 +36,6 @@ type ApplicationRegistration struct {
 	// Required: true
 	Creator *string `json:"creator"`
 
-	// MachineUser is on/off toggle of machine user for the application
-	MachineUser bool `json:"machineUser,omitempty"`
-
 	// Name the unique name of the Radix application
 	// Example: radix-canary-golang
 	// Required: true
