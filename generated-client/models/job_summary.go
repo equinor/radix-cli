@@ -24,7 +24,7 @@ type JobSummary struct {
 	// Example: radix-pipeline-20181029135644-algpv-6hznh
 	AppName string `json:"appName,omitempty"`
 
-	// Branch branch to build from
+	// Branch to build from
 	// Example: master
 	Branch string `json:"branch,omitempty"`
 
@@ -44,6 +44,10 @@ type JobSummary struct {
 	// Example: ["dev","qa"]
 	Environments []string `json:"environments"`
 
+	// Image tags names for components - if empty will use default logic
+	// Example: component1: tag1,component2: tag2
+	ImageTagNames map[string]string `json:"imageTagNames,omitempty"`
+
 	// Name of the job
 	// Example: radix-pipeline-20181029135644-algpv-6hznh
 	Name string `json:"name,omitempty"`
@@ -52,6 +56,15 @@ type JobSummary struct {
 	// Example: build-deploy
 	// Enum: [build-deploy  build]
 	Pipeline string `json:"pipeline,omitempty"`
+
+	// RadixDeployment name, which is promoted
+	PromotedFromDeployment string `json:"promotedFromDeployment,omitempty"`
+
+	// Environment name, from which the Radix deployment is promoted
+	PromotedFromEnvironment string `json:"promotedFromEnvironment,omitempty"`
+
+	// Environment name, to which the Radix deployment is promoted
+	PromotedToEnvironment string `json:"promotedToEnvironment,omitempty"`
 
 	// Started timestamp
 	// Example: 2006-01-02T15:04:05Z

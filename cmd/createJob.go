@@ -22,9 +22,10 @@ import (
 
 // createJobCmd represents the triggering of pipeline command
 var createJobCmd = &cobra.Command{
-	Use:   "job",
-	Short: "Create job command",
-	Long:  `Will be the main command for triggering pipelines.`,
+	Use:     "pipeline-job",
+	Aliases: []string{"job"},
+	Short:   "Create job command",
+	Long:    `Will be the main command for triggering pipelines.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("please specify the pipeline you want to create")
 	},

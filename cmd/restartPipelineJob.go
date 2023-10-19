@@ -19,19 +19,18 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/pipeline_job"
 	"github.com/equinor/radix-cli/pkg/client"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-// rerunCmd represents the rerun command
-var rerunCmd = &cobra.Command{
-	Use:   "rerun",
-	Short: "Rerun Radix pipeline job",
-	Long: `Rerun failed of stopped Radix pipeline job .
+// restartPipelineJobCmd represents the rerun command
+var restartPipelineJobCmd = &cobra.Command{
+	Use:     "pipeline-job",
+	Aliases: []string{"job"},
+	Short:   "Restart Radix pipeline job",
+	Long: `Restart failed of stopped Radix pipeline job.
 
 	Example:
-	# Get logs for a pipeline job
-	rx rerun --application radix-test --job radix-pipeline-20230323185013-ehvnz
+	rx restart pipeline-job --application radix-test --job radix-pipeline-20230323185013-ehvnz
 `,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -61,17 +60,14 @@ var rerunCmd = &cobra.Command{
 		params.AppName = *appName
 		params.JobName = jobName
 
-		job, err := apiClient.PipelineJob.RerunApplicationJob(&params, nil)
-		log.Info(job) // TODO
+		_, err = apiClient.PipelineJob.RerunApplicationJob(params, nil)
 		return err
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(rerunCmd)
-	rerunCmd.Flags().StringP("application", "a", "", "Name of the application for the job")
-	rerunCmd.Flags().StringP("job", "j", "", "The job to get logs for")
-	rerunCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
-	rerunCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
-	setContextSpecificPersistentFlags(rerunCmd)
+	restartCmd.AddCommand(restartPipelineJobCmd)
+	restartPipelineJobCmd.Flags().StringP("application", "a", "", "Name of the application for the job")
+	restartPipelineJobCmd.Flags().StringP("job", "j", "", "The job to restart")
+	setContextSpecificPersistentFlags(restartPipelineJobCmd)
 }

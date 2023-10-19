@@ -21,7 +21,7 @@ import (
 // swagger:model Job
 type Job struct {
 
-	// Branch branch to build from
+	// Branch to build from
 	// Example: master
 	Branch string `json:"branch,omitempty"`
 
@@ -45,6 +45,10 @@ type Job struct {
 	// Example: 2006-01-02T15:04:05Z
 	Ended string `json:"ended,omitempty"`
 
+	// Image tags names for components - if empty will use default logic
+	// Example: component1: tag1,component2: tag2
+	ImageTagNames map[string]string `json:"imageTagNames,omitempty"`
+
 	// Name of the job
 	// Example: radix-pipeline-20181029135644-algpv-6hznh
 	Name string `json:"name,omitempty"`
@@ -57,6 +61,9 @@ type Job struct {
 	// PromotedDeploymentName the name of the deployment that was promoted
 	// Example: component-6hznh
 	PromotedDeploymentName string `json:"promotedDeploymentName,omitempty"`
+
+	// RadixDeployment name, which is promoted
+	PromotedFromDeployment string `json:"promotedFromDeployment,omitempty"`
 
 	// PromotedFromEnvironment the name of the environment that was promoted from
 	// Example: dev
