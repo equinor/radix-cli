@@ -135,6 +135,10 @@ We are using the [cobra framework](https://github.com/spf13/cobra) for handling 
 cobra add <commandName>
 ```
 
+### Contributing
+
+Want to [contribute](./CONTRIBUTING.md)?
+
 ### Generate client stubs
 
 Client code is generated from swagger contract definition of the latest contract of the Radix API server. We use [go-swagger](https://github.com/go-swagger/go-swagger/blob/master/docs/install.md). Install it by:
@@ -170,3 +174,5 @@ CGO_ENABLED=0 GOOS=darwin go build -ldflags "-s -w" -a -installsuffix cgo -o ./r
 ### Security
 
 There is an app registration associated with the Radix CLI, `Omnia Radix CLI`, with API permissions to `Omnia Radix Web Console - Platform Clusters` to allow for the device code flow when running in interactive mode
+
+Read this [Security information](./security.md)
