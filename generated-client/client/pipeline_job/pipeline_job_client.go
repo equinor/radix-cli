@@ -417,7 +417,7 @@ func (a *Client) RerunApplicationJob(params *RerunApplicationJobParams, authInfo
 	op := &runtime.ClientOperation{
 		ID:                 "rerunApplicationJob",
 		Method:             "POST",
-		PathPattern:        "/applications/{appName}/jobs/{jobName}/restart",
+		PathPattern:        "/applications/{appName}/jobs/{jobName}/rerun",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
