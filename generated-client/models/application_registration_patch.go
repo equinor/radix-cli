@@ -28,9 +28,6 @@ type ApplicationRegistrationPatch struct {
 	// Ref: https://en.wikipedia.org/wiki/Configuration_item
 	ConfigurationItem string `json:"configurationItem,omitempty"`
 
-	// MachineUser is used for interacting directly with Radix API
-	MachineUser *bool `json:"machineUser,omitempty"`
-
 	// Owner of the application - should be an email
 	Owner string `json:"owner,omitempty"`
 

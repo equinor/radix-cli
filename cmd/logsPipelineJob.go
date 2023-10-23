@@ -34,15 +34,16 @@ var completedJobStatuses = []string{"Succeeded", "Failed", "Stopped"}
 
 // logsJobCmd represents the logsJobCmd command
 var logsJobCmd = &cobra.Command{
-	Use:   "job",
-	Short: "Gets logs for a pipeline job",
+	Use:     "pipeline-job",
+	Aliases: []string{"job"},
+	Short:   "Gets logs for a pipeline job",
 	Long: `Gets and follows logs for a pipeline job.
 
 It may take few seconds to get the log.
 
 Example:
   # Get logs for a pipeline job 
-  rx get logs job --application radix-test --job radix-pipeline-20230323185013-ehvnz
+  rx get logs pipeline-job --application radix-test --job radix-pipeline-20230323185013-ehvnz
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")

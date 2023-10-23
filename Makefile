@@ -6,13 +6,6 @@ RELEASE_NOTE ?= "First release"
 generate-client:
 	swagger generate client -t ./generated-client -f https://api.radix.equinor.com/swaggerui/swagger.json -A radixapi
 
-.PHONY: release
-release:
-	git tag -a v$(VERSION) -m "$(RELEASE_NOTE)"
-	git push origin v$(VERSION)
-	git config --global credential.helper cache
-	goreleaser --rm-dist
-
 .PHONY: push
 push:
 	docker build . -t ghcr.io/equinor/radix/rx:latest
