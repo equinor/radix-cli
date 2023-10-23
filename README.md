@@ -135,6 +135,10 @@ We are using the [cobra framework](https://github.com/spf13/cobra) for handling 
 cobra add <commandName>
 ```
 
+### Contributing
+
+Want to [contribute](./CONTRIBUTING.md)?
+
 ### Generate client stubs
 
 Client code is generated from swagger contract definition of the latest contract of the Radix API server. We use [go-swagger](https://github.com/go-swagger/go-swagger/blob/master/docs/install.md). Install it by:
@@ -152,7 +156,6 @@ NOTE: If there is a change to the API, you make need to point to the API environ
 
 We are making releases available as GitHub releases using [go-releaser](https://goreleaser.com/). The release process is controlled by the `.goreleaser.yml` file. 
 
-To make a release:
 1. Create and push the new version as a tag: `git tag v0.0.1` and `git push origin v0.0.1`
 2. If something goes wrong:
    - open the GitHub repository and delete [created tag](https://github.com/equinor/radix-cli/tags/) (with release)
@@ -169,3 +172,5 @@ CGO_ENABLED=0 GOOS=darwin go build -ldflags "-s -w" -a -installsuffix cgo -o ./r
 ### Security
 
 There is an app registration associated with the Radix CLI, `Omnia Radix CLI`, with API permissions to `Omnia Radix Web Console - Platform Clusters` to allow for the device code flow when running in interactive mode
+
+Read this [Security information](./security.md)
