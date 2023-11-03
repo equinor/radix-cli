@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/equinor/radix-operator/pkg/apis/radixvalidators"
 	"github.com/equinor/radix-operator/pkg/apis/utils"
@@ -35,6 +36,10 @@ var validateCmd = &cobra.Command{
 		radixconfig, err := cmd.Flags().GetString("radixconfig")
 		if err != nil {
 			return err
+		}
+
+		if _, err := os.Stat(radixconfig); errors.Is(err, os.ErrNotExist) {
+			return errors.New(fmt.Sprintf("Config file note found: %s", radixconfig))
 		}
 
 		ra, err := utils.GetRadixApplicationFromFile(radixconfig)
