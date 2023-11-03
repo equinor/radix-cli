@@ -22,6 +22,7 @@ import (
 	"github.com/equinor/radix-operator/pkg/apis/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 )
 
 // logoutCmd represents the logout command
@@ -38,6 +39,11 @@ var validateCmd = &cobra.Command{
 			return err
 		}
 
+		printfile, err := cmd.Flags().GetBool("print")
+		if err != nil {
+			return err
+		}
+
 		if _, err := os.Stat(radixconfig); errors.Is(err, os.ErrNotExist) {
 			return errors.New(fmt.Sprintf("Config file note found: %s", radixconfig))
 		}
@@ -46,6 +52,10 @@ var validateCmd = &cobra.Command{
 		if err != nil {
 			fmt.Println(err)
 			return errors.New("Radix Config is invalid")
+		}
+
+		if printfile {
+			_ = yaml.NewEncoder(os.Stdout).Encode(ra.Spec)
 		}
 
 		err = radixvalidators.IsRadixApplicationValid(ra)
@@ -63,5 +73,6 @@ var validateCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(validateCmd)
 	validateCmd.Flags().StringP("radixconfig", "c", "radixconfig.yaml", "Path to radixconfig.yaml")
+	validateCmd.Flags().BoolP("print", "p", false, "Print parsed config file")
 	setVerbosePersistentFlag(validateCmd)
 }
