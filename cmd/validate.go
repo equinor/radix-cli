@@ -22,7 +22,7 @@ import (
 	"github.com/equinor/radix-operator/pkg/apis/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // logoutCmd represents the logout command
@@ -55,7 +55,8 @@ var validateCmd = &cobra.Command{
 		}
 
 		if printfile {
-			_ = yaml.NewEncoder(os.Stdout).Encode(ra.Spec)
+			_ = yaml.NewEncoder(os.Stdout).Encode(ra)
+			fmt.Println("")
 		}
 
 		err = radixvalidators.IsRadixApplicationValid(ra)
