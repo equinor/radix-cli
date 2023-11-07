@@ -29,7 +29,7 @@ import (
 var validateCmd = &cobra.Command{
 	Use:   "validate",
 	Short: "Validate radixconfig.yaml",
-	Long:  `Make sure the radixconfig.yaml file has correct structure, but doe not check for logic errors in the configuration`,
+	Long:  `Check radixconfig.yaml for structural and logical errors`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		cmd.SilenceUsage = true
