@@ -74,7 +74,7 @@ var validateCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(validateCmd)
-	validateCmd.Flags().StringP("radixconfig", "c", "radixconfig.yaml", "Path to radixconfig.yaml")
+	validateCmd.Flags().StringP("config-file", "f", "radixconfig.yaml", "Name of the radixconfig file. Defaults to radixconfig.yaml in current directory")
 	validateCmd.Flags().BoolP("print", "p", false, "Print parsed config file")
 	setVerbosePersistentFlag(validateCmd)
 }
