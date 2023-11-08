@@ -34,7 +34,7 @@ var validateCmd = &cobra.Command{
 
 		cmd.SilenceUsage = true
 
-		radixconfig, err := cmd.Flags().GetString("radixconfig")
+		radixconfig, err := cmd.Flags().GetString("config-file")
 		if err != nil {
 			return err
 		}
