@@ -55,7 +55,10 @@ var validateCmd = &cobra.Command{
 		}
 
 		if printfile {
-			printRA(ra)
+			err = printRA(ra)
+			if err != nil {
+				return err
+			}
 		}
 
 		err = radixvalidators.IsRadixApplicationValid(ra)
@@ -68,14 +71,14 @@ var validateCmd = &cobra.Command{
 	},
 }
 
-func printRA(ra *radixv1.RadixApplication) {
+func printRA(ra *radixv1.RadixApplication) error {
 	b, err := yaml.Marshal(ra)
 	if err != nil {
-		fmt.Fprint(os.Stderr, err)
-		return
+		return err
 	}
 
 	fmt.Fprintf(os.Stdout, "%s\n", b)
+	return nil
 }
 
 func init() {
