@@ -18,11 +18,12 @@ import (
 	"fmt"
 	"os"
 
+	radixv1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/equinor/radix-operator/pkg/apis/radixvalidators"
 	"github.com/equinor/radix-operator/pkg/apis/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
+	"sigs.k8s.io/yaml"
 )
 
 // logoutCmd represents the logout command
@@ -56,8 +57,7 @@ var validateCmd = &cobra.Command{
 		}
 
 		if printfile {
-			_ = yaml.NewEncoder(os.Stdout).Encode(ra)
-			fmt.Println("")
+			printRA(ra)
 		}
 
 		err = radixvalidators.IsRadixApplicationValid(ra)
@@ -70,6 +70,16 @@ var validateCmd = &cobra.Command{
 
 		return errors.New("RadixConfig is invalid")
 	},
+}
+
+func printRA(ra *radixv1.RadixApplication) {
+	b, err := yaml.Marshal(ra)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("%s\n", b)
 }
 
 func init() {
