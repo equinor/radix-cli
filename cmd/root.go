@@ -33,8 +33,6 @@ var rootCmd = &cobra.Command{
 // Execute the top level command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		// fmt.Println(radixCLIError)
-		// fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }

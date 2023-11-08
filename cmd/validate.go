@@ -46,14 +46,12 @@ var validateCmd = &cobra.Command{
 		}
 
 		if _, err := os.Stat(radixconfig); errors.Is(err, os.ErrNotExist) {
-			return errors.New(fmt.Sprintf("RadixConfig file note found: %s", radixconfig))
+			return fmt.Errorf("RadixConfig file note found: %s", radixconfig)
 		}
 
 		ra, err := utils.GetRadixApplicationFromFile(radixconfig)
 		if err != nil {
-			fmt.Printf("Syntax error in RadixConfig file:\n\n")
-			fmt.Println(err)
-			return errors.New("RadixConfig is invalid")
+			return errors.Wrap(err, "RadixConfig is invalid")
 		}
 
 		if printfile {
@@ -61,25 +59,23 @@ var validateCmd = &cobra.Command{
 		}
 
 		err = radixvalidators.IsRadixApplicationValid(ra)
-		if err == nil {
-			fmt.Println("RadixConfig is valid")
-			return nil
+		if err != nil {
+			return fmt.Errorf("RadixConfig is invalid:\n%v", err)
 		}
 
-		fmt.Println(err)
-
-		return errors.New("RadixConfig is invalid")
+		fmt.Fprintln(os.Stderr, "RadixConfig is valid")
+		return nil
 	},
 }
 
 func printRA(ra *radixv1.RadixApplication) {
 	b, err := yaml.Marshal(ra)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprint(os.Stderr, err)
 		return
 	}
 
-	fmt.Printf("%s\n", b)
+	fmt.Fprintf(os.Stdout, "%s\n", b)
 }
 
 func init() {
