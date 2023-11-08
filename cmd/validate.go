@@ -45,14 +45,14 @@ var validateCmd = &cobra.Command{
 		}
 
 		if _, err := os.Stat(radixconfig); errors.Is(err, os.ErrNotExist) {
-			return errors.New(fmt.Sprintf("RaixConfig file note found: %s", radixconfig))
+			return errors.New(fmt.Sprintf("RadixConfig file note found: %s", radixconfig))
 		}
 
 		ra, err := utils.GetRadixApplicationFromFile(radixconfig)
 		if err != nil {
-			fmt.Printf("Syntax error in RaixConfig file:\n\n")
+			fmt.Printf("Syntax error in RadixConfig file:\n\n")
 			fmt.Println(err)
-			return errors.New("RaixConfig is invalid")
+			return errors.New("RadixConfig is invalid")
 		}
 
 		if printfile {
@@ -62,13 +62,13 @@ var validateCmd = &cobra.Command{
 
 		err = radixvalidators.IsRadixApplicationValid(ra)
 		if err == nil {
-			fmt.Println("RaixConfig is valid")
+			fmt.Println("RadixConfig is valid")
 			return nil
 		}
 
 		fmt.Println(err)
 
-		return errors.New("RaixConfig is invalid")
+		return errors.New("RadixConfig is invalid")
 	},
 }
 
