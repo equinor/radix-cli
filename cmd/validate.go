@@ -77,7 +77,7 @@ func printRA(ra *radixv1.RadixApplication) error {
 		return err
 	}
 
-	fmt.Fprintf(os.Stdout, "%s\n", b)
+	fmt.Fprintf(os.Stdout, "%s", b)
 	return nil
 }
 
