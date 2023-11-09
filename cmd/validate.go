@@ -15,75 +15,21 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
+	"errors"
 
-	radixv1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
-	"github.com/equinor/radix-operator/pkg/apis/radixvalidators"
-	"github.com/equinor/radix-operator/pkg/apis/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"sigs.k8s.io/yaml"
 )
 
-// logoutCmd represents the logout command
+// validateCmd represents the validate command
 var validateCmd = &cobra.Command{
 	Use:   "validate",
-	Short: "Validate radixconfig.yaml",
-	Long:  `Check radixconfig.yaml for structural and logical errors`,
+	Short: "Validate Radix resources",
+	Long:  `Validate Radix resources.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		cmd.SilenceUsage = true
-
-		radixconfig, err := cmd.Flags().GetString("config-file")
-		if err != nil {
-			return err
-		}
-
-		printfile, err := cmd.Flags().GetBool("print")
-		if err != nil {
-			return err
-		}
-
-		if _, err := os.Stat(radixconfig); errors.Is(err, os.ErrNotExist) {
-			return fmt.Errorf("RadixConfig file note found:\n%s", radixconfig)
-		}
-
-		ra, err := utils.GetRadixApplicationFromFile(radixconfig)
-		if err != nil {
-			return fmt.Errorf("RadixConfig is invalid:\n%v", err)
-		}
-
-		if printfile {
-			err = printRA(ra)
-			if err != nil {
-				return err
-			}
-		}
-
-		err = radixvalidators.IsRadixApplicationValid(ra)
-		if err != nil {
-			return fmt.Errorf("RadixConfig is invalid:\n%v", err)
-		}
-
-		fmt.Fprintln(os.Stderr, "RadixConfig is valid")
-		return nil
+		return errors.New("please specify the resource you want to validate")
 	},
-}
-
-func printRA(ra *radixv1.RadixApplication) error {
-	b, err := yaml.Marshal(ra)
-	if err != nil {
-		return err
-	}
-
-	fmt.Fprintf(os.Stdout, "%s", b)
-	return nil
 }
 
 func init() {
 	rootCmd.AddCommand(validateCmd)
-	validateCmd.Flags().StringP("config-file", "f", "radixconfig.yaml", "Name of the radixconfig file. Defaults to radixconfig.yaml in current directory")
-	validateCmd.Flags().BoolP("print", "p", false, "Print parsed config file")
-	setVerbosePersistentFlag(validateCmd)
 }
