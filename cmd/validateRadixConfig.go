@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/settings"
 	radixv1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/equinor/radix-operator/pkg/apis/radixvalidators"
 	"github.com/equinor/radix-operator/pkg/apis/utils"
@@ -85,5 +87,7 @@ func init() {
 	validateCmd.AddCommand(validateRadixConfigCmd)
 	validateRadixConfigCmd.Flags().StringP("config-file", "f", "radixconfig.yaml", "Name of the radixconfig file. Defaults to radixconfig.yaml in current directory")
 	validateRadixConfigCmd.Flags().BoolP("print", "p", false, "Print parsed config file")
-	setVerbosePersistentFlag(validateRadixConfigCmd)
+
+	validateRadixConfigCmd.Flags().Bool(settings.TokenEnvironmentOption, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
+	validateRadixConfigCmd.Flags().MarkHidden(settings.TokenEnvironmentOption)
 }
