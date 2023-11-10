@@ -88,6 +88,7 @@ func init() {
 	validateRadixConfigCmd.Flags().StringP("config-file", "f", "radixconfig.yaml", "Name of the radixconfig file. Defaults to radixconfig.yaml in current directory")
 	validateRadixConfigCmd.Flags().BoolP("print", "p", false, "Print parsed config file")
 
+	// Allow but hide token-env flag so radix-github-actions won't interfere
 	validateRadixConfigCmd.Flags().Bool(settings.TokenEnvironmentOption, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
 	validateRadixConfigCmd.Flags().MarkHidden(settings.TokenEnvironmentOption)
 }
