@@ -7,7 +7,7 @@ toolchain go1.21.0
 require (
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.1.0
 	github.com/equinor/radix-common v1.5.0
-	github.com/equinor/radix-operator v1.43.0
+	github.com/equinor/radix-operator v1.44.1
 	github.com/fatih/color v1.15.0
 	github.com/go-openapi/errors v0.20.4
 	github.com/go-openapi/runtime v0.26.0
@@ -18,6 +18,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.7.0
 	k8s.io/utils v0.0.0-20230505201702-9f6742963106
+	sigs.k8s.io/yaml v1.3.0
 )
 
 require (
@@ -90,5 +91,4 @@ require (
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/secrets-store-csi-driver v1.3.3 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
-	sigs.k8s.io/yaml v1.3.0 // indirect
 )
