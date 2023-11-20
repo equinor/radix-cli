@@ -20,6 +20,7 @@ import (
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/spf13/cobra"
 )
 
@@ -47,6 +48,7 @@ Example:
 
 		environmentName, _ := cmd.Flags().GetString("environment")
 		previousLog, _ := cmd.Flags().GetBool("previous")
+		since, _ := cmd.Flags().GetDuration("since")
 
 		if environmentName == "" {
 			return errors.New("both `environment` and `component` are required")
@@ -64,7 +66,7 @@ Example:
 			return err
 		}
 
-		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
+		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, since, componentReplicas, previousLog)
 	},
 }
 
@@ -98,5 +100,6 @@ func init() {
 	logsEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
 	logsEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
 	logsEnvironmentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
+	logsEnvironmentCmd.Flags().DurationP("since", "s", settings.DeltaRefreshApplication, "If set, start get logs from the specified time, eg. 5m or 12h")
 	setContextSpecificPersistentFlags(logsEnvironmentCmd)
 }

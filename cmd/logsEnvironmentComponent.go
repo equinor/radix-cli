@@ -61,6 +61,7 @@ Examples:
 		environmentName, _ := cmd.Flags().GetString("environment")
 		componentName, _ := cmd.Flags().GetString("component")
 		previousLog, _ := cmd.Flags().GetBool("previous")
+		since, _ := cmd.Flags().GetDuration("since")
 
 		if environmentName == "" || componentName == "" {
 			return errors.New("both `environment` and `component` are required")
@@ -81,11 +82,11 @@ Examples:
 		componentReplicas := make(map[string][]string)
 		componentReplicas[componentName] = replicas
 
-		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, componentReplicas, previousLog)
+		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, since, componentReplicas, previousLog)
 	},
 }
 
-func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, environmentName string, componentReplicas map[string][]string, previousLog bool) error {
+func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, environmentName string, since time.Duration, componentReplicas map[string][]string, previousLog bool) error {
 	refreshLog := time.Tick(settings.DeltaRefreshApplication)
 
 	// Sometimes, even though we get delta, the log is the same as previous
@@ -97,8 +98,8 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 		for componentName, replicas := range componentReplicas {
 			for _, replica := range replicas {
 				now := time.Now()
-				sinceTime := now.Add(-settings.DeltaRefreshApplication)
-				since := strfmt.DateTime(sinceTime)
+				sinceTime := now.Add(-since)
+				sinceDt := strfmt.DateTime(sinceTime)
 
 				logParameters := component.NewLogParams()
 				logParameters.WithAppName(appName)
@@ -106,7 +107,7 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 				logParameters.WithComponentName(componentName)
 				logParameters.WithPodName(replica)
 				if !previousLog {
-					logParameters.SetSinceTime(&since)
+					logParameters.SetSinceTime(&sinceDt)
 				}
 				logParameters.WithPrevious(&previous)
 				logData, err := apiClient.Component.Log(logParameters, nil)
@@ -173,5 +174,6 @@ func init() {
 	logsEnvironmentComponentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
 	logsEnvironmentComponentCmd.Flags().String("component", "", "The component to follow")
 	logsEnvironmentComponentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instance of the container in a component pod, if it exists")
+	logsEnvironmentComponentCmd.Flags().DurationP("since", "s", settings.DeltaRefreshApplication, "If set, start get logs from the specified time, eg. 5m or 12h")
 	setContextSpecificPersistentFlags(logsEnvironmentComponentCmd)
 }
