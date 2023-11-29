@@ -9,12 +9,12 @@ import (
 )
 
 var (
-	Yellow  = color.New(color.FgHiYellow, color.BgBlack, color.Bold).SprintFunc()
-	Green   = color.New(color.FgHiGreen, color.BgBlack, color.Bold).SprintFunc()
-	Blue    = color.New(color.FgHiBlue, color.BgBlack, color.Underline).SprintFunc()
+	Yellow  = color.New(color.FgHiYellow, color.BgBlack).SprintFunc()
+	Green   = color.New(color.FgHiGreen, color.BgBlack).SprintFunc()
+	Blue    = color.New(color.FgHiBlue, color.BgBlack).SprintFunc()
 	Cyan    = color.New(color.FgCyan, color.BgBlack).SprintFunc()
-	Red     = color.New(color.FgHiRed, color.BgBlack).Add(color.Italic).SprintFunc()
-	Magenta = color.New(color.FgHiMagenta, color.BgBlack).Add(color.Italic).SprintFunc()
+	Red     = color.New(color.FgHiRed, color.BgBlack).SprintFunc()
+	Magenta = color.New(color.FgHiMagenta, color.BgBlack).SprintFunc()
 
 	Colors = []func(a ...interface{}) string{Yellow, Green, Blue, Cyan, Red, Magenta}
 )
