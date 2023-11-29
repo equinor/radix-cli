@@ -27,10 +27,20 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/log"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-var completedJobStatuses = []string{"Succeeded", "Failed", "Stopped"}
+const (
+	jobStatusRunning   = "Running"
+	jobStatusFailed    = "Failed"
+	jobStatusSucceeded = "Succeeded"
+	jobStatusStopped   = "Stopped"
+
+	stepStatusWaiting = "Waiting"
+)
+
+var completedJobStatuses = []string{jobStatusSucceeded, jobStatusStopped, jobStatusFailed}
 
 // logsJobCmd represents the logsJobCmd command
 var logsJobCmd = &cobra.Command{
@@ -91,13 +101,16 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 			if respJob == nil {
 				continue
 			}
-			if slices.Contains(completedJobStatuses, respJob.Payload.Status) {
-				log.Print(cmd, "radix-cli", fmt.Sprintf("Job is completed with status %s\n", respJob.Payload.Status), log.Red)
-				return nil
+			if isCompletedJob(respJob.Payload.Status) {
+				return errorAndLogJobStatus(respJob.Payload.Status, cmd)
 			}
 			loggedForJob := false
 
 			for i, step := range respJob.Payload.Steps {
+				if step.Status == stepStatusWaiting {
+					continue
+				}
+
 				// Sometimes, even though we get delta, the log is the same as previous
 				previousLogLines := previousLogForStep[step.Name]
 				stepLogsParams := pipeline_job.NewGetPipelineJobStepLogsParams()
@@ -107,7 +120,7 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 
 				jobStepLog, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil)
 				if err != nil {
-					log.Print(cmd, "radix-cli", fmt.Sprintf("Failed to jet pipeline job logs. %v", err), log.Red)
+					logrus.Infof("Failed to get pipeline job logs. %v", err)
 					break
 				}
 				logLines := strings.Split(strings.Replace(jobStepLog.Payload, "\r\n", "\n", -1), "\n")
@@ -131,17 +144,8 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 				continue
 			}
 			jobSummary := respJob.Payload
-			if jobSummary.Status == "Succeeded" {
-				log.Print(cmd, "radix-cli", "Job complete", log.Green)
-				return nil
-			}
-			if jobSummary.Status == "Failed" {
-				log.Print(cmd, "radix-cli", "Job failed", log.Red)
-				return nil
-			}
-			if jobSummary.Status == "Stopped" {
-				log.Print(cmd, "radix-cli", "Job stopped", log.Red)
-				return nil
+			if isCompletedJob(jobSummary.Status) {
+				return errorAndLogJobStatus(jobSummary.Status, cmd)
 			}
 			if jobSummary.Status == "Running" {
 				// Reset timeout
@@ -151,13 +155,27 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 			getLogAttempts--
 			if getLogAttempts > 0 {
 				getLogAwaitingTime := int(time.Since(getLogStartTime))
-				log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %d seconds. Job summary: %v. Status: %s. Contihue waiting", getLogAwaitingTime, jobSummary, jobSummary.Status), log.GetColor(0))
+				logrus.Infof("Nothing logged the last %d seconds. Job summary: %v. Status: %s. Contihue waiting", getLogAwaitingTime, jobSummary, jobSummary.Status)
 				break
 			}
-			log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Job summary: %v. Status: %s. Timeout", settings.DeltaTimeout, jobSummary, jobSummary.Status), log.GetColor(0))
+			logrus.Infof("Nothing logged the last %s. Job summary: %v. Status: %s. Timeout", settings.DeltaTimeout, jobSummary, jobSummary.Status)
 			return nil
 		}
 	}
+}
+
+func isCompletedJob(status string) bool {
+	return slices.Contains(completedJobStatuses, status)
+}
+
+func errorAndLogJobStatus(status string, cmd *cobra.Command) error {
+	fmt.Fprintln(cmd.OutOrStdout())
+	msg := fmt.Sprintf("job is completed with status %s", status)
+	if status == jobStatusFailed {
+		return errors.New(msg)
+	}
+	logrus.Info(msg)
+	return nil
 }
 
 func init() {
