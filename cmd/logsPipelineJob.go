@@ -101,7 +101,7 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 				continue
 			}
 			if isCompletedJob(respJob.Payload.Status) {
-				return errorAndLogCompletedJob(respJob.Payload.Status, cmd)
+				return errorAndLogJobStatus(respJob.Payload.Status, cmd)
 			}
 			loggedForJob := false
 
@@ -144,7 +144,7 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 			}
 			jobSummary := respJob.Payload
 			if isCompletedJob(jobSummary.Status) {
-				return errorAndLogCompletedJob(jobSummary.Status, cmd)
+				return errorAndLogJobStatus(jobSummary.Status, cmd)
 			}
 			if jobSummary.Status == "Running" {
 				// Reset timeout
@@ -167,7 +167,7 @@ func isCompletedJob(status string) bool {
 	return slices.Contains(completedJobStatuses, status)
 }
 
-func errorAndLogCompletedJob(status string, cmd *cobra.Command) error {
+func errorAndLogJobStatus(status string, cmd *cobra.Command) error {
 	msg := fmt.Sprintf("job completed with status %s", status)
 	if status == jobStatusFailed {
 		fmt.Fprintln(cmd.OutOrStdout())
