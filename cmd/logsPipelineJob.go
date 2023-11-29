@@ -27,6 +27,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/log"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -119,7 +120,7 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 
 				jobStepLog, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil)
 				if err != nil {
-					log.Print(cmd, "radix-cli", fmt.Sprintf("Failed to get pipeline job logs. %v", err), log.Red)
+					logrus.Infof("Failed to get pipeline job logs. %v", err)
 					break
 				}
 				logLines := strings.Split(strings.Replace(jobStepLog.Payload, "\r\n", "\n", -1), "\n")
@@ -154,10 +155,10 @@ func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobN
 			getLogAttempts--
 			if getLogAttempts > 0 {
 				getLogAwaitingTime := int(time.Since(getLogStartTime))
-				log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %d seconds. Job summary: %v. Status: %s. Contihue waiting", getLogAwaitingTime, jobSummary, jobSummary.Status), log.GetColor(0))
+				logrus.Infof("Nothing logged the last %d seconds. Job summary: %v. Status: %s. Contihue waiting", getLogAwaitingTime, jobSummary, jobSummary.Status)
 				break
 			}
-			log.Print(cmd, "radix-cli", fmt.Sprintf("Nothing logged the last %s. Job summary: %v. Status: %s. Timeout", settings.DeltaTimeout, jobSummary, jobSummary.Status), log.GetColor(0))
+			logrus.Infof("Nothing logged the last %s. Job summary: %v. Status: %s. Timeout", settings.DeltaTimeout, jobSummary, jobSummary.Status)
 			return nil
 		}
 	}
@@ -168,12 +169,12 @@ func isCompletedJob(status string) bool {
 }
 
 func errorAndLogJobStatus(status string, cmd *cobra.Command) error {
-	msg := fmt.Sprintf("job completed with status %s", status)
+	fmt.Fprintln(cmd.OutOrStdout())
+	msg := fmt.Sprintf("job is completed with status %s", status)
 	if status == jobStatusFailed {
-		fmt.Fprintln(cmd.OutOrStdout())
 		return errors.New(msg)
 	}
-	log.Print(cmd, "radix-cli", msg, log.Red)
+	logrus.Info(msg)
 	return nil
 }
 
