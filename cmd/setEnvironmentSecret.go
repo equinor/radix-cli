@@ -26,22 +26,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	applicationOption    = "application"
-	environmentOption    = "environment"
-	componentOption      = "component"
-	secretOption         = "secret"
-	valueOption          = "value"
-	awaitReconcileOption = "await-reconcile"
-)
-
 // setEnvironmentSecretCmd represents the setEnvironmentSecretCmd command
 var setEnvironmentSecretCmd = &cobra.Command{
 	Use:   "environment-secret",
 	Short: "Will set an environment secret",
 	Long:  `Will set an environment secret`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, applicationOption)
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
 			return err
 		}
@@ -50,8 +41,8 @@ var setEnvironmentSecretCmd = &cobra.Command{
 			return errors.New("application name is required")
 		}
 
-		secretName, _ := cmd.Flags().GetString(secretOption)
-		secretValue, _ := cmd.Flags().GetString(valueOption)
+		secretName, _ := cmd.Flags().GetString("secret")
+		secretValue, _ := cmd.Flags().GetString("value")
 
 		if secretName == "" {
 			return errors.New("secret is required")
@@ -61,18 +52,18 @@ var setEnvironmentSecretCmd = &cobra.Command{
 			return errors.New("value is required")
 		}
 
-		environmentName, _ := cmd.Flags().GetString(environmentOption)
+		environmentName, _ := cmd.Flags().GetString("environment")
 
 		if environmentName == "" {
 			return errors.New("`environment` is required")
 		}
 
-		component, _ := cmd.Flags().GetString(componentOption)
+		component, _ := cmd.Flags().GetString("component")
 		if component == "" {
 			return errors.New("`component` is required")
 		}
 
-		awaitReconcile, _ := cmd.Flags().GetBool(awaitReconcileOption)
+		awaitReconcile, _ := cmd.Flags().GetBool("await-reconcile")
 
 		cmd.SilenceUsage = true
 
@@ -138,11 +129,11 @@ func isComponentSecretReconciled(apiClient *apiclient.Radixapi, appName, environ
 
 func init() {
 	setCmd.AddCommand(setEnvironmentSecretCmd)
-	setEnvironmentSecretCmd.Flags().StringP(applicationOption, "a", "", "Name of the application to set secret for")
-	setEnvironmentSecretCmd.Flags().StringP(environmentOption, "e", "", "Environment to set secret in")
-	setEnvironmentSecretCmd.Flags().String(componentOption, "", "Component to set the secret for")
-	setEnvironmentSecretCmd.Flags().StringP(secretOption, "s", "", "Name of the secret to set")
-	setEnvironmentSecretCmd.Flags().StringP(valueOption, "v", "", "Value of the secret to set")
-	setEnvironmentSecretCmd.Flags().Bool(awaitReconcileOption, true, "Await reconciliation in Radix. Default is true")
+	setEnvironmentSecretCmd.Flags().StringP("application", "a", "", "Name of the application to set secret for")
+	setEnvironmentSecretCmd.Flags().StringP("environment", "e", "", "Environment to set secret in")
+	setEnvironmentSecretCmd.Flags().String("component", "", "Component to set the secret for")
+	setEnvironmentSecretCmd.Flags().StringP("secret", "s", "", "Name of the secret to set")
+	setEnvironmentSecretCmd.Flags().StringP("value", "v", "", "Value of the secret to set")
+	setEnvironmentSecretCmd.Flags().Bool("await-reconcile", true, "Await reconciliation in Radix. Default is true")
 	setContextSpecificPersistentFlags(setEnvironmentSecretCmd)
 }
