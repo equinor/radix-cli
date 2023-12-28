@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -24,8 +25,18 @@ type SecretParameters struct {
 	// Required: true
 	SecretValue *string `json:"secretValue"`
 
-	// type
-	Type SecretType `json:"type,omitempty"`
+	// Type of the secret
+	// generic SecretTypeGeneric
+	// client-cert SecretTypeClientCert
+	// azure-blob-fuse-volume SecretTypeAzureBlobFuseVolume
+	// csi-azure-blob-volume SecretTypeCsiAzureBlobVolume
+	// csi-azure-key-vault-creds SecretTypeCsiAzureKeyVaultCreds
+	// csi-azure-key-vault-item SecretTypeCsiAzureKeyVaultItem
+	// client-cert-auth SecretTypeClientCertificateAuth
+	// oauth2-proxy SecretTypeOAuth2Proxy
+	// Example: azure-blob-fuse-volume
+	// Enum: [generic client-cert azure-blob-fuse-volume csi-azure-blob-volume csi-azure-key-vault-creds csi-azure-key-vault-item client-cert-auth oauth2-proxy]
+	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this secret parameters
@@ -55,52 +66,68 @@ func (m *SecretParameters) validateSecretValue(formats strfmt.Registry) error {
 	return nil
 }
 
+var secretParametersTypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["generic","client-cert","azure-blob-fuse-volume","csi-azure-blob-volume","csi-azure-key-vault-creds","csi-azure-key-vault-item","client-cert-auth","oauth2-proxy"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		secretParametersTypeTypePropEnum = append(secretParametersTypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// SecretParametersTypeGeneric captures enum value "generic"
+	SecretParametersTypeGeneric string = "generic"
+
+	// SecretParametersTypeClientDashCert captures enum value "client-cert"
+	SecretParametersTypeClientDashCert string = "client-cert"
+
+	// SecretParametersTypeAzureDashBlobDashFuseDashVolume captures enum value "azure-blob-fuse-volume"
+	SecretParametersTypeAzureDashBlobDashFuseDashVolume string = "azure-blob-fuse-volume"
+
+	// SecretParametersTypeCsiDashAzureDashBlobDashVolume captures enum value "csi-azure-blob-volume"
+	SecretParametersTypeCsiDashAzureDashBlobDashVolume string = "csi-azure-blob-volume"
+
+	// SecretParametersTypeCsiDashAzureDashKeyDashVaultDashCreds captures enum value "csi-azure-key-vault-creds"
+	SecretParametersTypeCsiDashAzureDashKeyDashVaultDashCreds string = "csi-azure-key-vault-creds"
+
+	// SecretParametersTypeCsiDashAzureDashKeyDashVaultDashItem captures enum value "csi-azure-key-vault-item"
+	SecretParametersTypeCsiDashAzureDashKeyDashVaultDashItem string = "csi-azure-key-vault-item"
+
+	// SecretParametersTypeClientDashCertDashAuth captures enum value "client-cert-auth"
+	SecretParametersTypeClientDashCertDashAuth string = "client-cert-auth"
+
+	// SecretParametersTypeOauth2DashProxy captures enum value "oauth2-proxy"
+	SecretParametersTypeOauth2DashProxy string = "oauth2-proxy"
+)
+
+// prop value enum
+func (m *SecretParameters) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, secretParametersTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *SecretParameters) validateType(formats strfmt.Registry) error {
 	if swag.IsZero(m.Type) { // not required
 		return nil
 	}
 
-	if err := m.Type.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("type")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
-			return ce.ValidateName("type")
-		}
+	// value enum
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// ContextValidate validate this secret parameters based on the context it is used
+// ContextValidate validates this secret parameters based on context it is used
 func (m *SecretParameters) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateType(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *SecretParameters) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Type) { // not required
-		return nil
-	}
-
-	if err := m.Type.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("type")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
-			return ce.ValidateName("type")
-		}
-		return err
-	}
-
 	return nil
 }
 

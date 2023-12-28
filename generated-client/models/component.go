@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -54,11 +55,13 @@ type Component struct {
 
 	// Status of the component
 	// Example: Consistent
+	// Enum: [Stopped Consistent Reconciling Restarting Outdated]
 	Status string `json:"status,omitempty"`
 
 	// Type of component
 	// Example: component
 	// Required: true
+	// Enum: [component job]
 	Type *string `json:"type"`
 
 	// Variable names map to values. From radixconfig.yaml
@@ -94,6 +97,10 @@ func (m *Component) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateReplicaList(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -193,9 +200,94 @@ func (m *Component) validateReplicaList(formats strfmt.Registry) error {
 	return nil
 }
 
+var componentTypeStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Stopped","Consistent","Reconciling","Restarting","Outdated"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		componentTypeStatusPropEnum = append(componentTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// ComponentStatusStopped captures enum value "Stopped"
+	ComponentStatusStopped string = "Stopped"
+
+	// ComponentStatusConsistent captures enum value "Consistent"
+	ComponentStatusConsistent string = "Consistent"
+
+	// ComponentStatusReconciling captures enum value "Reconciling"
+	ComponentStatusReconciling string = "Reconciling"
+
+	// ComponentStatusRestarting captures enum value "Restarting"
+	ComponentStatusRestarting string = "Restarting"
+
+	// ComponentStatusOutdated captures enum value "Outdated"
+	ComponentStatusOutdated string = "Outdated"
+)
+
+// prop value enum
+func (m *Component) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, componentTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Component) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var componentTypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["component","job"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		componentTypeTypePropEnum = append(componentTypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// ComponentTypeComponent captures enum value "component"
+	ComponentTypeComponent string = "component"
+
+	// ComponentTypeJob captures enum value "job"
+	ComponentTypeJob string = "job"
+)
+
+// prop value enum
+func (m *Component) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, componentTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *Component) validateType(formats strfmt.Registry) error {
 
 	if err := validate.Required("type", "body", m.Type); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
 		return err
 	}
 

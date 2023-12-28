@@ -14,7 +14,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
 )
 
 // NewCreateEnvironmentParams creates a new CreateEnvironmentParams object,
@@ -64,9 +63,9 @@ type CreateEnvironmentParams struct {
 
 	/* ImpersonateGroup.
 
-	   Works only with custom setup of cluster. Allow impersonation of test group (Required if Impersonate-User is set)
+	   Works only with custom setup of cluster. Allow impersonation of a comma-seperated list of test groups (Required if Impersonate-User is set)
 	*/
-	ImpersonateGroup []string
+	ImpersonateGroup *string
 
 	/* ImpersonateUser.
 
@@ -140,13 +139,13 @@ func (o *CreateEnvironmentParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithImpersonateGroup adds the impersonateGroup to the create environment params
-func (o *CreateEnvironmentParams) WithImpersonateGroup(impersonateGroup []string) *CreateEnvironmentParams {
+func (o *CreateEnvironmentParams) WithImpersonateGroup(impersonateGroup *string) *CreateEnvironmentParams {
 	o.SetImpersonateGroup(impersonateGroup)
 	return o
 }
 
 // SetImpersonateGroup adds the impersonateGroup to the create environment params
-func (o *CreateEnvironmentParams) SetImpersonateGroup(impersonateGroup []string) {
+func (o *CreateEnvironmentParams) SetImpersonateGroup(impersonateGroup *string) {
 	o.ImpersonateGroup = impersonateGroup
 }
 
@@ -193,14 +192,9 @@ func (o *CreateEnvironmentParams) WriteToRequest(r runtime.ClientRequest, reg st
 
 	if o.ImpersonateGroup != nil {
 
-		// binding items for Impersonate-Group
-		joinedImpersonateGroup := o.bindParamImpersonateGroup(reg)
-
-		// header array param Impersonate-Group
-		if len(joinedImpersonateGroup) > 0 {
-			if err := r.SetHeaderParam("Impersonate-Group", joinedImpersonateGroup[0]); err != nil {
-				return err
-			}
+		// header param Impersonate-Group
+		if err := r.SetHeaderParam("Impersonate-Group", *o.ImpersonateGroup); err != nil {
+			return err
 		}
 	}
 
@@ -226,21 +220,4 @@ func (o *CreateEnvironmentParams) WriteToRequest(r runtime.ClientRequest, reg st
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
-}
-
-// bindParamCreateEnvironment binds the parameter Impersonate-Group
-func (o *CreateEnvironmentParams) bindParamImpersonateGroup(formats strfmt.Registry) []string {
-	impersonateGroupIR := o.ImpersonateGroup
-
-	var impersonateGroupIC []string
-	for _, impersonateGroupIIR := range impersonateGroupIR { // explode []string
-
-		impersonateGroupIIV := impersonateGroupIIR // string as string
-		impersonateGroupIC = append(impersonateGroupIC, impersonateGroupIIV)
-	}
-
-	// items.CollectionFormat: ""
-	impersonateGroupIS := swag.JoinByFormat(impersonateGroupIC, "")
-
-	return impersonateGroupIS
 }

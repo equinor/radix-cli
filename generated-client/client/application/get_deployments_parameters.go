@@ -64,9 +64,9 @@ type GetDeploymentsParams struct {
 
 	/* ImpersonateGroup.
 
-	   Works only with custom setup of cluster. Allow impersonation of test group (Required if Impersonate-User is set)
+	   Works only with custom setup of cluster. Allow impersonation of a comma-seperated list of test groups (Required if Impersonate-User is set)
 	*/
-	ImpersonateGroup []string
+	ImpersonateGroup *string
 
 	/* ImpersonateUser.
 
@@ -146,13 +146,13 @@ func (o *GetDeploymentsParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithImpersonateGroup adds the impersonateGroup to the get deployments params
-func (o *GetDeploymentsParams) WithImpersonateGroup(impersonateGroup []string) *GetDeploymentsParams {
+func (o *GetDeploymentsParams) WithImpersonateGroup(impersonateGroup *string) *GetDeploymentsParams {
 	o.SetImpersonateGroup(impersonateGroup)
 	return o
 }
 
 // SetImpersonateGroup adds the impersonateGroup to the get deployments params
-func (o *GetDeploymentsParams) SetImpersonateGroup(impersonateGroup []string) {
+func (o *GetDeploymentsParams) SetImpersonateGroup(impersonateGroup *string) {
 	o.ImpersonateGroup = impersonateGroup
 }
 
@@ -210,14 +210,9 @@ func (o *GetDeploymentsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 
 	if o.ImpersonateGroup != nil {
 
-		// binding items for Impersonate-Group
-		joinedImpersonateGroup := o.bindParamImpersonateGroup(reg)
-
-		// header array param Impersonate-Group
-		if len(joinedImpersonateGroup) > 0 {
-			if err := r.SetHeaderParam("Impersonate-Group", joinedImpersonateGroup[0]); err != nil {
-				return err
-			}
+		// header param Impersonate-Group
+		if err := r.SetHeaderParam("Impersonate-Group", *o.ImpersonateGroup); err != nil {
+			return err
 		}
 	}
 
@@ -272,21 +267,4 @@ func (o *GetDeploymentsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
-}
-
-// bindParamGetDeployments binds the parameter Impersonate-Group
-func (o *GetDeploymentsParams) bindParamImpersonateGroup(formats strfmt.Registry) []string {
-	impersonateGroupIR := o.ImpersonateGroup
-
-	var impersonateGroupIC []string
-	for _, impersonateGroupIIR := range impersonateGroupIR { // explode []string
-
-		impersonateGroupIIV := impersonateGroupIIR // string as string
-		impersonateGroupIC = append(impersonateGroupIC, impersonateGroupIIV)
-	}
-
-	// items.CollectionFormat: ""
-	impersonateGroupIS := swag.JoinByFormat(impersonateGroupIC, "")
-
-	return impersonateGroupIS
 }

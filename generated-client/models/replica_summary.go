@@ -19,6 +19,10 @@ import (
 // swagger:model ReplicaSummary
 type ReplicaSummary struct {
 
+	// Container started timestamp
+	// Example: 2006-01-02T15:04:05Z
+	ContainerStarted string `json:"containerStarted,omitempty"`
+
 	// Created timestamp
 	// Example: 2006-01-02T15:04:05Z
 	Created string `json:"created,omitempty"`

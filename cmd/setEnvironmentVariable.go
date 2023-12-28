@@ -31,7 +31,11 @@ import (
 var setEnvironmentVariableCmd = &cobra.Command{
 	Use:   "environment-variable",
 	Short: "Will set an environment variable",
-	Long:  `Will set an environment variable`,
+	Long: `Will set an environment variable
+
+Example:
+rx set environment-variable --application your-application-name --environment test --component component-abc --variable LOG_LEVEL --value INFO
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
 		if err != nil {
@@ -115,8 +119,8 @@ func isComponentVariableReconciled(apiClient *apiclient.Radixapi, appName, envir
 		env.Payload.ActiveDeployment.Components != nil {
 		for _, component := range env.Payload.ActiveDeployment.Components {
 			if *component.Name == componentName {
-				for _, variable := range component.Variables {
-					if variable == variableName {
+				for name := range component.Variables {
+					if name == variableName {
 						return true
 					}
 				}

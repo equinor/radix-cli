@@ -37,7 +37,7 @@ type Step struct {
 
 	// Status of the step
 	// Example: Waiting
-	// Enum: [Waiting Running Succeeded Failed]
+	// Enum: [Queued Waiting Running Succeeded Failed Stopped StoppedNoChanges]
 	Status string `json:"status,omitempty"`
 }
 
@@ -59,7 +59,7 @@ var stepTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["Waiting","Running","Succeeded","Failed"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["Queued","Waiting","Running","Succeeded","Failed","Stopped","StoppedNoChanges"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -68,6 +68,9 @@ func init() {
 }
 
 const (
+
+	// StepStatusQueued captures enum value "Queued"
+	StepStatusQueued string = "Queued"
 
 	// StepStatusWaiting captures enum value "Waiting"
 	StepStatusWaiting string = "Waiting"
@@ -80,6 +83,12 @@ const (
 
 	// StepStatusFailed captures enum value "Failed"
 	StepStatusFailed string = "Failed"
+
+	// StepStatusStopped captures enum value "Stopped"
+	StepStatusStopped string = "Stopped"
+
+	// StepStatusStoppedNoChanges captures enum value "StoppedNoChanges"
+	StepStatusStoppedNoChanges string = "StoppedNoChanges"
 )
 
 // prop value enum

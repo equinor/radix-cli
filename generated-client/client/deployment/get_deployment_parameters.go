@@ -14,7 +14,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
 )
 
 // NewGetDeploymentParams creates a new GetDeploymentParams object,
@@ -64,9 +63,9 @@ type GetDeploymentParams struct {
 
 	/* ImpersonateGroup.
 
-	   Works only with custom setup of cluster. Allow impersonation of test group (Required if Impersonate-User is set)
+	   Works only with custom setup of cluster. Allow impersonation of a comma-seperated list of test groups (Required if Impersonate-User is set)
 	*/
-	ImpersonateGroup []string
+	ImpersonateGroup *string
 
 	/* ImpersonateUser.
 
@@ -140,13 +139,13 @@ func (o *GetDeploymentParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithImpersonateGroup adds the impersonateGroup to the get deployment params
-func (o *GetDeploymentParams) WithImpersonateGroup(impersonateGroup []string) *GetDeploymentParams {
+func (o *GetDeploymentParams) WithImpersonateGroup(impersonateGroup *string) *GetDeploymentParams {
 	o.SetImpersonateGroup(impersonateGroup)
 	return o
 }
 
 // SetImpersonateGroup adds the impersonateGroup to the get deployment params
-func (o *GetDeploymentParams) SetImpersonateGroup(impersonateGroup []string) {
+func (o *GetDeploymentParams) SetImpersonateGroup(impersonateGroup *string) {
 	o.ImpersonateGroup = impersonateGroup
 }
 
@@ -193,14 +192,9 @@ func (o *GetDeploymentParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	if o.ImpersonateGroup != nil {
 
-		// binding items for Impersonate-Group
-		joinedImpersonateGroup := o.bindParamImpersonateGroup(reg)
-
-		// header array param Impersonate-Group
-		if len(joinedImpersonateGroup) > 0 {
-			if err := r.SetHeaderParam("Impersonate-Group", joinedImpersonateGroup[0]); err != nil {
-				return err
-			}
+		// header param Impersonate-Group
+		if err := r.SetHeaderParam("Impersonate-Group", *o.ImpersonateGroup); err != nil {
+			return err
 		}
 	}
 
@@ -226,21 +220,4 @@ func (o *GetDeploymentParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
-}
-
-// bindParamGetDeployment binds the parameter Impersonate-Group
-func (o *GetDeploymentParams) bindParamImpersonateGroup(formats strfmt.Registry) []string {
-	impersonateGroupIR := o.ImpersonateGroup
-
-	var impersonateGroupIC []string
-	for _, impersonateGroupIIR := range impersonateGroupIR { // explode []string
-
-		impersonateGroupIIV := impersonateGroupIIR // string as string
-		impersonateGroupIC = append(impersonateGroupIC, impersonateGroupIIV)
-	}
-
-	// items.CollectionFormat: ""
-	impersonateGroupIS := swag.JoinByFormat(impersonateGroupIC, "")
-
-	return impersonateGroupIS
 }

@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -34,8 +33,7 @@ type PipelineRunTaskStep struct {
 	Started string `json:"started,omitempty"`
 
 	// Status of the task
-	// Example: Waiting
-	// Enum: [Waiting Running Succeeded Failed]
+	// Example: Completed
 	Status string `json:"status,omitempty"`
 
 	// StatusMessage of the task
@@ -50,10 +48,6 @@ func (m *PipelineRunTaskStep) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateStatus(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -63,54 +57,6 @@ func (m *PipelineRunTaskStep) Validate(formats strfmt.Registry) error {
 func (m *PipelineRunTaskStep) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var pipelineRunTaskStepTypeStatusPropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["Waiting","Running","Succeeded","Failed"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		pipelineRunTaskStepTypeStatusPropEnum = append(pipelineRunTaskStepTypeStatusPropEnum, v)
-	}
-}
-
-const (
-
-	// PipelineRunTaskStepStatusWaiting captures enum value "Waiting"
-	PipelineRunTaskStepStatusWaiting string = "Waiting"
-
-	// PipelineRunTaskStepStatusRunning captures enum value "Running"
-	PipelineRunTaskStepStatusRunning string = "Running"
-
-	// PipelineRunTaskStepStatusSucceeded captures enum value "Succeeded"
-	PipelineRunTaskStepStatusSucceeded string = "Succeeded"
-
-	// PipelineRunTaskStepStatusFailed captures enum value "Failed"
-	PipelineRunTaskStepStatusFailed string = "Failed"
-)
-
-// prop value enum
-func (m *PipelineRunTaskStep) validateStatusEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, pipelineRunTaskStepTypeStatusPropEnum, true); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *PipelineRunTaskStep) validateStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.Status) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
 		return err
 	}
 

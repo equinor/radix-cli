@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -26,6 +27,7 @@ type AuxiliaryResourceDeployment struct {
 	// Status of the auxiliary resource's deployment
 	// Example: Consistent
 	// Required: true
+	// Enum: [Stopped Consistent Reconciling]
 	Status *string `json:"status"`
 }
 
@@ -73,9 +75,46 @@ func (m *AuxiliaryResourceDeployment) validateReplicaList(formats strfmt.Registr
 	return nil
 }
 
+var auxiliaryResourceDeploymentTypeStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Stopped","Consistent","Reconciling"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		auxiliaryResourceDeploymentTypeStatusPropEnum = append(auxiliaryResourceDeploymentTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// AuxiliaryResourceDeploymentStatusStopped captures enum value "Stopped"
+	AuxiliaryResourceDeploymentStatusStopped string = "Stopped"
+
+	// AuxiliaryResourceDeploymentStatusConsistent captures enum value "Consistent"
+	AuxiliaryResourceDeploymentStatusConsistent string = "Consistent"
+
+	// AuxiliaryResourceDeploymentStatusReconciling captures enum value "Reconciling"
+	AuxiliaryResourceDeploymentStatusReconciling string = "Reconciling"
+)
+
+// prop value enum
+func (m *AuxiliaryResourceDeployment) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, auxiliaryResourceDeploymentTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *AuxiliaryResourceDeployment) validateStatus(formats strfmt.Registry) error {
 
 	if err := validate.Required("status", "body", m.Status); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateStatusEnum("status", "body", *m.Status); err != nil {
 		return err
 	}
 
