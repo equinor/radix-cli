@@ -32,8 +32,8 @@ type Event struct {
 	InvolvedObjectNamespace string `json:"involvedObjectNamespace,omitempty"`
 
 	// The time (ISO8601) at which the event was last recorded
-	// Format: date
-	LastTimestamp strfmt.Date `json:"lastTimestamp,omitempty"`
+	// Format: date-time
+	LastTimestamp strfmt.DateTime `json:"lastTimestamp,omitempty"`
 
 	// A human-readable description of the status of this event
 	// Example: 'Readiness probe failed: dial tcp 10.40.1.5:3003: connect: connection refused'
@@ -74,7 +74,7 @@ func (m *Event) validateLastTimestamp(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.FormatOf("lastTimestamp", "body", "date", m.LastTimestamp.String(), formats); err != nil {
+	if err := validate.FormatOf("lastTimestamp", "body", "date-time", m.LastTimestamp.String(), formats); err != nil {
 		return err
 	}
 
