@@ -90,5 +90,8 @@ func init() {
 
 	// Allow but hide token-env flag so radix-github-actions won't interfere
 	validateRadixConfigCmd.Flags().Bool(settings.TokenEnvironmentOption, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
-	validateRadixConfigCmd.Flags().MarkHidden(settings.TokenEnvironmentOption)
+	err := validateRadixConfigCmd.Flags().MarkHidden(settings.TokenEnvironmentOption)
+	if err != nil {
+		panic(err)
+	}
 }

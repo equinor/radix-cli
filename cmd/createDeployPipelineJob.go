@@ -24,7 +24,6 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
-	commonErrors "github.com/equinor/radix-common/utils/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -69,7 +68,7 @@ Examples:
 			errs = append(errs, err)
 		}
 		if len(errs) > 0 {
-			return commonErrors.Concat(errs)
+			return errors.Join(errs...)
 		}
 		if appName == nil || *appName == "" || targetEnvironment == "" {
 			return errors.New("application name and target environment are required")

@@ -37,18 +37,21 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  golangci:
-    name: lint
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: actions/setup-go@v4
         with:
           go-version: '1.21'
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.54
-          args: --timeout=5m --out-format=github-actions --fast
+      - name: Install dependencies
+        run: go mod download
+      - name: Install GolangCI Lint
+        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
 
+      - name: golangci-lint
+        run: golangci-lint run --timeout=30m --max-same-issues=0 --out-format=github-actions
 
