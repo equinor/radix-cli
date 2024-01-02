@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -32,6 +33,7 @@ type ComponentSummary struct {
 	// Type of component
 	// Example: component
 	// Required: true
+	// Enum: [component job]
 	Type *string `json:"type"`
 }
 
@@ -75,9 +77,43 @@ func (m *ComponentSummary) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
+var componentSummaryTypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["component","job"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		componentSummaryTypeTypePropEnum = append(componentSummaryTypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// ComponentSummaryTypeComponent captures enum value "component"
+	ComponentSummaryTypeComponent string = "component"
+
+	// ComponentSummaryTypeJob captures enum value "job"
+	ComponentSummaryTypeJob string = "job"
+)
+
+// prop value enum
+func (m *ComponentSummary) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, componentSummaryTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *ComponentSummary) validateType(formats strfmt.Registry) error {
 
 	if err := validate.Required("type", "body", m.Type); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
 		return err
 	}
 

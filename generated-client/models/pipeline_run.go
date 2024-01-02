@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -44,8 +43,7 @@ type PipelineRun struct {
 	Started string `json:"started,omitempty"`
 
 	// Status of the step
-	// Example: Waiting
-	// Enum: [Waiting Running Succeeded Failed]
+	// Example: Started
 	Status string `json:"status,omitempty"`
 
 	// StatusMessage of the task
@@ -65,10 +63,6 @@ func (m *PipelineRun) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRealName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -99,54 +93,6 @@ func (m *PipelineRun) validateName(formats strfmt.Registry) error {
 func (m *PipelineRun) validateRealName(formats strfmt.Registry) error {
 
 	if err := validate.Required("realName", "body", m.RealName); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var pipelineRunTypeStatusPropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["Waiting","Running","Succeeded","Failed"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		pipelineRunTypeStatusPropEnum = append(pipelineRunTypeStatusPropEnum, v)
-	}
-}
-
-const (
-
-	// PipelineRunStatusWaiting captures enum value "Waiting"
-	PipelineRunStatusWaiting string = "Waiting"
-
-	// PipelineRunStatusRunning captures enum value "Running"
-	PipelineRunStatusRunning string = "Running"
-
-	// PipelineRunStatusSucceeded captures enum value "Succeeded"
-	PipelineRunStatusSucceeded string = "Succeeded"
-
-	// PipelineRunStatusFailed captures enum value "Failed"
-	PipelineRunStatusFailed string = "Failed"
-)
-
-// prop value enum
-func (m *PipelineRun) validateStatusEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, pipelineRunTypeStatusPropEnum, true); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *PipelineRun) validateStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.Status) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
 		return err
 	}
 

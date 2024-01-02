@@ -55,7 +55,7 @@ type Job struct {
 
 	// Name of the pipeline
 	// Example: build-deploy
-	// Enum: [build-deploy]
+	// Enum: [build build-deploy promote deploy]
 	Pipeline string `json:"pipeline,omitempty"`
 
 	// PromotedDeploymentName the name of the deployment that was promoted
@@ -83,7 +83,7 @@ type Job struct {
 
 	// Status of the job
 	// Example: Waiting
-	// Enum: [Waiting Running Succeeded Stopping Stopped Failed StoppedNoChanges]
+	// Enum: [Queued Waiting Running Succeeded Failed Stopped Stopping StoppedNoChanges]
 	Status string `json:"status,omitempty"`
 
 	// Array of steps
@@ -180,7 +180,7 @@ var jobTypePipelinePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["build-deploy"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["build","build-deploy","promote","deploy"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -190,8 +190,17 @@ func init() {
 
 const (
 
+	// JobPipelineBuild captures enum value "build"
+	JobPipelineBuild string = "build"
+
 	// JobPipelineBuildDashDeploy captures enum value "build-deploy"
 	JobPipelineBuildDashDeploy string = "build-deploy"
+
+	// JobPipelinePromote captures enum value "promote"
+	JobPipelinePromote string = "promote"
+
+	// JobPipelineDeploy captures enum value "deploy"
+	JobPipelineDeploy string = "deploy"
 )
 
 // prop value enum
@@ -219,7 +228,7 @@ var jobTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["Waiting","Running","Succeeded","Stopping","Stopped","Failed","StoppedNoChanges"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["Queued","Waiting","Running","Succeeded","Failed","Stopped","Stopping","StoppedNoChanges"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -228,6 +237,9 @@ func init() {
 }
 
 const (
+
+	// JobStatusQueued captures enum value "Queued"
+	JobStatusQueued string = "Queued"
 
 	// JobStatusWaiting captures enum value "Waiting"
 	JobStatusWaiting string = "Waiting"
@@ -238,14 +250,14 @@ const (
 	// JobStatusSucceeded captures enum value "Succeeded"
 	JobStatusSucceeded string = "Succeeded"
 
-	// JobStatusStopping captures enum value "Stopping"
-	JobStatusStopping string = "Stopping"
+	// JobStatusFailed captures enum value "Failed"
+	JobStatusFailed string = "Failed"
 
 	// JobStatusStopped captures enum value "Stopped"
 	JobStatusStopped string = "Stopped"
 
-	// JobStatusFailed captures enum value "Failed"
-	JobStatusFailed string = "Failed"
+	// JobStatusStopping captures enum value "Stopping"
+	JobStatusStopping string = "Stopping"
 
 	// JobStatusStoppedNoChanges captures enum value "StoppedNoChanges"
 	JobStatusStoppedNoChanges string = "StoppedNoChanges"

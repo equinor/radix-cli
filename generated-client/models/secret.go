@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -46,6 +47,7 @@ type Secret struct {
 	// Consistent = Secret exists in Radix config and in cluster
 	// NotAvailable = Secret is available in external secret configuration but not in cluster
 	// Example: Consistent
+	// Enum: [Pending Consistent NotAvailable Invalid]
 	Status string `json:"status,omitempty"`
 
 	// StatusMessages contains a list of messages related to the Status
@@ -55,8 +57,18 @@ type Secret struct {
 	// The first certificate in the list should be the TLS certificate and the rest should be CA certificates
 	TLSCertificates []*TLSCertificate `json:"tlsCertificates"`
 
-	// type
-	Type SecretType `json:"type,omitempty"`
+	// Type of the secret
+	// generic SecretTypeGeneric
+	// client-cert SecretTypeClientCert
+	// azure-blob-fuse-volume SecretTypeAzureBlobFuseVolume
+	// csi-azure-blob-volume SecretTypeCsiAzureBlobVolume
+	// csi-azure-key-vault-creds SecretTypeCsiAzureKeyVaultCreds
+	// csi-azure-key-vault-item SecretTypeCsiAzureKeyVaultItem
+	// client-cert-auth SecretTypeClientCertificateAuth
+	// oauth2-proxy SecretTypeOAuth2Proxy
+	// Example: client-cert
+	// Enum: [generic client-cert azure-blob-fuse-volume csi-azure-blob-volume csi-azure-key-vault-creds csi-azure-key-vault-item client-cert-auth oauth2-proxy]
+	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this secret
@@ -64,6 +76,10 @@ func (m *Secret) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -84,6 +100,54 @@ func (m *Secret) Validate(formats strfmt.Registry) error {
 func (m *Secret) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var secretTypeStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Pending","Consistent","NotAvailable","Invalid"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		secretTypeStatusPropEnum = append(secretTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// SecretStatusPending captures enum value "Pending"
+	SecretStatusPending string = "Pending"
+
+	// SecretStatusConsistent captures enum value "Consistent"
+	SecretStatusConsistent string = "Consistent"
+
+	// SecretStatusNotAvailable captures enum value "NotAvailable"
+	SecretStatusNotAvailable string = "NotAvailable"
+
+	// SecretStatusInvalid captures enum value "Invalid"
+	SecretStatusInvalid string = "Invalid"
+)
+
+// prop value enum
+func (m *Secret) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, secretTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Secret) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
 		return err
 	}
 
@@ -116,17 +180,60 @@ func (m *Secret) validateTLSCertificates(formats strfmt.Registry) error {
 	return nil
 }
 
+var secretTypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["generic","client-cert","azure-blob-fuse-volume","csi-azure-blob-volume","csi-azure-key-vault-creds","csi-azure-key-vault-item","client-cert-auth","oauth2-proxy"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		secretTypeTypePropEnum = append(secretTypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// SecretTypeGeneric captures enum value "generic"
+	SecretTypeGeneric string = "generic"
+
+	// SecretTypeClientDashCert captures enum value "client-cert"
+	SecretTypeClientDashCert string = "client-cert"
+
+	// SecretTypeAzureDashBlobDashFuseDashVolume captures enum value "azure-blob-fuse-volume"
+	SecretTypeAzureDashBlobDashFuseDashVolume string = "azure-blob-fuse-volume"
+
+	// SecretTypeCsiDashAzureDashBlobDashVolume captures enum value "csi-azure-blob-volume"
+	SecretTypeCsiDashAzureDashBlobDashVolume string = "csi-azure-blob-volume"
+
+	// SecretTypeCsiDashAzureDashKeyDashVaultDashCreds captures enum value "csi-azure-key-vault-creds"
+	SecretTypeCsiDashAzureDashKeyDashVaultDashCreds string = "csi-azure-key-vault-creds"
+
+	// SecretTypeCsiDashAzureDashKeyDashVaultDashItem captures enum value "csi-azure-key-vault-item"
+	SecretTypeCsiDashAzureDashKeyDashVaultDashItem string = "csi-azure-key-vault-item"
+
+	// SecretTypeClientDashCertDashAuth captures enum value "client-cert-auth"
+	SecretTypeClientDashCertDashAuth string = "client-cert-auth"
+
+	// SecretTypeOauth2DashProxy captures enum value "oauth2-proxy"
+	SecretTypeOauth2DashProxy string = "oauth2-proxy"
+)
+
+// prop value enum
+func (m *Secret) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, secretTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *Secret) validateType(formats strfmt.Registry) error {
 	if swag.IsZero(m.Type) { // not required
 		return nil
 	}
 
-	if err := m.Type.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("type")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
-			return ce.ValidateName("type")
-		}
+	// value enum
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
 		return err
 	}
 
@@ -138,10 +245,6 @@ func (m *Secret) ContextValidate(ctx context.Context, formats strfmt.Registry) e
 	var res []error
 
 	if err := m.contextValidateTLSCertificates(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateType(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -171,24 +274,6 @@ func (m *Secret) contextValidateTLSCertificates(ctx context.Context, formats str
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *Secret) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Type) { // not required
-		return nil
-	}
-
-	if err := m.Type.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("type")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
-			return ce.ValidateName("type")
-		}
-		return err
 	}
 
 	return nil

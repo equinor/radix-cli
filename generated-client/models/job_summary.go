@@ -54,7 +54,7 @@ type JobSummary struct {
 
 	// Name of the pipeline
 	// Example: build-deploy
-	// Enum: [build-deploy  build]
+	// Enum: [build build-deploy promote deploy]
 	Pipeline string `json:"pipeline,omitempty"`
 
 	// RadixDeployment name, which is promoted
@@ -72,7 +72,7 @@ type JobSummary struct {
 
 	// Status of the job
 	// Example: Waiting
-	// Enum: [Waiting Running Succeeded Stopping Stopped Failed StoppedNoChanges]
+	// Enum: [Queued Waiting Running Succeeded Failed Stopped Stopping StoppedNoChanges]
 	Status string `json:"status,omitempty"`
 
 	// TriggeredBy user that triggered the job. If through webhook = sender.login. If through api - usertoken.upn
@@ -102,7 +102,7 @@ var jobSummaryTypePipelinePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["build-deploy"," build"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["build","build-deploy","promote","deploy"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -112,11 +112,17 @@ func init() {
 
 const (
 
+	// JobSummaryPipelineBuild captures enum value "build"
+	JobSummaryPipelineBuild string = "build"
+
 	// JobSummaryPipelineBuildDashDeploy captures enum value "build-deploy"
 	JobSummaryPipelineBuildDashDeploy string = "build-deploy"
 
-	// JobSummaryPipelineBuild captures enum value " build"
-	JobSummaryPipelineBuild string = " build"
+	// JobSummaryPipelinePromote captures enum value "promote"
+	JobSummaryPipelinePromote string = "promote"
+
+	// JobSummaryPipelineDeploy captures enum value "deploy"
+	JobSummaryPipelineDeploy string = "deploy"
 )
 
 // prop value enum
@@ -144,7 +150,7 @@ var jobSummaryTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["Waiting","Running","Succeeded","Stopping","Stopped","Failed","StoppedNoChanges"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["Queued","Waiting","Running","Succeeded","Failed","Stopped","Stopping","StoppedNoChanges"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -153,6 +159,9 @@ func init() {
 }
 
 const (
+
+	// JobSummaryStatusQueued captures enum value "Queued"
+	JobSummaryStatusQueued string = "Queued"
 
 	// JobSummaryStatusWaiting captures enum value "Waiting"
 	JobSummaryStatusWaiting string = "Waiting"
@@ -163,14 +172,14 @@ const (
 	// JobSummaryStatusSucceeded captures enum value "Succeeded"
 	JobSummaryStatusSucceeded string = "Succeeded"
 
-	// JobSummaryStatusStopping captures enum value "Stopping"
-	JobSummaryStatusStopping string = "Stopping"
+	// JobSummaryStatusFailed captures enum value "Failed"
+	JobSummaryStatusFailed string = "Failed"
 
 	// JobSummaryStatusStopped captures enum value "Stopped"
 	JobSummaryStatusStopped string = "Stopped"
 
-	// JobSummaryStatusFailed captures enum value "Failed"
-	JobSummaryStatusFailed string = "Failed"
+	// JobSummaryStatusStopping captures enum value "Stopping"
+	JobSummaryStatusStopping string = "Stopping"
 
 	// JobSummaryStatusStoppedNoChanges captures enum value "StoppedNoChanges"
 	JobSummaryStatusStoppedNoChanges string = "StoppedNoChanges"

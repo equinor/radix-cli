@@ -28,14 +28,14 @@ type TLSCertificate struct {
 	Issuer *string `json:"issuer"`
 
 	// NotAfter defines the uppdater date/time validity boundary
-	// Example: 2023-08-25T23:59:59Z
 	// Required: true
-	NotAfter interface{} `json:"notAfter"`
+	// Format: date-time
+	NotAfter *strfmt.DateTime `json:"notAfter"`
 
 	// NotBefore defines the lower date/time validity boundary
-	// Example: 2022-08-09T00:00:00Z
 	// Required: true
-	NotBefore interface{} `json:"notBefore"`
+	// Format: date-time
+	NotBefore *strfmt.DateTime `json:"notBefore"`
 
 	// Subject contains the distinguished name for the certificate
 	// Example: CN=mysite.example.com,O=MyOrg,L=MyLocation,C=NO
@@ -80,8 +80,12 @@ func (m *TLSCertificate) validateIssuer(formats strfmt.Registry) error {
 
 func (m *TLSCertificate) validateNotAfter(formats strfmt.Registry) error {
 
-	if m.NotAfter == nil {
-		return errors.Required("notAfter", "body", nil)
+	if err := validate.Required("notAfter", "body", m.NotAfter); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("notAfter", "body", "date-time", m.NotAfter.String(), formats); err != nil {
+		return err
 	}
 
 	return nil
@@ -89,8 +93,12 @@ func (m *TLSCertificate) validateNotAfter(formats strfmt.Registry) error {
 
 func (m *TLSCertificate) validateNotBefore(formats strfmt.Registry) error {
 
-	if m.NotBefore == nil {
-		return errors.Required("notBefore", "body", nil)
+	if err := validate.Required("notBefore", "body", m.NotBefore); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("notBefore", "body", "date-time", m.NotBefore.String(), formats); err != nil {
+		return err
 	}
 
 	return nil

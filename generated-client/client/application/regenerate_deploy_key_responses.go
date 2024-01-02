@@ -38,6 +38,12 @@ func (o *RegenerateDeployKeyReader) ReadResponse(response runtime.ClientResponse
 			return nil, err
 		}
 		return nil, result
+	case 409:
+		result := NewRegenerateDeployKeyConflict()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	default:
 		return nil, runtime.NewAPIError("[POST /applications/{appName}/regenerate-deploy-key] regenerateDeployKey", response, response.Code())
 	}
@@ -207,6 +213,62 @@ func (o *RegenerateDeployKeyNotFound) String() string {
 }
 
 func (o *RegenerateDeployKeyNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	return nil
+}
+
+// NewRegenerateDeployKeyConflict creates a RegenerateDeployKeyConflict with default headers values
+func NewRegenerateDeployKeyConflict() *RegenerateDeployKeyConflict {
+	return &RegenerateDeployKeyConflict{}
+}
+
+/*
+RegenerateDeployKeyConflict describes a response with status code 409, with default header values.
+
+Conflict
+*/
+type RegenerateDeployKeyConflict struct {
+}
+
+// IsSuccess returns true when this regenerate deploy key conflict response has a 2xx status code
+func (o *RegenerateDeployKeyConflict) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this regenerate deploy key conflict response has a 3xx status code
+func (o *RegenerateDeployKeyConflict) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this regenerate deploy key conflict response has a 4xx status code
+func (o *RegenerateDeployKeyConflict) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this regenerate deploy key conflict response has a 5xx status code
+func (o *RegenerateDeployKeyConflict) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this regenerate deploy key conflict response a status code equal to that given
+func (o *RegenerateDeployKeyConflict) IsCode(code int) bool {
+	return code == 409
+}
+
+// Code gets the status code for the regenerate deploy key conflict response
+func (o *RegenerateDeployKeyConflict) Code() int {
+	return 409
+}
+
+func (o *RegenerateDeployKeyConflict) Error() string {
+	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyConflict ", 409)
+}
+
+func (o *RegenerateDeployKeyConflict) String() string {
+	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyConflict ", 409)
+}
+
+func (o *RegenerateDeployKeyConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	return nil
 }

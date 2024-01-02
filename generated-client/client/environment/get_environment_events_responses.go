@@ -57,7 +57,7 @@ GetEnvironmentEventsOK describes a response with status code 200, with default h
 Successful get environment events
 */
 type GetEnvironmentEventsOK struct {
-	Payload *models.Event
+	Payload []*models.Event
 }
 
 // IsSuccess returns true when this get environment events o k response has a 2xx status code
@@ -98,16 +98,14 @@ func (o *GetEnvironmentEventsOK) String() string {
 	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsOK  %+v", 200, o.Payload)
 }
 
-func (o *GetEnvironmentEventsOK) GetPayload() *models.Event {
+func (o *GetEnvironmentEventsOK) GetPayload() []*models.Event {
 	return o.Payload
 }
 
 func (o *GetEnvironmentEventsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Event)
-
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 

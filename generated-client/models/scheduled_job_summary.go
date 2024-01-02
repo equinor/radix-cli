@@ -72,7 +72,7 @@ type ScheduledJobSummary struct {
 	// Status of the job
 	// Example: Waiting
 	// Required: true
-	// Enum: [Waiting Running Succeeded Stopping Stopped Failed]
+	// Enum: [Running Succeeded Failed Waiting Stopping Stopped]
 	Status *string `json:"status"`
 
 	// TimeLimitSeconds How long the job supposed to run at maximum
@@ -168,7 +168,7 @@ var scheduledJobSummaryTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["Waiting","Running","Succeeded","Stopping","Stopped","Failed"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["Running","Succeeded","Failed","Waiting","Stopping","Stopped"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -178,23 +178,23 @@ func init() {
 
 const (
 
-	// ScheduledJobSummaryStatusWaiting captures enum value "Waiting"
-	ScheduledJobSummaryStatusWaiting string = "Waiting"
-
 	// ScheduledJobSummaryStatusRunning captures enum value "Running"
 	ScheduledJobSummaryStatusRunning string = "Running"
 
 	// ScheduledJobSummaryStatusSucceeded captures enum value "Succeeded"
 	ScheduledJobSummaryStatusSucceeded string = "Succeeded"
 
+	// ScheduledJobSummaryStatusFailed captures enum value "Failed"
+	ScheduledJobSummaryStatusFailed string = "Failed"
+
+	// ScheduledJobSummaryStatusWaiting captures enum value "Waiting"
+	ScheduledJobSummaryStatusWaiting string = "Waiting"
+
 	// ScheduledJobSummaryStatusStopping captures enum value "Stopping"
 	ScheduledJobSummaryStatusStopping string = "Stopping"
 
 	// ScheduledJobSummaryStatusStopped captures enum value "Stopped"
 	ScheduledJobSummaryStatusStopped string = "Stopped"
-
-	// ScheduledJobSummaryStatusFailed captures enum value "Failed"
-	ScheduledJobSummaryStatusFailed string = "Failed"
 )
 
 // prop value enum

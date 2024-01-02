@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -59,6 +60,7 @@ type DeploymentSummary struct {
 
 	// Type of pipeline job
 	// Example: build-deploy
+	// Enum: [build build-deploy promote deploy]
 	PipelineJobType string `json:"pipelineJobType,omitempty"`
 
 	// Name of the environment the deployment was promoted from
@@ -84,6 +86,10 @@ func (m *DeploymentSummary) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePipelineJobType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -140,6 +146,54 @@ func (m *DeploymentSummary) validateEnvironment(formats strfmt.Registry) error {
 func (m *DeploymentSummary) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var deploymentSummaryTypePipelineJobTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["build","build-deploy","promote","deploy"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		deploymentSummaryTypePipelineJobTypePropEnum = append(deploymentSummaryTypePipelineJobTypePropEnum, v)
+	}
+}
+
+const (
+
+	// DeploymentSummaryPipelineJobTypeBuild captures enum value "build"
+	DeploymentSummaryPipelineJobTypeBuild string = "build"
+
+	// DeploymentSummaryPipelineJobTypeBuildDashDeploy captures enum value "build-deploy"
+	DeploymentSummaryPipelineJobTypeBuildDashDeploy string = "build-deploy"
+
+	// DeploymentSummaryPipelineJobTypePromote captures enum value "promote"
+	DeploymentSummaryPipelineJobTypePromote string = "promote"
+
+	// DeploymentSummaryPipelineJobTypeDeploy captures enum value "deploy"
+	DeploymentSummaryPipelineJobTypeDeploy string = "deploy"
+)
+
+// prop value enum
+func (m *DeploymentSummary) validatePipelineJobTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, deploymentSummaryTypePipelineJobTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *DeploymentSummary) validatePipelineJobType(formats strfmt.Registry) error {
+	if swag.IsZero(m.PipelineJobType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validatePipelineJobTypeEnum("pipelineJobType", "body", m.PipelineJobType); err != nil {
 		return err
 	}
 

@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -32,6 +33,7 @@ type ImageHubSecret struct {
 	// Pending = Secret value is not set
 	// Consistent = Secret value is set
 	// Example: Consistent
+	// Enum: [Pending Consistent]
 	Status string `json:"status,omitempty"`
 
 	// Username for connecting to private image hub
@@ -48,6 +50,10 @@ func (m *ImageHubSecret) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateUsername(formats); err != nil {
 		res = append(res, err)
 	}
@@ -61,6 +67,48 @@ func (m *ImageHubSecret) Validate(formats strfmt.Registry) error {
 func (m *ImageHubSecret) validateServer(formats strfmt.Registry) error {
 
 	if err := validate.Required("server", "body", m.Server); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var imageHubSecretTypeStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Pending","Consistent"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		imageHubSecretTypeStatusPropEnum = append(imageHubSecretTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// ImageHubSecretStatusPending captures enum value "Pending"
+	ImageHubSecretStatusPending string = "Pending"
+
+	// ImageHubSecretStatusConsistent captures enum value "Consistent"
+	ImageHubSecretStatusConsistent string = "Consistent"
+)
+
+// prop value enum
+func (m *ImageHubSecret) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, imageHubSecretTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ImageHubSecret) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
 		return err
 	}
 

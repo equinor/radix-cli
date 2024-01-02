@@ -20,6 +20,9 @@ import (
 // swagger:model Application
 type Application struct {
 
+	// DNS aliases showing nicer endpoint for application, without "app." subdomain domain
+	DNSAliases []*DNSAlias `json:"dnsAliases"`
+
 	// Environments List of environments for this application
 	Environments []*EnvironmentSummary `json:"environments"`
 
@@ -45,6 +48,10 @@ type Application struct {
 func (m *Application) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateDNSAliases(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateEnvironments(formats); err != nil {
 		res = append(res, err)
 	}
@@ -68,6 +75,32 @@ func (m *Application) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Application) validateDNSAliases(formats strfmt.Registry) error {
+	if swag.IsZero(m.DNSAliases) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.DNSAliases); i++ {
+		if swag.IsZero(m.DNSAliases[i]) { // not required
+			continue
+		}
+
+		if m.DNSAliases[i] != nil {
+			if err := m.DNSAliases[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("dnsAliases" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dnsAliases" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -174,6 +207,10 @@ func (m *Application) validateRegistration(formats strfmt.Registry) error {
 func (m *Application) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateDNSAliases(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateEnvironments(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -193,6 +230,31 @@ func (m *Application) ContextValidate(ctx context.Context, formats strfmt.Regist
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Application) contextValidateDNSAliases(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.DNSAliases); i++ {
+
+		if m.DNSAliases[i] != nil {
+
+			if swag.IsZero(m.DNSAliases[i]) { // not required
+				return nil
+			}
+
+			if err := m.DNSAliases[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("dnsAliases" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dnsAliases" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

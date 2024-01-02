@@ -14,7 +14,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
 )
 
 // NewStopBatchParams creates a new StopBatchParams object,
@@ -64,9 +63,9 @@ type StopBatchParams struct {
 
 	/* ImpersonateGroup.
 
-	   Works only with custom setup of cluster. Allow impersonation of test group (Required if Impersonate-User is set)
+	   Works only with custom setup of cluster. Allow impersonation of a comma-seperated list of test groups (Required if Impersonate-User is set)
 	*/
-	ImpersonateGroup []string
+	ImpersonateGroup *string
 
 	/* ImpersonateUser.
 
@@ -152,13 +151,13 @@ func (o *StopBatchParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithImpersonateGroup adds the impersonateGroup to the stop batch params
-func (o *StopBatchParams) WithImpersonateGroup(impersonateGroup []string) *StopBatchParams {
+func (o *StopBatchParams) WithImpersonateGroup(impersonateGroup *string) *StopBatchParams {
 	o.SetImpersonateGroup(impersonateGroup)
 	return o
 }
 
 // SetImpersonateGroup adds the impersonateGroup to the stop batch params
-func (o *StopBatchParams) SetImpersonateGroup(impersonateGroup []string) {
+func (o *StopBatchParams) SetImpersonateGroup(impersonateGroup *string) {
 	o.ImpersonateGroup = impersonateGroup
 }
 
@@ -227,14 +226,9 @@ func (o *StopBatchParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 
 	if o.ImpersonateGroup != nil {
 
-		// binding items for Impersonate-Group
-		joinedImpersonateGroup := o.bindParamImpersonateGroup(reg)
-
-		// header array param Impersonate-Group
-		if len(joinedImpersonateGroup) > 0 {
-			if err := r.SetHeaderParam("Impersonate-Group", joinedImpersonateGroup[0]); err != nil {
-				return err
-			}
+		// header param Impersonate-Group
+		if err := r.SetHeaderParam("Impersonate-Group", *o.ImpersonateGroup); err != nil {
+			return err
 		}
 	}
 
@@ -270,21 +264,4 @@ func (o *StopBatchParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
-}
-
-// bindParamStopBatch binds the parameter Impersonate-Group
-func (o *StopBatchParams) bindParamImpersonateGroup(formats strfmt.Registry) []string {
-	impersonateGroupIR := o.ImpersonateGroup
-
-	var impersonateGroupIC []string
-	for _, impersonateGroupIIR := range impersonateGroupIR { // explode []string
-
-		impersonateGroupIIV := impersonateGroupIIR // string as string
-		impersonateGroupIC = append(impersonateGroupIC, impersonateGroupIIV)
-	}
-
-	// items.CollectionFormat: ""
-	impersonateGroupIS := swag.JoinByFormat(impersonateGroupIC, "")
-
-	return impersonateGroupIS
 }
