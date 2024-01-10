@@ -27,7 +27,6 @@ type SecretParameters struct {
 
 	// Type of the secret
 	// generic SecretTypeGeneric
-	// client-cert SecretTypeClientCert
 	// azure-blob-fuse-volume SecretTypeAzureBlobFuseVolume
 	// csi-azure-blob-volume SecretTypeCsiAzureBlobVolume
 	// csi-azure-key-vault-creds SecretTypeCsiAzureKeyVaultCreds
@@ -35,7 +34,7 @@ type SecretParameters struct {
 	// client-cert-auth SecretTypeClientCertificateAuth
 	// oauth2-proxy SecretTypeOAuth2Proxy
 	// Example: azure-blob-fuse-volume
-	// Enum: [generic client-cert azure-blob-fuse-volume csi-azure-blob-volume csi-azure-key-vault-creds csi-azure-key-vault-item client-cert-auth oauth2-proxy]
+	// Enum: [generic azure-blob-fuse-volume csi-azure-blob-volume csi-azure-key-vault-creds csi-azure-key-vault-item client-cert-auth oauth2-proxy]
 	Type string `json:"type,omitempty"`
 }
 
@@ -70,7 +69,7 @@ var secretParametersTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["generic","client-cert","azure-blob-fuse-volume","csi-azure-blob-volume","csi-azure-key-vault-creds","csi-azure-key-vault-item","client-cert-auth","oauth2-proxy"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["generic","azure-blob-fuse-volume","csi-azure-blob-volume","csi-azure-key-vault-creds","csi-azure-key-vault-item","client-cert-auth","oauth2-proxy"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -82,9 +81,6 @@ const (
 
 	// SecretParametersTypeGeneric captures enum value "generic"
 	SecretParametersTypeGeneric string = "generic"
-
-	// SecretParametersTypeClientDashCert captures enum value "client-cert"
-	SecretParametersTypeClientDashCert string = "client-cert"
 
 	// SecretParametersTypeAzureDashBlobDashFuseDashVolume captures enum value "azure-blob-fuse-volume"
 	SecretParametersTypeAzureDashBlobDashFuseDashVolume string = "azure-blob-fuse-volume"
