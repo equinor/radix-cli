@@ -16,8 +16,10 @@ package cmd
 
 import (
 	"errors"
+
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -29,18 +31,18 @@ var startComponentCmd = &cobra.Command{
   - Pulls new image from image hub in radix configuration
   - Starts the container using up to date image`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		envName, err := cmd.Flags().GetString("environment")
+		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
 		if err != nil || appName == nil || *appName == "" || envName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
-		cmpName, err := cmd.Flags().GetString("component")
+		cmpName, err := cmd.Flags().GetString(flagnames.Component)
 		if err != nil {
 			return errors.New("component name is a required field")
 		}
@@ -64,8 +66,8 @@ var startComponentCmd = &cobra.Command{
 
 func init() {
 	startCmd.AddCommand(startComponentCmd)
-	startComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-	startComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-	startComponentCmd.Flags().StringP("component", "n", "", "Name of the component to start")
+	startComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	startComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
+	startComponentCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to start")
 	setContextSpecificPersistentFlags(startComponentCmd)
 }

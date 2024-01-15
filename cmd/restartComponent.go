@@ -16,8 +16,10 @@ package cmd
 
 import (
 	"errors"
+
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -29,18 +31,18 @@ var restartComponentCmd = &cobra.Command{
   - Starts the component's container, using up to date image
   - Stops the application component's old containers`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		envName, err := cmd.Flags().GetString("environment")
+		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
 		if err != nil || appName == nil || *appName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
-		cmpName, err := cmd.Flags().GetString("component")
+		cmpName, err := cmd.Flags().GetString(flagnames.Component)
 		if err != nil {
 			return errors.New("component name is a required field")
 		}
@@ -64,8 +66,8 @@ var restartComponentCmd = &cobra.Command{
 
 func init() {
 	restartCmd.AddCommand(restartComponentCmd)
-	restartComponentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-	restartComponentCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-	restartComponentCmd.Flags().StringP("component", "n", "", "Name of the component to restart")
+	restartComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	restartComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
+	restartComponentCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to restart")
 	setContextSpecificPersistentFlags(restartComponentCmd)
 }

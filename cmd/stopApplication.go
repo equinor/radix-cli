@@ -16,8 +16,10 @@ package cmd
 
 import (
 	"errors"
+
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +30,7 @@ var stopApplicationCmd = &cobra.Command{
 	Long: `Stop an application
   - Stops the application components running containers`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -54,6 +56,6 @@ var stopApplicationCmd = &cobra.Command{
 
 func init() {
 	stopCmd.AddCommand(stopApplicationCmd)
-	stopApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	stopApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 	setContextSpecificPersistentFlags(stopApplicationCmd)
 }

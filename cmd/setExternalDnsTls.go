@@ -24,16 +24,18 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
-// setComponentTLSSecretCmd represents the setComponentTLSSecretCmd command
-var setComponentTLSSecretCmd = &cobra.Command{
-	Use:   "tls",
-	Short: "Set TLS certificate and private key for DNS external alias",
-	Long:  `Set TLS certificate and private key for DNS external alias`,
+// setExternalDnsTlsCmd represents the setExternalDnsTlsCmd command
+var setExternalDnsTlsCmd = &cobra.Command{
+	Use:     "external-dns-tls",
+	Short:   "Set TLS certificate and private key for a component's external DNS alias",
+	Long:    "Set TLS certificate and private key for a component's external DNS alias",
+	Example: `rx set external-dns-tls --application myapp --environment prod --component web --alias myapp.example.com --certificate "$(cat ./cert.crt)" --private-key "$(cat ./cert.key)`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -41,33 +43,33 @@ var setComponentTLSSecretCmd = &cobra.Command{
 			return errors.New("application name is required")
 		}
 
-		environmentName, _ := cmd.Flags().GetString("environment")
+		environmentName, _ := cmd.Flags().GetString(flagnames.Environment)
 		if environmentName == "" {
 			return errors.New("`environment` is required")
 		}
 
-		componentName, _ := cmd.Flags().GetString("component")
+		componentName, _ := cmd.Flags().GetString(flagnames.Component)
 		if componentName == "" {
 			return errors.New("`component` is required")
 		}
 
-		fqdn, _ := cmd.Flags().GetString("alias")
+		fqdn, _ := cmd.Flags().GetString(flagnames.Alias)
 		if fqdn == "" {
 			return errors.New("`alias` is required")
 		}
 
-		certificate, _ := cmd.Flags().GetString("certificate")
+		certificate, _ := cmd.Flags().GetString(flagnames.Certificate)
 		if certificate == "" {
 			return errors.New("`certificate` is required")
 		}
 
-		privateKey, _ := cmd.Flags().GetString("private-key")
+		privateKey, _ := cmd.Flags().GetString(flagnames.PrivateKey)
 		if privateKey == "" {
 			return errors.New("`private-key` is required")
 		}
 
-		skipValidation, _ := cmd.Flags().GetBool("skip-validation")
-		awaitReconcile, _ := cmd.Flags().GetBool("await-reconcile")
+		skipValidation, _ := cmd.Flags().GetBool(flagnames.SkipValidation)
+		awaitReconcile, _ := cmd.Flags().GetBool(flagnames.AwaitReconcile)
 		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetForCommand(cmd)
@@ -130,14 +132,15 @@ func isComponentExternalDNSReconciled(apiClient *apiclient.Radixapi, appName, en
 }
 
 func init() {
-	setCmd.AddCommand(setComponentTLSSecretCmd)
-	setComponentTLSSecretCmd.Flags().StringP("application", "a", "", "Name of the application")
-	setComponentTLSSecretCmd.Flags().StringP("environment", "e", "", "Name of the environment")
-	setComponentTLSSecretCmd.Flags().String("component", "", "Name of the component")
-	setComponentTLSSecretCmd.Flags().String("alias", "", "External DNS alias to update TLS for")
-	setComponentTLSSecretCmd.Flags().String("certificate", "", "Certificate in PEM format")
-	setComponentTLSSecretCmd.Flags().String("private-key", "", "Private key in PEM format")
-	setComponentTLSSecretCmd.Flags().Bool("skip-validation", false, "Skip validation of certificate and private key")
-	setComponentTLSSecretCmd.Flags().Bool("await-reconcile", true, "Await reconciliation in Radix. Default is true")
-	setContextSpecificPersistentFlags(setComponentTLSSecretCmd)
+	setExternalDnsTlsCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
+	setExternalDnsTlsCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment")
+	setExternalDnsTlsCmd.Flags().String(flagnames.Component, "", "Name of the component")
+	setExternalDnsTlsCmd.Flags().String(flagnames.Alias, "", "External DNS alias to update")
+	setExternalDnsTlsCmd.Flags().String(flagnames.Certificate, "", "Certificate in PEM format")
+	setExternalDnsTlsCmd.Flags().String(flagnames.PrivateKey, "", "Private key in PEM format")
+	setExternalDnsTlsCmd.Flags().Bool(flagnames.SkipValidation, false, "Skip validation of certificate and private key")
+	setExternalDnsTlsCmd.Flags().Bool(flagnames.AwaitReconcile, true, "Await reconciliation in Radix. Default is true")
+	setContextSpecificPersistentFlags(setExternalDnsTlsCmd)
+
+	setCmd.AddCommand(setExternalDnsTlsCmd)
 }

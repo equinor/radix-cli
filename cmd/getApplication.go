@@ -21,6 +21,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -32,7 +33,7 @@ var getApplicationCmd = &cobra.Command{
 	Short: "Gets Radix application",
 	Long:  `Gets a list of Radix applications or a single application if provided`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -73,6 +74,6 @@ var getApplicationCmd = &cobra.Command{
 
 func init() {
 	getCmd.AddCommand(getApplicationCmd)
-	getApplicationCmd.Flags().StringP("application", "a", "", "Name of the application")
+	getApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	setContextSpecificPersistentFlags(getApplicationCmd)
 }

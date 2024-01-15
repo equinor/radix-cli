@@ -16,8 +16,10 @@ package cmd
 
 import (
 	"errors"
+
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +29,7 @@ var deleteApplicationCmd = &cobra.Command{
 	Short: "Delete application",
 	Long:  `Will delete an application from the cluster`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -53,6 +55,6 @@ var deleteApplicationCmd = &cobra.Command{
 
 func init() {
 	deleteCmd.AddCommand(deleteApplicationCmd)
-	deleteApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to create")
+	deleteApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to create")
 	setContextSpecificPersistentFlags(deleteApplicationCmd)
 }

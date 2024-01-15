@@ -16,8 +16,10 @@ package cmd
 
 import (
 	"errors"
+
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -27,12 +29,12 @@ var deleteEnvironmentCmd = &cobra.Command{
 	Short: "delete environment",
 	Long:  `deletes an orphaned Radix environment`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		envName, err := cmd.Flags().GetString("environment")
+		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
 		if err != nil || appName == nil || *appName == "" {
 			return errors.New("environment name and application name are required fields")
@@ -56,7 +58,7 @@ var deleteEnvironmentCmd = &cobra.Command{
 
 func init() {
 	deleteCmd.AddCommand(deleteEnvironmentCmd)
-	deleteEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-	deleteEnvironmentCmd.Flags().StringP("environment", "e", "", "Name of the environment to delete")
+	deleteEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
+	deleteEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment to delete")
 	setContextSpecificPersistentFlags(deleteEnvironmentCmd)
 }

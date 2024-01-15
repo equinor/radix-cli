@@ -16,8 +16,10 @@ package cmd
 
 import (
 	"errors"
+
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +31,7 @@ var startApplicationCmd = &cobra.Command{
   - Pulls new images from image hub in radix configuration
   - Starts the application containers using up to date images`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -55,6 +57,6 @@ var startApplicationCmd = &cobra.Command{
 
 func init() {
 	startCmd.AddCommand(startApplicationCmd)
-	startApplicationCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
+	startApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 	setContextSpecificPersistentFlags(startApplicationCmd)
 }
