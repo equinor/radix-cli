@@ -82,9 +82,9 @@ Examples:
 		if err != nil {
 			return err
 		}
-		componentNames, err := cmd.Flags().GetStringSlice("component")
+		componentsToDeploy, err := cmd.Flags().GetStringSlice("component")
 		if err != nil {
-			errs = append(errs, err)
+			return err
 		}
 
 		cmd.SilenceUsage = true
@@ -102,7 +102,7 @@ Examples:
 			TriggeredBy:   triggeredByUser,
 			CommitID:      commitID,
 		}
-		if components := strings.Join(componentNames, ","); len(components) > 0 {
+		if components := strings.Join(componentsToDeploy, ","); len(components) > 0 {
 			parametersDeploy.Components = components
 		}
 		triggerPipelineParams.SetPipelineParametersDeploy(&parametersDeploy)
@@ -142,7 +142,7 @@ func init() {
 	createDeployPipelineJobCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
 	createDeployPipelineJobCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
 	createDeployPipelineJobCmd.Flags().StringP("commitID", "i", "", "An optional 40 character commit id to tag the new pipeline job")
-	createDeployPipelineJobCmd.Flags().StringSlice("component", []string{}, "Optional component to deploy, if only specific component need to be deployed")
+	createDeployPipelineJobCmd.Flags().StringSlice("component", []string{}, "Optional component to deploy, when only specific component need to be deployed. Multiple components can be specified.")
 	createDeployPipelineJobCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
 	setContextSpecificPersistentFlags(createDeployPipelineJobCmd)
 }
