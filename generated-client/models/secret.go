@@ -8,7 +8,6 @@ package models
 import (
 	"context"
 	"encoding/json"
-	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -47,19 +46,11 @@ type Secret struct {
 	// Consistent = Secret exists in Radix config and in cluster
 	// NotAvailable = Secret is available in external secret configuration but not in cluster
 	// Example: Consistent
-	// Enum: [Pending Consistent NotAvailable Invalid]
+	// Enum: [Pending Consistent NotAvailable]
 	Status string `json:"status,omitempty"`
-
-	// StatusMessages contains a list of messages related to the Status
-	StatusMessages []string `json:"statusMessages"`
-
-	// TLSCertificates holds the TLS certificate and certificate authorities (CA)
-	// The first certificate in the list should be the TLS certificate and the rest should be CA certificates
-	TLSCertificates []*TLSCertificate `json:"tlsCertificates"`
 
 	// Type of the secret
 	// generic SecretTypeGeneric
-	// client-cert SecretTypeClientCert
 	// azure-blob-fuse-volume SecretTypeAzureBlobFuseVolume
 	// csi-azure-blob-volume SecretTypeCsiAzureBlobVolume
 	// csi-azure-key-vault-creds SecretTypeCsiAzureKeyVaultCreds
@@ -67,7 +58,7 @@ type Secret struct {
 	// client-cert-auth SecretTypeClientCertificateAuth
 	// oauth2-proxy SecretTypeOAuth2Proxy
 	// Example: client-cert
-	// Enum: [generic client-cert azure-blob-fuse-volume csi-azure-blob-volume csi-azure-key-vault-creds csi-azure-key-vault-item client-cert-auth oauth2-proxy]
+	// Enum: [generic azure-blob-fuse-volume csi-azure-blob-volume csi-azure-key-vault-creds csi-azure-key-vault-item client-cert-auth oauth2-proxy]
 	Type string `json:"type,omitempty"`
 }
 
@@ -80,10 +71,6 @@ func (m *Secret) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStatus(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTLSCertificates(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -110,7 +97,7 @@ var secretTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["Pending","Consistent","NotAvailable","Invalid"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["Pending","Consistent","NotAvailable"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -128,9 +115,6 @@ const (
 
 	// SecretStatusNotAvailable captures enum value "NotAvailable"
 	SecretStatusNotAvailable string = "NotAvailable"
-
-	// SecretStatusInvalid captures enum value "Invalid"
-	SecretStatusInvalid string = "Invalid"
 )
 
 // prop value enum
@@ -154,37 +138,11 @@ func (m *Secret) validateStatus(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Secret) validateTLSCertificates(formats strfmt.Registry) error {
-	if swag.IsZero(m.TLSCertificates) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.TLSCertificates); i++ {
-		if swag.IsZero(m.TLSCertificates[i]) { // not required
-			continue
-		}
-
-		if m.TLSCertificates[i] != nil {
-			if err := m.TLSCertificates[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("tlsCertificates" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("tlsCertificates" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
 var secretTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["generic","client-cert","azure-blob-fuse-volume","csi-azure-blob-volume","csi-azure-key-vault-creds","csi-azure-key-vault-item","client-cert-auth","oauth2-proxy"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["generic","azure-blob-fuse-volume","csi-azure-blob-volume","csi-azure-key-vault-creds","csi-azure-key-vault-item","client-cert-auth","oauth2-proxy"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -196,9 +154,6 @@ const (
 
 	// SecretTypeGeneric captures enum value "generic"
 	SecretTypeGeneric string = "generic"
-
-	// SecretTypeClientDashCert captures enum value "client-cert"
-	SecretTypeClientDashCert string = "client-cert"
 
 	// SecretTypeAzureDashBlobDashFuseDashVolume captures enum value "azure-blob-fuse-volume"
 	SecretTypeAzureDashBlobDashFuseDashVolume string = "azure-blob-fuse-volume"
@@ -240,42 +195,8 @@ func (m *Secret) validateType(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this secret based on the context it is used
+// ContextValidate validates this secret based on context it is used
 func (m *Secret) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateTLSCertificates(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *Secret) contextValidateTLSCertificates(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.TLSCertificates); i++ {
-
-		if m.TLSCertificates[i] != nil {
-
-			if swag.IsZero(m.TLSCertificates[i]) { // not required
-				return nil
-			}
-
-			if err := m.TLSCertificates[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("tlsCertificates" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("tlsCertificates" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 

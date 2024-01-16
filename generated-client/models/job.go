@@ -58,10 +58,6 @@ type Job struct {
 	// Enum: [build build-deploy promote deploy]
 	Pipeline string `json:"pipeline,omitempty"`
 
-	// PromotedDeploymentName the name of the deployment that was promoted
-	// Example: component-6hznh
-	PromotedDeploymentName string `json:"promotedDeploymentName,omitempty"`
-
 	// RadixDeployment name, which is promoted
 	PromotedFromDeployment string `json:"promotedFromDeployment,omitempty"`
 

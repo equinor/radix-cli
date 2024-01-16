@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -44,6 +45,9 @@ Examples:
 
   # Create a Radix pipeline deploy-only job with re-defined image-tags for components, short option versions 
   rx create job deploy -a radix-test -e dev -t web-app=web-app-v2.1 -t api-server=api-v1.0
+
+  # Create a Radix pipeline deploy-only job to deploy only specific components 
+  rx create job deploy -a radix-test -e dev --component web-app --component api-server
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
@@ -74,9 +78,13 @@ Examples:
 			return errors.New("application name and target environment are required")
 		}
 		commitID, _ := cmd.Flags().GetString("commitID")
-		err2 := validateCommitID(commitID)
-		if err2 != nil {
-			return err2
+		err = validateCommitID(commitID)
+		if err != nil {
+			return err
+		}
+		componentNames, err := cmd.Flags().GetStringSlice("component")
+		if err != nil {
+			errs = append(errs, err)
 		}
 
 		cmd.SilenceUsage = true
@@ -88,12 +96,16 @@ Examples:
 
 		triggerPipelineParams := application.NewTriggerPipelineDeployParams()
 		triggerPipelineParams.SetAppName(*appName)
-		triggerPipelineParams.SetPipelineParametersDeploy(&models.PipelineParametersDeploy{
+		parametersDeploy := models.PipelineParametersDeploy{
 			ToEnvironment: targetEnvironment,
 			ImageTagNames: imageTagNames,
 			TriggeredBy:   triggeredByUser,
 			CommitID:      commitID,
-		})
+		}
+		if components := strings.Join(componentNames, ","); len(components) > 0 {
+			parametersDeploy.Components = components
+		}
+		triggerPipelineParams.SetPipelineParametersDeploy(&parametersDeploy)
 
 		newJob, err := apiClient.Application.TriggerPipelineDeploy(triggerPipelineParams, nil)
 		if err != nil {
@@ -130,6 +142,7 @@ func init() {
 	createDeployPipelineJobCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
 	createDeployPipelineJobCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
 	createDeployPipelineJobCmd.Flags().StringP("commitID", "i", "", "An optional 40 character commit id to tag the new pipeline job")
+	createDeployPipelineJobCmd.Flags().StringSlice("component", []string{}, "Optional component to deploy, if only specific component need to be deployed")
 	createDeployPipelineJobCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
 	setContextSpecificPersistentFlags(createDeployPipelineJobCmd)
 }

@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -43,7 +44,23 @@ type PipelineRun struct {
 	Started string `json:"started,omitempty"`
 
 	// Status of the step
-	// Example: Started
+	// Started TaskRunReasonStarted  TaskRunReasonStarted is the reason set when the TaskRun has just started
+	// Running TaskRunReasonRunning  TaskRunReasonRunning is the reason set when the TaskRun is running
+	// Succeeded TaskRunReasonSuccessful  TaskRunReasonSuccessful is the reason set when the TaskRun completed successfully
+	// Failed TaskRunReasonFailed  TaskRunReasonFailed is the reason set when the TaskRun completed with a failure
+	// ToBeRetried TaskRunReasonToBeRetried  TaskRunReasonToBeRetried is the reason set when the last TaskRun execution failed, and will be retried
+	// TaskRunCancelled TaskRunReasonCancelled  TaskRunReasonCancelled is the reason set when the TaskRun is cancelled by the user
+	// TaskRunTimeout TaskRunReasonTimedOut  TaskRunReasonTimedOut is the reason set when one TaskRun execution has timed out
+	// TaskRunImagePullFailed TaskRunReasonImagePullFailed  TaskRunReasonImagePullFailed is the reason set when the step of a task fails due to image not being pulled
+	// TaskRunResultLargerThanAllowedLimit TaskRunReasonResultLargerThanAllowedLimit  TaskRunReasonResultLargerThanAllowedLimit is the reason set when one of the results exceeds its maximum allowed limit of 1 KB
+	// TaskRunStopSidecarFailed TaskRunReasonStopSidecarFailed  TaskRunReasonStopSidecarFailed indicates that the sidecar is not properly stopped.
+	// InvalidParamValue TaskRunReasonInvalidParamValue  TaskRunReasonInvalidParamValue indicates that the TaskRun Param input value is not allowed.
+	// TaskRunResolutionFailed TaskRunReasonFailedResolution  TaskRunReasonFailedResolution indicated that the reason for failure status is  that references within the TaskRun could not be resolved
+	// TaskRunValidationFailed TaskRunReasonFailedValidation  TaskRunReasonFailedValidation indicated that the reason for failure status is  that taskrun failed runtime validation
+	// TaskValidationFailed TaskRunReasonTaskFailedValidation  TaskRunReasonTaskFailedValidation indicated that the reason for failure status is  that task failed runtime validation
+	// ResourceVerificationFailed TaskRunReasonResourceVerificationFailed  TaskRunReasonResourceVerificationFailed indicates that the task fails the trusted resource verification,  it could be the content has changed, signature is invalid or public key is invalid
+	// FailureIgnored TaskRunReasonFailureIgnored  TaskRunReasonFailureIgnored is the reason set when the Taskrun has failed due to pod execution error and the failure is ignored for the owning PipelineRun.  TaskRuns failed due to reconciler/validation error should not use this reason.
+	// Enum: [Started Running Succeeded Failed ToBeRetried TaskRunCancelled TaskRunTimeout TaskRunImagePullFailed TaskRunResultLargerThanAllowedLimit TaskRunStopSidecarFailed InvalidParamValue TaskRunResolutionFailed TaskRunValidationFailed TaskValidationFailed ResourceVerificationFailed FailureIgnored]
 	Status string `json:"status,omitempty"`
 
 	// StatusMessage of the task
@@ -63,6 +80,10 @@ func (m *PipelineRun) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRealName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -93,6 +114,90 @@ func (m *PipelineRun) validateName(formats strfmt.Registry) error {
 func (m *PipelineRun) validateRealName(formats strfmt.Registry) error {
 
 	if err := validate.Required("realName", "body", m.RealName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var pipelineRunTypeStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Started","Running","Succeeded","Failed","ToBeRetried","TaskRunCancelled","TaskRunTimeout","TaskRunImagePullFailed","TaskRunResultLargerThanAllowedLimit","TaskRunStopSidecarFailed","InvalidParamValue","TaskRunResolutionFailed","TaskRunValidationFailed","TaskValidationFailed","ResourceVerificationFailed","FailureIgnored"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		pipelineRunTypeStatusPropEnum = append(pipelineRunTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// PipelineRunStatusStarted captures enum value "Started"
+	PipelineRunStatusStarted string = "Started"
+
+	// PipelineRunStatusRunning captures enum value "Running"
+	PipelineRunStatusRunning string = "Running"
+
+	// PipelineRunStatusSucceeded captures enum value "Succeeded"
+	PipelineRunStatusSucceeded string = "Succeeded"
+
+	// PipelineRunStatusFailed captures enum value "Failed"
+	PipelineRunStatusFailed string = "Failed"
+
+	// PipelineRunStatusToBeRetried captures enum value "ToBeRetried"
+	PipelineRunStatusToBeRetried string = "ToBeRetried"
+
+	// PipelineRunStatusTaskRunCancelled captures enum value "TaskRunCancelled"
+	PipelineRunStatusTaskRunCancelled string = "TaskRunCancelled"
+
+	// PipelineRunStatusTaskRunTimeout captures enum value "TaskRunTimeout"
+	PipelineRunStatusTaskRunTimeout string = "TaskRunTimeout"
+
+	// PipelineRunStatusTaskRunImagePullFailed captures enum value "TaskRunImagePullFailed"
+	PipelineRunStatusTaskRunImagePullFailed string = "TaskRunImagePullFailed"
+
+	// PipelineRunStatusTaskRunResultLargerThanAllowedLimit captures enum value "TaskRunResultLargerThanAllowedLimit"
+	PipelineRunStatusTaskRunResultLargerThanAllowedLimit string = "TaskRunResultLargerThanAllowedLimit"
+
+	// PipelineRunStatusTaskRunStopSidecarFailed captures enum value "TaskRunStopSidecarFailed"
+	PipelineRunStatusTaskRunStopSidecarFailed string = "TaskRunStopSidecarFailed"
+
+	// PipelineRunStatusInvalidParamValue captures enum value "InvalidParamValue"
+	PipelineRunStatusInvalidParamValue string = "InvalidParamValue"
+
+	// PipelineRunStatusTaskRunResolutionFailed captures enum value "TaskRunResolutionFailed"
+	PipelineRunStatusTaskRunResolutionFailed string = "TaskRunResolutionFailed"
+
+	// PipelineRunStatusTaskRunValidationFailed captures enum value "TaskRunValidationFailed"
+	PipelineRunStatusTaskRunValidationFailed string = "TaskRunValidationFailed"
+
+	// PipelineRunStatusTaskValidationFailed captures enum value "TaskValidationFailed"
+	PipelineRunStatusTaskValidationFailed string = "TaskValidationFailed"
+
+	// PipelineRunStatusResourceVerificationFailed captures enum value "ResourceVerificationFailed"
+	PipelineRunStatusResourceVerificationFailed string = "ResourceVerificationFailed"
+
+	// PipelineRunStatusFailureIgnored captures enum value "FailureIgnored"
+	PipelineRunStatusFailureIgnored string = "FailureIgnored"
+)
+
+// prop value enum
+func (m *PipelineRun) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, pipelineRunTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PipelineRun) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
 		return err
 	}
 

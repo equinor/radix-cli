@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -48,7 +49,40 @@ type PipelineRunTask struct {
 	Started string `json:"started,omitempty"`
 
 	// Status of the task
-	// Example: Running
+	// Started PipelineRunReasonStarted  PipelineRunReasonStarted is the reason set when the PipelineRun has just started
+	// Running PipelineRunReasonRunning  PipelineRunReasonRunning is the reason set when the PipelineRun is running
+	// Succeeded PipelineRunReasonSuccessful  PipelineRunReasonSuccessful is the reason set when the PipelineRun completed successfully
+	// Completed PipelineRunReasonCompleted  PipelineRunReasonCompleted is the reason set when the PipelineRun completed successfully with one or more skipped Tasks
+	// Failed PipelineRunReasonFailed  PipelineRunReasonFailed is the reason set when the PipelineRun completed with a failure
+	// Cancelled PipelineRunReasonCancelled  PipelineRunReasonCancelled is the reason set when the PipelineRun cancelled by the user  This reason may be found with a corev1.ConditionFalse status, if the cancellation was processed successfully  This reason may be found with a corev1.ConditionUnknown status, if the cancellation is being processed or failed
+	// PipelineRunPending PipelineRunReasonPending  PipelineRunReasonPending is the reason set when the PipelineRun is in the pending state
+	// PipelineRunTimeout PipelineRunReasonTimedOut  PipelineRunReasonTimedOut is the reason set when the PipelineRun has timed out
+	// PipelineRunStopping PipelineRunReasonStopping  PipelineRunReasonStopping indicates that no new Tasks will be scheduled by the controller, and the  pipeline will stop once all running tasks complete their work
+	// CancelledRunningFinally PipelineRunReasonCancelledRunningFinally  PipelineRunReasonCancelledRunningFinally indicates that pipeline has been gracefully cancelled  and no new Tasks will be scheduled by the controller, but final tasks are now running
+	// StoppedRunningFinally PipelineRunReasonStoppedRunningFinally  PipelineRunReasonStoppedRunningFinally indicates that pipeline has been gracefully stopped  and no new Tasks will be scheduled by the controller, but final tasks are now running
+	// CouldntGetPipeline PipelineRunReasonCouldntGetPipeline  ReasonCouldntGetPipeline indicates that the reason for the failure status is that the  associated Pipeline couldn't be retrieved
+	// InvalidPipelineResourceBindings PipelineRunReasonInvalidBindings  ReasonInvalidBindings indicates that the reason for the failure status is that the  PipelineResources bound in the PipelineRun didn't match those declared in the Pipeline
+	// InvalidWorkspaceBindings PipelineRunReasonInvalidWorkspaceBinding  ReasonInvalidWorkspaceBinding indicates that a Pipeline expects a workspace but a  PipelineRun has provided an invalid binding.
+	// InvalidTaskRunSpecs PipelineRunReasonInvalidTaskRunSpec  ReasonInvalidTaskRunSpec indicates that PipelineRun.Spec.TaskRunSpecs[].PipelineTaskName is defined with  a not exist taskName in pipelineSpec.
+	// ParameterTypeMismatch PipelineRunReasonParameterTypeMismatch  ReasonParameterTypeMismatch indicates that the reason for the failure status is that  parameter(s) declared in the PipelineRun do not have the some declared type as the  parameters(s) declared in the Pipeline that they are supposed to override.
+	// ObjectParameterMissKeys PipelineRunReasonObjectParameterMissKeys  ReasonObjectParameterMissKeys indicates that the object param value provided from PipelineRun spec  misses some keys required for the object param declared in Pipeline spec.
+	// ParamArrayIndexingInvalid PipelineRunReasonParamArrayIndexingInvalid  ReasonParamArrayIndexingInvalid indicates that the use of param array indexing is not under correct api fields feature gate  or the array is out of bound.
+	// CouldntGetTask PipelineRunReasonCouldntGetTask  ReasonCouldntGetTask indicates that the reason for the failure status is that the  associated Pipeline's Tasks couldn't all be retrieved
+	// ParameterMissing PipelineRunReasonParameterMissing  ReasonParameterMissing indicates that the reason for the failure status is that the  associated PipelineRun didn't provide all the required parameters
+	// PipelineValidationFailed PipelineRunReasonFailedValidation  ReasonFailedValidation indicates that the reason for failure status is  that pipelinerun failed runtime validation
+	// CouldntGetPipelineResult PipelineRunReasonCouldntGetPipelineResult  PipelineRunReasonCouldntGetPipelineResult indicates that the pipeline fails to retrieve the  referenced result. This could be due to failed TaskRuns or Runs that were supposed to produce  the results
+	// PipelineInvalidGraph PipelineRunReasonInvalidGraph  ReasonInvalidGraph indicates that the reason for the failure status is that the  associated Pipeline is an invalid graph (a.k.a wrong order, cycle, …)
+	// PipelineRunCouldntCancel PipelineRunReasonCouldntCancel  ReasonCouldntCancel indicates that a PipelineRun was cancelled but attempting to update  all of the running TaskRuns as cancelled failed.
+	// PipelineRunCouldntTimeOut PipelineRunReasonCouldntTimeOut  ReasonCouldntTimeOut indicates that a PipelineRun was timed out but attempting to update  all of the running TaskRuns as timed out failed.
+	// InvalidMatrixParameterTypes PipelineRunReasonInvalidMatrixParameterTypes  ReasonInvalidMatrixParameterTypes indicates a matrix contains invalid parameter types
+	// InvalidTaskResultReference PipelineRunReasonInvalidTaskResultReference  ReasonInvalidTaskResultReference indicates a task result was declared  but was not initialized by that task
+	// RequiredWorkspaceMarkedOptional PipelineRunReasonRequiredWorkspaceMarkedOptional  ReasonRequiredWorkspaceMarkedOptional indicates an optional workspace  has been passed to a Task that is expecting a non-optional workspace
+	// ResolvingPipelineRef PipelineRunReasonResolvingPipelineRef  ReasonResolvingPipelineRef indicates that the PipelineRun is waiting for  its pipelineRef to be asynchronously resolved.
+	// ResourceVerificationFailed PipelineRunReasonResourceVerificationFailed  ReasonResourceVerificationFailed indicates that the pipeline fails the trusted resource verification,  it could be the content has changed, signature is invalid or public key is invalid
+	// CreateRunFailed PipelineRunReasonCreateRunFailed  ReasonCreateRunFailed indicates that the pipeline fails to create the taskrun or other run resources
+	// CELEvaluationFailed PipelineRunReasonCELEvaluationFailed  ReasonCELEvaluationFailed indicates the pipeline fails the CEL evaluation
+	// InvalidParamValue PipelineRunReasonInvalidParamValue  PipelineRunReasonInvalidParamValue indicates that the PipelineRun Param input value is not allowed.
+	// Enum: [Started Running Succeeded Completed Failed Cancelled PipelineRunPending PipelineRunTimeout PipelineRunStopping CancelledRunningFinally StoppedRunningFinally CouldntGetPipeline InvalidPipelineResourceBindings InvalidWorkspaceBindings InvalidTaskRunSpecs ParameterTypeMismatch ObjectParameterMissKeys ParamArrayIndexingInvalid CouldntGetTask ParameterMissing PipelineValidationFailed CouldntGetPipelineResult PipelineInvalidGraph PipelineRunCouldntCancel PipelineRunCouldntTimeOut InvalidMatrixParameterTypes InvalidTaskResultReference RequiredWorkspaceMarkedOptional ResolvingPipelineRef ResourceVerificationFailed CreateRunFailed CELEvaluationFailed InvalidParamValue]
 	Status string `json:"status,omitempty"`
 
 	// StatusMessage of the task
@@ -72,6 +106,10 @@ func (m *PipelineRunTask) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRealName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -111,6 +149,141 @@ func (m *PipelineRunTask) validatePipelineRunEnv(formats strfmt.Registry) error 
 func (m *PipelineRunTask) validateRealName(formats strfmt.Registry) error {
 
 	if err := validate.Required("realName", "body", m.RealName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var pipelineRunTaskTypeStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Started","Running","Succeeded","Completed","Failed","Cancelled","PipelineRunPending","PipelineRunTimeout","PipelineRunStopping","CancelledRunningFinally","StoppedRunningFinally","CouldntGetPipeline","InvalidPipelineResourceBindings","InvalidWorkspaceBindings","InvalidTaskRunSpecs","ParameterTypeMismatch","ObjectParameterMissKeys","ParamArrayIndexingInvalid","CouldntGetTask","ParameterMissing","PipelineValidationFailed","CouldntGetPipelineResult","PipelineInvalidGraph","PipelineRunCouldntCancel","PipelineRunCouldntTimeOut","InvalidMatrixParameterTypes","InvalidTaskResultReference","RequiredWorkspaceMarkedOptional","ResolvingPipelineRef","ResourceVerificationFailed","CreateRunFailed","CELEvaluationFailed","InvalidParamValue"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		pipelineRunTaskTypeStatusPropEnum = append(pipelineRunTaskTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// PipelineRunTaskStatusStarted captures enum value "Started"
+	PipelineRunTaskStatusStarted string = "Started"
+
+	// PipelineRunTaskStatusRunning captures enum value "Running"
+	PipelineRunTaskStatusRunning string = "Running"
+
+	// PipelineRunTaskStatusSucceeded captures enum value "Succeeded"
+	PipelineRunTaskStatusSucceeded string = "Succeeded"
+
+	// PipelineRunTaskStatusCompleted captures enum value "Completed"
+	PipelineRunTaskStatusCompleted string = "Completed"
+
+	// PipelineRunTaskStatusFailed captures enum value "Failed"
+	PipelineRunTaskStatusFailed string = "Failed"
+
+	// PipelineRunTaskStatusCancelled captures enum value "Cancelled"
+	PipelineRunTaskStatusCancelled string = "Cancelled"
+
+	// PipelineRunTaskStatusPipelineRunPending captures enum value "PipelineRunPending"
+	PipelineRunTaskStatusPipelineRunPending string = "PipelineRunPending"
+
+	// PipelineRunTaskStatusPipelineRunTimeout captures enum value "PipelineRunTimeout"
+	PipelineRunTaskStatusPipelineRunTimeout string = "PipelineRunTimeout"
+
+	// PipelineRunTaskStatusPipelineRunStopping captures enum value "PipelineRunStopping"
+	PipelineRunTaskStatusPipelineRunStopping string = "PipelineRunStopping"
+
+	// PipelineRunTaskStatusCancelledRunningFinally captures enum value "CancelledRunningFinally"
+	PipelineRunTaskStatusCancelledRunningFinally string = "CancelledRunningFinally"
+
+	// PipelineRunTaskStatusStoppedRunningFinally captures enum value "StoppedRunningFinally"
+	PipelineRunTaskStatusStoppedRunningFinally string = "StoppedRunningFinally"
+
+	// PipelineRunTaskStatusCouldntGetPipeline captures enum value "CouldntGetPipeline"
+	PipelineRunTaskStatusCouldntGetPipeline string = "CouldntGetPipeline"
+
+	// PipelineRunTaskStatusInvalidPipelineResourceBindings captures enum value "InvalidPipelineResourceBindings"
+	PipelineRunTaskStatusInvalidPipelineResourceBindings string = "InvalidPipelineResourceBindings"
+
+	// PipelineRunTaskStatusInvalidWorkspaceBindings captures enum value "InvalidWorkspaceBindings"
+	PipelineRunTaskStatusInvalidWorkspaceBindings string = "InvalidWorkspaceBindings"
+
+	// PipelineRunTaskStatusInvalidTaskRunSpecs captures enum value "InvalidTaskRunSpecs"
+	PipelineRunTaskStatusInvalidTaskRunSpecs string = "InvalidTaskRunSpecs"
+
+	// PipelineRunTaskStatusParameterTypeMismatch captures enum value "ParameterTypeMismatch"
+	PipelineRunTaskStatusParameterTypeMismatch string = "ParameterTypeMismatch"
+
+	// PipelineRunTaskStatusObjectParameterMissKeys captures enum value "ObjectParameterMissKeys"
+	PipelineRunTaskStatusObjectParameterMissKeys string = "ObjectParameterMissKeys"
+
+	// PipelineRunTaskStatusParamArrayIndexingInvalid captures enum value "ParamArrayIndexingInvalid"
+	PipelineRunTaskStatusParamArrayIndexingInvalid string = "ParamArrayIndexingInvalid"
+
+	// PipelineRunTaskStatusCouldntGetTask captures enum value "CouldntGetTask"
+	PipelineRunTaskStatusCouldntGetTask string = "CouldntGetTask"
+
+	// PipelineRunTaskStatusParameterMissing captures enum value "ParameterMissing"
+	PipelineRunTaskStatusParameterMissing string = "ParameterMissing"
+
+	// PipelineRunTaskStatusPipelineValidationFailed captures enum value "PipelineValidationFailed"
+	PipelineRunTaskStatusPipelineValidationFailed string = "PipelineValidationFailed"
+
+	// PipelineRunTaskStatusCouldntGetPipelineResult captures enum value "CouldntGetPipelineResult"
+	PipelineRunTaskStatusCouldntGetPipelineResult string = "CouldntGetPipelineResult"
+
+	// PipelineRunTaskStatusPipelineInvalidGraph captures enum value "PipelineInvalidGraph"
+	PipelineRunTaskStatusPipelineInvalidGraph string = "PipelineInvalidGraph"
+
+	// PipelineRunTaskStatusPipelineRunCouldntCancel captures enum value "PipelineRunCouldntCancel"
+	PipelineRunTaskStatusPipelineRunCouldntCancel string = "PipelineRunCouldntCancel"
+
+	// PipelineRunTaskStatusPipelineRunCouldntTimeOut captures enum value "PipelineRunCouldntTimeOut"
+	PipelineRunTaskStatusPipelineRunCouldntTimeOut string = "PipelineRunCouldntTimeOut"
+
+	// PipelineRunTaskStatusInvalidMatrixParameterTypes captures enum value "InvalidMatrixParameterTypes"
+	PipelineRunTaskStatusInvalidMatrixParameterTypes string = "InvalidMatrixParameterTypes"
+
+	// PipelineRunTaskStatusInvalidTaskResultReference captures enum value "InvalidTaskResultReference"
+	PipelineRunTaskStatusInvalidTaskResultReference string = "InvalidTaskResultReference"
+
+	// PipelineRunTaskStatusRequiredWorkspaceMarkedOptional captures enum value "RequiredWorkspaceMarkedOptional"
+	PipelineRunTaskStatusRequiredWorkspaceMarkedOptional string = "RequiredWorkspaceMarkedOptional"
+
+	// PipelineRunTaskStatusResolvingPipelineRef captures enum value "ResolvingPipelineRef"
+	PipelineRunTaskStatusResolvingPipelineRef string = "ResolvingPipelineRef"
+
+	// PipelineRunTaskStatusResourceVerificationFailed captures enum value "ResourceVerificationFailed"
+	PipelineRunTaskStatusResourceVerificationFailed string = "ResourceVerificationFailed"
+
+	// PipelineRunTaskStatusCreateRunFailed captures enum value "CreateRunFailed"
+	PipelineRunTaskStatusCreateRunFailed string = "CreateRunFailed"
+
+	// PipelineRunTaskStatusCELEvaluationFailed captures enum value "CELEvaluationFailed"
+	PipelineRunTaskStatusCELEvaluationFailed string = "CELEvaluationFailed"
+
+	// PipelineRunTaskStatusInvalidParamValue captures enum value "InvalidParamValue"
+	PipelineRunTaskStatusInvalidParamValue string = "InvalidParamValue"
+)
+
+// prop value enum
+func (m *PipelineRunTask) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, pipelineRunTaskTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PipelineRunTask) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
 		return err
 	}
 
