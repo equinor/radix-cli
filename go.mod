@@ -5,14 +5,14 @@ go 1.21
 toolchain go1.21.0
 
 require (
-	github.com/AzureAD/microsoft-authentication-library-for-go v1.1.0
-	github.com/equinor/radix-operator v1.47.2
+	github.com/AzureAD/microsoft-authentication-library-for-go v1.2.1
+	github.com/equinor/radix-operator v1.49.0
 	github.com/fatih/color v1.15.0
 	github.com/go-openapi/errors v0.20.4
-	github.com/go-openapi/runtime v0.26.0
-	github.com/go-openapi/strfmt v0.21.7
+	github.com/go-openapi/runtime v0.26.2
+	github.com/go-openapi/strfmt v0.21.8
 	github.com/go-openapi/swag v0.22.4
-	github.com/go-openapi/validate v0.22.1
+	github.com/go-openapi/validate v0.22.3
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0
@@ -34,7 +34,7 @@ require (
 	github.com/go-openapi/jsonpointer v0.20.0 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/loads v0.21.2 // indirect
-	github.com/go-openapi/spec v0.20.8 // indirect
+	github.com/go-openapi/spec v0.20.11 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.0.0 // indirect
 	github.com/golang/mock v1.6.0 // indirect
@@ -66,7 +66,7 @@ require (
 	github.com/prometheus/common v0.45.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	go.mongodb.org/mongo-driver v1.11.3 // indirect
+	go.mongodb.org/mongo-driver v1.13.1 // indirect
 	go.opentelemetry.io/otel v1.19.0 // indirect
 	go.opentelemetry.io/otel/metric v1.19.0 // indirect
 	go.opentelemetry.io/otel/trace v1.19.0 // indirect
