@@ -30,10 +30,11 @@ import (
 
 // setExternalDnsTlsCmd represents the setExternalDnsTlsCmd command
 var setExternalDnsTlsCmd = &cobra.Command{
-	Use:     "external-dns-tls",
-	Short:   "Set TLS certificate and private key for a component's external DNS alias",
-	Long:    "Set TLS certificate and private key for a component's external DNS alias",
-	Example: `rx set external-dns-tls --application myapp --environment prod --component web --alias myapp.example.com --certificate "$(cat ./cert.crt)" --private-key "$(cat ./cert.key)"`,
+	Use:   "external-dns-tls",
+	Short: "Set TLS certificate and private key for a component's external DNS alias",
+	Long:  "Set TLS certificate and private key for a component's external DNS alias",
+	Example: `# Read certificate and private key from file
+rx set external-dns-tls --application myapp --environment prod --component web --alias myapp.example.com --certificate-from-file "cert.crt" --private-key-from-file "cert.key" `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
@@ -58,14 +59,20 @@ var setExternalDnsTlsCmd = &cobra.Command{
 			return errors.New("`alias` is required")
 		}
 
-		certificate, _ := cmd.Flags().GetString(flagnames.Certificate)
+		certificate, err := getStringFromFlagValueOrFlagFile(cmd, flagnames.Certificate, flagnames.CertificateFromFile)
+		if err != nil {
+			return err
+		}
 		if certificate == "" {
-			return errors.New("`certificate` is required")
+			return errors.New("certificate value cannot be empty")
 		}
 
-		privateKey, _ := cmd.Flags().GetString(flagnames.PrivateKey)
+		privateKey, err := getStringFromFlagValueOrFlagFile(cmd, flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
+		if err != nil {
+			return err
+		}
 		if privateKey == "" {
-			return errors.New("`private-key` is required")
+			return errors.New("private key value cannot be empty")
 		}
 
 		skipValidation, _ := cmd.Flags().GetBool(flagnames.SkipValidation)
@@ -131,15 +138,34 @@ func isComponentExternalDNSReconciled(apiClient *apiclient.Radixapi, appName, en
 	return false
 }
 
+func getStringFromFlagValueOrFlagFile(cmd *cobra.Command, valueFlag, fileNameFlag string) (string, error) {
+	if fileName, err := cmd.Flags().GetString(fileNameFlag); err != nil {
+		return "", err
+	} else if len(fileName) > 0 {
+		fileContent, err := os.ReadFile(fileName)
+		return string(fileContent), err
+	}
+
+	return cmd.Flags().GetString(valueFlag)
+}
+
 func init() {
 	setExternalDnsTlsCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	setExternalDnsTlsCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment")
 	setExternalDnsTlsCmd.Flags().String(flagnames.Component, "", "Name of the component")
 	setExternalDnsTlsCmd.Flags().String(flagnames.Alias, "", "External DNS alias to update")
-	setExternalDnsTlsCmd.Flags().String(flagnames.Certificate, "", "Certificate in PEM format")
-	setExternalDnsTlsCmd.Flags().String(flagnames.PrivateKey, "", "Private key in PEM format")
+	setExternalDnsTlsCmd.Flags().String(flagnames.Certificate, "", "Certificate (PEM format)")
+	setExternalDnsTlsCmd.Flags().String(flagnames.CertificateFromFile, "", "Read certificate (PEM format) from file")
+	setExternalDnsTlsCmd.Flags().String(flagnames.PrivateKey, "", "Private key (PEM format)")
+	setExternalDnsTlsCmd.Flags().String(flagnames.PrivateKeyFromFile, "", "Read private key (PEM format) from file")
 	setExternalDnsTlsCmd.Flags().Bool(flagnames.SkipValidation, false, "Skip validation of certificate and private key")
 	setExternalDnsTlsCmd.Flags().Bool(flagnames.AwaitReconcile, true, "Await reconciliation in Radix. Default is true")
+
+	setExternalDnsTlsCmd.MarkFlagsOneRequired(flagnames.Certificate, flagnames.CertificateFromFile)
+	setExternalDnsTlsCmd.MarkFlagsMutuallyExclusive(flagnames.Certificate, flagnames.CertificateFromFile)
+	setExternalDnsTlsCmd.MarkFlagsOneRequired(flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
+	setExternalDnsTlsCmd.MarkFlagsMutuallyExclusive(flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
+
 	setContextSpecificPersistentFlags(setExternalDnsTlsCmd)
 
 	setCmd.AddCommand(setExternalDnsTlsCmd)
