@@ -24,20 +24,18 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
 // setEnvironmentVariableCmd represents the setEnvironmentVariableCmd command
 var setEnvironmentVariableCmd = &cobra.Command{
-	Use:   "environment-variable",
-	Short: "Will set an environment variable",
-	Long: `Will set an environment variable
-
-Example:
-rx set environment-variable --application your-application-name --environment test --component component-abc --variable LOG_LEVEL --value INFO
-`,
+	Use:     "environment-variable",
+	Short:   "Will set an environment variable",
+	Long:    "Will set an environment variable",
+	Example: `rx set environment-variable --application your-application-name --environment test --component component-abc --variable LOG_LEVEL --value INFO`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -46,8 +44,8 @@ rx set environment-variable --application your-application-name --environment te
 			return errors.New("application name is required")
 		}
 
-		variableName, _ := cmd.Flags().GetString("variable")
-		variableValue, _ := cmd.Flags().GetString("value")
+		variableName, _ := cmd.Flags().GetString(flagnames.Variable)
+		variableValue, _ := cmd.Flags().GetString(flagnames.Value)
 
 		if variableName == "" {
 			return errors.New("variable is required")
@@ -57,18 +55,18 @@ rx set environment-variable --application your-application-name --environment te
 			return errors.New("value is required")
 		}
 
-		environmentName, _ := cmd.Flags().GetString("environment")
+		environmentName, _ := cmd.Flags().GetString(flagnames.Environment)
 
 		if environmentName == "" {
 			return errors.New("`environment` is required")
 		}
 
-		componentName, _ := cmd.Flags().GetString("component")
+		componentName, _ := cmd.Flags().GetString(flagnames.Component)
 		if componentName == "" {
 			return errors.New("`component` is required")
 		}
 
-		awaitReconcile, _ := cmd.Flags().GetBool("await-reconcile")
+		awaitReconcile, _ := cmd.Flags().GetBool(flagnames.AwaitReconcile)
 
 		cmd.SilenceUsage = true
 
@@ -134,11 +132,11 @@ func isComponentVariableReconciled(apiClient *apiclient.Radixapi, appName, envir
 
 func init() {
 	setCmd.AddCommand(setEnvironmentVariableCmd)
-	setEnvironmentVariableCmd.Flags().StringP("application", "a", "", "Name of the application to set variable for")
-	setEnvironmentVariableCmd.Flags().StringP("environment", "e", "", "Environment to set variable in")
-	setEnvironmentVariableCmd.Flags().String("component", "", "Component to set the variable for")
-	setEnvironmentVariableCmd.Flags().StringP("variable", "", "", "Name of the variable to set")
-	setEnvironmentVariableCmd.Flags().StringP("value", "v", "", "Value of the variable to set")
-	setEnvironmentVariableCmd.Flags().Bool("await-reconcile", true, "Await reconciliation in Radix. Default is true")
+	setEnvironmentVariableCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to set variable for")
+	setEnvironmentVariableCmd.Flags().StringP(flagnames.Environment, "e", "", "Environment to set variable in")
+	setEnvironmentVariableCmd.Flags().String(flagnames.Component, "", "Component to set the variable for")
+	setEnvironmentVariableCmd.Flags().StringP(flagnames.Variable, "", "", "Name of the variable to set")
+	setEnvironmentVariableCmd.Flags().StringP(flagnames.Value, "v", "", "Value of the variable to set")
+	setEnvironmentVariableCmd.Flags().Bool(flagnames.AwaitReconcile, true, "Await reconciliation in Radix. Default is true")
 	setContextSpecificPersistentFlags(setEnvironmentVariableCmd)
 }

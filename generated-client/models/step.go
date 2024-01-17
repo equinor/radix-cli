@@ -24,16 +24,16 @@ type Step struct {
 	Components []string `json:"components"`
 
 	// Ended timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Ended string `json:"ended,omitempty"`
+	// Format: date-time
+	Ended strfmt.DateTime `json:"ended,omitempty"`
 
 	// Name of the step
 	// Example: build
 	Name string `json:"name,omitempty"`
 
 	// Started timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Started string `json:"started,omitempty"`
+	// Format: date-time
+	Started strfmt.DateTime `json:"started,omitempty"`
 
 	// Status of the step
 	// Example: Waiting
@@ -45,6 +45,14 @@ type Step struct {
 func (m *Step) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateEnded(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStarted(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
@@ -52,6 +60,30 @@ func (m *Step) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Step) validateEnded(formats strfmt.Registry) error {
+	if swag.IsZero(m.Ended) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("ended", "body", "date-time", m.Ended.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Step) validateStarted(formats strfmt.Registry) error {
+	if swag.IsZero(m.Started) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("started", "body", "date-time", m.Started.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -21,6 +21,9 @@ import (
 // swagger:model Component
 type Component struct {
 
+	// Array of external DNS configurations
+	ExternalDNS []*ExternalDNS `json:"externalDNS"`
+
 	// Image name
 	// Example: radixdev.azurecr.io/app-server:cdgkg
 	// Required: true
@@ -84,6 +87,10 @@ type Component struct {
 func (m *Component) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateExternalDNS(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateImage(formats); err != nil {
 		res = append(res, err)
 	}
@@ -127,6 +134,32 @@ func (m *Component) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Component) validateExternalDNS(formats strfmt.Registry) error {
+	if swag.IsZero(m.ExternalDNS) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.ExternalDNS); i++ {
+		if swag.IsZero(m.ExternalDNS[i]) { // not required
+			continue
+		}
+
+		if m.ExternalDNS[i] != nil {
+			if err := m.ExternalDNS[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("externalDNS" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("externalDNS" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -374,6 +407,10 @@ func (m *Component) validateOauth2(formats strfmt.Registry) error {
 func (m *Component) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateExternalDNS(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidatePorts(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -401,6 +438,31 @@ func (m *Component) ContextValidate(ctx context.Context, formats strfmt.Registry
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Component) contextValidateExternalDNS(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.ExternalDNS); i++ {
+
+		if m.ExternalDNS[i] != nil {
+
+			if swag.IsZero(m.ExternalDNS[i]) { // not required
+				return nil
+			}
+
+			if err := m.ExternalDNS[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("externalDNS" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("externalDNS" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

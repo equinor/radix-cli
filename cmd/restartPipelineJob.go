@@ -19,6 +19,7 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/pipeline_job"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -27,14 +28,11 @@ var restartPipelineJobCmd = &cobra.Command{
 	Use:     "pipeline-job",
 	Aliases: []string{"job"},
 	Short:   "Restart Radix pipeline job",
-	Long: `Restart failed of stopped Radix pipeline job.
-
-	Example:
-	rx restart pipeline-job --application radix-test --job radix-pipeline-20230323185013-ehvnz
-`,
+	Long:    "Restart failed of stopped Radix pipeline job.",
+	Example: `rx restart pipeline-job --application radix-test --job radix-pipeline-20230323185013-ehvnz`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -43,7 +41,7 @@ var restartPipelineJobCmd = &cobra.Command{
 			return errors.New("application name is required")
 		}
 
-		jobName, _ := cmd.Flags().GetString("job")
+		jobName, _ := cmd.Flags().GetString(flagnames.Job)
 
 		if jobName == "" {
 			return errors.New("`job` is required")
@@ -67,7 +65,7 @@ var restartPipelineJobCmd = &cobra.Command{
 
 func init() {
 	restartCmd.AddCommand(restartPipelineJobCmd)
-	restartPipelineJobCmd.Flags().StringP("application", "a", "", "Name of the application for the job")
-	restartPipelineJobCmd.Flags().StringP("job", "j", "", "The job to restart")
+	restartPipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application for the job")
+	restartPipelineJobCmd.Flags().StringP(flagnames.Job, "j", "", "The job to restart")
 	setContextSpecificPersistentFlags(restartPipelineJobCmd)
 }

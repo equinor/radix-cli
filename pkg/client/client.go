@@ -11,7 +11,7 @@ import (
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/pkg/client/auth"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
-	"github.com/equinor/radix-cli/pkg/settings"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
@@ -44,7 +44,7 @@ func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
 	if err != nil {
 		return nil, err
 	}
-	verboseOutput, _ := cmd.Flags().GetBool(settings.VerboseOption)
+	verboseOutput, _ := cmd.Flags().GetBool(flagnames.Verbose)
 	transport := getTransport(endpoint, authWriter, verboseOutput)
 	return apiclient.New(transport, strfmt.Default), nil
 }
@@ -63,7 +63,7 @@ func getAPIEndpoint(cmd *cobra.Command, config *radixconfig.RadixConfig) (string
 	}
 
 	if cluster != "" {
-		apiEnvironment, _ := cmd.Flags().GetString(settings.ApiEnvironmentOption)
+		apiEnvironment, _ := cmd.Flags().GetString(flagnames.ApiEnvironment)
 		return getAPIEndpointForCluster(cluster, apiEnvironment), nil
 	}
 
@@ -103,7 +103,7 @@ func LogoutCommand() error {
 
 func getContextAndCluster(cmd *cobra.Command) (string, string, error) {
 	context, _ := cmd.Flags().GetString("context")
-	cluster, _ := cmd.Flags().GetString(settings.ClusterOption)
+	cluster, _ := cmd.Flags().GetString(flagnames.Cluster)
 
 	if context != "" && cluster != "" {
 		return "", "", errors.New("cannot use both context and cluster as arguments at the same time")
@@ -158,8 +158,8 @@ func getPatternForContext(context string) string {
 
 func getTokenFromFlagSet(cmd *cobra.Command) (*string, error) {
 	var token string
-	tokenFromStdIn, _ := cmd.Flags().GetBool(settings.TokenStdinOption)
-	tokenFromEnvironment, _ := cmd.Flags().GetBool(settings.TokenEnvironmentOption)
+	tokenFromStdIn, _ := cmd.Flags().GetBool(flagnames.TokenStdin)
+	tokenFromEnvironment, _ := cmd.Flags().GetBool(flagnames.TokenEnvironment)
 
 	if tokenFromStdIn && tokenFromEnvironment {
 		return nil, errors.New("`token-stdin` and `token-environment` cannot both be set")

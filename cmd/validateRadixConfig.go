@@ -19,7 +19,7 @@ import (
 	"os"
 
 	"github.com/equinor/radix-cli/pkg/client"
-	"github.com/equinor/radix-cli/pkg/settings"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	radixv1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/equinor/radix-operator/pkg/apis/radixvalidators"
 	"github.com/equinor/radix-operator/pkg/apis/utils"
@@ -37,12 +37,12 @@ var validateRadixConfigCmd = &cobra.Command{
 
 		cmd.SilenceUsage = true
 
-		radixconfig, err := cmd.Flags().GetString("config-file")
+		radixconfig, err := cmd.Flags().GetString(flagnames.ConfigFile)
 		if err != nil {
 			return err
 		}
 
-		printfile, err := cmd.Flags().GetBool("print")
+		printfile, err := cmd.Flags().GetBool(flagnames.Print)
 		if err != nil {
 			return err
 		}
@@ -85,12 +85,12 @@ func printRA(ra *radixv1.RadixApplication) error {
 
 func init() {
 	validateCmd.AddCommand(validateRadixConfigCmd)
-	validateRadixConfigCmd.Flags().StringP("config-file", "f", "radixconfig.yaml", "Name of the radixconfig file. Defaults to radixconfig.yaml in current directory")
-	validateRadixConfigCmd.Flags().BoolP("print", "p", false, "Print parsed config file")
+	validateRadixConfigCmd.Flags().StringP(flagnames.ConfigFile, "f", "radixconfig.yaml", "Name of the radixconfig file. Defaults to radixconfig.yaml in current directory")
+	validateRadixConfigCmd.Flags().BoolP(flagnames.Print, "p", false, "Print parsed config file")
 
 	// Allow but hide token-env flag so radix-github-actions won't interfere
-	validateRadixConfigCmd.Flags().Bool(settings.TokenEnvironmentOption, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
-	err := validateRadixConfigCmd.Flags().MarkHidden(settings.TokenEnvironmentOption)
+	validateRadixConfigCmd.Flags().Bool(flagnames.TokenEnvironment, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
+	err := validateRadixConfigCmd.Flags().MarkHidden(flagnames.TokenEnvironment)
 	if err != nil {
 		panic(err)
 	}

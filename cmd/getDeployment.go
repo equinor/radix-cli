@@ -17,9 +17,11 @@ package cmd
 import (
 	"errors"
 	"fmt"
+
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/json"
 
 	"github.com/equinor/radix-cli/generated-client/client/deployment"
@@ -44,7 +46,7 @@ Examples:
   rx get deployment --application radix-test --environment test
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -52,11 +54,11 @@ Examples:
 			return errors.New("application name is required field")
 		}
 
-		deploymentName, err := cmd.Flags().GetString("deployment")
+		deploymentName, err := cmd.Flags().GetString(flagnames.Deployment)
 		if err != nil {
 			return err
 		}
-		envName, err := cmd.Flags().GetString("environment")
+		envName, err := cmd.Flags().GetString(flagnames.Environment)
 		if err != nil {
 			return err
 		}
@@ -132,8 +134,8 @@ func getDeploymentForEnvironment(apiClient *apiclient.Radixapi, appName, envName
 
 func init() {
 	getCmd.AddCommand(getDeploymentCmd)
-	getDeploymentCmd.Flags().StringP("application", "a", "", "Name of the application")
-	getDeploymentCmd.Flags().StringP("deployment", "d", "", "Optional, name of a deployment. It cannot be used together with an option 'environment'.")
-	getDeploymentCmd.Flags().StringP("environment", "e", "", "Optional, name of the environment. It cannot be used together with an option 'deployment'.")
+	getDeploymentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
+	getDeploymentCmd.Flags().StringP(flagnames.Deployment, "d", "", "Optional, name of a deployment. It cannot be used together with an option 'environment'.")
+	getDeploymentCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional, name of the environment. It cannot be used together with an option 'deployment'.")
 	setContextSpecificPersistentFlags(getDeploymentCmd)
 }
