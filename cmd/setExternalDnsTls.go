@@ -33,7 +33,7 @@ var setExternalDnsTlsCmd = &cobra.Command{
 	Use:     "external-dns-tls",
 	Short:   "Set TLS certificate and private key for a component's external DNS alias",
 	Long:    "Set TLS certificate and private key for a component's external DNS alias",
-	Example: `rx set external-dns-tls --application myapp --environment prod --component web --alias myapp.example.com --certificate "$(cat ./cert.crt)" --private-key "$(cat ./cert.key)`,
+	Example: `rx set external-dns-tls --application myapp --environment prod --component web --alias myapp.example.com --certificate "$(cat ./cert.crt)" --private-key "$(cat ./cert.key)"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
