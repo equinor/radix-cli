@@ -141,3 +141,16 @@ func loadConfigFromFile(appFileName string) (*v1.RadixApplication, error) {
 
 	return radixApplication, nil
 }
+
+func getStringFromFlagValueOrFlagFile(cmd *cobra.Command, valueFlag, fileNameFlag string) (string, error) {
+	fileName, err := cmd.Flags().GetString(fileNameFlag)
+	if err != nil {
+		return "", err
+	}
+	if len(fileName) > 0 {
+		fileContent, err := os.ReadFile(fileName)
+		return string(fileContent), err
+	}
+
+	return cmd.Flags().GetString(valueFlag)
+}

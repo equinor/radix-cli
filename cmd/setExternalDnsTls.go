@@ -138,17 +138,6 @@ func isComponentExternalDNSReconciled(apiClient *apiclient.Radixapi, appName, en
 	return false
 }
 
-func getStringFromFlagValueOrFlagFile(cmd *cobra.Command, valueFlag, fileNameFlag string) (string, error) {
-	if fileName, err := cmd.Flags().GetString(fileNameFlag); err != nil {
-		return "", err
-	} else if len(fileName) > 0 {
-		fileContent, err := os.ReadFile(fileName)
-		return string(fileContent), err
-	}
-
-	return cmd.Flags().GetString(valueFlag)
-}
-
 func init() {
 	setExternalDnsTlsCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	setExternalDnsTlsCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment")
