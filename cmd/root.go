@@ -10,6 +10,7 @@ import (
 
 	"github.com/equinor/radix-cli/pkg/client"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	v1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/equinor/radix-operator/pkg/apis/utils"
@@ -38,21 +39,21 @@ func Execute() {
 }
 
 func setVerbosePersistentFlag(cmd *cobra.Command) *bool {
-	return cmd.PersistentFlags().Bool(settings.VerboseOption, false, "Verbose output")
+	return cmd.PersistentFlags().Bool(flagnames.Verbose, false, "Verbose output")
 }
 
 func setContextSpecificPersistentFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().Bool(settings.FromConfigOption, false, "Read and use radix config from file as context")
-	cmd.PersistentFlags().Bool(settings.TokenEnvironmentOption, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
-	cmd.PersistentFlags().Bool(settings.TokenStdinOption, false, "Take the token from stdin")
+	cmd.PersistentFlags().Bool(flagnames.FromConfig, false, "Read and use radix config from file as context")
+	cmd.PersistentFlags().Bool(flagnames.TokenEnvironment, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
+	cmd.PersistentFlags().Bool(flagnames.TokenStdin, false, "Take the token from stdin")
 	setContextPersistentFlags(cmd)
-	cmd.PersistentFlags().String(settings.ClusterOption, "", "Set cluster to override context")
-	cmd.PersistentFlags().String(settings.ApiEnvironmentOption, "prod", "The API api-environment to run with (default prod)")
+	cmd.PersistentFlags().String(flagnames.Cluster, "", "Set cluster to override context")
+	cmd.PersistentFlags().String(flagnames.ApiEnvironment, "prod", "The API api-environment to run with (default prod)")
 	setVerbosePersistentFlag(cmd)
 }
 
 func setContextPersistentFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringP(settings.ContextOption, "c", "", fmt.Sprintf("Use context %s|%s|%s|%s regardless of current context (default production) ",
+	cmd.PersistentFlags().StringP(flagnames.Context, "c", "", fmt.Sprintf("Use context %s|%s|%s|%s regardless of current context (default production) ",
 		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment))
 }
 
@@ -84,7 +85,7 @@ func getAppNameFromConfigOrFromParameter(cmd *cobra.Command, appNameField string
 	var appName string
 	var err error
 
-	fromConfig, _ := cmd.Flags().GetBool(settings.FromConfigOption)
+	fromConfig, _ := cmd.Flags().GetBool(flagnames.FromConfig)
 	if fromConfig {
 		radicConfig, err := getRadixApplicationFromFile()
 		if err != nil {
@@ -105,7 +106,7 @@ func getAppNameFromConfigOrFromParameter(cmd *cobra.Command, appNameField string
 func getEnvironmentFromConfig(cmd *cobra.Command, branchName string) (*string, error) {
 	var err error
 
-	fromConfig, _ := cmd.Flags().GetBool(settings.FromConfigOption)
+	fromConfig, _ := cmd.Flags().GetBool(flagnames.FromConfig)
 	if !fromConfig {
 		return nil, errors.New("--from-config is required when getting environment from branch")
 	}
@@ -139,4 +140,17 @@ func loadConfigFromFile(appFileName string) (*v1.RadixApplication, error) {
 	}
 
 	return radixApplication, nil
+}
+
+func getStringFromFlagValueOrFlagFile(cmd *cobra.Command, valueFlag, fileNameFlag string) (string, error) {
+	fileName, err := cmd.Flags().GetString(fileNameFlag)
+	if err != nil {
+		return "", err
+	}
+	if len(fileName) > 0 {
+		fileContent, err := os.ReadFile(fileName)
+		return string(fileContent), err
+	}
+
+	return cmd.Flags().GetString(valueFlag)
 }

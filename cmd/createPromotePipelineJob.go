@@ -23,6 +23,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -32,17 +33,17 @@ var createPromotePipelineJobCmd = &cobra.Command{
 	Short: "Will trigger promote of a Radix application",
 	Long:  `Triggers promote of a Radix application deployment`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		useActiveDeployment, _ := cmd.Flags().GetBool("use-active-deployment")
-		deploymentName, _ := cmd.Flags().GetString("deployment")
-		fromEnvironment, _ := cmd.Flags().GetString("from-environment")
-		toEnvironment, _ := cmd.Flags().GetString("to-environment")
-		triggeredByUser, _ := cmd.Flags().GetString("user")
-		follow, _ := cmd.Flags().GetBool("follow")
+		useActiveDeployment, _ := cmd.Flags().GetBool(flagnames.UseActiveDeployment)
+		deploymentName, _ := cmd.Flags().GetString(flagnames.Deployment)
+		fromEnvironment, _ := cmd.Flags().GetString(flagnames.FromEnvironment)
+		toEnvironment, _ := cmd.Flags().GetString(flagnames.ToEnvironment)
+		triggeredByUser, _ := cmd.Flags().GetString(flagnames.User)
+		follow, _ := cmd.Flags().GetBool(flagnames.Follow)
 
 		if !useActiveDeployment && deploymentName == "" {
 			return errors.New("Specifying deployment name or setting use-active-deployment is required")
@@ -114,12 +115,12 @@ func getActiveDeploymentName(apiClient *apiclient.Radixapi, appName, envName str
 
 func init() {
 	createJobCmd.AddCommand(createPromotePipelineJobCmd)
-	createPromotePipelineJobCmd.Flags().StringP("application", "a", "", "Name of the application to be promoted")
-	createPromotePipelineJobCmd.Flags().StringP("deployment", "d", "", "Name of a deployment to be promoted")
-	createPromotePipelineJobCmd.Flags().StringP("from-environment", "", "", "The deployment source environment")
-	createPromotePipelineJobCmd.Flags().StringP("to-environment", "", "", "The deployment target environment")
-	createPromotePipelineJobCmd.Flags().StringP("user", "u", "", "The user who triggered the promote pipeline job")
-	createPromotePipelineJobCmd.Flags().BoolP("follow", "f", false, "Follow the promote pipeline job log")
-	createPromotePipelineJobCmd.Flags().BoolP("use-active-deployment", "", false, "Promote the active deployment")
+	createPromotePipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to be promoted")
+	createPromotePipelineJobCmd.Flags().StringP(flagnames.Deployment, "d", "", "Name of a deployment to be promoted")
+	createPromotePipelineJobCmd.Flags().StringP(flagnames.FromEnvironment, "", "", "The deployment source environment")
+	createPromotePipelineJobCmd.Flags().StringP(flagnames.ToEnvironment, "", "", "The deployment target environment")
+	createPromotePipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the promote pipeline job")
+	createPromotePipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow the promote pipeline job log")
+	createPromotePipelineJobCmd.Flags().BoolP(flagnames.UseActiveDeployment, "", false, "Promote the active deployment")
 	setContextSpecificPersistentFlags(createPromotePipelineJobCmd)
 }

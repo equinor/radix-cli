@@ -20,6 +20,7 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -38,19 +39,19 @@ rx scale --application radix-test --environment dev --component component-abc --
 rx scale -a radix-test -e dev -n component-abc -r 2
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
-		envName, err := cmd.Flags().GetString("environment")
+		envName, err := cmd.Flags().GetString(flagnames.Environment)
 		if err != nil {
 			return err
 		}
-		cmpName, err := cmd.Flags().GetString("component")
+		cmpName, err := cmd.Flags().GetString(flagnames.Component)
 		if err != nil {
 			return err
 		}
-		replicas, err := cmd.Flags().GetInt("replicas")
+		replicas, err := cmd.Flags().GetInt(flagnames.Replicas)
 		if err != nil {
 			return err
 		}
@@ -80,9 +81,9 @@ rx scale -a radix-test -e dev -n component-abc -r 2
 
 func init() {
 	rootCmd.AddCommand(scaleCmd)
-	scaleCmd.Flags().StringP("application", "a", "", "Name of the application namespace")
-	scaleCmd.Flags().StringP("environment", "e", "", "Name of the environment of the application")
-	scaleCmd.Flags().StringP("component", "n", "", "Name of the component to scale")
-	scaleCmd.Flags().IntP("replicas", "r", 1, "The new desired number of replicas")
+	scaleCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	scaleCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
+	scaleCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to scale")
+	scaleCmd.Flags().IntP(flagnames.Replicas, "r", 1, "The new desired number of replicas")
 	setContextSpecificPersistentFlags(scaleCmd)
 }

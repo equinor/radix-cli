@@ -20,6 +20,7 @@ import (
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/spf13/cobra"
 )
@@ -29,15 +30,13 @@ var logsEnvironmentCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Gets logs for all components in an environment",
 	Long: `Gets and follows logs for all components in an environment.
-
+	
 It may take few seconds to get the log.
-
-Example:
-  # Get logs for all components in an environment. Log lines from different components have different colors
-  rx get logs environment --application radix-test --environment dev
-`,
+	`,
+	Example: `# Get logs for all components in an environment. Log lines from different components have different colors
+rx get logs environment --application radix-test --environment dev`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -46,9 +45,9 @@ Example:
 			return errors.New("application name is required")
 		}
 
-		environmentName, _ := cmd.Flags().GetString("environment")
-		previousLog, _ := cmd.Flags().GetBool("previous")
-		since, _ := cmd.Flags().GetDuration("since")
+		environmentName, _ := cmd.Flags().GetString(flagnames.Environment)
+		previousLog, _ := cmd.Flags().GetBool(flagnames.Previous)
+		since, _ := cmd.Flags().GetDuration(flagnames.Since)
 
 		if environmentName == "" {
 			return errors.New("both `environment` and `component` are required")
@@ -97,9 +96,9 @@ func getComponentReplicasForEnvironment(apiClient *apiclient.Radixapi, appName, 
 
 func init() {
 	logsCmd.AddCommand(logsEnvironmentCmd)
-	logsEnvironmentCmd.Flags().StringP("application", "a", "", "Name of the application owning the component")
-	logsEnvironmentCmd.Flags().StringP("environment", "e", "", "Environment the component runs in")
-	logsEnvironmentCmd.Flags().BoolP("previous", "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
-	logsEnvironmentCmd.Flags().DurationP("since", "s", settings.DeltaRefreshApplication, "If set, start get logs from the specified time, eg. 5m or 12h")
+	logsEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application owning the component")
+	logsEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Environment the component runs in")
+	logsEnvironmentCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
+	logsEnvironmentCmd.Flags().DurationP(flagnames.Since, "s", settings.DeltaRefreshApplication, "If set, start get logs from the specified time, eg. 5m or 12h")
 	setContextSpecificPersistentFlags(logsEnvironmentCmd)
 }

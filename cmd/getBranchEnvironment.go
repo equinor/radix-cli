@@ -18,7 +18,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/equinor/radix-cli/pkg/settings"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ var getBranchEnvironmentCmd = &cobra.Command{
 	Short: "Gets the environment for a given branch",
 	Long:  `Gets the environment for a given branch`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fromConfig, _ := cmd.Flags().GetBool(settings.FromConfigOption)
+		fromConfig, _ := cmd.Flags().GetBool(flagnames.FromConfig)
 		if !fromConfig {
 			return errors.New("config can only come from radixconfig file in current folder")
 		}
@@ -38,7 +38,7 @@ var getBranchEnvironmentCmd = &cobra.Command{
 			return err
 		}
 
-		branch, _ := cmd.Flags().GetString("branch")
+		branch, _ := cmd.Flags().GetString(flagnames.Branch)
 
 		if branch == "" {
 			return errors.New("`branch` is required")
@@ -56,6 +56,6 @@ var getBranchEnvironmentCmd = &cobra.Command{
 
 func init() {
 	getConfigCmd.AddCommand(getBranchEnvironmentCmd)
-	getBranchEnvironmentCmd.Flags().StringP("branch", "b", "", "Branch of the repository. Should be used together with --from-config to get the environment")
+	getBranchEnvironmentCmd.Flags().StringP(flagnames.Branch, "b", "", "Branch of the repository. Should be used together with --from-config to get the environment")
 	setContextSpecificPersistentFlags(getBranchEnvironmentCmd)
 }

@@ -18,7 +18,7 @@ import (
 	"fmt"
 
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
-	"github.com/equinor/radix-cli/pkg/settings"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +30,7 @@ var setContextCmd = &cobra.Command{
 	Long: fmt.Sprintf("Sets the context to be either %s, %s, %s or %s",
 		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		context, _ := cmd.Flags().GetString(settings.ContextOption)
+		context, _ := cmd.Flags().GetString(flagnames.Context)
 
 		if !radixconfig.IsValidContext(context) {
 			return fmt.Errorf("context '%s' is not a valid context", context)

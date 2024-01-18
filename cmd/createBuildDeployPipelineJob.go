@@ -16,11 +16,13 @@ package cmd
 
 import (
 	"errors"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -30,14 +32,14 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 	Short: "Will trigger build-deploy of a Radix application",
 	Long:  `Triggers build-deploy of Radix application, if branch to environment map exists for the branch in the Radix config`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		branch, _ := cmd.Flags().GetString("branch")
-		commitID, _ := cmd.Flags().GetString("commitID")
-		follow, _ := cmd.Flags().GetBool("follow")
+		branch, _ := cmd.Flags().GetString(flagnames.Branch)
+		commitID, _ := cmd.Flags().GetString(flagnames.CommitID)
+		follow, _ := cmd.Flags().GetBool(flagnames.Follow)
 
 		if appName == nil || *appName == "" || branch == "" {
 			return errors.New("application name and branch are required")
@@ -73,9 +75,9 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 
 func init() {
 	createJobCmd.AddCommand(createBuildDeployApplicationCmd)
-	createBuildDeployApplicationCmd.Flags().StringP("application", "a", "", "Name of the application to build-deploy")
-	createBuildDeployApplicationCmd.Flags().StringP("branch", "b", "master", "Branch to build-deploy from")
-	createBuildDeployApplicationCmd.Flags().StringP("commitID", "i", "", "Commit id")
-	createBuildDeployApplicationCmd.Flags().BoolP("follow", "f", false, "Follow build-deploy")
+	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to build-deploy")
+	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Branch, "b", "master", "Branch to build-deploy from")
+	createBuildDeployApplicationCmd.Flags().StringP(flagnames.CommitID, "i", "", "Commit id")
+	createBuildDeployApplicationCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build-deploy")
 	setContextSpecificPersistentFlags(createBuildDeployApplicationCmd)
 }

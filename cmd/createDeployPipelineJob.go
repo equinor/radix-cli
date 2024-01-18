@@ -18,13 +18,13 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
-	"strings"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -51,23 +51,23 @@ Examples:
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, "application")
+		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			errs = append(errs, err)
 		}
-		targetEnvironment, err := cmd.Flags().GetString("environment")
+		targetEnvironment, err := cmd.Flags().GetString(flagnames.Environment)
 		if err != nil {
 			errs = append(errs, err)
 		}
-		triggeredByUser, err := cmd.Flags().GetString("user")
+		triggeredByUser, err := cmd.Flags().GetString(flagnames.User)
 		if err != nil {
 			errs = append(errs, err)
 		}
-		follow, err := cmd.Flags().GetBool("follow")
+		follow, err := cmd.Flags().GetBool(flagnames.Follow)
 		if err != nil {
 			errs = append(errs, err)
 		}
-		imageTagNames, err := cmd.Flags().GetStringToString("image-tag-name")
+		imageTagNames, err := cmd.Flags().GetStringToString(flagnames.ImageTagName)
 		if err != nil {
 			errs = append(errs, err)
 		}
@@ -77,12 +77,12 @@ Examples:
 		if appName == nil || *appName == "" || targetEnvironment == "" {
 			return errors.New("application name and target environment are required")
 		}
-		commitID, _ := cmd.Flags().GetString("commitID")
-		err = validateCommitID(commitID)
-		if err != nil {
-			return err
+		commitID, _ := cmd.Flags().GetString(flagnames.CommitID)
+		err2 := validateCommitID(commitID)
+		if err2 != nil {
+			return err2
 		}
-		componentsToDeploy, err := cmd.Flags().GetStringSlice("component")
+		componentsToDeploy, err := cmd.Flags().GetStringSlice(flagnames.Component)
 		if err != nil {
 			return err
 		}
@@ -137,12 +137,11 @@ func validateCommitID(commitID string) error {
 
 func init() {
 	createJobCmd.AddCommand(createDeployPipelineJobCmd)
-	createDeployPipelineJobCmd.Flags().StringP("application", "a", "", "Name of the application to deploy")
-	createDeployPipelineJobCmd.Flags().StringP("environment", "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
-	createDeployPipelineJobCmd.Flags().StringP("user", "u", "", "The user who triggered the deploy")
-	createDeployPipelineJobCmd.Flags().StringToStringP("image-tag-name", "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
-	createDeployPipelineJobCmd.Flags().StringP("commitID", "i", "", "An optional 40 character commit id to tag the new pipeline job")
-	createDeployPipelineJobCmd.Flags().StringSlice("component", []string{}, "Optional component to deploy, when only specific component need to be deployed. Multiple components can be specified.")
-	createDeployPipelineJobCmd.Flags().BoolP("follow", "f", false, "Follow deploy")
+	createDeployPipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to deploy")
+	createDeployPipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the deploy")
+	createDeployPipelineJobCmd.Flags().StringToStringP(flagnames.ImageTagName, "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
+	createDeployPipelineJobCmd.Flags().StringP(flagnames.CommitID, "i", "", "An optional 40 character commit id to tag the new pipeline job")
+	createDeployPipelineJobCmd.Flags().StringSlice(flagnames.Component, []string{}, "Optional component to deploy, when only specific component need to be deployed. Multiple components can be specified.")
+	createDeployPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow deploy")
 	setContextSpecificPersistentFlags(createDeployPipelineJobCmd)
 }
