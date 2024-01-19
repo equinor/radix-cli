@@ -139,6 +139,7 @@ func validateCommitID(commitID string) error {
 func init() {
 	createJobCmd.AddCommand(createDeployPipelineJobCmd)
 	createDeployPipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to deploy")
+	createDeployPipelineJobCmd.Flags().StringP(flagnames.Environment, "e", "", "Target environment to deploy in ('prod', 'dev', 'playground')")
 	createDeployPipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the deploy")
 	createDeployPipelineJobCmd.Flags().StringToStringP(flagnames.ImageTagName, "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
 	createDeployPipelineJobCmd.Flags().StringP(flagnames.CommitID, "i", "", "An optional 40 character commit id to tag the new pipeline job")
