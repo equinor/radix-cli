@@ -22,10 +22,9 @@ type PipelineParametersDeploy struct {
 	// Example: 4faca8595c5283a9d0f17a623b9255a0d9866a2e
 	CommitID string `json:"commitID,omitempty"`
 
-	// Components List of components to deploy
+	// ComponentsToDeploy List of components to deploy
 	// OPTIONAL If specified, only these components are deployed
-	// Example: component1,component2
-	Components string `json:"components,omitempty"`
+	ComponentsToDeploy []string `json:"componentsToDeploy"`
 
 	// Image tags names for components
 	// Example: component1=tag1,component2=tag2

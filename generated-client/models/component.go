@@ -21,6 +21,9 @@ import (
 // swagger:model Component
 type Component struct {
 
+	// Commit ID for the component. It can be different from the Commit ID, specified in deployment label
+	CommitID string `json:"CommitID,omitempty"`
+
 	// Array of external DNS configurations
 	ExternalDNS []*ExternalDNS `json:"externalDNS"`
 

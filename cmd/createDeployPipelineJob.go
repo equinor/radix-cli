@@ -18,7 +18,6 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
-	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -98,13 +97,11 @@ Examples:
 		triggerPipelineParams := application.NewTriggerPipelineDeployParams()
 		triggerPipelineParams.SetAppName(*appName)
 		parametersDeploy := models.PipelineParametersDeploy{
-			ToEnvironment: targetEnvironment,
-			ImageTagNames: imageTagNames,
-			TriggeredBy:   triggeredByUser,
-			CommitID:      commitID,
-		}
-		if components := strings.Join(componentsToDeploy, ","); len(components) > 0 {
-			parametersDeploy.Components = components
+			ToEnvironment:      targetEnvironment,
+			ImageTagNames:      imageTagNames,
+			TriggeredBy:        triggeredByUser,
+			CommitID:           commitID,
+			ComponentsToDeploy: componentsToDeploy,
 		}
 		triggerPipelineParams.SetPipelineParametersDeploy(&parametersDeploy)
 
