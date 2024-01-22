@@ -31,10 +31,8 @@ import (
 var createDeployPipelineJobCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Will trigger deploy of a Radix application",
-	Long: `Triggers deploy of a Radix application according to the radix config in its repository's master branch.
-
-Examples:
-  # Create a Radix pipeline deploy-only job to deploy an application "radix-test" to an environment "dev" 
+	Long:  "Triggers deploy of a Radix application according to the radix config in its repository's master branch.",
+	Example: `  # Create a Radix pipeline deploy-only job to deploy an application "radix-test" to an environment "dev" 
   rx create job deploy --application radix-test --environment dev
 
   # Create a Radix pipeline deploy-only job, short option versions 
@@ -47,8 +45,7 @@ Examples:
   rx create job deploy -a radix-test -e dev -t web-app=web-app-v2.1 -t api-server=api-v1.0
 
   # Create a Radix pipeline deploy-only job to deploy only specific components 
-  rx create job deploy -a radix-test -e dev --component web-app --component api-server
-`,
+  rx create job deploy -a radix-test -e dev --component web-app --component api-server`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
