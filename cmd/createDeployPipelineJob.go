@@ -31,10 +31,8 @@ import (
 var createDeployPipelineJobCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Will trigger deploy of a Radix application",
-	Long: `Triggers deploy of a Radix application according to the radix config in its repository's master branch.
-
-Examples:
-  # Create a Radix pipeline deploy-only job to deploy an application "radix-test" to an environment "dev" 
+	Long:  "Triggers deploy of a Radix application according to the radix config in its repository's master branch.",
+	Example: `  # Create a Radix pipeline deploy-only job to deploy an application "radix-test" to an environment "dev" 
   rx create job deploy --application radix-test --environment dev
 
   # Create a Radix pipeline deploy-only job, short option versions 
@@ -45,7 +43,9 @@ Examples:
 
   # Create a Radix pipeline deploy-only job with re-defined image-tags for components, short option versions 
   rx create job deploy -a radix-test -e dev -t web-app=web-app-v2.1 -t api-server=api-v1.0
-`,
+
+  # Create a Radix pipeline deploy-only job to deploy only specific components 
+  rx create job deploy -a radix-test -e dev --component web-app --component api-server`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
@@ -79,6 +79,10 @@ Examples:
 		if err2 != nil {
 			return err2
 		}
+		componentsToDeploy, err := cmd.Flags().GetStringSlice(flagnames.Component)
+		if err != nil {
+			return err
+		}
 
 		cmd.SilenceUsage = true
 
@@ -89,12 +93,14 @@ Examples:
 
 		triggerPipelineParams := application.NewTriggerPipelineDeployParams()
 		triggerPipelineParams.SetAppName(*appName)
-		triggerPipelineParams.SetPipelineParametersDeploy(&models.PipelineParametersDeploy{
-			ToEnvironment: targetEnvironment,
-			ImageTagNames: imageTagNames,
-			TriggeredBy:   triggeredByUser,
-			CommitID:      commitID,
-		})
+		parametersDeploy := models.PipelineParametersDeploy{
+			ToEnvironment:      targetEnvironment,
+			ImageTagNames:      imageTagNames,
+			TriggeredBy:        triggeredByUser,
+			CommitID:           commitID,
+			ComponentsToDeploy: componentsToDeploy,
+		}
+		triggerPipelineParams.SetPipelineParametersDeploy(&parametersDeploy)
 
 		newJob, err := apiClient.Application.TriggerPipelineDeploy(triggerPipelineParams, nil)
 		if err != nil {
@@ -131,6 +137,7 @@ func init() {
 	createDeployPipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the deploy")
 	createDeployPipelineJobCmd.Flags().StringToStringP(flagnames.ImageTagName, "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
 	createDeployPipelineJobCmd.Flags().StringP(flagnames.CommitID, "i", "", "An optional 40 character commit id to tag the new pipeline job")
+	createDeployPipelineJobCmd.Flags().StringSlice(flagnames.Component, []string{}, "Optional component to deploy, when only specific component need to be deployed. Multiple components can be specified.")
 	createDeployPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow deploy")
 	setContextSpecificPersistentFlags(createDeployPipelineJobCmd)
 }

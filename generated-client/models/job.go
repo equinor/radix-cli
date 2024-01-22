@@ -34,6 +34,10 @@ type Job struct {
 	// Deprecated: Inspect each deployment to get list of components created by the job
 	Components []*ComponentSummary `json:"components"`
 
+	// ComponentsToDeploy List of components to deploy
+	// OPTIONAL If specified, only these components are deployed
+	ComponentsToDeploy []string `json:"componentsToDeploy"`
+
 	// Created timestamp
 	// Example: 2006-01-02T15:04:05Z
 	Created string `json:"created,omitempty"`
@@ -57,10 +61,6 @@ type Job struct {
 	// Example: build-deploy
 	// Enum: [build build-deploy promote deploy]
 	Pipeline string `json:"pipeline,omitempty"`
-
-	// PromotedDeploymentName the name of the deployment that was promoted
-	// Example: component-6hznh
-	PromotedDeploymentName string `json:"promotedDeploymentName,omitempty"`
 
 	// RadixDeployment name, which is promoted
 	PromotedFromDeployment string `json:"promotedFromDeployment,omitempty"`
