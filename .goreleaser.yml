@@ -3,6 +3,8 @@
 builds:
   - id: rx
     binary: rx
+    main: ./cli/rx
+
     env:
       - CGO_ENABLED=0
     goos:

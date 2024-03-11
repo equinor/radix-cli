@@ -6,6 +6,11 @@ Radix CLI in the [Radix documentation](https://radix.equinor.com/docs/topic-radi
 
 ## Installation
 
+### If using Go:
+```sh
+go install github.com/equinor/radix-cli/cli/rx@latest
+```
+
 ### Linux or Mac
 
 #### Binaries
