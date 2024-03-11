@@ -171,7 +171,7 @@ We are making releases available as GitHub releases using [go-releaser](https://
 To generate a local version for debugging purposes, it can be built using:
 
 ```
-CGO_ENABLED=0 GOOS=darwin go build -ldflags "-s -w" -a -installsuffix cgo -o ./rx
+CGO_ENABLED=0 GOOS=darwin go build -ldflags "-s -w" -a -installsuffix cgo -o ./rx ./cli/rx
 ```
 
 ### Security
