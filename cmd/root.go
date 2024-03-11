@@ -43,6 +43,7 @@ func init() {
 	if Version == "dev" {
 		if info, ok := debug.ReadBuildInfo(); ok {
 			Version = info.Main.Version
+			rootCmd.Version = info.Main.Version
 		}
 	}
 }
