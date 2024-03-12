@@ -6,6 +6,11 @@ Radix CLI in the [Radix documentation](https://radix.equinor.com/docs/topic-radi
 
 ## Installation
 
+### If using Go:
+```sh
+go install github.com/equinor/radix-cli/cli/rx@latest
+```
+
 ### Linux or Mac
 
 #### Binaries
@@ -166,7 +171,7 @@ We are making releases available as GitHub releases using [go-releaser](https://
 To generate a local version for debugging purposes, it can be built using:
 
 ```
-CGO_ENABLED=0 GOOS=darwin go build -ldflags "-s -w" -a -installsuffix cgo -o ./rx
+CGO_ENABLED=0 GOOS=darwin go build -ldflags "-s -w" -a -installsuffix cgo -o ./rx ./cli/rx
 ```
 
 ### Security

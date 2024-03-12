@@ -15,7 +15,7 @@
 /vendor/*
 debug
 radix-cli
-rx
-rx-test
+/rx
+/rx-test
 .idea/
 .dccache

@@ -18,7 +18,7 @@ COPY . /app
 RUN addgroup -S -g 1000 radix && adduser -S -u 1000 -G radix radix
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o ./rootfs/rx
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o ./rootfs/rx ./cli/rx
 
 ## Run operator
 FROM scratch
