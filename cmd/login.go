@@ -40,6 +40,6 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
-	loginCmd.Flags().Bool(flagnames.UseDeviceCode, false, "Use CLI's old authentication flow based on device code")
+	loginCmd.Flags().Bool(flagnames.UseDeviceCode, false, "Use CLI's old authentication flow based on device code. The device code flow does not work for accounts with compliant device policy enabled.")
 	setVerbosePersistentFlag(loginCmd)
 }
