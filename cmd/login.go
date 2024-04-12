@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -25,10 +26,8 @@ var loginCmd = &cobra.Command{
 	Short: "Login to Radix",
 	Long:  `Login to Radix.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		cmd.SilenceUsage = true
-
-		err := client.LoginCommand(cmd)
+		useDeviceCode, _ := cmd.Flags().GetBool(flagnames.UseDeviceCode)
+		err := client.LoginCommand(cmd, useDeviceCode)
 		if err != nil {
 			return err
 		}
@@ -39,5 +38,6 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
+	loginCmd.Flags().Bool(flagnames.UseDeviceCode, false, "Name of the application")
 	setVerbosePersistentFlag(loginCmd)
 }
