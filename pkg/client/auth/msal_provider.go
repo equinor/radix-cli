@@ -20,17 +20,20 @@ type MSALAuthProvider interface {
 
 // NewMSALAuthProvider creates a new MSALAuthProvider
 func NewMSALAuthProvider(radixConfig *radixconfig.RadixConfig, clientID, tenantID string) (MSALAuthProvider, error) {
-	client, err := newPublicClient(radixConfig, clientID, tenantID)
+	authority := fmt.Sprintf("https://login.microsoftonline.com/%s", tenantID)
+	client, err := newPublicClient(radixConfig, clientID, authority)
 	if err != nil {
 		return nil, err
 	}
 	return &msalAuthProvider{
-		client: client,
+		client:    client,
+		authority: authority,
 	}, nil
 }
 
 type msalAuthProvider struct {
-	client *public.Client
+	authority string
+	client    *public.Client
 }
 
 func (provider *msalAuthProvider) AuthenticateRequest(r runtime.ClientRequest, _ strfmt.Registry) error {
@@ -44,7 +47,7 @@ func (provider *msalAuthProvider) AuthenticateRequest(r runtime.ClientRequest, _
 // Login allows the plugin to initialize its configuration. It must not
 // require direct user interaction.
 func (provider *msalAuthProvider) Login(ctx context.Context) error {
-	_, err := provider.loginWithDeviceCode(ctx)
+	_, err := provider.loginInteractive(ctx)
 	return err
 }
 
@@ -80,20 +83,14 @@ func (provider *msalAuthProvider) GetToken(ctx context.Context) (string, error) 
 
 	// either there was no cached account/token or the call to AcquireTokenSilent() failed
 	// make a new request to AAD
-	return provider.loginWithDeviceCode(ctx)
+	return provider.loginInteractive(ctx)
 }
 
-func (provider *msalAuthProvider) loginWithDeviceCode(ctx context.Context) (string, error) {
-	ctx, cancel := context.WithTimeout(ctx, 100*time.Second)
+func (provider *msalAuthProvider) loginInteractive(ctx context.Context) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
-	devCode, err := provider.client.AcquireTokenByDeviceCode(ctx, getScopes())
-	if err != nil {
-		return "", fmt.Errorf("got error while waiting for user to input the device code: %s", err)
-	}
-
-	fmt.Println(devCode.Result.Message) // show authentication link with device code
-
-	result, err := devCode.AuthenticationResult(ctx)
+	fmt.Printf("A web browser has been opened at %s/oauth2/v2.0/authorize. Please continue the login in the web browser.\n", provider.authority)
+	result, err := provider.client.AcquireTokenInteractive(ctx, getScopes())
 	if err != nil {
 		return "", err
 	}
