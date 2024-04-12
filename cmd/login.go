@@ -26,6 +26,8 @@ var loginCmd = &cobra.Command{
 	Short: "Login to Radix",
 	Long:  `Login to Radix.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		cmd.SilenceUsage = true
+
 		useDeviceCode, _ := cmd.Flags().GetBool(flagnames.UseDeviceCode)
 		err := client.LoginCommand(cmd, useDeviceCode)
 		if err != nil {
@@ -38,6 +40,6 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
-	loginCmd.Flags().Bool(flagnames.UseDeviceCode, false, "Name of the application")
+	loginCmd.Flags().Bool(flagnames.UseDeviceCode, false, "Use CLI's old authentication flow based on device code")
 	setVerbosePersistentFlag(loginCmd)
 }
