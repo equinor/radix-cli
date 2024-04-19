@@ -40,6 +40,9 @@ type TLS struct {
 	// UseAutomation describes if TLS certificate is automatically issued using automation (ACME)
 	// Required: true
 	UseAutomation *bool `json:"useAutomation"`
+
+	// automation
+	Automation *TLSAutomation `json:"automation,omitempty"`
 }
 
 // Validate validates this TLS
@@ -55,6 +58,10 @@ func (m *TLS) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUseAutomation(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateAutomation(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -145,11 +152,34 @@ func (m *TLS) validateUseAutomation(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *TLS) validateAutomation(formats strfmt.Registry) error {
+	if swag.IsZero(m.Automation) { // not required
+		return nil
+	}
+
+	if m.Automation != nil {
+		if err := m.Automation.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("automation")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("automation")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this TLS based on the context it is used
 func (m *TLS) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateCertificates(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateAutomation(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -179,6 +209,27 @@ func (m *TLS) contextValidateCertificates(ctx context.Context, formats strfmt.Re
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *TLS) contextValidateAutomation(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Automation != nil {
+
+		if swag.IsZero(m.Automation) { // not required
+			return nil
+		}
+
+		if err := m.Automation.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("automation")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("automation")
+			}
+			return err
+		}
 	}
 
 	return nil

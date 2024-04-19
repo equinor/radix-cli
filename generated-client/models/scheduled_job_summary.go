@@ -72,7 +72,7 @@ type ScheduledJobSummary struct {
 	// Status of the job
 	// Example: Waiting
 	// Required: true
-	// Enum: [Running Succeeded Failed Waiting Stopping Stopped]
+	// Enum: [Running Active Succeeded Failed Waiting Stopping Stopped]
 	Status *string `json:"status"`
 
 	// TimeLimitSeconds How long the job supposed to run at maximum
@@ -168,7 +168,7 @@ var scheduledJobSummaryTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["Running","Succeeded","Failed","Waiting","Stopping","Stopped"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["Running","Active","Succeeded","Failed","Waiting","Stopping","Stopped"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -180,6 +180,9 @@ const (
 
 	// ScheduledJobSummaryStatusRunning captures enum value "Running"
 	ScheduledJobSummaryStatusRunning string = "Running"
+
+	// ScheduledJobSummaryStatusActive captures enum value "Active"
+	ScheduledJobSummaryStatusActive string = "Active"
 
 	// ScheduledJobSummaryStatusSucceeded captures enum value "Succeeded"
 	ScheduledJobSummaryStatusSucceeded string = "Succeeded"
