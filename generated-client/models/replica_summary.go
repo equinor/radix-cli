@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -27,6 +28,13 @@ type ReplicaSummary struct {
 	// Example: 2006-01-02T15:04:05Z
 	Created string `json:"created,omitempty"`
 
+	// The time at which the batch job's pod finishedAt.
+	// Example: 2006-01-02T15:04:05Z
+	EndTime string `json:"endTime,omitempty"`
+
+	// Exit status from the last termination of the container
+	ExitCode int32 `json:"exitCode,omitempty"`
+
 	// The image the container is running.
 	// Example: radixdev.azurecr.io/app-server:cdgkg
 	Image string `json:"image,omitempty"`
@@ -40,11 +48,32 @@ type ReplicaSummary struct {
 	// Required: true
 	Name *string `json:"name"`
 
+	// The index of the pod in the re-starts
+	PodIndex int64 `json:"podIndex,omitempty"`
+
+	// A brief CamelCase message indicating details about why the job is in this phase
+	Reason string `json:"reason,omitempty"`
+
 	// RestartCount count of restarts of a component container inside a pod
 	RestartCount int32 `json:"restartCount,omitempty"`
 
+	// The time at which the batch job's pod startedAt
+	// Example: 2006-01-02T15:04:05Z
+	StartTime string `json:"startTime,omitempty"`
+
 	// StatusMessage provides message describing the status of a component container inside a pod
 	StatusMessage string `json:"statusMessage,omitempty"`
+
+	// Pod type
+	// ComponentReplica = Replica of a Radix component
+	// ScheduledJobReplica = Replica of a Radix job-component
+	// JobManager = Replica of a Radix job-component scheduler
+	// JobManagerAux = Replica of a Radix job-component scheduler auxiliary
+	// OAuth2 = Replica of a Radix OAuth2 component
+	// Undefined = Replica without defined type - to be extended
+	// Example: ComponentReplica
+	// Enum: [ComponentReplica ScheduledJobReplica JobManager JobManagerAux OAuth2 Undefined]
+	Type string `json:"type,omitempty"`
 
 	// replica status
 	ReplicaStatus *ReplicaStatus `json:"replicaStatus,omitempty"`
@@ -58,6 +87,10 @@ func (m *ReplicaSummary) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -78,6 +111,60 @@ func (m *ReplicaSummary) Validate(formats strfmt.Registry) error {
 func (m *ReplicaSummary) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var replicaSummaryTypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["ComponentReplica","ScheduledJobReplica","JobManager","JobManagerAux","OAuth2","Undefined"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		replicaSummaryTypeTypePropEnum = append(replicaSummaryTypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// ReplicaSummaryTypeComponentReplica captures enum value "ComponentReplica"
+	ReplicaSummaryTypeComponentReplica string = "ComponentReplica"
+
+	// ReplicaSummaryTypeScheduledJobReplica captures enum value "ScheduledJobReplica"
+	ReplicaSummaryTypeScheduledJobReplica string = "ScheduledJobReplica"
+
+	// ReplicaSummaryTypeJobManager captures enum value "JobManager"
+	ReplicaSummaryTypeJobManager string = "JobManager"
+
+	// ReplicaSummaryTypeJobManagerAux captures enum value "JobManagerAux"
+	ReplicaSummaryTypeJobManagerAux string = "JobManagerAux"
+
+	// ReplicaSummaryTypeOAuth2 captures enum value "OAuth2"
+	ReplicaSummaryTypeOAuth2 string = "OAuth2"
+
+	// ReplicaSummaryTypeUndefined captures enum value "Undefined"
+	ReplicaSummaryTypeUndefined string = "Undefined"
+)
+
+// prop value enum
+func (m *ReplicaSummary) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, replicaSummaryTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ReplicaSummary) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
 		return err
 	}
 
