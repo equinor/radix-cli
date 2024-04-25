@@ -34,10 +34,6 @@ type Job struct {
 	// Deprecated: Inspect each deployment to get list of components created by the job
 	Components []*ComponentSummary `json:"components"`
 
-	// ComponentsToDeploy List of components to deploy
-	// OPTIONAL If specified, only these components are deployed
-	ComponentsToDeploy []string `json:"componentsToDeploy"`
-
 	// Created timestamp
 	// Example: 2006-01-02T15:04:05Z
 	Created string `json:"created,omitempty"`

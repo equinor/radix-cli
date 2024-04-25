@@ -107,6 +107,12 @@ type JobLogParams struct {
 	*/
 	Lines *string
 
+	/* ReplicaName.
+
+	   Name of the job replica
+	*/
+	ReplicaName *string
+
 	/* ScheduledJobName.
 
 	   Name of scheduled job
@@ -251,6 +257,17 @@ func (o *JobLogParams) SetLines(lines *string) {
 	o.Lines = lines
 }
 
+// WithReplicaName adds the replicaName to the job log params
+func (o *JobLogParams) WithReplicaName(replicaName *string) *JobLogParams {
+	o.SetReplicaName(replicaName)
+	return o
+}
+
+// SetReplicaName adds the replicaName to the job log params
+func (o *JobLogParams) SetReplicaName(replicaName *string) {
+	o.ReplicaName = replicaName
+}
+
 // WithScheduledJobName adds the scheduledJobName to the job log params
 func (o *JobLogParams) WithScheduledJobName(scheduledJobName string) *JobLogParams {
 	o.SetScheduledJobName(scheduledJobName)
@@ -341,6 +358,23 @@ func (o *JobLogParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regist
 		if qLines != "" {
 
 			if err := r.SetQueryParam("lines", qLines); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ReplicaName != nil {
+
+		// query param replicaName
+		var qrReplicaName string
+
+		if o.ReplicaName != nil {
+			qrReplicaName = *o.ReplicaName
+		}
+		qReplicaName := qrReplicaName
+		if qReplicaName != "" {
+
+			if err := r.SetQueryParam("replicaName", qReplicaName); err != nil {
 				return err
 			}
 		}

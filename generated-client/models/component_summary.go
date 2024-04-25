@@ -20,6 +20,15 @@ import (
 // swagger:model ComponentSummary
 type ComponentSummary struct {
 
+	// CommitID the commit ID of the branch to build
+	// REQUIRED for "build" and "build-deploy" pipelines
+	// Example: 4faca8595c5283a9d0f17a623b9255a0d9866a2e
+	CommitID string `json:"commitID,omitempty"`
+
+	// GitTags the git tags that the git commit hash points to
+	// Example: \"v1.22.1 v1.22.3\
+	GitTags string `json:"gitTags,omitempty"`
+
 	// Image name
 	// Example: radixdev.azurecr.io/app-server:cdgkg
 	// Required: true
@@ -30,11 +39,18 @@ type ComponentSummary struct {
 	// Required: true
 	Name *string `json:"name"`
 
+	// SkipDeployment The component should not be deployed, but used existing
+	// Example: true
+	SkipDeployment bool `json:"skipDeployment,omitempty"`
+
 	// Type of component
 	// Example: component
 	// Required: true
 	// Enum: [component job]
 	Type *string `json:"type"`
+
+	// resources
+	Resources *ResourceRequirements `json:"resources,omitempty"`
 }
 
 // Validate validates this component summary
@@ -50,6 +66,10 @@ func (m *ComponentSummary) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateResources(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -120,8 +140,57 @@ func (m *ComponentSummary) validateType(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this component summary based on context it is used
+func (m *ComponentSummary) validateResources(formats strfmt.Registry) error {
+	if swag.IsZero(m.Resources) { // not required
+		return nil
+	}
+
+	if m.Resources != nil {
+		if err := m.Resources.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("resources")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("resources")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this component summary based on the context it is used
 func (m *ComponentSummary) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateResources(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ComponentSummary) contextValidateResources(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Resources != nil {
+
+		if swag.IsZero(m.Resources) { // not required
+			return nil
+		}
+
+		if err := m.Resources.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("resources")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("resources")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

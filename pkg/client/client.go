@@ -84,8 +84,8 @@ func getAuthWriter(cmd *cobra.Command, config *radixconfig.RadixConfig) (runtime
 }
 
 // LoginCommand Login client for command
-func LoginCommand(cmd *cobra.Command) error {
-	return LoginContext()
+func LoginCommand(cmd *cobra.Command, useDeviceCode bool) error {
+	return LoginContext(useDeviceCode)
 }
 
 // LogoutCommand Logout command
@@ -112,7 +112,7 @@ func getContextAndCluster(cmd *cobra.Command) (string, string, error) {
 }
 
 // LoginContext Performs login
-func LoginContext() error {
+func LoginContext(useDeviceCode bool) error {
 	radixConfig, err := radixconfig.GetRadixConfig()
 	if err != nil {
 		return err
@@ -124,7 +124,7 @@ func LoginContext() error {
 	if err != nil {
 		return err
 	}
-	return provider.Login(context.Background())
+	return provider.Login(context.Background(), useDeviceCode)
 }
 
 func getAuthProvider(radixConfig *radixconfig.RadixConfig) (auth.MSALAuthProvider, error) {
