@@ -24,7 +24,9 @@ import (
 	"github.com/equinor/radix-operator/pkg/apis/radixvalidators"
 	"github.com/equinor/radix-operator/pkg/apis/utils"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/yannh/kubeconform/pkg/validator"
 	"sigs.k8s.io/yaml"
 )
 
@@ -47,13 +49,19 @@ var validateRadixConfigCmd = &cobra.Command{
 			return err
 		}
 
+		schema, err := cmd.Flags().GetString(flagnames.Schema)
+		if err != nil {
+			return err
+		}
+
+		fmt.Fprintf(os.Stderr, "Validating %s\n", radixconfig)
 		if _, err := os.Stat(radixconfig); errors.Is(err, os.ErrNotExist) {
-			return fmt.Errorf("RadixConfig file not found: %s", radixconfig)
+			return fmt.Errorf("RadixConfig file not found")
 		}
 
 		ra, err := utils.GetRadixApplicationFromFile(radixconfig)
 		if err != nil {
-			return fmt.Errorf("RadixConfig is invalid: %w", err)
+			return err
 		}
 
 		if printfile {
@@ -63,14 +71,52 @@ var validateRadixConfigCmd = &cobra.Command{
 			}
 		}
 
+		errs, err := validateSchema(radixconfig, schema)
+		if err != nil {
+			return err
+		}
+
 		err = radixvalidators.IsRadixApplicationValid(ra)
 		if err != nil {
-			return fmt.Errorf("RadixConfig is invalid:\n%w", err)
+			errs = append(errs, err)
+		}
+
+		err = strictUnmarshalValidation(radixconfig)
+		if err != nil {
+			errs = append(errs, err)
+		}
+
+		if len(errs) > 0 {
+			for _, err := range errs {
+				fmt.Fprintf(os.Stderr, " - %s\n", err.Error())
+			}
+
+			fmt.Fprintln(os.Stderr, "RadixConfig is invalid ")
+			os.Exit(2)
 		}
 
 		fmt.Fprintln(os.Stderr, "RadixConfig is valid")
 		return nil
 	},
+}
+
+func validateSchema(filename, schema string) ([]error, error) {
+	var errs []error
+	v, err := validator.New([]string{schema}, validator.Opts{Strict: true})
+	if err != nil {
+		return nil, fmt.Errorf("failed initializing validator: %s", err)
+	}
+
+	f, err := os.Open(filename)
+	if err != nil {
+		log.Fatalf("failed opening %s: %s", filename, err)
+	}
+	for _, res := range v.Validate(filename, f) { // A file might contain multiple resources
+		for _, err := range res.ValidationErrors {
+			errs = append(errs, fmt.Errorf("%s: %s", err.Path, err.Msg))
+		}
+	}
+	return errs, nil
 }
 
 func printRA(ra *radixv1.RadixApplication) error {
@@ -87,6 +133,7 @@ func init() {
 	validateCmd.AddCommand(validateRadixConfigCmd)
 	validateRadixConfigCmd.Flags().StringP(flagnames.ConfigFile, "f", "radixconfig.yaml", "Name of the radixconfig file. Defaults to radixconfig.yaml in current directory")
 	validateRadixConfigCmd.Flags().BoolP(flagnames.Print, "p", false, "Print parsed config file")
+	validateRadixConfigCmd.Flags().StringP(flagnames.Schema, "s", "https://raw.githubusercontent.com/equinor/radix-operator/release/json-schema/radixapplication.json", "Validate against schema")
 
 	// Allow but hide token-env flag so radix-github-actions won't interfere
 	validateRadixConfigCmd.Flags().Bool(flagnames.TokenEnvironment, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
@@ -94,4 +141,21 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func strictUnmarshalValidation(filename string) error {
+	log.Debug("get radix application yaml from %s", filename)
+	radixApp := &radixv1.RadixApplication{}
+
+	raw, err := os.ReadFile(filename)
+	if err != nil {
+		return fmt.Errorf("failed to read file: %v", err)
+	}
+
+	err = yaml.UnmarshalStrict(raw, radixApp)
+	if err != nil {
+		return fmt.Errorf("strict test failed: %v", err)
+	}
+
+	return nil
 }
