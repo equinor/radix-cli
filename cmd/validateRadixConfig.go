@@ -22,11 +22,10 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	radixv1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/equinor/radix-operator/pkg/apis/radixvalidators"
-	"github.com/equinor/radix-operator/pkg/apis/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"github.com/santhosh-tekuri/jsonschema/v5"
+	_ "github.com/santhosh-tekuri/jsonschema/v5/httploader"
 	"github.com/spf13/cobra"
-	"github.com/yannh/kubeconform/pkg/validator"
 	"sigs.k8s.io/yaml"
 )
 
@@ -35,88 +34,124 @@ var validateRadixConfigCmd = &cobra.Command{
 	Use:   "radix-config",
 	Short: "Validate radixconfig.yaml",
 	Long:  `Check radixconfig.yaml for structural and logical errors`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-
-		cmd.SilenceUsage = true
-
+	Run: func(cmd *cobra.Command, args []string) {
 		radixconfig, err := cmd.Flags().GetString(flagnames.ConfigFile)
 		if err != nil {
-			return err
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
 		}
 
 		printfile, err := cmd.Flags().GetBool(flagnames.Print)
 		if err != nil {
-			return err
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
 		}
 
 		schema, err := cmd.Flags().GetString(flagnames.Schema)
 		if err != nil {
-			return err
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
 		}
 
 		fmt.Fprintf(os.Stderr, "Validating %s\n", radixconfig)
 		if _, err := os.Stat(radixconfig); errors.Is(err, os.ErrNotExist) {
-			return fmt.Errorf("RadixConfig file not found")
+			fmt.Fprintln(os.Stderr, "RadixConfig file not found")
+			os.Exit(1)
 		}
 
-		ra, err := utils.GetRadixApplicationFromFile(radixconfig)
+		raw, err := os.ReadFile(radixconfig)
 		if err != nil {
-			return err
+			fmt.Fprintf(os.Stderr, "failed to read file: %v\n", err)
+			os.Exit(1)
+		}
+
+		ra, err := unmarshalRadixApplication(raw)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
 		}
 
 		if printfile {
 			err = printRA(ra)
 			if err != nil {
-				return err
+				fmt.Fprintln(os.Stderr, err.Error())
+				os.Exit(1)
 			}
 		}
 
-		errs, err := validateSchema(radixconfig, schema)
+		validationErrors, err := validateSchema(raw, schema)
 		if err != nil {
-			return err
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
 		}
 
 		err = radixvalidators.IsRadixApplicationValid(ra)
 		if err != nil {
-			errs = append(errs, err)
+			validationErrors = append(validationErrors, err)
 		}
 
-		err = strictUnmarshalValidation(radixconfig)
+		err = strictUnmarshalValidation(raw)
 		if err != nil {
-			errs = append(errs, err)
+			validationErrors = append(validationErrors, err)
 		}
 
-		if len(errs) > 0 {
-			for _, err := range errs {
-				fmt.Fprintf(os.Stderr, " - %s\n", err.Error())
+		if len(validationErrors) > 0 {
+			for _, err := range validationErrors {
+				fmt.Fprintf(os.Stderr, " - %s\n", err)
 			}
 
-			fmt.Fprintln(os.Stderr, "RadixConfig is invalid ")
+			fmt.Fprintln(os.Stderr, "RadixConfig is invalid")
 			os.Exit(2)
 		}
 
 		fmt.Fprintln(os.Stderr, "RadixConfig is valid")
-		return nil
 	},
 }
 
-func validateSchema(filename, schema string) ([]error, error) {
-	var errs []error
-	v, err := validator.New([]string{schema}, validator.Opts{Strict: true})
+func validateSchema(raw []byte, schema string) (validationErrors []error, err error) {
+	s, err := jsonschema.Compile(schema)
 	if err != nil {
-		return nil, fmt.Errorf("failed initializing validator: %s", err)
+		return nil, fmt.Errorf("failed compiling schema %s: %s", schema, err)
 	}
 
-	f, err := os.Open(filename)
+	var obj interface{}
+	err = yaml.Unmarshal(raw, &obj)
 	if err != nil {
-		log.Fatalf("failed opening %s: %s", filename, err)
+		return nil, fmt.Errorf("failed to parse file: %v", err)
 	}
-	for _, res := range v.Validate(filename, f) { // A file might contain multiple resources
-		for _, err := range res.ValidationErrors {
-			errs = append(errs, fmt.Errorf("%s: %s", err.Path, err.Msg))
+
+	err = s.Validate(obj)
+	var verr *jsonschema.ValidationError
+	if errors.As(err, &verr) {
+		for _, err := range verr.Causes {
+			validationErrors = append(validationErrors, fmt.Errorf("%s: %s", err.InstanceLocation, err.Message))
 		}
+	} else {
+		return nil, err
 	}
-	return errs, nil
+
+	return validationErrors, nil
+}
+
+func strictUnmarshalValidation(raw []byte) error {
+	radixApp := &radixv1.RadixApplication{}
+
+	err := yaml.UnmarshalStrict(raw, radixApp)
+	if err != nil {
+		return fmt.Errorf("strict test failed: %v", err)
+	}
+
+	return nil
+}
+func unmarshalRadixApplication(raw []byte) (*radixv1.RadixApplication, error) {
+	radixApp := &radixv1.RadixApplication{}
+
+	err := yaml.Unmarshal(raw, radixApp)
+	if err != nil {
+		return nil, fmt.Errorf("strict test failed: %v", err)
+	}
+
+	return radixApp, nil
 }
 
 func printRA(ra *radixv1.RadixApplication) error {
@@ -141,21 +176,4 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func strictUnmarshalValidation(filename string) error {
-	log.Debug("get radix application yaml from %s", filename)
-	radixApp := &radixv1.RadixApplication{}
-
-	raw, err := os.ReadFile(filename)
-	if err != nil {
-		return fmt.Errorf("failed to read file: %v", err)
-	}
-
-	err = yaml.UnmarshalStrict(raw, radixApp)
-	if err != nil {
-		return fmt.Errorf("strict test failed: %v", err)
-	}
-
-	return nil
 }
