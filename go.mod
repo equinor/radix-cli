@@ -6,7 +6,7 @@ toolchain go1.22.1
 
 require (
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.2.1
-	github.com/equinor/radix-operator v1.52.2-0.20240527123843-b73bc5820c12
+	github.com/equinor/radix-operator v1.55.0
 	github.com/fatih/color v1.16.0
 	github.com/go-openapi/errors v0.20.4
 	github.com/go-openapi/runtime v0.26.2
@@ -72,6 +72,7 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.53.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rs/zerolog v1.32.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	go.mongodb.org/mongo-driver v1.13.1 // indirect

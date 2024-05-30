@@ -22,8 +22,8 @@ github.com/emicklei/go-restful/v3 v3.11.2 h1:1onLa9DcsMYO9P+CXaL0dStDqQ2EHHXLiz+
 github.com/emicklei/go-restful/v3 v3.11.2/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
 github.com/equinor/radix-common v1.7.1 h1:kl7Tuo2VEo2WHGm/vkvktrZ9t9S3Nht7Mob3CSIzcJI=
 github.com/equinor/radix-common v1.7.1/go.mod h1:M6mhgHtFQ3rnjJnyOuECXiZOh7XQ5xVeHMyCAU+YPzQ=
-github.com/equinor/radix-operator v1.52.2-0.20240527123843-b73bc5820c12 h1:JCaFba6mG+1jZUZxAiqQqiStYIQL6puZV1RC8Z+fk80=
-github.com/equinor/radix-operator v1.52.2-0.20240527123843-b73bc5820c12/go.mod h1:C4qhjji1SvSMzke+QhBaS+RDeYD7Y3GRyIfWxhiHuL0=
+github.com/equinor/radix-operator v1.55.0 h1:T8P1Bo0KONe3NzLF2/RBYP2Z9ZQwmyaYq1KXlOmaxH8=
+github.com/equinor/radix-operator v1.55.0/go.mod h1:0KwN3ZEACZWhHrJZIuSxVYVeHhFgUBaRoeDyGiAljRs=
 github.com/evanphx/json-patch v5.8.1+incompatible h1:2toJaoe7/rNa1zpeQx0UnVEjqk6z2ecyA20V/zg8vTU=
 github.com/evanphx/json-patch v5.8.1+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
 github.com/evanphx/json-patch/v5 v5.9.0 h1:kcBlZQbplgElYIlo/n1hJbls2z/1awpXxpRi0/FOJfg=
@@ -172,6 +172,8 @@ github.com/prometheus/common v0.53.0 h1:U2pL9w9nmJwJDa4qqLQ3ZaePJ6ZTwt7cMD3AG3+a
 github.com/prometheus/common v0.53.0/go.mod h1:BrxBKv3FWBIGXw89Mg1AeBq7FSyRzXWI3l3e7W3RN5U=
 github.com/prometheus/procfs v0.12.0 h1:jluTpSng7V9hY0O2R9DzzJHYb2xULk9VTR1V1R/k6Bo=
 github.com/prometheus/procfs v0.12.0/go.mod h1:pcuDEFsWDnvcgNzo4EEweacyhjeA9Zk3cnaOZAZEfOo=
+github.com/robfig/cron/v3 v3.0.1 h1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=
+github.com/robfig/cron/v3 v3.0.1/go.mod h1:eQICP3HwyT7UooqI/z+Ov+PtYAWygg1TEWWzGIFLtro=
 github.com/rogpeppe/go-internal v1.12.0 h1:exVL4IDcn6na9z1rAb56Vxr+CgyK3nn3O+epU5NdKM8=
 github.com/rogpeppe/go-internal v1.12.0/go.mod h1:E+RYuTGaKKdloAfM02xzb0FW3Paa99yedzYV+kq4uf4=
 github.com/rs/xid v1.5.0/go.mod h1:trrq9SKmegXys3aeAKXMUTdJsYXVwGY3RLcfgqegfbg=
