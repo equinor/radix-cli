@@ -26,6 +26,7 @@ const (
 	Job                 = "job"
 	Previous            = "previous"
 	Print               = "print"
+	Schema              = "schema"
 	PrivateKey          = "private-key"
 	PrivateKeyFromFile  = "private-key-from-file"
 	ReaderADGroups      = "reader-ad-groups"
