@@ -18,11 +18,15 @@ lint: bootstrap
 
 HAS_SWAGGER       := $(shell command -v swagger;)
 HAS_GOLANGCI_LINT := $(shell command -v golangci-lint;)
+HAS_GORELEASER    := $(shell command -v goreleaser;)
 
 bootstrap:
 ifndef HAS_SWAGGER
 	go install github.com/go-swagger/go-swagger/cmd/swagger@v0.30.5
 endif
 ifndef HAS_GOLANGCI_LINT
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.2
+endif
+ifndef HAS_GORELEASER
+	go install github.com/goreleaser/goreleaser@v1.26.2
 endif

@@ -168,7 +168,7 @@ func init() {
 	validateCmd.AddCommand(validateRadixConfigCmd)
 	validateRadixConfigCmd.Flags().StringP(flagnames.ConfigFile, "f", "radixconfig.yaml", "Name of the radixconfig file. Defaults to radixconfig.yaml in current directory")
 	validateRadixConfigCmd.Flags().BoolP(flagnames.Print, "p", false, "Print parsed config file")
-	validateRadixConfigCmd.Flags().StringP(flagnames.Schema, "s", "https://raw.githubusercontent.com/equinor/radix-operator/release/json-schema/radixapplication.json", "Validate against schema")
+	validateRadixConfigCmd.Flags().String(flagnames.Schema, "https://raw.githubusercontent.com/equinor/radix-operator/release/json-schema/radixapplication.json", "Validate against schema. http://, file:// or path is supported")
 
 	// Allow but hide token-env flag so radix-github-actions won't interfere
 	validateRadixConfigCmd.Flags().Bool(flagnames.TokenEnvironment, false, fmt.Sprintf("Take the token from environment variable %s", client.TokenEnvironmentName))
