@@ -95,16 +95,16 @@ var validateRadixConfigCmd = &cobra.Command{
 			validationErrors = append(validationErrors, err)
 		}
 
-		if len(validationErrors) > 0 {
-			for _, err := range validationErrors {
-				fmt.Fprintf(os.Stderr, " - %s\n", err)
-			}
-
-			fmt.Fprintln(os.Stderr, "RadixConfig is invalid")
-			os.Exit(2)
+		if len(validationErrors) == 0 {
+			fmt.Fprintln(os.Stderr, "RadixConfig is valid")
+			return
 		}
 
-		fmt.Fprintln(os.Stderr, "RadixConfig is valid")
+		fmt.Fprintln(os.Stderr, "RadixConfig is invalid")
+		for _, err := range validationErrors {
+			fmt.Fprintf(os.Stderr, " - %s\n", err)
+		}
+		os.Exit(2)
 	},
 }
 
