@@ -34,6 +34,16 @@ var validateRadixConfigCmd = &cobra.Command{
 	Use:   "radix-config",
 	Short: "Validate radixconfig.yaml",
 	Long:  `Check radixconfig.yaml for structural and logical errors`,
+	Example: `# Validate radixconfig.yaml in current directory:
+rx validate radix-config
+
+# Specify path to radixconfig to validate:
+rx validate radix-config --config-file /path/to/anyradixconfig.yaml
+
+# Validate radixconfig without strict validation:
+rx validate radix-config --strict-validation=false
+
+sdfsdfs`,
 	Run: func(cmd *cobra.Command, args []string) {
 		radixconfig, err := cmd.Flags().GetString(flagnames.ConfigFile)
 		if err != nil {
@@ -48,6 +58,12 @@ var validateRadixConfigCmd = &cobra.Command{
 		}
 
 		schema, err := cmd.Flags().GetString(flagnames.Schema)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+
+		strictValidation, err := cmd.Flags().GetBool(flagnames.StrictValidation)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
@@ -90,9 +106,11 @@ var validateRadixConfigCmd = &cobra.Command{
 			validationErrors = append(validationErrors, err)
 		}
 
-		err = strictUnmarshalValidation(raw)
-		if err != nil {
-			validationErrors = append(validationErrors, err)
+		if strictValidation {
+			err = strictUnmarshalValidation(raw)
+			if err != nil {
+				validationErrors = append(validationErrors, err)
+			}
 		}
 
 		if len(validationErrors) == 0 {
