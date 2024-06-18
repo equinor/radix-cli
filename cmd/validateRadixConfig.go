@@ -42,8 +42,7 @@ rx validate radix-config --config-file /path/to/anyradixconfig.yaml
 
 # Validate radixconfig without strict validation:
 rx validate radix-config --strict-validation=false
-
-sdfsdfs`,
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		radixconfig, err := cmd.Flags().GetString(flagnames.ConfigFile)
 		if err != nil {
