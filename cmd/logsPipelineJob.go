@@ -17,10 +17,9 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
-
-	"k8s.io/utils/strings/slices"
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/pipeline_job"

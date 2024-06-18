@@ -15,9 +15,12 @@
 package cmd
 
 import (
+	"errors"
+	"fmt"
+
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
-	"github.com/pkg/errors"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
@@ -46,10 +49,10 @@ var createPromotePipelineJobCmd = &cobra.Command{
 		follow, _ := cmd.Flags().GetBool(flagnames.Follow)
 
 		if !useActiveDeployment && deploymentName == "" {
-			return errors.New("Specifying deployment name or setting use-active-deployment is required")
+			return errors.New("specifying deployment name or setting use-active-deployment is required")
 		}
 		if useActiveDeployment && deploymentName != "" {
-			return errors.New("You cannot set use-active-deployment and specify deployment name at the same time")
+			return errors.New("you cannot set use-active-deployment and specify deployment name at the same time")
 		}
 
 		if appName == nil || *appName == "" || fromEnvironment == "" || toEnvironment == "" {
@@ -103,11 +106,11 @@ func getActiveDeploymentName(apiClient *apiclient.Radixapi, appName, envName str
 
 	resp, err := apiClient.Environment.GetEnvironment(params, nil)
 	if err != nil {
-		return "", errors.Wrap(err, "Failed to get environment details")
+		return "", fmt.Errorf("failed to get environment details: %w", err)
 	}
 
 	if resp.Payload.ActiveDeployment == nil || resp.Payload.ActiveDeployment.Name == "" {
-		return "", errors.Errorf("Environment '%s' does not have any active deployments", envName)
+		return "", fmt.Errorf("environment '%s' does not have any active deployments", envName)
 	}
 
 	return resp.Payload.ActiveDeployment.Name, nil

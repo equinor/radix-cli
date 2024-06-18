@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -22,7 +23,6 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	radixv1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/equinor/radix-operator/pkg/apis/radixvalidators"
-	"github.com/pkg/errors"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	_ "github.com/santhosh-tekuri/jsonschema/v5/httploader"
 	"github.com/spf13/cobra"
@@ -168,6 +168,7 @@ func init() {
 	validateCmd.AddCommand(validateRadixConfigCmd)
 	validateRadixConfigCmd.Flags().StringP(flagnames.ConfigFile, "f", "radixconfig.yaml", "Name of the radixconfig file. Defaults to radixconfig.yaml in current directory")
 	validateRadixConfigCmd.Flags().BoolP(flagnames.Print, "p", false, "Print parsed config file")
+	validateRadixConfigCmd.Flags().Bool(flagnames.StrictValidation, true, "Enable (default) or disable strict schema validation, which will check for unknown fields in the radixconfig file")
 	validateRadixConfigCmd.Flags().String(flagnames.Schema, "https://raw.githubusercontent.com/equinor/radix-operator/release/json-schema/radixapplication.json", "Validate against schema. http://, file:// or path is supported")
 
 	// Allow but hide token-env flag so radix-github-actions won't interfere
