@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -22,7 +23,6 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	radixv1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/equinor/radix-operator/pkg/apis/radixvalidators"
-	"github.com/pkg/errors"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	_ "github.com/santhosh-tekuri/jsonschema/v5/httploader"
 	"github.com/spf13/cobra"
@@ -34,6 +34,15 @@ var validateRadixConfigCmd = &cobra.Command{
 	Use:   "radix-config",
 	Short: "Validate radixconfig.yaml",
 	Long:  `Check radixconfig.yaml for structural and logical errors`,
+	Example: `# Validate radixconfig.yaml in current directory:
+rx validate radix-config
+
+# Specify path to radixconfig to validate:
+rx validate radix-config --config-file /path/to/anyradixconfig.yaml
+
+# Validate radixconfig without strict validation:
+rx validate radix-config --strict-validation=false
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		radixconfig, err := cmd.Flags().GetString(flagnames.ConfigFile)
 		if err != nil {
@@ -48,6 +57,12 @@ var validateRadixConfigCmd = &cobra.Command{
 		}
 
 		schema, err := cmd.Flags().GetString(flagnames.Schema)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+
+		strictValidation, err := cmd.Flags().GetBool(flagnames.StrictValidation)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
@@ -90,9 +105,11 @@ var validateRadixConfigCmd = &cobra.Command{
 			validationErrors = append(validationErrors, err)
 		}
 
-		err = strictUnmarshalValidation(raw)
-		if err != nil {
-			validationErrors = append(validationErrors, err)
+		if strictValidation {
+			err = strictUnmarshalValidation(raw)
+			if err != nil {
+				validationErrors = append(validationErrors, err)
+			}
 		}
 
 		if len(validationErrors) == 0 {
@@ -168,6 +185,7 @@ func init() {
 	validateCmd.AddCommand(validateRadixConfigCmd)
 	validateRadixConfigCmd.Flags().StringP(flagnames.ConfigFile, "f", "radixconfig.yaml", "Name of the radixconfig file. Defaults to radixconfig.yaml in current directory")
 	validateRadixConfigCmd.Flags().BoolP(flagnames.Print, "p", false, "Print parsed config file")
+	validateRadixConfigCmd.Flags().Bool(flagnames.StrictValidation, true, "Enable or disable strict schema validation, which will check for unknown fields in the radixconfig file")
 	validateRadixConfigCmd.Flags().String(flagnames.Schema, "https://raw.githubusercontent.com/equinor/radix-operator/release/json-schema/radixapplication.json", "Validate against schema. http://, file:// or path is supported")
 
 	// Allow but hide token-env flag so radix-github-actions won't interfere

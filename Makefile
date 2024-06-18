@@ -22,7 +22,7 @@ HAS_GORELEASER    := $(shell command -v goreleaser;)
 
 bootstrap:
 ifndef HAS_SWAGGER
-	go install github.com/go-swagger/go-swagger/cmd/swagger@v0.30.5
+	go install github.com/go-swagger/go-swagger/cmd/swagger@v0.31.0
 endif
 ifndef HAS_GOLANGCI_LINT
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.2
