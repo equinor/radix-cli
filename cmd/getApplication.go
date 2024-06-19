@@ -23,7 +23,6 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/json"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -52,8 +51,9 @@ var getApplicationCmd = &cobra.Command{
 
 			if err == nil {
 				for _, application := range resp.Payload {
-					log.Infof("App: %s", application.Name)
+					fmt.Println(application.Name)
 				}
+				return nil
 			}
 			return err
 		}
