@@ -70,9 +70,17 @@ type ScheduledJobSummary struct {
 	Started string `json:"started,omitempty"`
 
 	// Status of the job
+	// Running ScheduledBatchJobStatusRunning  ScheduledBatchJobStatusRunning Active
+	// Succeeded ScheduledBatchJobStatusSucceeded  ScheduledBatchJobStatusSucceeded Job succeeded
+	// Failed ScheduledBatchJobStatusFailed  ScheduledBatchJobStatusFailed Job failed
+	// Waiting ScheduledBatchJobStatusWaiting  ScheduledBatchJobStatusWaiting Job pending
+	// Stopping ScheduledBatchJobStatusStopping  ScheduledBatchJobStatusStopping job is stopping
+	// Stopped ScheduledBatchJobStatusStopped  ScheduledBatchJobStatusStopped job stopped
+	// Active ScheduledBatchJobStatusActive  ScheduledBatchJobStatusActive job, one or more pods are not ready
+	// Completed ScheduledBatchJobStatusCompleted  ScheduledBatchJobStatusCompleted batch jobs are completed
 	// Example: Waiting
 	// Required: true
-	// Enum: [Running Active Succeeded Failed Waiting Stopping Stopped]
+	// Enum: [Running Succeeded Failed Waiting Stopping Stopped Active Completed]
 	Status *string `json:"status"`
 
 	// TimeLimitSeconds How long the job supposed to run at maximum
@@ -84,6 +92,9 @@ type ScheduledJobSummary struct {
 
 	// resources
 	Resources *ResourceRequirements `json:"resources,omitempty"`
+
+	// runtime
+	Runtime *Runtime `json:"runtime,omitempty"`
 }
 
 // Validate validates this scheduled job summary
@@ -111,6 +122,10 @@ func (m *ScheduledJobSummary) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateResources(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRuntime(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -168,7 +183,7 @@ var scheduledJobSummaryTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["Running","Active","Succeeded","Failed","Waiting","Stopping","Stopped"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["Running","Succeeded","Failed","Waiting","Stopping","Stopped","Active","Completed"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -180,9 +195,6 @@ const (
 
 	// ScheduledJobSummaryStatusRunning captures enum value "Running"
 	ScheduledJobSummaryStatusRunning string = "Running"
-
-	// ScheduledJobSummaryStatusActive captures enum value "Active"
-	ScheduledJobSummaryStatusActive string = "Active"
 
 	// ScheduledJobSummaryStatusSucceeded captures enum value "Succeeded"
 	ScheduledJobSummaryStatusSucceeded string = "Succeeded"
@@ -198,6 +210,12 @@ const (
 
 	// ScheduledJobSummaryStatusStopped captures enum value "Stopped"
 	ScheduledJobSummaryStatusStopped string = "Stopped"
+
+	// ScheduledJobSummaryStatusActive captures enum value "Active"
+	ScheduledJobSummaryStatusActive string = "Active"
+
+	// ScheduledJobSummaryStatusCompleted captures enum value "Completed"
+	ScheduledJobSummaryStatusCompleted string = "Completed"
 )
 
 // prop value enum
@@ -260,6 +278,25 @@ func (m *ScheduledJobSummary) validateResources(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ScheduledJobSummary) validateRuntime(formats strfmt.Registry) error {
+	if swag.IsZero(m.Runtime) { // not required
+		return nil
+	}
+
+	if m.Runtime != nil {
+		if err := m.Runtime.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("runtime")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("runtime")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this scheduled job summary based on the context it is used
 func (m *ScheduledJobSummary) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -273,6 +310,10 @@ func (m *ScheduledJobSummary) ContextValidate(ctx context.Context, formats strfm
 	}
 
 	if err := m.contextValidateResources(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRuntime(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -341,6 +382,27 @@ func (m *ScheduledJobSummary) contextValidateResources(ctx context.Context, form
 				return ve.ValidateName("resources")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("resources")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ScheduledJobSummary) contextValidateRuntime(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Runtime != nil {
+
+		if swag.IsZero(m.Runtime) { // not required
+			return nil
+		}
+
+		if err := m.Runtime.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("runtime")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("runtime")
 			}
 			return err
 		}

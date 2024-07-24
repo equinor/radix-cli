@@ -50,9 +50,17 @@ type ScheduledBatchSummary struct {
 	Started string `json:"started,omitempty"`
 
 	// Status of the job
+	// Running ScheduledBatchJobStatusRunning  ScheduledBatchJobStatusRunning Active
+	// Succeeded ScheduledBatchJobStatusSucceeded  ScheduledBatchJobStatusSucceeded Job succeeded
+	// Failed ScheduledBatchJobStatusFailed  ScheduledBatchJobStatusFailed Job failed
+	// Waiting ScheduledBatchJobStatusWaiting  ScheduledBatchJobStatusWaiting Job pending
+	// Stopping ScheduledBatchJobStatusStopping  ScheduledBatchJobStatusStopping job is stopping
+	// Stopped ScheduledBatchJobStatusStopped  ScheduledBatchJobStatusStopped job stopped
+	// Active ScheduledBatchJobStatusActive  ScheduledBatchJobStatusActive job, one or more pods are not ready
+	// Completed ScheduledBatchJobStatusCompleted  ScheduledBatchJobStatusCompleted batch jobs are completed
 	// Example: Waiting
 	// Required: true
-	// Enum: [Waiting Running Succeeded Failed]
+	// Enum: [Running Succeeded Failed Waiting Stopping Stopped Active Completed]
 	Status *string `json:"status"`
 
 	// TotalJobCount count of jobs, requested to be scheduled by a batch
@@ -146,7 +154,7 @@ var scheduledBatchSummaryTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["Waiting","Running","Succeeded","Failed"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["Running","Succeeded","Failed","Waiting","Stopping","Stopped","Active","Completed"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -156,9 +164,6 @@ func init() {
 
 const (
 
-	// ScheduledBatchSummaryStatusWaiting captures enum value "Waiting"
-	ScheduledBatchSummaryStatusWaiting string = "Waiting"
-
 	// ScheduledBatchSummaryStatusRunning captures enum value "Running"
 	ScheduledBatchSummaryStatusRunning string = "Running"
 
@@ -167,6 +172,21 @@ const (
 
 	// ScheduledBatchSummaryStatusFailed captures enum value "Failed"
 	ScheduledBatchSummaryStatusFailed string = "Failed"
+
+	// ScheduledBatchSummaryStatusWaiting captures enum value "Waiting"
+	ScheduledBatchSummaryStatusWaiting string = "Waiting"
+
+	// ScheduledBatchSummaryStatusStopping captures enum value "Stopping"
+	ScheduledBatchSummaryStatusStopping string = "Stopping"
+
+	// ScheduledBatchSummaryStatusStopped captures enum value "Stopped"
+	ScheduledBatchSummaryStatusStopped string = "Stopped"
+
+	// ScheduledBatchSummaryStatusActive captures enum value "Active"
+	ScheduledBatchSummaryStatusActive string = "Active"
+
+	// ScheduledBatchSummaryStatusCompleted captures enum value "Completed"
+	ScheduledBatchSummaryStatusCompleted string = "Completed"
 )
 
 // prop value enum
