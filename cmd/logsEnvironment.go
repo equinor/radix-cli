@@ -19,9 +19,11 @@ import (
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
+	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
+	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
 )
 
@@ -87,7 +89,9 @@ func getComponentReplicasForEnvironment(apiClient *apiclient.Radixapi, appName, 
 	componentReplicas := make(map[string][]string)
 	for _, component := range environmentDetails.Payload.ActiveDeployment.Components {
 		if component.Name != nil {
-			componentReplicas[*component.Name] = component.Replicas
+			componentReplicas[*component.Name] = slice.Reduce(component.ReplicaList, make([]string, 0), func(acc []string, replica *models.ReplicaSummary) []string {
+				return append(acc, *replica.Name)
+			})
 		}
 	}
 

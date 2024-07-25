@@ -12,9 +12,10 @@ permissions:
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        arch: [ arm64 ]
     steps:
     - name: Checkout
       uses: actions/checkout@v4
