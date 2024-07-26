@@ -22,14 +22,24 @@ type ReplicaStatus struct {
 
 	// Status of the container
 	// Pending = Container in Waiting state and the reason is ContainerCreating
+	// Starting = Container is starting
 	// Failed = Container is failed
 	// Failing = Container is failed
 	// Running = Container in Running state
 	// Succeeded = Container in Succeeded state
+	// Stopped = Replica was deleted du to job stopped
 	// Terminated = Container in Terminated state
+	// Pending Pending  Pending container
+	// Failed Failed  Failed container permanently exists in a failed state
+	// Failing Failing  Failing container, which can attempt to restart
+	// Running Running  Running container
+	// Terminated Terminated  Terminated container
+	// Starting Starting  Starting container
+	// Stopped Stopped  Stopped container
+	// Succeeded Succeeded  Succeeded all containers in the pod have voluntarily terminated
 	// Example: Running
 	// Required: true
-	// Enum: [Pending Succeeded Failing Failed Running Terminated Starting]
+	// Enum: [Pending Failed Failing Running Terminated Starting Stopped Succeeded]
 	Status *string `json:"status"`
 }
 
@@ -51,7 +61,7 @@ var replicaStatusTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["Pending","Succeeded","Failing","Failed","Running","Terminated","Starting"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["Pending","Failed","Failing","Running","Terminated","Starting","Stopped","Succeeded"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -64,14 +74,11 @@ const (
 	// ReplicaStatusStatusPending captures enum value "Pending"
 	ReplicaStatusStatusPending string = "Pending"
 
-	// ReplicaStatusStatusSucceeded captures enum value "Succeeded"
-	ReplicaStatusStatusSucceeded string = "Succeeded"
+	// ReplicaStatusStatusFailed captures enum value "Failed"
+	ReplicaStatusStatusFailed string = "Failed"
 
 	// ReplicaStatusStatusFailing captures enum value "Failing"
 	ReplicaStatusStatusFailing string = "Failing"
-
-	// ReplicaStatusStatusFailed captures enum value "Failed"
-	ReplicaStatusStatusFailed string = "Failed"
 
 	// ReplicaStatusStatusRunning captures enum value "Running"
 	ReplicaStatusStatusRunning string = "Running"
@@ -81,6 +88,12 @@ const (
 
 	// ReplicaStatusStatusStarting captures enum value "Starting"
 	ReplicaStatusStatusStarting string = "Starting"
+
+	// ReplicaStatusStatusStopped captures enum value "Stopped"
+	ReplicaStatusStatusStopped string = "Stopped"
+
+	// ReplicaStatusStatusSucceeded captures enum value "Succeeded"
+	ReplicaStatusStatusSucceeded string = "Succeeded"
 )
 
 // prop value enum
