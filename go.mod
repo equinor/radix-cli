@@ -6,6 +6,7 @@ toolchain go1.22.5
 
 require (
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.2.2
+	github.com/equinor/radix-common v1.9.2
 	github.com/equinor/radix-operator v1.57.4
 	github.com/fatih/color v1.17.0
 	github.com/go-openapi/errors v0.22.0
@@ -27,7 +28,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/emicklei/go-restful/v3 v3.11.2 // indirect
-	github.com/equinor/radix-common v1.9.2 // indirect
 	github.com/evanphx/json-patch v5.8.1+incompatible // indirect
 	github.com/evanphx/json-patch/v5 v5.9.0 // indirect
 	github.com/expr-lang/expr v1.15.8 // indirect

@@ -41,6 +41,7 @@ const (
 	TokenEnvironment    = "token-environment"
 	TokenStdin          = "token-stdin"
 	UseActiveDeployment = "use-active-deployment"
+	UseBuildCache       = "use-build-cache"
 	UseDeviceCode       = "use-device-code"
 	User                = "user"
 	Variable            = "variable"
