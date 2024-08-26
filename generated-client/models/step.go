@@ -37,7 +37,7 @@ type Step struct {
 
 	// Status of the step
 	// Example: Waiting
-	// Enum: [Queued Waiting Running Succeeded Failed Stopped StoppedNoChanges]
+	// Enum: ["Queued","Waiting","Running","Succeeded","Failed","Stopped","StoppedNoChanges"]
 	Status string `json:"status,omitempty"`
 }
 

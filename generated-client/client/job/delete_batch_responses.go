@@ -99,11 +99,11 @@ func (o *DeleteBatchNoContent) Code() int {
 }
 
 func (o *DeleteBatchNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchNoContent ", 204)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchNoContent", 204)
 }
 
 func (o *DeleteBatchNoContent) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchNoContent ", 204)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchNoContent", 204)
 }
 
 func (o *DeleteBatchNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -155,11 +155,11 @@ func (o *DeleteBatchBadRequest) Code() int {
 }
 
 func (o *DeleteBatchBadRequest) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchBadRequest ", 400)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchBadRequest", 400)
 }
 
 func (o *DeleteBatchBadRequest) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchBadRequest ", 400)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchBadRequest", 400)
 }
 
 func (o *DeleteBatchBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -211,11 +211,11 @@ func (o *DeleteBatchUnauthorized) Code() int {
 }
 
 func (o *DeleteBatchUnauthorized) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchUnauthorized ", 401)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchUnauthorized", 401)
 }
 
 func (o *DeleteBatchUnauthorized) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchUnauthorized ", 401)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchUnauthorized", 401)
 }
 
 func (o *DeleteBatchUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -267,11 +267,11 @@ func (o *DeleteBatchForbidden) Code() int {
 }
 
 func (o *DeleteBatchForbidden) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchForbidden ", 403)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchForbidden", 403)
 }
 
 func (o *DeleteBatchForbidden) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchForbidden ", 403)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchForbidden", 403)
 }
 
 func (o *DeleteBatchForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -323,11 +323,11 @@ func (o *DeleteBatchNotFound) Code() int {
 }
 
 func (o *DeleteBatchNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchNotFound ", 404)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchNotFound", 404)
 }
 
 func (o *DeleteBatchNotFound) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchNotFound ", 404)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] deleteBatchNotFound", 404)
 }
 
 func (o *DeleteBatchNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

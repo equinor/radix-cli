@@ -6,6 +6,7 @@ package job
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -103,11 +104,13 @@ func (o *CopyBatchOK) Code() int {
 }
 
 func (o *CopyBatchOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchOK %s", 200, payload)
 }
 
 func (o *CopyBatchOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchOK %s", 200, payload)
 }
 
 func (o *CopyBatchOK) GetPayload() *models.ScheduledBatchSummary {
@@ -170,11 +173,11 @@ func (o *CopyBatchBadRequest) Code() int {
 }
 
 func (o *CopyBatchBadRequest) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchBadRequest", 400)
 }
 
 func (o *CopyBatchBadRequest) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchBadRequest", 400)
 }
 
 func (o *CopyBatchBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -226,11 +229,11 @@ func (o *CopyBatchUnauthorized) Code() int {
 }
 
 func (o *CopyBatchUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchUnauthorized", 401)
 }
 
 func (o *CopyBatchUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchUnauthorized", 401)
 }
 
 func (o *CopyBatchUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -282,11 +285,11 @@ func (o *CopyBatchForbidden) Code() int {
 }
 
 func (o *CopyBatchForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchForbidden", 403)
 }
 
 func (o *CopyBatchForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchForbidden", 403)
 }
 
 func (o *CopyBatchForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -338,11 +341,11 @@ func (o *CopyBatchNotFound) Code() int {
 }
 
 func (o *CopyBatchNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchNotFound", 404)
 }
 
 func (o *CopyBatchNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/copy][%d] copyBatchNotFound", 404)
 }
 
 func (o *CopyBatchNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -87,11 +87,11 @@ func (o *StopEnvironmentOK) Code() int {
 }
 
 func (o *StopEnvironmentOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentOK", 200)
 }
 
 func (o *StopEnvironmentOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentOK", 200)
 }
 
 func (o *StopEnvironmentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -143,11 +143,11 @@ func (o *StopEnvironmentUnauthorized) Code() int {
 }
 
 func (o *StopEnvironmentUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentUnauthorized", 401)
 }
 
 func (o *StopEnvironmentUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentUnauthorized", 401)
 }
 
 func (o *StopEnvironmentUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -199,11 +199,11 @@ func (o *StopEnvironmentNotFound) Code() int {
 }
 
 func (o *StopEnvironmentNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentNotFound", 404)
 }
 
 func (o *StopEnvironmentNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/stop][%d] stopEnvironmentNotFound", 404)
 }
 
 func (o *StopEnvironmentNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

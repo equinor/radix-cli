@@ -87,11 +87,11 @@ func (o *StopApplicationOK) Code() int {
 }
 
 func (o *StopApplicationOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationOK", 200)
 }
 
 func (o *StopApplicationOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationOK", 200)
 }
 
 func (o *StopApplicationOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -143,11 +143,11 @@ func (o *StopApplicationUnauthorized) Code() int {
 }
 
 func (o *StopApplicationUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationUnauthorized", 401)
 }
 
 func (o *StopApplicationUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationUnauthorized", 401)
 }
 
 func (o *StopApplicationUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -199,11 +199,11 @@ func (o *StopApplicationNotFound) Code() int {
 }
 
 func (o *StopApplicationNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationNotFound", 404)
 }
 
 func (o *StopApplicationNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/stop][%d] stopApplicationNotFound", 404)
 }
 
 func (o *StopApplicationNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

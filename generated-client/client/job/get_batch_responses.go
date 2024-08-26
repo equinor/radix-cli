@@ -6,6 +6,7 @@ package job
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -85,11 +86,13 @@ func (o *GetBatchOK) Code() int {
 }
 
 func (o *GetBatchOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] getBatchOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] getBatchOK %s", 200, payload)
 }
 
 func (o *GetBatchOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] getBatchOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] getBatchOK %s", 200, payload)
 }
 
 func (o *GetBatchOK) GetPayload() *models.ScheduledBatchSummary {
@@ -152,11 +155,11 @@ func (o *GetBatchNotFound) Code() int {
 }
 
 func (o *GetBatchNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] getBatchNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] getBatchNotFound", 404)
 }
 
 func (o *GetBatchNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] getBatchNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}][%d] getBatchNotFound", 404)
 }
 
 func (o *GetBatchNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -46,7 +46,7 @@ type Secret struct {
 	// Consistent = Secret exists in Radix config and in cluster
 	// NotAvailable = Secret is available in external secret configuration but not in cluster
 	// Example: Consistent
-	// Enum: [Pending Consistent NotAvailable]
+	// Enum: ["Pending","Consistent","NotAvailable"]
 	Status string `json:"status,omitempty"`
 
 	// Type of the secret
@@ -58,7 +58,7 @@ type Secret struct {
 	// client-cert-auth SecretTypeClientCertificateAuth
 	// oauth2-proxy SecretTypeOAuth2Proxy
 	// Example: client-cert
-	// Enum: [generic azure-blob-fuse-volume csi-azure-blob-volume csi-azure-key-vault-creds csi-azure-key-vault-item client-cert-auth oauth2-proxy]
+	// Enum: ["generic","azure-blob-fuse-volume","csi-azure-blob-volume","csi-azure-key-vault-creds","csi-azure-key-vault-item","client-cert-auth","oauth2-proxy"]
 	Type string `json:"type,omitempty"`
 }
 

@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -103,11 +104,13 @@ func (o *ChangeRegistrationDetailsOK) Code() int {
 }
 
 func (o *ChangeRegistrationDetailsOK) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsOK %s", 200, payload)
 }
 
 func (o *ChangeRegistrationDetailsOK) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsOK %s", 200, payload)
 }
 
 func (o *ChangeRegistrationDetailsOK) GetPayload() *models.ApplicationRegistrationUpsertResponse {
@@ -170,11 +173,11 @@ func (o *ChangeRegistrationDetailsBadRequest) Code() int {
 }
 
 func (o *ChangeRegistrationDetailsBadRequest) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsBadRequest", 400)
 }
 
 func (o *ChangeRegistrationDetailsBadRequest) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsBadRequest", 400)
 }
 
 func (o *ChangeRegistrationDetailsBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -226,11 +229,11 @@ func (o *ChangeRegistrationDetailsUnauthorized) Code() int {
 }
 
 func (o *ChangeRegistrationDetailsUnauthorized) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsUnauthorized", 401)
 }
 
 func (o *ChangeRegistrationDetailsUnauthorized) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsUnauthorized", 401)
 }
 
 func (o *ChangeRegistrationDetailsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -282,11 +285,11 @@ func (o *ChangeRegistrationDetailsNotFound) Code() int {
 }
 
 func (o *ChangeRegistrationDetailsNotFound) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsNotFound", 404)
 }
 
 func (o *ChangeRegistrationDetailsNotFound) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsNotFound", 404)
 }
 
 func (o *ChangeRegistrationDetailsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -338,11 +341,11 @@ func (o *ChangeRegistrationDetailsConflict) Code() int {
 }
 
 func (o *ChangeRegistrationDetailsConflict) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsConflict ", 409)
+	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsConflict", 409)
 }
 
 func (o *ChangeRegistrationDetailsConflict) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsConflict ", 409)
+	return fmt.Sprintf("[PUT /applications/{appName}][%d] changeRegistrationDetailsConflict", 409)
 }
 
 func (o *ChangeRegistrationDetailsConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

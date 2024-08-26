@@ -105,11 +105,11 @@ func (o *RestartOAuthAuxiliaryResourceOK) Code() int {
 }
 
 func (o *RestartOAuthAuxiliaryResourceOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceOK", 200)
 }
 
 func (o *RestartOAuthAuxiliaryResourceOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceOK", 200)
 }
 
 func (o *RestartOAuthAuxiliaryResourceOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -161,11 +161,11 @@ func (o *RestartOAuthAuxiliaryResourceUnauthorized) Code() int {
 }
 
 func (o *RestartOAuthAuxiliaryResourceUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceUnauthorized", 401)
 }
 
 func (o *RestartOAuthAuxiliaryResourceUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceUnauthorized", 401)
 }
 
 func (o *RestartOAuthAuxiliaryResourceUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -217,11 +217,11 @@ func (o *RestartOAuthAuxiliaryResourceForbidden) Code() int {
 }
 
 func (o *RestartOAuthAuxiliaryResourceForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceForbidden", 403)
 }
 
 func (o *RestartOAuthAuxiliaryResourceForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceForbidden", 403)
 }
 
 func (o *RestartOAuthAuxiliaryResourceForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -273,11 +273,11 @@ func (o *RestartOAuthAuxiliaryResourceNotFound) Code() int {
 }
 
 func (o *RestartOAuthAuxiliaryResourceNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceNotFound", 404)
 }
 
 func (o *RestartOAuthAuxiliaryResourceNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceNotFound", 404)
 }
 
 func (o *RestartOAuthAuxiliaryResourceNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -329,11 +329,11 @@ func (o *RestartOAuthAuxiliaryResourceConflict) Code() int {
 }
 
 func (o *RestartOAuthAuxiliaryResourceConflict) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceConflict ", 409)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceConflict", 409)
 }
 
 func (o *RestartOAuthAuxiliaryResourceConflict) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceConflict ", 409)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceConflict", 409)
 }
 
 func (o *RestartOAuthAuxiliaryResourceConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -385,11 +385,11 @@ func (o *RestartOAuthAuxiliaryResourceInternalServerError) Code() int {
 }
 
 func (o *RestartOAuthAuxiliaryResourceInternalServerError) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceInternalServerError ", 500)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceInternalServerError", 500)
 }
 
 func (o *RestartOAuthAuxiliaryResourceInternalServerError) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceInternalServerError ", 500)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart][%d] restartOAuthAuxiliaryResourceInternalServerError", 500)
 }
 
 func (o *RestartOAuthAuxiliaryResourceInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

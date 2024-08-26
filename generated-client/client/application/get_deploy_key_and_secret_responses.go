@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *GetDeployKeyAndSecretOK) Code() int {
 }
 
 func (o *GetDeployKeyAndSecretOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretOK %s", 200, payload)
 }
 
 func (o *GetDeployKeyAndSecretOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretOK %s", 200, payload)
 }
 
 func (o *GetDeployKeyAndSecretOK) GetPayload() *models.DeployKeyAndSecret {
@@ -158,11 +161,11 @@ func (o *GetDeployKeyAndSecretUnauthorized) Code() int {
 }
 
 func (o *GetDeployKeyAndSecretUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretUnauthorized", 401)
 }
 
 func (o *GetDeployKeyAndSecretUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretUnauthorized", 401)
 }
 
 func (o *GetDeployKeyAndSecretUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -214,11 +217,11 @@ func (o *GetDeployKeyAndSecretNotFound) Code() int {
 }
 
 func (o *GetDeployKeyAndSecretNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretNotFound", 404)
 }
 
 func (o *GetDeployKeyAndSecretNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/deploy-key-and-secret][%d] getDeployKeyAndSecretNotFound", 404)
 }
 
 func (o *GetDeployKeyAndSecretNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

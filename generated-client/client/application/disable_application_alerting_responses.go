@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -109,11 +110,13 @@ func (o *DisableApplicationAlertingOK) Code() int {
 }
 
 func (o *DisableApplicationAlertingOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingOK %s", 200, payload)
 }
 
 func (o *DisableApplicationAlertingOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingOK %s", 200, payload)
 }
 
 func (o *DisableApplicationAlertingOK) GetPayload() *models.AlertingConfig {
@@ -176,11 +179,11 @@ func (o *DisableApplicationAlertingBadRequest) Code() int {
 }
 
 func (o *DisableApplicationAlertingBadRequest) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingBadRequest", 400)
 }
 
 func (o *DisableApplicationAlertingBadRequest) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingBadRequest", 400)
 }
 
 func (o *DisableApplicationAlertingBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -232,11 +235,11 @@ func (o *DisableApplicationAlertingUnauthorized) Code() int {
 }
 
 func (o *DisableApplicationAlertingUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingUnauthorized", 401)
 }
 
 func (o *DisableApplicationAlertingUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingUnauthorized", 401)
 }
 
 func (o *DisableApplicationAlertingUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -288,11 +291,11 @@ func (o *DisableApplicationAlertingForbidden) Code() int {
 }
 
 func (o *DisableApplicationAlertingForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingForbidden", 403)
 }
 
 func (o *DisableApplicationAlertingForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingForbidden", 403)
 }
 
 func (o *DisableApplicationAlertingForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -344,11 +347,11 @@ func (o *DisableApplicationAlertingNotFound) Code() int {
 }
 
 func (o *DisableApplicationAlertingNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingNotFound", 404)
 }
 
 func (o *DisableApplicationAlertingNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingNotFound", 404)
 }
 
 func (o *DisableApplicationAlertingNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -400,11 +403,11 @@ func (o *DisableApplicationAlertingInternalServerError) Code() int {
 }
 
 func (o *DisableApplicationAlertingInternalServerError) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingInternalServerError ", 500)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingInternalServerError", 500)
 }
 
 func (o *DisableApplicationAlertingInternalServerError) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingInternalServerError ", 500)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/disable][%d] disableApplicationAlertingInternalServerError", 500)
 }
 
 func (o *DisableApplicationAlertingInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

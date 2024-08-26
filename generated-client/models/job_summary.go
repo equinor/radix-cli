@@ -52,9 +52,12 @@ type JobSummary struct {
 	// Example: radix-pipeline-20181029135644-algpv-6hznh
 	Name string `json:"name,omitempty"`
 
+	// OverrideUseBuildCache override default or configured build cache option
+	OverrideUseBuildCache bool `json:"overrideUseBuildCache,omitempty"`
+
 	// Name of the pipeline
 	// Example: build-deploy
-	// Enum: [build build-deploy promote deploy]
+	// Enum: ["build","build-deploy","promote","deploy"]
 	Pipeline string `json:"pipeline,omitempty"`
 
 	// RadixDeployment name, which is promoted
@@ -72,7 +75,7 @@ type JobSummary struct {
 
 	// Status of the job
 	// Example: Waiting
-	// Enum: [Queued Waiting Running Succeeded Failed Stopped Stopping StoppedNoChanges]
+	// Enum: ["Queued","Waiting","Running","Succeeded","Failed","Stopped","Stopping","StoppedNoChanges"]
 	Status string `json:"status,omitempty"`
 
 	// TriggeredBy user that triggered the job. If through webhook = sender.login. If through api - usertoken.upn

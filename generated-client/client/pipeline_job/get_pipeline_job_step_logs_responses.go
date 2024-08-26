@@ -6,6 +6,7 @@ package pipeline_job
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -89,11 +90,13 @@ func (o *GetPipelineJobStepLogsOK) Code() int {
 }
 
 func (o *GetPipelineJobStepLogsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsOK %s", 200, payload)
 }
 
 func (o *GetPipelineJobStepLogsOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsOK %s", 200, payload)
 }
 
 func (o *GetPipelineJobStepLogsOK) GetPayload() string {
@@ -154,11 +157,11 @@ func (o *GetPipelineJobStepLogsUnauthorized) Code() int {
 }
 
 func (o *GetPipelineJobStepLogsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsUnauthorized", 401)
 }
 
 func (o *GetPipelineJobStepLogsUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsUnauthorized", 401)
 }
 
 func (o *GetPipelineJobStepLogsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -210,11 +213,11 @@ func (o *GetPipelineJobStepLogsNotFound) Code() int {
 }
 
 func (o *GetPipelineJobStepLogsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsNotFound", 404)
 }
 
 func (o *GetPipelineJobStepLogsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/logs/{stepName}][%d] getPipelineJobStepLogsNotFound", 404)
 }
 
 func (o *GetPipelineJobStepLogsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -93,11 +93,11 @@ func (o *RegenerateDeployKeyNoContent) Code() int {
 }
 
 func (o *RegenerateDeployKeyNoContent) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyNoContent", 204)
 }
 
 func (o *RegenerateDeployKeyNoContent) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyNoContent", 204)
 }
 
 func (o *RegenerateDeployKeyNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -149,11 +149,11 @@ func (o *RegenerateDeployKeyUnauthorized) Code() int {
 }
 
 func (o *RegenerateDeployKeyUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyUnauthorized", 401)
 }
 
 func (o *RegenerateDeployKeyUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyUnauthorized", 401)
 }
 
 func (o *RegenerateDeployKeyUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -205,11 +205,11 @@ func (o *RegenerateDeployKeyNotFound) Code() int {
 }
 
 func (o *RegenerateDeployKeyNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyNotFound", 404)
 }
 
 func (o *RegenerateDeployKeyNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyNotFound", 404)
 }
 
 func (o *RegenerateDeployKeyNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -261,11 +261,11 @@ func (o *RegenerateDeployKeyConflict) Code() int {
 }
 
 func (o *RegenerateDeployKeyConflict) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyConflict ", 409)
+	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyConflict", 409)
 }
 
 func (o *RegenerateDeployKeyConflict) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyConflict ", 409)
+	return fmt.Sprintf("[POST /applications/{appName}/regenerate-deploy-key][%d] regenerateDeployKeyConflict", 409)
 }
 
 func (o *RegenerateDeployKeyConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

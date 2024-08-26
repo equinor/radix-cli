@@ -111,11 +111,11 @@ func (o *ChangeEnvVarOK) Code() int {
 }
 
 func (o *ChangeEnvVarOK) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarOK ", 200)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarOK", 200)
 }
 
 func (o *ChangeEnvVarOK) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarOK ", 200)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarOK", 200)
 }
 
 func (o *ChangeEnvVarOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -167,11 +167,11 @@ func (o *ChangeEnvVarBadRequest) Code() int {
 }
 
 func (o *ChangeEnvVarBadRequest) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarBadRequest ", 400)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarBadRequest", 400)
 }
 
 func (o *ChangeEnvVarBadRequest) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarBadRequest ", 400)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarBadRequest", 400)
 }
 
 func (o *ChangeEnvVarBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -223,11 +223,11 @@ func (o *ChangeEnvVarUnauthorized) Code() int {
 }
 
 func (o *ChangeEnvVarUnauthorized) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarUnauthorized ", 401)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarUnauthorized", 401)
 }
 
 func (o *ChangeEnvVarUnauthorized) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarUnauthorized ", 401)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarUnauthorized", 401)
 }
 
 func (o *ChangeEnvVarUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -279,11 +279,11 @@ func (o *ChangeEnvVarForbidden) Code() int {
 }
 
 func (o *ChangeEnvVarForbidden) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarForbidden ", 403)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarForbidden", 403)
 }
 
 func (o *ChangeEnvVarForbidden) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarForbidden ", 403)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarForbidden", 403)
 }
 
 func (o *ChangeEnvVarForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -335,11 +335,11 @@ func (o *ChangeEnvVarNotFound) Code() int {
 }
 
 func (o *ChangeEnvVarNotFound) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarNotFound ", 404)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarNotFound", 404)
 }
 
 func (o *ChangeEnvVarNotFound) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarNotFound ", 404)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarNotFound", 404)
 }
 
 func (o *ChangeEnvVarNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -391,11 +391,11 @@ func (o *ChangeEnvVarConflict) Code() int {
 }
 
 func (o *ChangeEnvVarConflict) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarConflict ", 409)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarConflict", 409)
 }
 
 func (o *ChangeEnvVarConflict) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarConflict ", 409)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarConflict", 409)
 }
 
 func (o *ChangeEnvVarConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -447,11 +447,11 @@ func (o *ChangeEnvVarInternalServerError) Code() int {
 }
 
 func (o *ChangeEnvVarInternalServerError) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarInternalServerError ", 500)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarInternalServerError", 500)
 }
 
 func (o *ChangeEnvVarInternalServerError) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarInternalServerError ", 500)
+	return fmt.Sprintf("[PATCH /applications/{appName}/environments/{envName}/components/{componentName}/envvars][%d] changeEnvVarInternalServerError", 500)
 }
 
 func (o *ChangeEnvVarInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

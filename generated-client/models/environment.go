@@ -40,7 +40,7 @@ type Environment struct {
 	// Consistent = Environment exists in Radix config and in cluster
 	// Orphan = Environment does not exist in Radix config, but exists in cluster
 	// Example: Consistent
-	// Enum: [Pending Consistent Orphan]
+	// Enum: ["Pending","Consistent","Orphan"]
 	Status string `json:"status,omitempty"`
 
 	// active deployment

@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *GetBuildSecretsOK) Code() int {
 }
 
 func (o *GetBuildSecretsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsOK %s", 200, payload)
 }
 
 func (o *GetBuildSecretsOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsOK %s", 200, payload)
 }
 
 func (o *GetBuildSecretsOK) GetPayload() []*models.BuildSecret {
@@ -156,11 +159,11 @@ func (o *GetBuildSecretsUnauthorized) Code() int {
 }
 
 func (o *GetBuildSecretsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsUnauthorized", 401)
 }
 
 func (o *GetBuildSecretsUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsUnauthorized", 401)
 }
 
 func (o *GetBuildSecretsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -212,11 +215,11 @@ func (o *GetBuildSecretsNotFound) Code() int {
 }
 
 func (o *GetBuildSecretsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsNotFound", 404)
 }
 
 func (o *GetBuildSecretsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/buildsecrets][%d] getBuildSecretsNotFound", 404)
 }
 
 func (o *GetBuildSecretsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

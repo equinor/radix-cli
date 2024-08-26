@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -77,11 +78,13 @@ func (o *ListPipelinesOK) Code() int {
 }
 
 func (o *ListPipelinesOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/pipelines][%d] listPipelinesOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/pipelines][%d] listPipelinesOK %s", 200, payload)
 }
 
 func (o *ListPipelinesOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/pipelines][%d] listPipelinesOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/pipelines][%d] listPipelinesOK %s", 200, payload)
 }
 
 func (o *ListPipelinesOK) GetPayload() []string {

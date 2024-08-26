@@ -70,13 +70,13 @@ type Component struct {
 
 	// Status of the component
 	// Example: Consistent
-	// Enum: [Stopped Consistent Reconciling Restarting Outdated]
+	// Enum: ["Stopped","Consistent","Reconciling","Restarting","Outdated"]
 	Status string `json:"status,omitempty"`
 
 	// Type of component
 	// Example: component
 	// Required: true
-	// Enum: [component job]
+	// Enum: ["component","job"]
 	Type *string `json:"type"`
 
 	// Variable names map to values. From radixconfig.yaml

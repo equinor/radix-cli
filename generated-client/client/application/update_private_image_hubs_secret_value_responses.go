@@ -105,11 +105,11 @@ func (o *UpdatePrivateImageHubsSecretValueOK) Code() int {
 }
 
 func (o *UpdatePrivateImageHubsSecretValueOK) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueOK ", 200)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueOK", 200)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueOK) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueOK ", 200)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueOK", 200)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -161,11 +161,11 @@ func (o *UpdatePrivateImageHubsSecretValueBadRequest) Code() int {
 }
 
 func (o *UpdatePrivateImageHubsSecretValueBadRequest) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueBadRequest", 400)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueBadRequest) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueBadRequest", 400)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -217,11 +217,11 @@ func (o *UpdatePrivateImageHubsSecretValueUnauthorized) Code() int {
 }
 
 func (o *UpdatePrivateImageHubsSecretValueUnauthorized) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueUnauthorized", 401)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueUnauthorized) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueUnauthorized", 401)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -273,11 +273,11 @@ func (o *UpdatePrivateImageHubsSecretValueForbidden) Code() int {
 }
 
 func (o *UpdatePrivateImageHubsSecretValueForbidden) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueForbidden", 403)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueForbidden) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueForbidden", 403)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -329,11 +329,11 @@ func (o *UpdatePrivateImageHubsSecretValueNotFound) Code() int {
 }
 
 func (o *UpdatePrivateImageHubsSecretValueNotFound) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueNotFound", 404)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueNotFound) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueNotFound", 404)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -385,11 +385,11 @@ func (o *UpdatePrivateImageHubsSecretValueConflict) Code() int {
 }
 
 func (o *UpdatePrivateImageHubsSecretValueConflict) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueConflict ", 409)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueConflict", 409)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueConflict) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueConflict ", 409)
+	return fmt.Sprintf("[PUT /applications/{appName}/privateimagehubs/{serverName}][%d] updatePrivateImageHubsSecretValueConflict", 409)
 }
 
 func (o *UpdatePrivateImageHubsSecretValueConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -99,11 +99,11 @@ func (o *RestartBatchNoContent) Code() int {
 }
 
 func (o *RestartBatchNoContent) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchNoContent", 204)
 }
 
 func (o *RestartBatchNoContent) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchNoContent", 204)
 }
 
 func (o *RestartBatchNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -155,11 +155,11 @@ func (o *RestartBatchBadRequest) Code() int {
 }
 
 func (o *RestartBatchBadRequest) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchBadRequest", 400)
 }
 
 func (o *RestartBatchBadRequest) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchBadRequest", 400)
 }
 
 func (o *RestartBatchBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -211,11 +211,11 @@ func (o *RestartBatchUnauthorized) Code() int {
 }
 
 func (o *RestartBatchUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchUnauthorized", 401)
 }
 
 func (o *RestartBatchUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchUnauthorized", 401)
 }
 
 func (o *RestartBatchUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -267,11 +267,11 @@ func (o *RestartBatchForbidden) Code() int {
 }
 
 func (o *RestartBatchForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchForbidden", 403)
 }
 
 func (o *RestartBatchForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchForbidden", 403)
 }
 
 func (o *RestartBatchForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -323,11 +323,11 @@ func (o *RestartBatchNotFound) Code() int {
 }
 
 func (o *RestartBatchNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchNotFound", 404)
 }
 
 func (o *RestartBatchNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/restart][%d] restartBatchNotFound", 404)
 }
 
 func (o *RestartBatchNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

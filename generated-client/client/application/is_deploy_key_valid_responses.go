@@ -105,11 +105,11 @@ func (o *IsDeployKeyValidOK) Code() int {
 }
 
 func (o *IsDeployKeyValidOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidOK ", 200)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidOK", 200)
 }
 
 func (o *IsDeployKeyValidOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidOK ", 200)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidOK", 200)
 }
 
 func (o *IsDeployKeyValidOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -161,11 +161,11 @@ func (o *IsDeployKeyValidUnauthorized) Code() int {
 }
 
 func (o *IsDeployKeyValidUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidUnauthorized", 401)
 }
 
 func (o *IsDeployKeyValidUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidUnauthorized", 401)
 }
 
 func (o *IsDeployKeyValidUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -217,11 +217,11 @@ func (o *IsDeployKeyValidForbidden) Code() int {
 }
 
 func (o *IsDeployKeyValidForbidden) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidForbidden", 403)
 }
 
 func (o *IsDeployKeyValidForbidden) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidForbidden", 403)
 }
 
 func (o *IsDeployKeyValidForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -273,11 +273,11 @@ func (o *IsDeployKeyValidNotFound) Code() int {
 }
 
 func (o *IsDeployKeyValidNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidNotFound", 404)
 }
 
 func (o *IsDeployKeyValidNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidNotFound", 404)
 }
 
 func (o *IsDeployKeyValidNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -329,11 +329,11 @@ func (o *IsDeployKeyValidConflict) Code() int {
 }
 
 func (o *IsDeployKeyValidConflict) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidConflict ", 409)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidConflict", 409)
 }
 
 func (o *IsDeployKeyValidConflict) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidConflict ", 409)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidConflict", 409)
 }
 
 func (o *IsDeployKeyValidConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -385,11 +385,11 @@ func (o *IsDeployKeyValidInternalServerError) Code() int {
 }
 
 func (o *IsDeployKeyValidInternalServerError) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidInternalServerError", 500)
 }
 
 func (o *IsDeployKeyValidInternalServerError) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/deploykey-valid][%d] isDeployKeyValidInternalServerError", 500)
 }
 
 func (o *IsDeployKeyValidInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

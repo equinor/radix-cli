@@ -87,11 +87,11 @@ func (o *StopComponentOK) Code() int {
 }
 
 func (o *StopComponentOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentOK", 200)
 }
 
 func (o *StopComponentOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentOK", 200)
 }
 
 func (o *StopComponentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -143,11 +143,11 @@ func (o *StopComponentUnauthorized) Code() int {
 }
 
 func (o *StopComponentUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentUnauthorized", 401)
 }
 
 func (o *StopComponentUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentUnauthorized", 401)
 }
 
 func (o *StopComponentUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -199,11 +199,11 @@ func (o *StopComponentNotFound) Code() int {
 }
 
 func (o *StopComponentNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentNotFound", 404)
 }
 
 func (o *StopComponentNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/stop][%d] stopComponentNotFound", 404)
 }
 
 func (o *StopComponentNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -6,6 +6,7 @@ package platform
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -109,11 +110,13 @@ func (o *ShowApplicationsOK) Code() int {
 }
 
 func (o *ShowApplicationsOK) Error() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsOK %s", 200, payload)
 }
 
 func (o *ShowApplicationsOK) String() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsOK %s", 200, payload)
 }
 
 func (o *ShowApplicationsOK) GetPayload() []*models.ApplicationSummary {
@@ -174,11 +177,11 @@ func (o *ShowApplicationsUnauthorized) Code() int {
 }
 
 func (o *ShowApplicationsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsUnauthorized", 401)
 }
 
 func (o *ShowApplicationsUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsUnauthorized", 401)
 }
 
 func (o *ShowApplicationsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -230,11 +233,11 @@ func (o *ShowApplicationsForbidden) Code() int {
 }
 
 func (o *ShowApplicationsForbidden) Error() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsForbidden ", 403)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsForbidden", 403)
 }
 
 func (o *ShowApplicationsForbidden) String() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsForbidden ", 403)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsForbidden", 403)
 }
 
 func (o *ShowApplicationsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -286,11 +289,11 @@ func (o *ShowApplicationsNotFound) Code() int {
 }
 
 func (o *ShowApplicationsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsNotFound", 404)
 }
 
 func (o *ShowApplicationsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsNotFound", 404)
 }
 
 func (o *ShowApplicationsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -342,11 +345,11 @@ func (o *ShowApplicationsConflict) Code() int {
 }
 
 func (o *ShowApplicationsConflict) Error() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsConflict ", 409)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsConflict", 409)
 }
 
 func (o *ShowApplicationsConflict) String() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsConflict ", 409)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsConflict", 409)
 }
 
 func (o *ShowApplicationsConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -398,11 +401,11 @@ func (o *ShowApplicationsInternalServerError) Code() int {
 }
 
 func (o *ShowApplicationsInternalServerError) Error() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsInternalServerError", 500)
 }
 
 func (o *ShowApplicationsInternalServerError) String() string {
-	return fmt.Sprintf("[GET /applications][%d] showApplicationsInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications][%d] showApplicationsInternalServerError", 500)
 }
 
 func (o *ShowApplicationsInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -109,11 +110,13 @@ func (o *EnableApplicationAlertingOK) Code() int {
 }
 
 func (o *EnableApplicationAlertingOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingOK %s", 200, payload)
 }
 
 func (o *EnableApplicationAlertingOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingOK %s", 200, payload)
 }
 
 func (o *EnableApplicationAlertingOK) GetPayload() *models.AlertingConfig {
@@ -176,11 +179,11 @@ func (o *EnableApplicationAlertingBadRequest) Code() int {
 }
 
 func (o *EnableApplicationAlertingBadRequest) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingBadRequest", 400)
 }
 
 func (o *EnableApplicationAlertingBadRequest) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingBadRequest", 400)
 }
 
 func (o *EnableApplicationAlertingBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -232,11 +235,11 @@ func (o *EnableApplicationAlertingUnauthorized) Code() int {
 }
 
 func (o *EnableApplicationAlertingUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingUnauthorized", 401)
 }
 
 func (o *EnableApplicationAlertingUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingUnauthorized", 401)
 }
 
 func (o *EnableApplicationAlertingUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -288,11 +291,11 @@ func (o *EnableApplicationAlertingForbidden) Code() int {
 }
 
 func (o *EnableApplicationAlertingForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingForbidden", 403)
 }
 
 func (o *EnableApplicationAlertingForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingForbidden", 403)
 }
 
 func (o *EnableApplicationAlertingForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -344,11 +347,11 @@ func (o *EnableApplicationAlertingNotFound) Code() int {
 }
 
 func (o *EnableApplicationAlertingNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingNotFound", 404)
 }
 
 func (o *EnableApplicationAlertingNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingNotFound", 404)
 }
 
 func (o *EnableApplicationAlertingNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -400,11 +403,11 @@ func (o *EnableApplicationAlertingInternalServerError) Code() int {
 }
 
 func (o *EnableApplicationAlertingInternalServerError) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingInternalServerError ", 500)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingInternalServerError", 500)
 }
 
 func (o *EnableApplicationAlertingInternalServerError) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingInternalServerError ", 500)
+	return fmt.Sprintf("[POST /applications/{appName}/alerting/enable][%d] enableApplicationAlertingInternalServerError", 500)
 }
 
 func (o *EnableApplicationAlertingInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

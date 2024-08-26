@@ -39,7 +39,7 @@ type ReplicaStatus struct {
 	// Succeeded Succeeded  Succeeded all containers in the pod have voluntarily terminated
 	// Example: Running
 	// Required: true
-	// Enum: [Pending Failed Failing Running Terminated Starting Stopped Succeeded]
+	// Enum: ["Pending","Failed","Failing","Running","Terminated","Starting","Stopped","Succeeded"]
 	Status *string `json:"status"`
 }
 

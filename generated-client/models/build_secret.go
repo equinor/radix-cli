@@ -29,7 +29,7 @@ type BuildSecret struct {
 	// Pending = Secret value is not set
 	// Consistent = Secret value is set
 	// Example: Consistent
-	// Enum: [Pending Consistent]
+	// Enum: ["Pending","Consistent"]
 	Status string `json:"status,omitempty"`
 }
 

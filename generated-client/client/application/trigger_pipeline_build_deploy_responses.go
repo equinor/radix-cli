@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *TriggerPipelineBuildDeployOK) Code() int {
 }
 
 func (o *TriggerPipelineBuildDeployOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployOK %s", 200, payload)
 }
 
 func (o *TriggerPipelineBuildDeployOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployOK %s", 200, payload)
 }
 
 func (o *TriggerPipelineBuildDeployOK) GetPayload() *models.JobSummary {
@@ -158,11 +161,11 @@ func (o *TriggerPipelineBuildDeployForbidden) Code() int {
 }
 
 func (o *TriggerPipelineBuildDeployForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployForbidden", 403)
 }
 
 func (o *TriggerPipelineBuildDeployForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployForbidden", 403)
 }
 
 func (o *TriggerPipelineBuildDeployForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -214,11 +217,11 @@ func (o *TriggerPipelineBuildDeployNotFound) Code() int {
 }
 
 func (o *TriggerPipelineBuildDeployNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployNotFound", 404)
 }
 
 func (o *TriggerPipelineBuildDeployNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/build-deploy][%d] triggerPipelineBuildDeployNotFound", 404)
 }
 
 func (o *TriggerPipelineBuildDeployNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

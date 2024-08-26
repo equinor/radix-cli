@@ -6,6 +6,7 @@ package job
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -85,11 +86,13 @@ func (o *GetJobComponentDeploymentsOK) Code() int {
 }
 
 func (o *GetJobComponentDeploymentsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/deployments][%d] getJobComponentDeploymentsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/deployments][%d] getJobComponentDeploymentsOK %s", 200, payload)
 }
 
 func (o *GetJobComponentDeploymentsOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/deployments][%d] getJobComponentDeploymentsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/deployments][%d] getJobComponentDeploymentsOK %s", 200, payload)
 }
 
 func (o *GetJobComponentDeploymentsOK) GetPayload() []*models.DeploymentItem {
@@ -150,11 +153,11 @@ func (o *GetJobComponentDeploymentsNotFound) Code() int {
 }
 
 func (o *GetJobComponentDeploymentsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/deployments][%d] getJobComponentDeploymentsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/deployments][%d] getJobComponentDeploymentsNotFound", 404)
 }
 
 func (o *GetJobComponentDeploymentsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/deployments][%d] getJobComponentDeploymentsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/deployments][%d] getJobComponentDeploymentsNotFound", 404)
 }
 
 func (o *GetJobComponentDeploymentsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

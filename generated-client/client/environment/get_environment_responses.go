@@ -6,6 +6,7 @@ package environment
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *GetEnvironmentOK) Code() int {
 }
 
 func (o *GetEnvironmentOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentOK %s", 200, payload)
 }
 
 func (o *GetEnvironmentOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentOK %s", 200, payload)
 }
 
 func (o *GetEnvironmentOK) GetPayload() *models.Environment {
@@ -158,11 +161,11 @@ func (o *GetEnvironmentUnauthorized) Code() int {
 }
 
 func (o *GetEnvironmentUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentUnauthorized", 401)
 }
 
 func (o *GetEnvironmentUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentUnauthorized", 401)
 }
 
 func (o *GetEnvironmentUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -214,11 +217,11 @@ func (o *GetEnvironmentNotFound) Code() int {
 }
 
 func (o *GetEnvironmentNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentNotFound", 404)
 }
 
 func (o *GetEnvironmentNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}][%d] getEnvironmentNotFound", 404)
 }
 
 func (o *GetEnvironmentNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

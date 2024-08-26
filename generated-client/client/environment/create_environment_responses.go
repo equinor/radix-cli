@@ -81,11 +81,11 @@ func (o *CreateEnvironmentOK) Code() int {
 }
 
 func (o *CreateEnvironmentOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}][%d] createEnvironmentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}][%d] createEnvironmentOK", 200)
 }
 
 func (o *CreateEnvironmentOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}][%d] createEnvironmentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}][%d] createEnvironmentOK", 200)
 }
 
 func (o *CreateEnvironmentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -137,11 +137,11 @@ func (o *CreateEnvironmentUnauthorized) Code() int {
 }
 
 func (o *CreateEnvironmentUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}][%d] createEnvironmentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}][%d] createEnvironmentUnauthorized", 401)
 }
 
 func (o *CreateEnvironmentUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}][%d] createEnvironmentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}][%d] createEnvironmentUnauthorized", 401)
 }
 
 func (o *CreateEnvironmentUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

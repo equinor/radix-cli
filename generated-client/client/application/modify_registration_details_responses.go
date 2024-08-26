@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -103,11 +104,13 @@ func (o *ModifyRegistrationDetailsOK) Code() int {
 }
 
 func (o *ModifyRegistrationDetailsOK) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsOK %s", 200, payload)
 }
 
 func (o *ModifyRegistrationDetailsOK) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsOK %s", 200, payload)
 }
 
 func (o *ModifyRegistrationDetailsOK) GetPayload() *models.ApplicationRegistrationUpsertResponse {
@@ -170,11 +173,11 @@ func (o *ModifyRegistrationDetailsBadRequest) Code() int {
 }
 
 func (o *ModifyRegistrationDetailsBadRequest) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsBadRequest ", 400)
+	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsBadRequest", 400)
 }
 
 func (o *ModifyRegistrationDetailsBadRequest) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsBadRequest ", 400)
+	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsBadRequest", 400)
 }
 
 func (o *ModifyRegistrationDetailsBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -226,11 +229,11 @@ func (o *ModifyRegistrationDetailsUnauthorized) Code() int {
 }
 
 func (o *ModifyRegistrationDetailsUnauthorized) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsUnauthorized ", 401)
+	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsUnauthorized", 401)
 }
 
 func (o *ModifyRegistrationDetailsUnauthorized) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsUnauthorized ", 401)
+	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsUnauthorized", 401)
 }
 
 func (o *ModifyRegistrationDetailsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -282,11 +285,11 @@ func (o *ModifyRegistrationDetailsNotFound) Code() int {
 }
 
 func (o *ModifyRegistrationDetailsNotFound) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsNotFound ", 404)
+	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsNotFound", 404)
 }
 
 func (o *ModifyRegistrationDetailsNotFound) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsNotFound ", 404)
+	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsNotFound", 404)
 }
 
 func (o *ModifyRegistrationDetailsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -338,11 +341,11 @@ func (o *ModifyRegistrationDetailsConflict) Code() int {
 }
 
 func (o *ModifyRegistrationDetailsConflict) Error() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsConflict ", 409)
+	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsConflict", 409)
 }
 
 func (o *ModifyRegistrationDetailsConflict) String() string {
-	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsConflict ", 409)
+	return fmt.Sprintf("[PATCH /applications/{appName}][%d] modifyRegistrationDetailsConflict", 409)
 }
 
 func (o *ModifyRegistrationDetailsConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -6,6 +6,7 @@ package environment
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -109,11 +110,13 @@ func (o *UpdateEnvironmentAlertingConfigOK) Code() int {
 }
 
 func (o *UpdateEnvironmentAlertingConfigOK) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigOK %s", 200, payload)
 }
 
 func (o *UpdateEnvironmentAlertingConfigOK) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigOK %s", 200, payload)
 }
 
 func (o *UpdateEnvironmentAlertingConfigOK) GetPayload() *models.AlertingConfig {
@@ -176,11 +179,11 @@ func (o *UpdateEnvironmentAlertingConfigBadRequest) Code() int {
 }
 
 func (o *UpdateEnvironmentAlertingConfigBadRequest) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigBadRequest", 400)
 }
 
 func (o *UpdateEnvironmentAlertingConfigBadRequest) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigBadRequest", 400)
 }
 
 func (o *UpdateEnvironmentAlertingConfigBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -232,11 +235,11 @@ func (o *UpdateEnvironmentAlertingConfigUnauthorized) Code() int {
 }
 
 func (o *UpdateEnvironmentAlertingConfigUnauthorized) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigUnauthorized", 401)
 }
 
 func (o *UpdateEnvironmentAlertingConfigUnauthorized) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigUnauthorized", 401)
 }
 
 func (o *UpdateEnvironmentAlertingConfigUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -288,11 +291,11 @@ func (o *UpdateEnvironmentAlertingConfigForbidden) Code() int {
 }
 
 func (o *UpdateEnvironmentAlertingConfigForbidden) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigForbidden", 403)
 }
 
 func (o *UpdateEnvironmentAlertingConfigForbidden) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigForbidden", 403)
 }
 
 func (o *UpdateEnvironmentAlertingConfigForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -344,11 +347,11 @@ func (o *UpdateEnvironmentAlertingConfigNotFound) Code() int {
 }
 
 func (o *UpdateEnvironmentAlertingConfigNotFound) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigNotFound", 404)
 }
 
 func (o *UpdateEnvironmentAlertingConfigNotFound) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigNotFound", 404)
 }
 
 func (o *UpdateEnvironmentAlertingConfigNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -400,11 +403,11 @@ func (o *UpdateEnvironmentAlertingConfigInternalServerError) Code() int {
 }
 
 func (o *UpdateEnvironmentAlertingConfigInternalServerError) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigInternalServerError ", 500)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigInternalServerError", 500)
 }
 
 func (o *UpdateEnvironmentAlertingConfigInternalServerError) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigInternalServerError ", 500)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/alerting][%d] updateEnvironmentAlertingConfigInternalServerError", 500)
 }
 
 func (o *UpdateEnvironmentAlertingConfigInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

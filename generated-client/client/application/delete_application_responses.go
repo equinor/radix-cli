@@ -93,11 +93,11 @@ func (o *DeleteApplicationOK) Code() int {
 }
 
 func (o *DeleteApplicationOK) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationOK ", 200)
+	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationOK", 200)
 }
 
 func (o *DeleteApplicationOK) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationOK ", 200)
+	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationOK", 200)
 }
 
 func (o *DeleteApplicationOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -149,11 +149,11 @@ func (o *DeleteApplicationUnauthorized) Code() int {
 }
 
 func (o *DeleteApplicationUnauthorized) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationUnauthorized ", 401)
+	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationUnauthorized", 401)
 }
 
 func (o *DeleteApplicationUnauthorized) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationUnauthorized ", 401)
+	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationUnauthorized", 401)
 }
 
 func (o *DeleteApplicationUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -205,11 +205,11 @@ func (o *DeleteApplicationForbidden) Code() int {
 }
 
 func (o *DeleteApplicationForbidden) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationForbidden ", 403)
+	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationForbidden", 403)
 }
 
 func (o *DeleteApplicationForbidden) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationForbidden ", 403)
+	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationForbidden", 403)
 }
 
 func (o *DeleteApplicationForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -261,11 +261,11 @@ func (o *DeleteApplicationNotFound) Code() int {
 }
 
 func (o *DeleteApplicationNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationNotFound ", 404)
+	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationNotFound", 404)
 }
 
 func (o *DeleteApplicationNotFound) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationNotFound ", 404)
+	return fmt.Sprintf("[DELETE /applications/{appName}][%d] deleteApplicationNotFound", 404)
 }
 
 func (o *DeleteApplicationNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

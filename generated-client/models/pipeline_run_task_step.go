@@ -50,7 +50,7 @@ type PipelineRunTaskStep struct {
 	// TaskValidationFailed TaskRunReasonTaskFailedValidation  TaskRunReasonTaskFailedValidation indicated that the reason for failure status is  that task failed runtime validation
 	// ResourceVerificationFailed TaskRunReasonResourceVerificationFailed  TaskRunReasonResourceVerificationFailed indicates that the task fails the trusted resource verification,  it could be the content has changed, signature is invalid or public key is invalid
 	// FailureIgnored TaskRunReasonFailureIgnored  TaskRunReasonFailureIgnored is the reason set when the Taskrun has failed due to pod execution error and the failure is ignored for the owning PipelineRun.  TaskRuns failed due to reconciler/validation error should not use this reason.
-	// Enum: [Started Running Succeeded Failed ToBeRetried TaskRunCancelled TaskRunTimeout TaskRunImagePullFailed TaskRunResultLargerThanAllowedLimit TaskRunStopSidecarFailed InvalidParamValue TaskRunResolutionFailed TaskRunValidationFailed TaskValidationFailed ResourceVerificationFailed FailureIgnored]
+	// Enum: ["Started","Running","Succeeded","Failed","ToBeRetried","TaskRunCancelled","TaskRunTimeout","TaskRunImagePullFailed","TaskRunResultLargerThanAllowedLimit","TaskRunStopSidecarFailed","InvalidParamValue","TaskRunResolutionFailed","TaskRunValidationFailed","TaskValidationFailed","ResourceVerificationFailed","FailureIgnored"]
 	Status string `json:"status,omitempty"`
 
 	// StatusMessage of the task

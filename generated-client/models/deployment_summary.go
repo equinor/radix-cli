@@ -60,7 +60,7 @@ type DeploymentSummary struct {
 
 	// Type of pipeline job
 	// Example: build-deploy
-	// Enum: [build build-deploy promote deploy]
+	// Enum: ["build","build-deploy","promote","deploy"]
 	PipelineJobType string `json:"pipelineJobType,omitempty"`
 
 	// Name of the environment the deployment was promoted from

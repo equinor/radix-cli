@@ -111,11 +111,11 @@ func (o *ChangeComponentSecretOK) Code() int {
 }
 
 func (o *ChangeComponentSecretOK) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretOK ", 200)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretOK", 200)
 }
 
 func (o *ChangeComponentSecretOK) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretOK ", 200)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretOK", 200)
 }
 
 func (o *ChangeComponentSecretOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -167,11 +167,11 @@ func (o *ChangeComponentSecretBadRequest) Code() int {
 }
 
 func (o *ChangeComponentSecretBadRequest) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretBadRequest", 400)
 }
 
 func (o *ChangeComponentSecretBadRequest) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretBadRequest", 400)
 }
 
 func (o *ChangeComponentSecretBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -223,11 +223,11 @@ func (o *ChangeComponentSecretUnauthorized) Code() int {
 }
 
 func (o *ChangeComponentSecretUnauthorized) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretUnauthorized", 401)
 }
 
 func (o *ChangeComponentSecretUnauthorized) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretUnauthorized", 401)
 }
 
 func (o *ChangeComponentSecretUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -279,11 +279,11 @@ func (o *ChangeComponentSecretForbidden) Code() int {
 }
 
 func (o *ChangeComponentSecretForbidden) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretForbidden", 403)
 }
 
 func (o *ChangeComponentSecretForbidden) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretForbidden", 403)
 }
 
 func (o *ChangeComponentSecretForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -335,11 +335,11 @@ func (o *ChangeComponentSecretNotFound) Code() int {
 }
 
 func (o *ChangeComponentSecretNotFound) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretNotFound", 404)
 }
 
 func (o *ChangeComponentSecretNotFound) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretNotFound", 404)
 }
 
 func (o *ChangeComponentSecretNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -391,11 +391,11 @@ func (o *ChangeComponentSecretConflict) Code() int {
 }
 
 func (o *ChangeComponentSecretConflict) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretConflict ", 409)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretConflict", 409)
 }
 
 func (o *ChangeComponentSecretConflict) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretConflict ", 409)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretConflict", 409)
 }
 
 func (o *ChangeComponentSecretConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -447,11 +447,11 @@ func (o *ChangeComponentSecretInternalServerError) Code() int {
 }
 
 func (o *ChangeComponentSecretInternalServerError) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretInternalServerError ", 500)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretInternalServerError", 500)
 }
 
 func (o *ChangeComponentSecretInternalServerError) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretInternalServerError ", 500)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/secrets/{secretName}][%d] changeComponentSecretInternalServerError", 500)
 }
 
 func (o *ChangeComponentSecretInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

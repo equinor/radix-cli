@@ -87,11 +87,11 @@ func (o *StartComponentOK) Code() int {
 }
 
 func (o *StartComponentOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentOK", 200)
 }
 
 func (o *StartComponentOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentOK", 200)
 }
 
 func (o *StartComponentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -143,11 +143,11 @@ func (o *StartComponentUnauthorized) Code() int {
 }
 
 func (o *StartComponentUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentUnauthorized", 401)
 }
 
 func (o *StartComponentUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentUnauthorized", 401)
 }
 
 func (o *StartComponentUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -199,11 +199,11 @@ func (o *StartComponentNotFound) Code() int {
 }
 
 func (o *StartComponentNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentNotFound", 404)
 }
 
 func (o *StartComponentNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/start][%d] startComponentNotFound", 404)
 }
 
 func (o *StartComponentNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

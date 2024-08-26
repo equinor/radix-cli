@@ -6,6 +6,7 @@ package job
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -85,11 +86,13 @@ func (o *GetJobsOK) Code() int {
 }
 
 func (o *GetJobsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/jobs][%d] getJobsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/jobs][%d] getJobsOK %s", 200, payload)
 }
 
 func (o *GetJobsOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/jobs][%d] getJobsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/jobs][%d] getJobsOK %s", 200, payload)
 }
 
 func (o *GetJobsOK) GetPayload() []*models.ScheduledJobSummary {
@@ -150,11 +153,11 @@ func (o *GetJobsNotFound) Code() int {
 }
 
 func (o *GetJobsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/jobs][%d] getJobsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/jobs][%d] getJobsNotFound", 404)
 }
 
 func (o *GetJobsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/jobs][%d] getJobsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/jobs][%d] getJobsNotFound", 404)
 }
 
 func (o *GetJobsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

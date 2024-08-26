@@ -72,7 +72,7 @@ type ReplicaSummary struct {
 	// OAuth2 = Replica of a Radix OAuth2 component
 	// Undefined = Replica without defined type - to be extended
 	// Example: ComponentReplica
-	// Enum: [ComponentReplica ScheduledJobReplica JobManager JobManagerAux OAuth2 Undefined]
+	// Enum: ["ComponentReplica","ScheduledJobReplica","JobManager","JobManagerAux","OAuth2","Undefined"]
 	Type string `json:"type,omitempty"`
 
 	// replica status

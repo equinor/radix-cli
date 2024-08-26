@@ -6,6 +6,7 @@ package platform
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -97,11 +98,13 @@ func (o *RegisterApplicationOK) Code() int {
 }
 
 func (o *RegisterApplicationOK) Error() string {
-	return fmt.Sprintf("[POST /applications][%d] registerApplicationOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications][%d] registerApplicationOK %s", 200, payload)
 }
 
 func (o *RegisterApplicationOK) String() string {
-	return fmt.Sprintf("[POST /applications][%d] registerApplicationOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications][%d] registerApplicationOK %s", 200, payload)
 }
 
 func (o *RegisterApplicationOK) GetPayload() *models.ApplicationRegistrationUpsertResponse {
@@ -164,11 +167,11 @@ func (o *RegisterApplicationBadRequest) Code() int {
 }
 
 func (o *RegisterApplicationBadRequest) Error() string {
-	return fmt.Sprintf("[POST /applications][%d] registerApplicationBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications][%d] registerApplicationBadRequest", 400)
 }
 
 func (o *RegisterApplicationBadRequest) String() string {
-	return fmt.Sprintf("[POST /applications][%d] registerApplicationBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications][%d] registerApplicationBadRequest", 400)
 }
 
 func (o *RegisterApplicationBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -220,11 +223,11 @@ func (o *RegisterApplicationUnauthorized) Code() int {
 }
 
 func (o *RegisterApplicationUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications][%d] registerApplicationUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications][%d] registerApplicationUnauthorized", 401)
 }
 
 func (o *RegisterApplicationUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications][%d] registerApplicationUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications][%d] registerApplicationUnauthorized", 401)
 }
 
 func (o *RegisterApplicationUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -276,11 +279,11 @@ func (o *RegisterApplicationConflict) Code() int {
 }
 
 func (o *RegisterApplicationConflict) Error() string {
-	return fmt.Sprintf("[POST /applications][%d] registerApplicationConflict ", 409)
+	return fmt.Sprintf("[POST /applications][%d] registerApplicationConflict", 409)
 }
 
 func (o *RegisterApplicationConflict) String() string {
-	return fmt.Sprintf("[POST /applications][%d] registerApplicationConflict ", 409)
+	return fmt.Sprintf("[POST /applications][%d] registerApplicationConflict", 409)
 }
 
 func (o *RegisterApplicationConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

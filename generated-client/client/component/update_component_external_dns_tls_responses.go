@@ -111,11 +111,11 @@ func (o *UpdateComponentExternalDNSTLSOK) Code() int {
 }
 
 func (o *UpdateComponentExternalDNSTLSOK) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsOK ", 200)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsOK", 200)
 }
 
 func (o *UpdateComponentExternalDNSTLSOK) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsOK ", 200)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsOK", 200)
 }
 
 func (o *UpdateComponentExternalDNSTLSOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -167,11 +167,11 @@ func (o *UpdateComponentExternalDNSTLSBadRequest) Code() int {
 }
 
 func (o *UpdateComponentExternalDNSTLSBadRequest) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsBadRequest", 400)
 }
 
 func (o *UpdateComponentExternalDNSTLSBadRequest) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsBadRequest", 400)
 }
 
 func (o *UpdateComponentExternalDNSTLSBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -223,11 +223,11 @@ func (o *UpdateComponentExternalDNSTLSUnauthorized) Code() int {
 }
 
 func (o *UpdateComponentExternalDNSTLSUnauthorized) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsUnauthorized", 401)
 }
 
 func (o *UpdateComponentExternalDNSTLSUnauthorized) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsUnauthorized", 401)
 }
 
 func (o *UpdateComponentExternalDNSTLSUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -279,11 +279,11 @@ func (o *UpdateComponentExternalDNSTLSForbidden) Code() int {
 }
 
 func (o *UpdateComponentExternalDNSTLSForbidden) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsForbidden", 403)
 }
 
 func (o *UpdateComponentExternalDNSTLSForbidden) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsForbidden", 403)
 }
 
 func (o *UpdateComponentExternalDNSTLSForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -335,11 +335,11 @@ func (o *UpdateComponentExternalDNSTLSNotFound) Code() int {
 }
 
 func (o *UpdateComponentExternalDNSTLSNotFound) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsNotFound", 404)
 }
 
 func (o *UpdateComponentExternalDNSTLSNotFound) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsNotFound", 404)
 }
 
 func (o *UpdateComponentExternalDNSTLSNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -391,11 +391,11 @@ func (o *UpdateComponentExternalDNSTLSConflict) Code() int {
 }
 
 func (o *UpdateComponentExternalDNSTLSConflict) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsConflict ", 409)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsConflict", 409)
 }
 
 func (o *UpdateComponentExternalDNSTLSConflict) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsConflict ", 409)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsConflict", 409)
 }
 
 func (o *UpdateComponentExternalDNSTLSConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -447,11 +447,11 @@ func (o *UpdateComponentExternalDNSTLSInternalServerError) Code() int {
 }
 
 func (o *UpdateComponentExternalDNSTLSInternalServerError) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsInternalServerError ", 500)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsInternalServerError", 500)
 }
 
 func (o *UpdateComponentExternalDNSTLSInternalServerError) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsInternalServerError ", 500)
+	return fmt.Sprintf("[PUT /applications/{appName}/environments/{envName}/components/{componentName}/externaldns/{fqdn}/tls][%d] updateComponentExternalDnsTlsInternalServerError", 500)
 }
 
 func (o *UpdateComponentExternalDNSTLSInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
