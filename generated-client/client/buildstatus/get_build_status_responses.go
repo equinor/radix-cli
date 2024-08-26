@@ -81,11 +81,11 @@ func (o *GetBuildStatusOK) Code() int {
 }
 
 func (o *GetBuildStatusOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/buildstatus][%d] getBuildStatusOK ", 200)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/buildstatus][%d] getBuildStatusOK", 200)
 }
 
 func (o *GetBuildStatusOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/buildstatus][%d] getBuildStatusOK ", 200)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/buildstatus][%d] getBuildStatusOK", 200)
 }
 
 func (o *GetBuildStatusOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -137,11 +137,11 @@ func (o *GetBuildStatusInternalServerError) Code() int {
 }
 
 func (o *GetBuildStatusInternalServerError) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/buildstatus][%d] getBuildStatusInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/buildstatus][%d] getBuildStatusInternalServerError", 500)
 }
 
 func (o *GetBuildStatusInternalServerError) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/buildstatus][%d] getBuildStatusInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/buildstatus][%d] getBuildStatusInternalServerError", 500)
 }
 
 func (o *GetBuildStatusInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

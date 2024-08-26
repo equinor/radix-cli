@@ -6,6 +6,7 @@ package platform
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -109,11 +110,13 @@ func (o *SearchApplicationsOK) Code() int {
 }
 
 func (o *SearchApplicationsOK) Error() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsOK %s", 200, payload)
 }
 
 func (o *SearchApplicationsOK) String() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsOK %s", 200, payload)
 }
 
 func (o *SearchApplicationsOK) GetPayload() []*models.ApplicationSummary {
@@ -174,11 +177,11 @@ func (o *SearchApplicationsUnauthorized) Code() int {
 }
 
 func (o *SearchApplicationsUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsUnauthorized", 401)
 }
 
 func (o *SearchApplicationsUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsUnauthorized", 401)
 }
 
 func (o *SearchApplicationsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -230,11 +233,11 @@ func (o *SearchApplicationsForbidden) Code() int {
 }
 
 func (o *SearchApplicationsForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsForbidden", 403)
 }
 
 func (o *SearchApplicationsForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsForbidden", 403)
 }
 
 func (o *SearchApplicationsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -286,11 +289,11 @@ func (o *SearchApplicationsNotFound) Code() int {
 }
 
 func (o *SearchApplicationsNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsNotFound", 404)
 }
 
 func (o *SearchApplicationsNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsNotFound", 404)
 }
 
 func (o *SearchApplicationsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -342,11 +345,11 @@ func (o *SearchApplicationsConflict) Code() int {
 }
 
 func (o *SearchApplicationsConflict) Error() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsConflict ", 409)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsConflict", 409)
 }
 
 func (o *SearchApplicationsConflict) String() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsConflict ", 409)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsConflict", 409)
 }
 
 func (o *SearchApplicationsConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -398,11 +401,11 @@ func (o *SearchApplicationsInternalServerError) Code() int {
 }
 
 func (o *SearchApplicationsInternalServerError) Error() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsInternalServerError ", 500)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsInternalServerError", 500)
 }
 
 func (o *SearchApplicationsInternalServerError) String() string {
-	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsInternalServerError ", 500)
+	return fmt.Sprintf("[POST /applications/_search][%d] searchApplicationsInternalServerError", 500)
 }
 
 func (o *SearchApplicationsInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

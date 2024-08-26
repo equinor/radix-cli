@@ -6,6 +6,7 @@ package environment
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -103,11 +104,13 @@ func (o *GetEnvironmentAlertingConfigOK) Code() int {
 }
 
 func (o *GetEnvironmentAlertingConfigOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigOK %s", 200, payload)
 }
 
 func (o *GetEnvironmentAlertingConfigOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigOK %s", 200, payload)
 }
 
 func (o *GetEnvironmentAlertingConfigOK) GetPayload() *models.AlertingConfig {
@@ -170,11 +173,11 @@ func (o *GetEnvironmentAlertingConfigUnauthorized) Code() int {
 }
 
 func (o *GetEnvironmentAlertingConfigUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigUnauthorized", 401)
 }
 
 func (o *GetEnvironmentAlertingConfigUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigUnauthorized", 401)
 }
 
 func (o *GetEnvironmentAlertingConfigUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -226,11 +229,11 @@ func (o *GetEnvironmentAlertingConfigForbidden) Code() int {
 }
 
 func (o *GetEnvironmentAlertingConfigForbidden) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigForbidden", 403)
 }
 
 func (o *GetEnvironmentAlertingConfigForbidden) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigForbidden", 403)
 }
 
 func (o *GetEnvironmentAlertingConfigForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -282,11 +285,11 @@ func (o *GetEnvironmentAlertingConfigNotFound) Code() int {
 }
 
 func (o *GetEnvironmentAlertingConfigNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigNotFound", 404)
 }
 
 func (o *GetEnvironmentAlertingConfigNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigNotFound", 404)
 }
 
 func (o *GetEnvironmentAlertingConfigNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -338,11 +341,11 @@ func (o *GetEnvironmentAlertingConfigInternalServerError) Code() int {
 }
 
 func (o *GetEnvironmentAlertingConfigInternalServerError) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigInternalServerError", 500)
 }
 
 func (o *GetEnvironmentAlertingConfigInternalServerError) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/alerting][%d] getEnvironmentAlertingConfigInternalServerError", 500)
 }
 
 func (o *GetEnvironmentAlertingConfigInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

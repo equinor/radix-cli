@@ -99,11 +99,11 @@ func (o *ScaleComponentNoContent) Code() int {
 }
 
 func (o *ScaleComponentNoContent) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentNoContent", 204)
 }
 
 func (o *ScaleComponentNoContent) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentNoContent", 204)
 }
 
 func (o *ScaleComponentNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -155,11 +155,11 @@ func (o *ScaleComponentBadRequest) Code() int {
 }
 
 func (o *ScaleComponentBadRequest) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentBadRequest", 400)
 }
 
 func (o *ScaleComponentBadRequest) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentBadRequest", 400)
 }
 
 func (o *ScaleComponentBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -211,11 +211,11 @@ func (o *ScaleComponentUnauthorized) Code() int {
 }
 
 func (o *ScaleComponentUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentUnauthorized", 401)
 }
 
 func (o *ScaleComponentUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentUnauthorized", 401)
 }
 
 func (o *ScaleComponentUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -267,11 +267,11 @@ func (o *ScaleComponentForbidden) Code() int {
 }
 
 func (o *ScaleComponentForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentForbidden", 403)
 }
 
 func (o *ScaleComponentForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentForbidden", 403)
 }
 
 func (o *ScaleComponentForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -323,11 +323,11 @@ func (o *ScaleComponentNotFound) Code() int {
 }
 
 func (o *ScaleComponentNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentNotFound", 404)
 }
 
 func (o *ScaleComponentNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/scale/{replicas}][%d] scaleComponentNotFound", 404)
 }
 
 func (o *ScaleComponentNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -6,6 +6,7 @@ package pipeline_job
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *GetTektonPipelineRunTaskOK) Code() int {
 }
 
 func (o *GetTektonPipelineRunTaskOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskOK %s", 200, payload)
 }
 
 func (o *GetTektonPipelineRunTaskOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskOK %s", 200, payload)
 }
 
 func (o *GetTektonPipelineRunTaskOK) GetPayload() *models.PipelineRunTask {
@@ -158,11 +161,11 @@ func (o *GetTektonPipelineRunTaskUnauthorized) Code() int {
 }
 
 func (o *GetTektonPipelineRunTaskUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskUnauthorized", 401)
 }
 
 func (o *GetTektonPipelineRunTaskUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskUnauthorized", 401)
 }
 
 func (o *GetTektonPipelineRunTaskUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -214,11 +217,11 @@ func (o *GetTektonPipelineRunTaskNotFound) Code() int {
 }
 
 func (o *GetTektonPipelineRunTaskNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskNotFound", 404)
 }
 
 func (o *GetTektonPipelineRunTaskNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}][%d] getTektonPipelineRunTaskNotFound", 404)
 }
 
 func (o *GetTektonPipelineRunTaskNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

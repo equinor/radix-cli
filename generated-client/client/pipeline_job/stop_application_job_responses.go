@@ -87,11 +87,11 @@ func (o *StopApplicationJobNoContent) Code() int {
 }
 
 func (o *StopApplicationJobNoContent) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobNoContent", 204)
 }
 
 func (o *StopApplicationJobNoContent) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobNoContent", 204)
 }
 
 func (o *StopApplicationJobNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -143,11 +143,11 @@ func (o *StopApplicationJobUnauthorized) Code() int {
 }
 
 func (o *StopApplicationJobUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobUnauthorized", 401)
 }
 
 func (o *StopApplicationJobUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobUnauthorized", 401)
 }
 
 func (o *StopApplicationJobUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -199,11 +199,11 @@ func (o *StopApplicationJobNotFound) Code() int {
 }
 
 func (o *StopApplicationJobNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobNotFound", 404)
 }
 
 func (o *StopApplicationJobNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/stop][%d] stopApplicationJobNotFound", 404)
 }
 
 func (o *StopApplicationJobNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

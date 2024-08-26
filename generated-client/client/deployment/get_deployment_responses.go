@@ -6,6 +6,7 @@ package deployment
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *GetDeploymentOK) Code() int {
 }
 
 func (o *GetDeploymentOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentOK %s", 200, payload)
 }
 
 func (o *GetDeploymentOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentOK %s", 200, payload)
 }
 
 func (o *GetDeploymentOK) GetPayload() *models.Deployment {
@@ -158,11 +161,11 @@ func (o *GetDeploymentUnauthorized) Code() int {
 }
 
 func (o *GetDeploymentUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentUnauthorized", 401)
 }
 
 func (o *GetDeploymentUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentUnauthorized", 401)
 }
 
 func (o *GetDeploymentUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -214,11 +217,11 @@ func (o *GetDeploymentNotFound) Code() int {
 }
 
 func (o *GetDeploymentNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentNotFound", 404)
 }
 
 func (o *GetDeploymentNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}][%d] getDeploymentNotFound", 404)
 }
 
 func (o *GetDeploymentNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -93,11 +93,11 @@ func (o *RestartEnvironmentOK) Code() int {
 }
 
 func (o *RestartEnvironmentOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentOK", 200)
 }
 
 func (o *RestartEnvironmentOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentOK", 200)
 }
 
 func (o *RestartEnvironmentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -149,11 +149,11 @@ func (o *RestartEnvironmentUnauthorized) Code() int {
 }
 
 func (o *RestartEnvironmentUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentUnauthorized", 401)
 }
 
 func (o *RestartEnvironmentUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentUnauthorized", 401)
 }
 
 func (o *RestartEnvironmentUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -205,11 +205,11 @@ func (o *RestartEnvironmentForbidden) Code() int {
 }
 
 func (o *RestartEnvironmentForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentForbidden", 403)
 }
 
 func (o *RestartEnvironmentForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentForbidden", 403)
 }
 
 func (o *RestartEnvironmentForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -261,11 +261,11 @@ func (o *RestartEnvironmentNotFound) Code() int {
 }
 
 func (o *RestartEnvironmentNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentNotFound", 404)
 }
 
 func (o *RestartEnvironmentNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/restart][%d] restartEnvironmentNotFound", 404)
 }
 
 func (o *RestartEnvironmentNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

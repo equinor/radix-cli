@@ -87,11 +87,11 @@ func (o *RestartApplicationOK) Code() int {
 }
 
 func (o *RestartApplicationOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationOK", 200)
 }
 
 func (o *RestartApplicationOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationOK", 200)
 }
 
 func (o *RestartApplicationOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -143,11 +143,11 @@ func (o *RestartApplicationUnauthorized) Code() int {
 }
 
 func (o *RestartApplicationUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationUnauthorized", 401)
 }
 
 func (o *RestartApplicationUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationUnauthorized", 401)
 }
 
 func (o *RestartApplicationUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -199,11 +199,11 @@ func (o *RestartApplicationNotFound) Code() int {
 }
 
 func (o *RestartApplicationNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationNotFound", 404)
 }
 
 func (o *RestartApplicationNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/restart][%d] restartApplicationNotFound", 404)
 }
 
 func (o *RestartApplicationNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

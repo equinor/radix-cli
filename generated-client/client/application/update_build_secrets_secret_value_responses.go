@@ -105,11 +105,11 @@ func (o *UpdateBuildSecretsSecretValueOK) Code() int {
 }
 
 func (o *UpdateBuildSecretsSecretValueOK) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueOK ", 200)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueOK", 200)
 }
 
 func (o *UpdateBuildSecretsSecretValueOK) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueOK ", 200)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueOK", 200)
 }
 
 func (o *UpdateBuildSecretsSecretValueOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -161,11 +161,11 @@ func (o *UpdateBuildSecretsSecretValueBadRequest) Code() int {
 }
 
 func (o *UpdateBuildSecretsSecretValueBadRequest) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueBadRequest", 400)
 }
 
 func (o *UpdateBuildSecretsSecretValueBadRequest) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueBadRequest", 400)
 }
 
 func (o *UpdateBuildSecretsSecretValueBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -217,11 +217,11 @@ func (o *UpdateBuildSecretsSecretValueUnauthorized) Code() int {
 }
 
 func (o *UpdateBuildSecretsSecretValueUnauthorized) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueUnauthorized", 401)
 }
 
 func (o *UpdateBuildSecretsSecretValueUnauthorized) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueUnauthorized", 401)
 }
 
 func (o *UpdateBuildSecretsSecretValueUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -273,11 +273,11 @@ func (o *UpdateBuildSecretsSecretValueForbidden) Code() int {
 }
 
 func (o *UpdateBuildSecretsSecretValueForbidden) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueForbidden", 403)
 }
 
 func (o *UpdateBuildSecretsSecretValueForbidden) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueForbidden", 403)
 }
 
 func (o *UpdateBuildSecretsSecretValueForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -329,11 +329,11 @@ func (o *UpdateBuildSecretsSecretValueNotFound) Code() int {
 }
 
 func (o *UpdateBuildSecretsSecretValueNotFound) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueNotFound", 404)
 }
 
 func (o *UpdateBuildSecretsSecretValueNotFound) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueNotFound", 404)
 }
 
 func (o *UpdateBuildSecretsSecretValueNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -385,11 +385,11 @@ func (o *UpdateBuildSecretsSecretValueConflict) Code() int {
 }
 
 func (o *UpdateBuildSecretsSecretValueConflict) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueConflict ", 409)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueConflict", 409)
 }
 
 func (o *UpdateBuildSecretsSecretValueConflict) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueConflict ", 409)
+	return fmt.Sprintf("[PUT /applications/{appName}/buildsecrets/{secretName}][%d] updateBuildSecretsSecretValueConflict", 409)
 }
 
 func (o *UpdateBuildSecretsSecretValueConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

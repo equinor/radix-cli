@@ -6,6 +6,7 @@ package environment
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *GetEnvironmentEventsOK) Code() int {
 }
 
 func (o *GetEnvironmentEventsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsOK %s", 200, payload)
 }
 
 func (o *GetEnvironmentEventsOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsOK %s", 200, payload)
 }
 
 func (o *GetEnvironmentEventsOK) GetPayload() []*models.Event {
@@ -156,11 +159,11 @@ func (o *GetEnvironmentEventsUnauthorized) Code() int {
 }
 
 func (o *GetEnvironmentEventsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsUnauthorized", 401)
 }
 
 func (o *GetEnvironmentEventsUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsUnauthorized", 401)
 }
 
 func (o *GetEnvironmentEventsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -212,11 +215,11 @@ func (o *GetEnvironmentEventsNotFound) Code() int {
 }
 
 func (o *GetEnvironmentEventsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsNotFound", 404)
 }
 
 func (o *GetEnvironmentEventsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/events][%d] getEnvironmentEventsNotFound", 404)
 }
 
 func (o *GetEnvironmentEventsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 
+	"github.com/equinor/radix-cli/pkg/model"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
@@ -25,6 +26,8 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
+
+var overrideUseBuildCache model.BoolPtr
 
 // createBuildDeployApplicationCmd represents the buildApplication command
 var createBuildDeployApplicationCmd = &cobra.Command{
@@ -44,7 +47,6 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		if appName == nil || *appName == "" || branch == "" {
 			return errors.New("application name and branch are required")
 		}
-
 		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetForCommand(cmd)
@@ -55,8 +57,9 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		triggerPipelineParams := application.NewTriggerPipelineBuildDeployParams()
 		triggerPipelineParams.SetAppName(*appName)
 		triggerPipelineParams.SetPipelineParametersBuild(&models.PipelineParametersBuild{
-			Branch:   branch,
-			CommitID: commitID,
+			Branch:                branch,
+			CommitID:              commitID,
+			OverrideUseBuildCache: overrideUseBuildCache.Get(),
 		})
 
 		newJob, err := apiClient.Application.TriggerPipelineBuildDeploy(triggerPipelineParams, nil)
@@ -79,5 +82,7 @@ func init() {
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Branch, "b", "master", "Branch to build-deploy from")
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.CommitID, "i", "", "Commit id")
 	createBuildDeployApplicationCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build-deploy")
+	createBuildDeployApplicationCmd.Flags().Var(&overrideUseBuildCache, flagnames.UseBuildCache, "Optional. Overrides configured or default useBuildCache option. It is applicable when the useBuildKit option is set as true.")
+
 	setContextSpecificPersistentFlags(createBuildDeployApplicationCmd)
 }

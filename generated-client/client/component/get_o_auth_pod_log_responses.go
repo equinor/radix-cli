@@ -6,6 +6,7 @@ package component
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -101,11 +102,13 @@ func (o *GetOAuthPodLogOK) Code() int {
 }
 
 func (o *GetOAuthPodLogOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogOK %s", 200, payload)
 }
 
 func (o *GetOAuthPodLogOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogOK %s", 200, payload)
 }
 
 func (o *GetOAuthPodLogOK) GetPayload() string {
@@ -166,11 +169,11 @@ func (o *GetOAuthPodLogUnauthorized) Code() int {
 }
 
 func (o *GetOAuthPodLogUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogUnauthorized", 401)
 }
 
 func (o *GetOAuthPodLogUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogUnauthorized", 401)
 }
 
 func (o *GetOAuthPodLogUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -222,11 +225,11 @@ func (o *GetOAuthPodLogForbidden) Code() int {
 }
 
 func (o *GetOAuthPodLogForbidden) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogForbidden", 403)
 }
 
 func (o *GetOAuthPodLogForbidden) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogForbidden", 403)
 }
 
 func (o *GetOAuthPodLogForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -278,11 +281,11 @@ func (o *GetOAuthPodLogNotFound) Code() int {
 }
 
 func (o *GetOAuthPodLogNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogNotFound", 404)
 }
 
 func (o *GetOAuthPodLogNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogNotFound", 404)
 }
 
 func (o *GetOAuthPodLogNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -334,11 +337,11 @@ func (o *GetOAuthPodLogInternalServerError) Code() int {
 }
 
 func (o *GetOAuthPodLogInternalServerError) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogInternalServerError", 500)
 }
 
 func (o *GetOAuthPodLogInternalServerError) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs][%d] getOAuthPodLogInternalServerError", 500)
 }
 
 func (o *GetOAuthPodLogInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

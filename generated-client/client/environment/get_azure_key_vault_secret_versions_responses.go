@@ -6,6 +6,7 @@ package environment
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -115,11 +116,13 @@ func (o *GetAzureKeyVaultSecretVersionsOK) Code() int {
 }
 
 func (o *GetAzureKeyVaultSecretVersionsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsOK %s", 200, payload)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsOK %s", 200, payload)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsOK) GetPayload() []*models.AzureKeyVaultSecretVersion {
@@ -180,11 +183,11 @@ func (o *GetAzureKeyVaultSecretVersionsBadRequest) Code() int {
 }
 
 func (o *GetAzureKeyVaultSecretVersionsBadRequest) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsBadRequest ", 400)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsBadRequest", 400)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsBadRequest) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsBadRequest ", 400)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsBadRequest", 400)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -236,11 +239,11 @@ func (o *GetAzureKeyVaultSecretVersionsUnauthorized) Code() int {
 }
 
 func (o *GetAzureKeyVaultSecretVersionsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsUnauthorized", 401)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsUnauthorized", 401)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -292,11 +295,11 @@ func (o *GetAzureKeyVaultSecretVersionsForbidden) Code() int {
 }
 
 func (o *GetAzureKeyVaultSecretVersionsForbidden) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsForbidden", 403)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsForbidden) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsForbidden", 403)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -348,11 +351,11 @@ func (o *GetAzureKeyVaultSecretVersionsNotFound) Code() int {
 }
 
 func (o *GetAzureKeyVaultSecretVersionsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsNotFound", 404)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsNotFound", 404)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -404,11 +407,11 @@ func (o *GetAzureKeyVaultSecretVersionsConflict) Code() int {
 }
 
 func (o *GetAzureKeyVaultSecretVersionsConflict) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsConflict ", 409)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsConflict", 409)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsConflict) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsConflict ", 409)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsConflict", 409)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -460,11 +463,11 @@ func (o *GetAzureKeyVaultSecretVersionsInternalServerError) Code() int {
 }
 
 func (o *GetAzureKeyVaultSecretVersionsInternalServerError) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsInternalServerError", 500)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsInternalServerError) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/components/{componentName}/secrets/azure/keyvault/{azureKeyVaultName}][%d] getAzureKeyVaultSecretVersionsInternalServerError", 500)
 }
 
 func (o *GetAzureKeyVaultSecretVersionsInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

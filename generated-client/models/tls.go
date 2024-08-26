@@ -31,7 +31,7 @@ type TLS struct {
 	// Invalid TLSStatusInvalid  TLS certificate and private key is invalid
 	// Example: Consistent
 	// Required: true
-	// Enum: [Pending Consistent Invalid]
+	// Enum: ["Pending","Consistent","Invalid"]
 	Status *string `json:"status"`
 
 	// StatusMessages contains a list of messages related to Status

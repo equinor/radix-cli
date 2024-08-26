@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -109,11 +110,13 @@ func (o *GetApplicationOK) Code() int {
 }
 
 func (o *GetApplicationOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationOK %s", 200, payload)
 }
 
 func (o *GetApplicationOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationOK %s", 200, payload)
 }
 
 func (o *GetApplicationOK) GetPayload() *models.Application {
@@ -176,11 +179,11 @@ func (o *GetApplicationUnauthorized) Code() int {
 }
 
 func (o *GetApplicationUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationUnauthorized", 401)
 }
 
 func (o *GetApplicationUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationUnauthorized", 401)
 }
 
 func (o *GetApplicationUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -232,11 +235,11 @@ func (o *GetApplicationForbidden) Code() int {
 }
 
 func (o *GetApplicationForbidden) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationForbidden", 403)
 }
 
 func (o *GetApplicationForbidden) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationForbidden", 403)
 }
 
 func (o *GetApplicationForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -288,11 +291,11 @@ func (o *GetApplicationNotFound) Code() int {
 }
 
 func (o *GetApplicationNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationNotFound", 404)
 }
 
 func (o *GetApplicationNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationNotFound", 404)
 }
 
 func (o *GetApplicationNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -344,11 +347,11 @@ func (o *GetApplicationConflict) Code() int {
 }
 
 func (o *GetApplicationConflict) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationConflict ", 409)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationConflict", 409)
 }
 
 func (o *GetApplicationConflict) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationConflict ", 409)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationConflict", 409)
 }
 
 func (o *GetApplicationConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -400,11 +403,11 @@ func (o *GetApplicationInternalServerError) Code() int {
 }
 
 func (o *GetApplicationInternalServerError) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationInternalServerError", 500)
 }
 
 func (o *GetApplicationInternalServerError) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}][%d] getApplicationInternalServerError", 500)
 }
 
 func (o *GetApplicationInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

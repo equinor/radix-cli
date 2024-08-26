@@ -27,7 +27,7 @@ type AuxiliaryResourceDeployment struct {
 	// Status of the auxiliary resource's deployment
 	// Example: Consistent
 	// Required: true
-	// Enum: [Stopped Consistent Reconciling]
+	// Enum: ["Stopped","Consistent","Reconciling"]
 	Status *string `json:"status"`
 }
 

@@ -87,11 +87,11 @@ func (o *RerunApplicationJobNoContent) Code() int {
 }
 
 func (o *RerunApplicationJobNoContent) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobNoContent", 204)
 }
 
 func (o *RerunApplicationJobNoContent) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobNoContent", 204)
 }
 
 func (o *RerunApplicationJobNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -143,11 +143,11 @@ func (o *RerunApplicationJobUnauthorized) Code() int {
 }
 
 func (o *RerunApplicationJobUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobUnauthorized", 401)
 }
 
 func (o *RerunApplicationJobUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobUnauthorized", 401)
 }
 
 func (o *RerunApplicationJobUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -199,11 +199,11 @@ func (o *RerunApplicationJobNotFound) Code() int {
 }
 
 func (o *RerunApplicationJobNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobNotFound", 404)
 }
 
 func (o *RerunApplicationJobNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/jobs/{jobName}/rerun][%d] rerunApplicationJobNotFound", 404)
 }
 
 func (o *RerunApplicationJobNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

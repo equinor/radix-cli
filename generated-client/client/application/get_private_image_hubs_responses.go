@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *GetPrivateImageHubsOK) Code() int {
 }
 
 func (o *GetPrivateImageHubsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsOK %s", 200, payload)
 }
 
 func (o *GetPrivateImageHubsOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsOK %s", 200, payload)
 }
 
 func (o *GetPrivateImageHubsOK) GetPayload() []*models.ImageHubSecret {
@@ -156,11 +159,11 @@ func (o *GetPrivateImageHubsUnauthorized) Code() int {
 }
 
 func (o *GetPrivateImageHubsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsUnauthorized", 401)
 }
 
 func (o *GetPrivateImageHubsUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsUnauthorized", 401)
 }
 
 func (o *GetPrivateImageHubsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -212,11 +215,11 @@ func (o *GetPrivateImageHubsNotFound) Code() int {
 }
 
 func (o *GetPrivateImageHubsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsNotFound", 404)
 }
 
 func (o *GetPrivateImageHubsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/privateimagehubs][%d] getPrivateImageHubsNotFound", 404)
 }
 
 func (o *GetPrivateImageHubsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

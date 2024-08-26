@@ -60,7 +60,7 @@ type ScheduledBatchSummary struct {
 	// Completed ScheduledBatchJobStatusCompleted  ScheduledBatchJobStatusCompleted batch jobs are completed
 	// Example: Waiting
 	// Required: true
-	// Enum: [Running Succeeded Failed Waiting Stopping Stopped Active Completed]
+	// Enum: ["Running","Succeeded","Failed","Waiting","Stopping","Stopped","Active","Completed"]
 	Status *string `json:"status"`
 
 	// TotalJobCount count of jobs, requested to be scheduled by a batch

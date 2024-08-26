@@ -6,6 +6,7 @@ package pipeline_job
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *GetTektonPipelineRunsOK) Code() int {
 }
 
 func (o *GetTektonPipelineRunsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsOK %s", 200, payload)
 }
 
 func (o *GetTektonPipelineRunsOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsOK %s", 200, payload)
 }
 
 func (o *GetTektonPipelineRunsOK) GetPayload() []*models.PipelineRun {
@@ -156,11 +159,11 @@ func (o *GetTektonPipelineRunsUnauthorized) Code() int {
 }
 
 func (o *GetTektonPipelineRunsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsUnauthorized", 401)
 }
 
 func (o *GetTektonPipelineRunsUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsUnauthorized", 401)
 }
 
 func (o *GetTektonPipelineRunsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -212,11 +215,11 @@ func (o *GetTektonPipelineRunsNotFound) Code() int {
 }
 
 func (o *GetTektonPipelineRunsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsNotFound", 404)
 }
 
 func (o *GetTektonPipelineRunsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}/pipelineruns][%d] getTektonPipelineRunsNotFound", 404)
 }
 
 func (o *GetTektonPipelineRunsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

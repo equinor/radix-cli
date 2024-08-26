@@ -34,7 +34,7 @@ type SecretParameters struct {
 	// client-cert-auth SecretTypeClientCertificateAuth
 	// oauth2-proxy SecretTypeOAuth2Proxy
 	// Example: azure-blob-fuse-volume
-	// Enum: [generic azure-blob-fuse-volume csi-azure-blob-volume csi-azure-key-vault-creds csi-azure-key-vault-item client-cert-auth oauth2-proxy]
+	// Enum: ["generic","azure-blob-fuse-volume","csi-azure-blob-volume","csi-azure-key-vault-creds","csi-azure-key-vault-item","client-cert-auth","oauth2-proxy"]
 	Type string `json:"type,omitempty"`
 }
 

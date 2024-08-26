@@ -6,6 +6,7 @@ package component
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -85,11 +86,13 @@ func (o *ComponentsOK) Code() int {
 }
 
 func (o *ComponentsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components][%d] componentsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components][%d] componentsOK %s", 200, payload)
 }
 
 func (o *ComponentsOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components][%d] componentsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components][%d] componentsOK %s", 200, payload)
 }
 
 func (o *ComponentsOK) GetPayload() []*models.Component {
@@ -150,11 +153,11 @@ func (o *ComponentsNotFound) Code() int {
 }
 
 func (o *ComponentsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components][%d] componentsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components][%d] componentsNotFound", 404)
 }
 
 func (o *ComponentsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components][%d] componentsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components][%d] componentsNotFound", 404)
 }
 
 func (o *ComponentsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

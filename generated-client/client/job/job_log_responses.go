@@ -6,6 +6,7 @@ package job
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -83,11 +84,13 @@ func (o *JobLogOK) Code() int {
 }
 
 func (o *JobLogOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/scheduledjobs/{scheduledJobName}/logs][%d] jobLogOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/scheduledjobs/{scheduledJobName}/logs][%d] jobLogOK %s", 200, payload)
 }
 
 func (o *JobLogOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/scheduledjobs/{scheduledJobName}/logs][%d] jobLogOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/scheduledjobs/{scheduledJobName}/logs][%d] jobLogOK %s", 200, payload)
 }
 
 func (o *JobLogOK) GetPayload() string {
@@ -148,11 +151,11 @@ func (o *JobLogNotFound) Code() int {
 }
 
 func (o *JobLogNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/scheduledjobs/{scheduledJobName}/logs][%d] jobLogNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/scheduledjobs/{scheduledJobName}/logs][%d] jobLogNotFound", 404)
 }
 
 func (o *JobLogNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/scheduledjobs/{scheduledJobName}/logs][%d] jobLogNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/scheduledjobs/{scheduledJobName}/logs][%d] jobLogNotFound", 404)
 }
 
 func (o *JobLogNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

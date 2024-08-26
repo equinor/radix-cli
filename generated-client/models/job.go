@@ -55,7 +55,7 @@ type Job struct {
 
 	// Name of the pipeline
 	// Example: build-deploy
-	// Enum: [build build-deploy promote deploy]
+	// Enum: ["build","build-deploy","promote","deploy"]
 	Pipeline string `json:"pipeline,omitempty"`
 
 	// RadixDeployment name, which is promoted
@@ -79,7 +79,7 @@ type Job struct {
 
 	// Status of the job
 	// Example: Waiting
-	// Enum: [Queued Waiting Running Succeeded Failed Stopped Stopping StoppedNoChanges]
+	// Enum: ["Queued","Waiting","Running","Succeeded","Failed","Stopped","Stopping","StoppedNoChanges"]
 	Status string `json:"status,omitempty"`
 
 	// Array of steps

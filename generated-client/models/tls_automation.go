@@ -29,7 +29,7 @@ type TLSAutomation struct {
 	// Failed TLSAutomationFailed  Certificate automation request failed
 	// Example: Pending
 	// Required: true
-	// Enum: [Pending Success Failed]
+	// Enum: ["Pending","Success","Failed"]
 	Status *string `json:"status"`
 }
 

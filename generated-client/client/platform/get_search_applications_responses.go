@@ -6,6 +6,7 @@ package platform
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -109,11 +110,13 @@ func (o *GetSearchApplicationsOK) Code() int {
 }
 
 func (o *GetSearchApplicationsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsOK %s", 200, payload)
 }
 
 func (o *GetSearchApplicationsOK) String() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsOK %s", 200, payload)
 }
 
 func (o *GetSearchApplicationsOK) GetPayload() []*models.ApplicationSummary {
@@ -174,11 +177,11 @@ func (o *GetSearchApplicationsUnauthorized) Code() int {
 }
 
 func (o *GetSearchApplicationsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsUnauthorized", 401)
 }
 
 func (o *GetSearchApplicationsUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsUnauthorized", 401)
 }
 
 func (o *GetSearchApplicationsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -230,11 +233,11 @@ func (o *GetSearchApplicationsForbidden) Code() int {
 }
 
 func (o *GetSearchApplicationsForbidden) Error() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsForbidden", 403)
 }
 
 func (o *GetSearchApplicationsForbidden) String() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsForbidden", 403)
 }
 
 func (o *GetSearchApplicationsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -286,11 +289,11 @@ func (o *GetSearchApplicationsNotFound) Code() int {
 }
 
 func (o *GetSearchApplicationsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsNotFound", 404)
 }
 
 func (o *GetSearchApplicationsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsNotFound", 404)
 }
 
 func (o *GetSearchApplicationsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -342,11 +345,11 @@ func (o *GetSearchApplicationsConflict) Code() int {
 }
 
 func (o *GetSearchApplicationsConflict) Error() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsConflict ", 409)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsConflict", 409)
 }
 
 func (o *GetSearchApplicationsConflict) String() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsConflict ", 409)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsConflict", 409)
 }
 
 func (o *GetSearchApplicationsConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -398,11 +401,11 @@ func (o *GetSearchApplicationsInternalServerError) Code() int {
 }
 
 func (o *GetSearchApplicationsInternalServerError) Error() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsInternalServerError", 500)
 }
 
 func (o *GetSearchApplicationsInternalServerError) String() string {
-	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/_search][%d] getSearchApplicationsInternalServerError", 500)
 }
 
 func (o *GetSearchApplicationsInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

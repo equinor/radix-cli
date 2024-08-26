@@ -87,11 +87,11 @@ func (o *DeleteEnvironmentOK) Code() int {
 }
 
 func (o *DeleteEnvironmentOK) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentOK ", 200)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentOK", 200)
 }
 
 func (o *DeleteEnvironmentOK) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentOK ", 200)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentOK", 200)
 }
 
 func (o *DeleteEnvironmentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -143,11 +143,11 @@ func (o *DeleteEnvironmentUnauthorized) Code() int {
 }
 
 func (o *DeleteEnvironmentUnauthorized) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentUnauthorized ", 401)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentUnauthorized", 401)
 }
 
 func (o *DeleteEnvironmentUnauthorized) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentUnauthorized ", 401)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentUnauthorized", 401)
 }
 
 func (o *DeleteEnvironmentUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -199,11 +199,11 @@ func (o *DeleteEnvironmentNotFound) Code() int {
 }
 
 func (o *DeleteEnvironmentNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentNotFound ", 404)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentNotFound", 404)
 }
 
 func (o *DeleteEnvironmentNotFound) String() string {
-	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentNotFound ", 404)
+	return fmt.Sprintf("[DELETE /applications/{appName}/environments/{envName}][%d] deleteEnvironmentNotFound", 404)
 }
 
 func (o *DeleteEnvironmentNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

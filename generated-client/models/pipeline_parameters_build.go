@@ -39,6 +39,9 @@ type PipelineParametersBuild struct {
 	// Example: master-latest
 	ImageTag string `json:"imageTag,omitempty"`
 
+	// OverrideUseBuildCache override default or configured build cache option
+	OverrideUseBuildCache *bool `json:"overrideUseBuildCache,omitempty"`
+
 	// PushImage should image be pushed to container registry. Defaults pushing
 	// Example: true
 	PushImage string `json:"pushImage,omitempty"`

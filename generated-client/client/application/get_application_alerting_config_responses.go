@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -103,11 +104,13 @@ func (o *GetApplicationAlertingConfigOK) Code() int {
 }
 
 func (o *GetApplicationAlertingConfigOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigOK %s", 200, payload)
 }
 
 func (o *GetApplicationAlertingConfigOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigOK %s", 200, payload)
 }
 
 func (o *GetApplicationAlertingConfigOK) GetPayload() *models.AlertingConfig {
@@ -170,11 +173,11 @@ func (o *GetApplicationAlertingConfigUnauthorized) Code() int {
 }
 
 func (o *GetApplicationAlertingConfigUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigUnauthorized", 401)
 }
 
 func (o *GetApplicationAlertingConfigUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigUnauthorized", 401)
 }
 
 func (o *GetApplicationAlertingConfigUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -226,11 +229,11 @@ func (o *GetApplicationAlertingConfigForbidden) Code() int {
 }
 
 func (o *GetApplicationAlertingConfigForbidden) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigForbidden", 403)
 }
 
 func (o *GetApplicationAlertingConfigForbidden) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigForbidden ", 403)
+	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigForbidden", 403)
 }
 
 func (o *GetApplicationAlertingConfigForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -282,11 +285,11 @@ func (o *GetApplicationAlertingConfigNotFound) Code() int {
 }
 
 func (o *GetApplicationAlertingConfigNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigNotFound", 404)
 }
 
 func (o *GetApplicationAlertingConfigNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigNotFound", 404)
 }
 
 func (o *GetApplicationAlertingConfigNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -338,11 +341,11 @@ func (o *GetApplicationAlertingConfigInternalServerError) Code() int {
 }
 
 func (o *GetApplicationAlertingConfigInternalServerError) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigInternalServerError", 500)
 }
 
 func (o *GetApplicationAlertingConfigInternalServerError) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigInternalServerError ", 500)
+	return fmt.Sprintf("[GET /applications/{appName}/alerting][%d] getApplicationAlertingConfigInternalServerError", 500)
 }
 
 func (o *GetApplicationAlertingConfigInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

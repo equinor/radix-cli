@@ -46,7 +46,7 @@ type ComponentSummary struct {
 	// Type of component
 	// Example: component
 	// Required: true
-	// Enum: [component job]
+	// Enum: ["component","job"]
 	Type *string `json:"type"`
 
 	// resources

@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -85,11 +86,13 @@ func (o *TriggerPipelinePromoteOK) Code() int {
 }
 
 func (o *TriggerPipelinePromoteOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/promote][%d] triggerPipelinePromoteOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/promote][%d] triggerPipelinePromoteOK %s", 200, payload)
 }
 
 func (o *TriggerPipelinePromoteOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/promote][%d] triggerPipelinePromoteOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/promote][%d] triggerPipelinePromoteOK %s", 200, payload)
 }
 
 func (o *TriggerPipelinePromoteOK) GetPayload() *models.JobSummary {
@@ -152,11 +155,11 @@ func (o *TriggerPipelinePromoteNotFound) Code() int {
 }
 
 func (o *TriggerPipelinePromoteNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/promote][%d] triggerPipelinePromoteNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/promote][%d] triggerPipelinePromoteNotFound", 404)
 }
 
 func (o *TriggerPipelinePromoteNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/promote][%d] triggerPipelinePromoteNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/promote][%d] triggerPipelinePromoteNotFound", 404)
 }
 
 func (o *TriggerPipelinePromoteNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

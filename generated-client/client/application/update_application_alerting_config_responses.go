@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -109,11 +110,13 @@ func (o *UpdateApplicationAlertingConfigOK) Code() int {
 }
 
 func (o *UpdateApplicationAlertingConfigOK) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigOK %s", 200, payload)
 }
 
 func (o *UpdateApplicationAlertingConfigOK) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigOK %s", 200, payload)
 }
 
 func (o *UpdateApplicationAlertingConfigOK) GetPayload() *models.AlertingConfig {
@@ -176,11 +179,11 @@ func (o *UpdateApplicationAlertingConfigBadRequest) Code() int {
 }
 
 func (o *UpdateApplicationAlertingConfigBadRequest) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigBadRequest", 400)
 }
 
 func (o *UpdateApplicationAlertingConfigBadRequest) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigBadRequest ", 400)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigBadRequest", 400)
 }
 
 func (o *UpdateApplicationAlertingConfigBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -232,11 +235,11 @@ func (o *UpdateApplicationAlertingConfigUnauthorized) Code() int {
 }
 
 func (o *UpdateApplicationAlertingConfigUnauthorized) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigUnauthorized", 401)
 }
 
 func (o *UpdateApplicationAlertingConfigUnauthorized) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigUnauthorized ", 401)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigUnauthorized", 401)
 }
 
 func (o *UpdateApplicationAlertingConfigUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -288,11 +291,11 @@ func (o *UpdateApplicationAlertingConfigForbidden) Code() int {
 }
 
 func (o *UpdateApplicationAlertingConfigForbidden) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigForbidden", 403)
 }
 
 func (o *UpdateApplicationAlertingConfigForbidden) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigForbidden ", 403)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigForbidden", 403)
 }
 
 func (o *UpdateApplicationAlertingConfigForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -344,11 +347,11 @@ func (o *UpdateApplicationAlertingConfigNotFound) Code() int {
 }
 
 func (o *UpdateApplicationAlertingConfigNotFound) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigNotFound", 404)
 }
 
 func (o *UpdateApplicationAlertingConfigNotFound) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigNotFound ", 404)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigNotFound", 404)
 }
 
 func (o *UpdateApplicationAlertingConfigNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -400,11 +403,11 @@ func (o *UpdateApplicationAlertingConfigInternalServerError) Code() int {
 }
 
 func (o *UpdateApplicationAlertingConfigInternalServerError) Error() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigInternalServerError ", 500)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigInternalServerError", 500)
 }
 
 func (o *UpdateApplicationAlertingConfigInternalServerError) String() string {
-	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigInternalServerError ", 500)
+	return fmt.Sprintf("[PUT /applications/{appName}/alerting][%d] updateApplicationAlertingConfigInternalServerError", 500)
 }
 
 func (o *UpdateApplicationAlertingConfigInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

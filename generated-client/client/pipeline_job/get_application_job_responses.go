@@ -6,6 +6,7 @@ package pipeline_job
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *GetApplicationJobOK) Code() int {
 }
 
 func (o *GetApplicationJobOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobOK %s", 200, payload)
 }
 
 func (o *GetApplicationJobOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobOK %s", 200, payload)
 }
 
 func (o *GetApplicationJobOK) GetPayload() *models.Job {
@@ -158,11 +161,11 @@ func (o *GetApplicationJobUnauthorized) Code() int {
 }
 
 func (o *GetApplicationJobUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobUnauthorized", 401)
 }
 
 func (o *GetApplicationJobUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobUnauthorized", 401)
 }
 
 func (o *GetApplicationJobUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -214,11 +217,11 @@ func (o *GetApplicationJobNotFound) Code() int {
 }
 
 func (o *GetApplicationJobNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobNotFound", 404)
 }
 
 func (o *GetApplicationJobNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/jobs/{jobName}][%d] getApplicationJobNotFound", 404)
 }
 
 func (o *GetApplicationJobNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

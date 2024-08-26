@@ -87,11 +87,11 @@ func (o *RestartComponentOK) Code() int {
 }
 
 func (o *RestartComponentOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentOK", 200)
 }
 
 func (o *RestartComponentOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentOK ", 200)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentOK", 200)
 }
 
 func (o *RestartComponentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -143,11 +143,11 @@ func (o *RestartComponentUnauthorized) Code() int {
 }
 
 func (o *RestartComponentUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentUnauthorized", 401)
 }
 
 func (o *RestartComponentUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentUnauthorized", 401)
 }
 
 func (o *RestartComponentUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -199,11 +199,11 @@ func (o *RestartComponentNotFound) Code() int {
 }
 
 func (o *RestartComponentNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentNotFound", 404)
 }
 
 func (o *RestartComponentNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/components/{componentName}/restart][%d] restartComponentNotFound", 404)
 }
 
 func (o *RestartComponentNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -99,11 +99,11 @@ func (o *StopBatchNoContent) Code() int {
 }
 
 func (o *StopBatchNoContent) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchNoContent", 204)
 }
 
 func (o *StopBatchNoContent) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchNoContent ", 204)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchNoContent", 204)
 }
 
 func (o *StopBatchNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -155,11 +155,11 @@ func (o *StopBatchBadRequest) Code() int {
 }
 
 func (o *StopBatchBadRequest) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchBadRequest", 400)
 }
 
 func (o *StopBatchBadRequest) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchBadRequest", 400)
 }
 
 func (o *StopBatchBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -211,11 +211,11 @@ func (o *StopBatchUnauthorized) Code() int {
 }
 
 func (o *StopBatchUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchUnauthorized", 401)
 }
 
 func (o *StopBatchUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchUnauthorized", 401)
 }
 
 func (o *StopBatchUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -267,11 +267,11 @@ func (o *StopBatchForbidden) Code() int {
 }
 
 func (o *StopBatchForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchForbidden", 403)
 }
 
 func (o *StopBatchForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchForbidden", 403)
 }
 
 func (o *StopBatchForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -323,11 +323,11 @@ func (o *StopBatchNotFound) Code() int {
 }
 
 func (o *StopBatchNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchNotFound", 404)
 }
 
 func (o *StopBatchNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/{batchName}/stop][%d] stopBatchNotFound", 404)
 }
 
 func (o *StopBatchNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

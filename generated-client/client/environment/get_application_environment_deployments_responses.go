@@ -6,6 +6,7 @@ package environment
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *GetApplicationEnvironmentDeploymentsOK) Code() int {
 }
 
 func (o *GetApplicationEnvironmentDeploymentsOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsOK %s", 200, payload)
 }
 
 func (o *GetApplicationEnvironmentDeploymentsOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsOK %s", 200, payload)
 }
 
 func (o *GetApplicationEnvironmentDeploymentsOK) GetPayload() []*models.DeploymentSummary {
@@ -156,11 +159,11 @@ func (o *GetApplicationEnvironmentDeploymentsUnauthorized) Code() int {
 }
 
 func (o *GetApplicationEnvironmentDeploymentsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsUnauthorized", 401)
 }
 
 func (o *GetApplicationEnvironmentDeploymentsUnauthorized) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsUnauthorized ", 401)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsUnauthorized", 401)
 }
 
 func (o *GetApplicationEnvironmentDeploymentsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -212,11 +215,11 @@ func (o *GetApplicationEnvironmentDeploymentsNotFound) Code() int {
 }
 
 func (o *GetApplicationEnvironmentDeploymentsNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsNotFound", 404)
 }
 
 func (o *GetApplicationEnvironmentDeploymentsNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/environments/{envName}/deployments][%d] getApplicationEnvironmentDeploymentsNotFound", 404)
 }
 
 func (o *GetApplicationEnvironmentDeploymentsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

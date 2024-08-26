@@ -6,6 +6,7 @@ package component
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -83,11 +84,13 @@ func (o *LogOK) Code() int {
 }
 
 func (o *LogOK) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components/{componentName}/replicas/{podName}/logs][%d] logOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components/{componentName}/replicas/{podName}/logs][%d] logOK %s", 200, payload)
 }
 
 func (o *LogOK) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components/{componentName}/replicas/{podName}/logs][%d] logOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components/{componentName}/replicas/{podName}/logs][%d] logOK %s", 200, payload)
 }
 
 func (o *LogOK) GetPayload() string {
@@ -148,11 +151,11 @@ func (o *LogNotFound) Code() int {
 }
 
 func (o *LogNotFound) Error() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components/{componentName}/replicas/{podName}/logs][%d] logNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components/{componentName}/replicas/{podName}/logs][%d] logNotFound", 404)
 }
 
 func (o *LogNotFound) String() string {
-	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components/{componentName}/replicas/{podName}/logs][%d] logNotFound ", 404)
+	return fmt.Sprintf("[GET /applications/{appName}/deployments/{deploymentName}/components/{componentName}/replicas/{podName}/logs][%d] logNotFound", 404)
 }
 
 func (o *LogNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

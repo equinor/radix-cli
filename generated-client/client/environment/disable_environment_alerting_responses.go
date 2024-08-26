@@ -6,6 +6,7 @@ package environment
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -109,11 +110,13 @@ func (o *DisableEnvironmentAlertingOK) Code() int {
 }
 
 func (o *DisableEnvironmentAlertingOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingOK %s", 200, payload)
 }
 
 func (o *DisableEnvironmentAlertingOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingOK %s", 200, payload)
 }
 
 func (o *DisableEnvironmentAlertingOK) GetPayload() *models.AlertingConfig {
@@ -176,11 +179,11 @@ func (o *DisableEnvironmentAlertingBadRequest) Code() int {
 }
 
 func (o *DisableEnvironmentAlertingBadRequest) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingBadRequest", 400)
 }
 
 func (o *DisableEnvironmentAlertingBadRequest) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingBadRequest ", 400)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingBadRequest", 400)
 }
 
 func (o *DisableEnvironmentAlertingBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -232,11 +235,11 @@ func (o *DisableEnvironmentAlertingUnauthorized) Code() int {
 }
 
 func (o *DisableEnvironmentAlertingUnauthorized) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingUnauthorized", 401)
 }
 
 func (o *DisableEnvironmentAlertingUnauthorized) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingUnauthorized ", 401)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingUnauthorized", 401)
 }
 
 func (o *DisableEnvironmentAlertingUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -288,11 +291,11 @@ func (o *DisableEnvironmentAlertingForbidden) Code() int {
 }
 
 func (o *DisableEnvironmentAlertingForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingForbidden", 403)
 }
 
 func (o *DisableEnvironmentAlertingForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingForbidden", 403)
 }
 
 func (o *DisableEnvironmentAlertingForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -344,11 +347,11 @@ func (o *DisableEnvironmentAlertingNotFound) Code() int {
 }
 
 func (o *DisableEnvironmentAlertingNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingNotFound", 404)
 }
 
 func (o *DisableEnvironmentAlertingNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingNotFound", 404)
 }
 
 func (o *DisableEnvironmentAlertingNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -400,11 +403,11 @@ func (o *DisableEnvironmentAlertingInternalServerError) Code() int {
 }
 
 func (o *DisableEnvironmentAlertingInternalServerError) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingInternalServerError ", 500)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingInternalServerError", 500)
 }
 
 func (o *DisableEnvironmentAlertingInternalServerError) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingInternalServerError ", 500)
+	return fmt.Sprintf("[POST /applications/{appName}/environments/{envName}/alerting/disable][%d] disableEnvironmentAlertingInternalServerError", 500)
 }
 
 func (o *DisableEnvironmentAlertingInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

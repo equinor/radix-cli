@@ -6,6 +6,7 @@ package application
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -91,11 +92,13 @@ func (o *TriggerPipelineApplyConfigOK) Code() int {
 }
 
 func (o *TriggerPipelineApplyConfigOK) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigOK %s", 200, payload)
 }
 
 func (o *TriggerPipelineApplyConfigOK) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigOK %s", 200, payload)
 }
 
 func (o *TriggerPipelineApplyConfigOK) GetPayload() *models.JobSummary {
@@ -158,11 +161,11 @@ func (o *TriggerPipelineApplyConfigForbidden) Code() int {
 }
 
 func (o *TriggerPipelineApplyConfigForbidden) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigForbidden", 403)
 }
 
 func (o *TriggerPipelineApplyConfigForbidden) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigForbidden ", 403)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigForbidden", 403)
 }
 
 func (o *TriggerPipelineApplyConfigForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -214,11 +217,11 @@ func (o *TriggerPipelineApplyConfigNotFound) Code() int {
 }
 
 func (o *TriggerPipelineApplyConfigNotFound) Error() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigNotFound", 404)
 }
 
 func (o *TriggerPipelineApplyConfigNotFound) String() string {
-	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigNotFound ", 404)
+	return fmt.Sprintf("[POST /applications/{appName}/pipelines/apply-config][%d] triggerPipelineApplyConfigNotFound", 404)
 }
 
 func (o *TriggerPipelineApplyConfigNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
