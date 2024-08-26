@@ -29,3 +29,8 @@ func (b *BoolPtr) Set(s string) error {
 func (b *BoolPtr) Type() string {
 	return "bool"
 }
+
+// Get the value of the nillable boolean
+func (b *BoolPtr) Get() *bool {
+	return b.value
+}

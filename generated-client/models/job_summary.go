@@ -53,7 +53,7 @@ type JobSummary struct {
 	Name string `json:"name,omitempty"`
 
 	// OverrideUseBuildCache override default or configured build cache option
-	OverrideUseBuildCache bool `json:"overrideUseBuildCache,omitempty"`
+	OverrideUseBuildCache *bool `json:"overrideUseBuildCache,omitempty"`
 
 	// Name of the pipeline
 	// Example: build-deploy

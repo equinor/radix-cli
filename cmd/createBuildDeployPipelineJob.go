@@ -57,8 +57,9 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		triggerPipelineParams := application.NewTriggerPipelineBuildDeployParams()
 		triggerPipelineParams.SetAppName(*appName)
 		triggerPipelineParams.SetPipelineParametersBuild(&models.PipelineParametersBuild{
-			Branch:   branch,
-			CommitID: commitID,
+			Branch:                branch,
+			CommitID:              commitID,
+			OverrideUseBuildCache: overrideUseBuildCache.Get(),
 		})
 
 		newJob, err := apiClient.Application.TriggerPipelineBuildDeploy(triggerPipelineParams, nil)
