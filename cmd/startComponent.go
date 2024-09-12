@@ -20,6 +20,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -28,9 +29,12 @@ var startComponentCmd = &cobra.Command{
 	Use:   "component",
 	Short: "Start a component",
 	Long: `Start a component
+#NOTE: Deprecated: Use rx scale component --reset instead
+
   - Pulls new image from image hub in radix configuration
   - Starts the container using up to date image`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		logrus.Warn("This command is deprecated. Please use 'rx scale component --reset' instead. Will be removed after September 2025")
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
@@ -60,7 +64,12 @@ var startComponentCmd = &cobra.Command{
 		}
 
 		_, err = apiClient.Component.StartComponent(parameters, nil)
-		return err
+		if err != nil {
+			return err
+		}
+
+		logrus.Infof("%s Successfully reset to normal scaling", cmpName)
+		return nil
 	},
 }
 
