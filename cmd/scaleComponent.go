@@ -18,7 +18,7 @@ import (
 	"errors"
 	"strconv"
 
-	client2 "github.com/equinor/radix-cli/generated-client/client"
+	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -85,15 +85,14 @@ rx scale --application radix-test --environment dev --component component-abc --
 	},
 }
 
-func scaleComponent(apiClient *client2.Radixapi, appName, envName, cmpName, replicas string) error {
+func scaleComponent(apiClient *apiclient.Radixapi, appName, envName, cmpName, replicas string) error {
 	parameters := component.NewScaleComponentParams().
 		WithAppName(appName).
 		WithEnvName(envName).
 		WithComponentName(cmpName).
 		WithReplicas(replicas)
 
-	_, err := apiClient.Component.ScaleComponent(parameters, nil)
-	if err != nil {
+	if _, err := apiClient.Component.ScaleComponent(parameters, nil); err != nil {
 		return err
 	}
 
@@ -101,14 +100,13 @@ func scaleComponent(apiClient *client2.Radixapi, appName, envName, cmpName, repl
 	return nil
 }
 
-func resetScaledComponent(apiClient *client2.Radixapi, appName, envName, cmpName string) error {
+func resetScaledComponent(apiClient *apiclient.Radixapi, appName, envName, cmpName string) error {
 	parameters := component.NewResetScaledComponentParams().
 		WithAppName(appName).
 		WithEnvName(envName).
 		WithComponentName(cmpName)
 
-	_, err := apiClient.Component.ResetScaledComponent(parameters, nil)
-	if err != nil {
+	if _, err := apiClient.Component.ResetScaledComponent(parameters, nil); err != nil {
 		return err
 	}
 
