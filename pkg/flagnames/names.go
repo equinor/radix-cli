@@ -30,6 +30,7 @@ const (
 	PrivateKeyFromFile  = "private-key-from-file"
 	ReaderADGroups      = "reader-ad-groups"
 	Replicas            = "replicas"
+	Reset               = "reset"
 	Repository          = "repository"
 	Schema              = "schema"
 	Secret              = "secret"
