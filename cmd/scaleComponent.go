@@ -35,13 +35,13 @@ Note: Manual scaling will persist across deployments, and will disable autoscali
 `,
 	Example: `
 # Scale up component to 2 replicas
-rx scale --application radix-test --environment dev --component component-abc --replicas 2
+rx scale component --application radix-test --environment dev --component component-abc --replicas 2
 
 # Short version of scaling up component to 0 replicas
-rx scale -a radix-test -e dev -n component-abc -r 2
+rx scale component -a radix-test -e dev -n component-abc -r 2
 
 # Reset manual scaling to resume normal operations:
-rx scale --application radix-test --environment dev --component component-abc --reset
+rx scale component --application radix-test --environment dev --component component-abc --reset
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
