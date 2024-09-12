@@ -32,8 +32,7 @@ var startComponentCmd = &cobra.Command{
 
 Deprecated: Use 'rx scale component --reset' instead
 
-  - Pulls new image from image hub in radix configuration
-  - Starts the container using up to date image`,
+Resets a manully scaled component to resume normal operations again.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logrus.Warn("This command is deprecated. Please use 'rx scale component --reset' instead. Will be removed after September 2025")
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
