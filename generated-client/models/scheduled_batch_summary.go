@@ -21,6 +21,9 @@ import (
 // swagger:model ScheduledBatchSummary
 type ScheduledBatchSummary struct {
 
+	// Defines a user defined ID of the batch.
+	BatchID string `json:"batchId,omitempty"`
+
 	// Created timestamp
 	// Example: 2006-01-02T15:04:05Z
 	Created string `json:"created,omitempty"`

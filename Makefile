@@ -4,7 +4,7 @@ RELEASE_NOTE ?= "First release"
 
 .PHONY: swagger
 swagger: bootstrap
-	swagger generate client -t ./generated-client -f https://api.radix.equinor.com/swaggerui/swagger.json -A radixapi
+	swagger generate client -t ./generated-client -f https://api.dev.radix.equinor.com/swaggerui/swagger.json -A radixapi
 
 .PHONY: push
 push:

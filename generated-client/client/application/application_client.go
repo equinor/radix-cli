@@ -84,6 +84,8 @@ type ClientService interface {
 
 	RegenerateDeployKey(params *RegenerateDeployKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RegenerateDeployKeyNoContent, error)
 
+	ResetManuallyScaledComponentsInApplication(params *ResetManuallyScaledComponentsInApplicationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ResetManuallyScaledComponentsInApplicationOK, error)
+
 	RestartApplication(params *RestartApplicationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RestartApplicationOK, error)
 
 	StartApplication(params *StartApplicationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StartApplicationOK, error)
@@ -656,6 +658,45 @@ func (a *Client) RegenerateDeployKey(params *RegenerateDeployKeyParams, authInfo
 }
 
 /*
+ResetManuallyScaledComponentsInApplication resets and resumes normal opperation for all manually stopped components in all environments of the application
+*/
+func (a *Client) ResetManuallyScaledComponentsInApplication(params *ResetManuallyScaledComponentsInApplicationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ResetManuallyScaledComponentsInApplicationOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewResetManuallyScaledComponentsInApplicationParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "resetManuallyScaledComponentsInApplication",
+		Method:             "POST",
+		PathPattern:        "/applications/{appName}/reset-scale",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ResetManuallyScaledComponentsInApplicationReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ResetManuallyScaledComponentsInApplicationOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for resetManuallyScaledComponentsInApplication: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
 RestartApplication restarts all components in all environments of the application stops all running components in all environments of the application pulls new images from image hub in radix configuration starts all components in all environments of the application again using up to date image
 */
 func (a *Client) RestartApplication(params *RestartApplicationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RestartApplicationOK, error) {
@@ -695,7 +736,7 @@ func (a *Client) RestartApplication(params *RestartApplicationParams, authInfo r
 }
 
 /*
-StartApplication starts all components in all environments of the application
+StartApplication deprecateds use reset scale that does the same thing instead this will be removed after 1 september 2025
 */
 func (a *Client) StartApplication(params *StartApplicationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StartApplicationOK, error) {
 	// TODO: Validate the params before sending
