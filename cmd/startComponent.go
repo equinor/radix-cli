@@ -29,7 +29,8 @@ var startComponentCmd = &cobra.Command{
 	Use:   "component",
 	Short: "Start a component",
 	Long: `Start a component
-#NOTE: Deprecated: Use rx scale component --reset instead
+
+Deprecated: Use 'rx scale component --reset' instead
 
   - Pulls new image from image hub in radix configuration
   - Starts the container using up to date image`,
