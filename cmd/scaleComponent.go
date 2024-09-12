@@ -80,9 +80,8 @@ rx scale --application radix-test --environment dev --component component-abc --
 
 		if reset {
 			return resetScaledComponent(apiClient, *appName, envName, cmpName)
-		} else {
-			return scaleComponent(apiClient, *appName, envName, cmpName, strconv.Itoa(replicas))
 		}
+		return scaleComponent(apiClient, *appName, envName, cmpName, strconv.Itoa(replicas))
 	},
 }
 
