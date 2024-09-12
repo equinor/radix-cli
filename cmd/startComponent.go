@@ -33,8 +33,8 @@ var startComponentCmd = &cobra.Command{
 Deprecated: Use 'rx scale component --reset' instead
 
 Resets a manully scaled component to resume normal operations again.`,
+	Deprecated: " Use 'rx scale component --reset' instead. Will be removed after September 2025",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logrus.Warn("This command is deprecated. Please use 'rx scale component --reset' instead. Will be removed after September 2025")
 		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err

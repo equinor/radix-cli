@@ -32,9 +32,8 @@ var scaleComponentCmd = &cobra.Command{
 	Short: "Scale component replicas",
 	Long: `Used for manually scaling up or down replicas of a Radix application component.
 Note: Manual scaling will persist across deployments, and will disable autoscaling.
-
-Examples:
-
+`,
+	Example: `
 # Scale up component to 2 replicas
 rx scale --application radix-test --environment dev --component component-abc --replicas 2
 

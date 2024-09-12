@@ -16,17 +16,16 @@ package cmd
 
 import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 // startCmd represents the start command
 var scaleCmd = &cobra.Command{
-	Use:   "scale",
-	Short: "Scale component replicas",
-	Long:  `Scale component replicas.`,
+	Use:        "scale",
+	Short:      "Scale component replicas",
+	Long:       `Scale component replicas.`,
+	Deprecated: "Please use 'rx scale component' instead. Will be removed after September 2025",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logrus.Warn("This command is deprecated. Please use 'rx scale component' instead. Will be removed after September 2025")
 		return scaleComponentCmd.RunE(cmd, args)
 	},
 }
