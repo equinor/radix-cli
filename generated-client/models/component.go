@@ -52,6 +52,10 @@ type Component struct {
 	// Example: ["server-78fc8857c4-hm76l","server-78fc8857c4-asfa2"]
 	Replicas []string `json:"replicas"`
 
+	// Set if manual control of replicas is in place. Not set means automatic control, 0 means stopped and >= 1 is manually scaled.
+	// Example: 5
+	ReplicasOverride *int64 `json:"replicasOverride,omitempty"`
+
 	// ScheduledJobPayloadPath defines the payload path, where payload for Job Scheduler will be mapped as a file. From radixconfig.yaml
 	// Example: \"/tmp/payload\
 	ScheduledJobPayloadPath string `json:"scheduledJobPayloadPath,omitempty"`
