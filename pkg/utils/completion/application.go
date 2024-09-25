@@ -16,8 +16,8 @@ import (
 const KnownApps = "known_apps"
 
 func ApplicationCompletion(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	if content, ok := config.GetCache("known_apps"); ok {
-		return strings.Split(content, ","), cobra.ShellCompDirectiveNoFileComp
+	if content, ok := config.GetCache[[]string]("known_apps"); ok {
+		return content, cobra.ShellCompDirectiveNoFileComp
 	}
 
 	apiClient, err := client.GetForCommand(cmd)
@@ -39,7 +39,7 @@ func ApplicationCompletion(cmd *cobra.Command, args []string, toComplete string)
 	applications := slices.Filter(nil, appNames, func(appName string) bool {
 		return strings.HasPrefix(appName, toComplete)
 	})
-	config.SetCache(KnownApps, strings.Join(applications, ","), config.DefaultCacheDuration)
+	config.SetCache(KnownApps, applications, config.DefaultCacheDuration)
 
 	return applications, cobra.ShellCompDirectiveNoFileComp
 }

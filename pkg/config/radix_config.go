@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"os"
 	"path"
 	"time"
@@ -87,23 +88,27 @@ func GetDefaultRadixConfig() *RadixConfig {
 	}
 }
 
-func GetCache(key string) (string, bool) {
+func GetCache[T any](key string) (content T, ok bool) {
 	config, err := GetRadixConfig()
 	if err != nil {
-		return "", false
+		return content, false
 	}
 	item, ok := config.Cache[config.CustomConfig.Context][key]
 	if !ok {
-		return "", false
+		return content, false
 	}
 
 	if time.Now().After(item.ExpiresAt) {
-		return "", false
+		return content, false
 	}
 
-	return item.Content, ok
+	err = json.Unmarshal([]byte(item.Content), &content)
+	if err != nil {
+		return content, false
+	}
+	return content, ok
 }
-func SetCache(key, content string, ttl time.Duration) {
+func SetCache[T any](key string, content T, ttl time.Duration) {
 	config, _ := GetRadixConfig()
 
 	if config.Cache == nil {
@@ -113,10 +118,15 @@ func SetCache(key, content string, ttl time.Duration) {
 		config.Cache[config.CustomConfig.Context] = make(map[string]CacheItem)
 	}
 
+	jsonContent, err := json.Marshal(content)
+	if err != nil {
+		return
+	}
+
 	config.Cache[config.CustomConfig.Context][key] = CacheItem{
 		UpdatedAt: time.Now(),
 		ExpiresAt: time.Now().Add(ttl),
-		Content:   content,
+		Content:   string(jsonContent),
 	}
 
 	_ = Save(config)
