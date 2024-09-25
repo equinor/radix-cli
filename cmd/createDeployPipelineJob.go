@@ -140,6 +140,7 @@ func init() {
 	createDeployPipelineJobCmd.Flags().StringP(flagnames.CommitID, "i", "", "An optional 40 character commit id to tag the new pipeline job")
 	createDeployPipelineJobCmd.Flags().StringSlice(flagnames.Component, []string{}, "Optional component to deploy, when only specific component need to be deployed. Multiple components can be specified.")
 	createDeployPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow deploy")
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = createDeployPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = createDeployPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(createDeployPipelineJobCmd)
 }

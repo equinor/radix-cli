@@ -183,6 +183,6 @@ func init() {
 	logsJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application for the job")
 	logsJobCmd.Flags().StringP(flagnames.Job, "j", "", "The job to get logs for")
 
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = logsJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(logsJobCmd)
 }

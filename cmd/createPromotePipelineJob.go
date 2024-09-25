@@ -126,6 +126,6 @@ func init() {
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the promote pipeline job")
 	createPromotePipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow the promote pipeline job log")
 	createPromotePipelineJobCmd.Flags().BoolP(flagnames.UseActiveDeployment, "", false, "Promote the active deployment")
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createPromotePipelineJobCmd)
 }

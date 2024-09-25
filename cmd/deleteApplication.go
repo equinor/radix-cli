@@ -57,6 +57,6 @@ var deleteApplicationCmd = &cobra.Command{
 func init() {
 	deleteCmd.AddCommand(deleteApplicationCmd)
 	deleteApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to delete")
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = deleteApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(deleteApplicationCmd)
 }

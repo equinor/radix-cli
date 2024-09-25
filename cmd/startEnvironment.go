@@ -63,6 +63,6 @@ func init() {
 	startCmd.AddCommand(startEnvironmentCmd)
 	startEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 	startEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = startEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(startEnvironmentCmd)
 }

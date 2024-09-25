@@ -69,6 +69,7 @@ func init() {
 	stopComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 	stopComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 	stopComponentCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to stop")
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = stopComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = stopComponentCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(stopComponentCmd)
 }

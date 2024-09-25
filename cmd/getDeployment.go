@@ -139,6 +139,6 @@ func init() {
 	getDeploymentCmd.Flags().StringP(flagnames.Deployment, "d", "", "Optional, name of a deployment. It cannot be used together with an option 'environment'.")
 	getDeploymentCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional, name of the environment. It cannot be used together with an option 'deployment'.")
 
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = getDeploymentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(getDeploymentCmd)
 }

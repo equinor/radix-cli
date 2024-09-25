@@ -71,6 +71,7 @@ func init() {
 	restartComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 	restartComponentCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to restart")
 
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = restartComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = restartComponentCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(restartComponentCmd)
 }

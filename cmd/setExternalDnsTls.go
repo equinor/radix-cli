@@ -156,7 +156,8 @@ func init() {
 	setExternalDnsTlsCmd.MarkFlagsOneRequired(flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
 	setExternalDnsTlsCmd.MarkFlagsMutuallyExclusive(flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
 
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = setExternalDnsTlsCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = setExternalDnsTlsCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 
 	setContextSpecificPersistentFlags(setExternalDnsTlsCmd)
 	setCmd.AddCommand(setExternalDnsTlsCmd)

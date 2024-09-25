@@ -8,11 +8,9 @@ import (
 	"k8s.io/utils/strings/slices"
 )
 
-func ConfigContext(cmd *cobra.Command, args []string, toComplete string) (applications []string, shell cobra.ShellCompDirective) {
-	shell = cobra.ShellCompDirectiveNoFileComp
-
-	applications = slices.Filter(nil, config.ValidContexts, func(appName string) bool {
+func ConfigContext(_ *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	contexts := slices.Filter(nil, config.ValidContexts, func(appName string) bool {
 		return strings.HasPrefix(appName, toComplete)
 	})
-	return
+	return contexts, cobra.ShellCompDirectiveNoFileComp
 }

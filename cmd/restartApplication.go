@@ -60,6 +60,6 @@ func init() {
 	restartCmd.AddCommand(restartApplicationCmd)
 	restartApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = restartApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(restartApplicationCmd)
 }

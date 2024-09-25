@@ -41,6 +41,7 @@ func init() {
 	scaleCmd.MarkFlagsOneRequired(flagnames.Replicas, flagnames.Reset)
 	scaleCmd.MarkFlagsMutuallyExclusive(flagnames.Replicas, flagnames.Reset)
 
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = scaleCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = scaleCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(scaleComponentCmd)
 }

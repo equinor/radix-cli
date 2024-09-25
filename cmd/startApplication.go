@@ -59,6 +59,6 @@ var startApplicationCmd = &cobra.Command{
 func init() {
 	startCmd.AddCommand(startApplicationCmd)
 	startApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = startApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(startApplicationCmd)
 }

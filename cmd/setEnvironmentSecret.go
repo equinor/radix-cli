@@ -138,6 +138,7 @@ func init() {
 	setEnvironmentSecretCmd.Flags().StringP(flagnames.Value, "v", "", "Value of the secret to set")
 	setEnvironmentSecretCmd.Flags().Bool(flagnames.AwaitReconcile, true, "Await reconciliation in Radix. Default is true")
 
-	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = setEnvironmentSecretCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = setEnvironmentSecretCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(setEnvironmentSecretCmd)
 }
