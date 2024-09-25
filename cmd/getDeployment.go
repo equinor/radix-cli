@@ -68,6 +68,8 @@ Examples:
 			return errors.New("options 'deployment' and 'environment' cannot be used together")
 		}
 
+		completion.CreateDeploymentCompletion(flagnames.Environment, false)(cmd, []string{}, "")
+
 		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetForCommand(cmd)
@@ -142,5 +144,6 @@ func init() {
 
 	_ = getDeploymentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = getDeploymentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
+	_ = getDeploymentCmd.RegisterFlagCompletionFunc(flagnames.Deployment, completion.CreateDeploymentCompletion(flagnames.Environment, false))
 	setContextSpecificPersistentFlags(getDeploymentCmd)
 }

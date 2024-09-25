@@ -20,14 +20,13 @@ func ComponentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]s
 	if err != nil || appName == "" {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
-
-	apiClient, err := client.GetForCommand(cmd)
-	if err != nil {
+	envName, err := cmd.Flags().GetString(flagnames.Environment)
+	if err != nil || envName == "" {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	envName, err := cmd.Flags().GetString(flagnames.Environment)
-	if err != nil || envName == "" {
+	apiClient, err := client.GetForCommand(cmd)
+	if err != nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 

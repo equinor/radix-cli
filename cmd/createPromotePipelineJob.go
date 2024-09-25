@@ -128,5 +128,8 @@ func init() {
 	createPromotePipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow the promote pipeline job log")
 	createPromotePipelineJobCmd.Flags().BoolP(flagnames.UseActiveDeployment, "", false, "Promote the active deployment")
 	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.FromEnvironment, completion.EnvironmentCompletion)
+	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.ToEnvironment, completion.EnvironmentCompletion)
+	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Deployment, completion.CreateDeploymentCompletion(flagnames.FromEnvironment, true))
 	setContextSpecificPersistentFlags(createPromotePipelineJobCmd)
 }
