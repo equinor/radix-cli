@@ -21,7 +21,9 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/json"
 	"github.com/spf13/cobra"
 )
@@ -49,12 +51,18 @@ var getApplicationCmd = &cobra.Command{
 			showApplicationParams := platform.NewShowApplicationsParams()
 			resp, err := apiClient.Platform.ShowApplications(showApplicationParams, nil)
 
+			var appNames []string
+
 			if err == nil {
 				for _, application := range resp.Payload {
 					fmt.Println(application.Name)
+					appNames = append(appNames, application.Name)
 				}
+				config.SetCache(completion.KnownApps, strings.Join(appNames, ","), config.DefaultCacheDuration)
+
 				return nil
 			}
+
 			return err
 		}
 		getApplicationParams := application.NewGetApplicationParams()
@@ -75,5 +83,6 @@ var getApplicationCmd = &cobra.Command{
 func init() {
 	getCmd.AddCommand(getApplicationCmd)
 	getApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(getApplicationCmd)
 }

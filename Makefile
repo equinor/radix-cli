@@ -16,6 +16,10 @@ push:
 lint: bootstrap
 	golangci-lint run --max-same-issues 0
 
+install:
+	go build ./cli/rx/
+	mv rx $$(go env GOPATH)/bin/rx
+
 HAS_SWAGGER       := $(shell command -v swagger;)
 HAS_GOLANGCI_LINT := $(shell command -v golangci-lint;)
 HAS_GORELEASER    := $(shell command -v goreleaser;)

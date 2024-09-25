@@ -13,6 +13,7 @@ import (
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	v1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/equinor/radix-operator/pkg/apis/utils"
 	log "github.com/sirupsen/logrus"
@@ -63,8 +64,8 @@ func setContextSpecificPersistentFlags(cmd *cobra.Command) {
 }
 
 func setContextPersistentFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringP(flagnames.Context, "c", "", fmt.Sprintf("Use context %s|%s|%s|%s regardless of current context (default production) ",
-		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment))
+	cmd.PersistentFlags().StringP(flagnames.Context, "c", "", fmt.Sprintf("Use context %s regardless of current context (default production) ", strings.Join(radixconfig.ValidContexts, "|")))
+	_ = cmd.RegisterFlagCompletionFunc(flagnames.Context, completion.ConfigContext)
 }
 
 // CheckFnNew The prototype function for any check function

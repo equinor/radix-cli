@@ -21,7 +21,7 @@ func NewTokenCache(radixConfig *radixconfig.RadixConfig) *TokenCache {
 }
 
 // Replace replaces the cache with what is in external storage. Implementors should honor
-// Context cancellations and return context.Canceled or context.DeadlineExceeded in those cases.
+// RadixCluster cancellations and return context.Canceled or context.DeadlineExceeded in those cases.
 func (t *TokenCache) Replace(ctx context.Context, cache cache.Unmarshaler, hints cache.ReplaceHints) error {
 	var (
 		data []byte
@@ -38,7 +38,7 @@ func (t *TokenCache) Replace(ctx context.Context, cache cache.Unmarshaler, hints
 }
 
 // Export writes the binary representation of the cache (cache.Marshal()) to external storage.
-// This is considered opaque. Context cancellations should be honored as in Replace.
+// This is considered opaque. RadixCluster cancellations should be honored as in Replace.
 func (t *TokenCache) Export(ctx context.Context, cache cache.Marshaler, hints cache.ExportHints) error {
 	data, err := cache.Marshal()
 	if err != nil {

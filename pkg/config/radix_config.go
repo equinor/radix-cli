@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path"
+	"time"
 
 	jsonutils "github.com/equinor/radix-cli/pkg/utils/json"
 )
@@ -17,7 +18,8 @@ const (
 	radixConfigDir      = ".radix"
 	radixConfigFileName = "config"
 
-	defaultContext = ContextPlatform
+	defaultContext       = ContextPlatform
+	DefaultCacheDuration = 7 * 24 * time.Hour
 )
 
 var (
@@ -34,9 +36,15 @@ func getUserHomeDir() string {
 	return homeDir
 }
 
+type CacheItem struct {
+	UpdatedAt time.Time `json:"updated_at"`
+	ExpiresAt time.Time `json:"expires_at"`
+	Content   string    `json:"content"`
+}
 type RadixConfig struct {
 	// CustomConfig is the custom environment config
-	CustomConfig *CustomConfig `json:"customConfig"`
+	CustomConfig *CustomConfig                   `json:"customConfig"`
+	Cache        map[string]map[string]CacheItem `json:"cache"`
 
 	// MSAL is the internal cache structure used by the MSAL module. The content is base64 encoded
 	MSAL string `json:"msal,omitempty"`
@@ -74,9 +82,44 @@ func GetRadixConfig() (*RadixConfig, error) {
 func GetDefaultRadixConfig() *RadixConfig {
 	return &RadixConfig{
 		CustomConfig: &CustomConfig{
-			Context: defaultContext,
+			Context: string(defaultContext),
 		},
 	}
+}
+
+func GetCache(key string) (string, bool) {
+	config, err := GetRadixConfig()
+	if err != nil {
+		return "", false
+	}
+	item, ok := config.Cache[config.CustomConfig.Context][key]
+	if !ok {
+		return "", false
+	}
+
+	if time.Now().After(item.ExpiresAt) {
+		return "", false
+	}
+
+	return item.Content, ok
+}
+func SetCache(key, content string, ttl time.Duration) {
+	config, _ := GetRadixConfig()
+
+	if config.Cache == nil {
+		config.Cache = make(map[string]map[string]CacheItem)
+	}
+	if _, ok := config.Cache[config.CustomConfig.Context]; !ok {
+		config.Cache[config.CustomConfig.Context] = make(map[string]CacheItem)
+	}
+
+	config.Cache[config.CustomConfig.Context][key] = CacheItem{
+		UpdatedAt: time.Now(),
+		ExpiresAt: time.Now().Add(ttl),
+		Content:   content,
+	}
+
+	_ = Save(config)
 }
 
 // Save Saves RadixConfig
