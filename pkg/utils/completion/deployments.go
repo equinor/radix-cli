@@ -23,12 +23,12 @@ func CreateDeploymentCompletion(environmentFlagName string, envRequired bool) fu
 		}
 		envName, err := cmd.Flags().GetString(environmentFlagName)
 		if err != nil || (envRequired && envName == "") {
-			return []string{"missing-env"}, cobra.ShellCompDirectiveNoFileComp
+			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
-			return []string{err.Error()}, cobra.ShellCompDirectiveNoFileComp
+			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
 
 		var names []string

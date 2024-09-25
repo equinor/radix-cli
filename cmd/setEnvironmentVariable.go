@@ -136,7 +136,7 @@ func init() {
 	setCmd.AddCommand(setEnvironmentVariableCmd)
 	setEnvironmentVariableCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to set variable for")
 	setEnvironmentVariableCmd.Flags().StringP(flagnames.Environment, "e", "", "Environment to set variable in")
-	setEnvironmentVariableCmd.Flags().String(flagnames.Component, "", "Component to set the variable for")
+	setEnvironmentVariableCmd.Flags().StringP(flagnames.Component, "n", "", "Component to set the variable for")
 	setEnvironmentVariableCmd.Flags().StringP(flagnames.Variable, "", "", "Name of the variable to set")
 	setEnvironmentVariableCmd.Flags().StringP(flagnames.Value, "v", "", "Value of the variable to set")
 	setEnvironmentVariableCmd.Flags().Bool(flagnames.AwaitReconcile, true, "Await reconciliation in Radix. Default is true")
@@ -144,5 +144,6 @@ func init() {
 	_ = setEnvironmentVariableCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = setEnvironmentVariableCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	_ = setEnvironmentVariableCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
+	_ = setEnvironmentVariableCmd.RegisterFlagCompletionFunc(flagnames.Variable, completion.VariableCompletion)
 	setContextSpecificPersistentFlags(setEnvironmentVariableCmd)
 }
