@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	log "github.com/sirupsen/logrus"
 
@@ -49,7 +50,7 @@ var createDeployPipelineJobCmd = &cobra.Command{
   rx create job deploy -a radix-test -e dev --component web-app --component api-server`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			errs = append(errs, err)
 		}
@@ -141,6 +142,7 @@ func init() {
 	createDeployPipelineJobCmd.Flags().StringSlice(flagnames.Component, []string{}, "Optional component to deploy, when only specific component need to be deployed. Multiple components can be specified.")
 	createDeployPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow deploy")
 	_ = createDeployPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = createDeployPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	_ = createDeployPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(createDeployPipelineJobCmd)
 }

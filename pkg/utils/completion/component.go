@@ -3,32 +3,53 @@ package completion
 import (
 	"strings"
 
-	"github.com/equinor/radix-cli/generated-client/client/component"
+	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/equinor/radix-common/utils/slice"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"k8s.io/utils/strings/slices"
 )
 
 func ComponentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	apiClient, err := client.GetForCommand(cmd)
+
+	appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 	if err != nil {
-		log.Warn(err)
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+	if appName == nil || *appName == "" {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	params := component.NewComponentsParams()
-	resp, err := apiClient.Component.Components(params, nil)
+	apiClient, err := client.GetForCommand(cmd)
+	if err != nil {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
 
-	componentNamesNames := slice.Map(resp.Payload, func(component *models.Component) string {
+	envName, err := cmd.Flags().GetString(flagnames.Environment)
+	if err != nil {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+	if envName == "" {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+
+	GetEnvironmentParams := environment.NewGetEnvironmentParams().WithEnvName(envName).WithAppName(*appName)
+	resp, err := apiClient.Environment.GetEnvironment(GetEnvironmentParams, nil)
+	if err != nil {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+
+	names := slice.Map(resp.Payload.ActiveDeployment.Components, func(component *models.Component) string {
 		return pointers.Val(component.Name)
 	})
-	components := slices.Filter(nil, componentNamesNames, func(appName string) bool {
+
+	filteredNames := slices.Filter(nil, names, func(appName string) bool {
 		return strings.HasPrefix(appName, toComplete)
 	})
 
-	return components, cobra.ShellCompDirectiveNoFileComp
+	return filteredNames, cobra.ShellCompDirectiveNoFileComp
 }

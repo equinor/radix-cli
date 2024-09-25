@@ -19,6 +19,7 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
@@ -31,7 +32,7 @@ var stopComponentCmd = &cobra.Command{
 	Long: `Stop a component
   - Stops the component running container`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -70,6 +71,7 @@ func init() {
 	stopComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 	stopComponentCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to stop")
 	_ = stopComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = stopComponentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	_ = stopComponentCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(stopComponentCmd)
 }

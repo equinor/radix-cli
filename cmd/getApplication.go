@@ -21,6 +21,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/json"
@@ -33,7 +34,7 @@ var getApplicationCmd = &cobra.Command{
 	Short: "Gets Radix application",
 	Long:  `Gets a list of Radix applications or a single application if provided`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}

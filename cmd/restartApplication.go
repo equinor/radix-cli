@@ -19,6 +19,7 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
@@ -32,7 +33,7 @@ var restartApplicationCmd = &cobra.Command{
   - Starts the application's containers, using up to date images
   - Stops the application's old containers`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}

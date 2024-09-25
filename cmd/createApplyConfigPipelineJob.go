@@ -20,6 +20,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	log "github.com/sirupsen/logrus"
@@ -38,7 +39,7 @@ Currently applied changes in properties DNS alias, build secrets, create new or 
   rx create job apply-config -a radix-test`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			errs = append(errs, err)
 		}

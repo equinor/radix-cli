@@ -8,28 +8,25 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-common/utils/slice"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"k8s.io/utils/strings/slices"
 )
 
 const knownApps = "known_apps"
 
-func ApplicationCompletion(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+func ApplicationCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	if content, ok := config.GetCache[[]string]("known_apps"); ok {
 		return content, cobra.ShellCompDirectiveNoFileComp
 	}
 
 	apiClient, err := client.GetForCommand(cmd)
 	if err != nil {
-		log.Warn(err)
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
 	showApplicationParams := platform.NewShowApplicationsParams()
 	resp, err := apiClient.Platform.ShowApplications(showApplicationParams, nil)
 	if err != nil {
-		log.Warn(err)
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 

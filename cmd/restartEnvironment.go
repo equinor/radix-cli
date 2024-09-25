@@ -19,6 +19,7 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
@@ -32,7 +33,7 @@ var restartEnvironmentCmd = &cobra.Command{
   - Starts the environment's containers, using up to date images
   - Stops the application environment's old containers`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -64,6 +65,7 @@ func init() {
 	restartEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 	restartEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 
-	_ = restartEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = restartComponentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
+	_ = restartComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(restartEnvironmentCmd)
 }

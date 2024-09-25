@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/model"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	log "github.com/sirupsen/logrus"
@@ -36,7 +37,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 	Short: "Will trigger build-deploy of a Radix application",
 	Long:  `Triggers build-deploy of Radix application, if branch to environment map exists for the branch in the Radix config`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}

@@ -23,6 +23,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
@@ -34,7 +35,7 @@ var setEnvironmentSecretCmd = &cobra.Command{
 	Short: "Will set an environment secret",
 	Long:  `Will set an environment secret`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -139,6 +140,7 @@ func init() {
 	setEnvironmentSecretCmd.Flags().Bool(flagnames.AwaitReconcile, true, "Await reconciliation in Radix. Default is true")
 
 	_ = setEnvironmentSecretCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = setEnvironmentSecretCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	_ = setEnvironmentSecretCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(setEnvironmentSecretCmd)
 }

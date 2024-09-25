@@ -21,6 +21,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
@@ -39,7 +40,7 @@ It may take few seconds to get the log.
 	Example: `# Get logs for all components in an environment. Log lines from different components have different colors
 rx get logs environment --application radix-test --environment dev`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -107,5 +108,6 @@ func init() {
 	logsEnvironmentCmd.Flags().DurationP(flagnames.Since, "s", settings.DeltaRefreshApplication, "If set, start get logs from the specified time, eg. 5m or 12h")
 
 	_ = logsEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = logsEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	setContextSpecificPersistentFlags(logsEnvironmentCmd)
 }

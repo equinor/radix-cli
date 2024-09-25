@@ -21,6 +21,7 @@ import (
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/json"
@@ -47,7 +48,7 @@ Examples:
   rx get deployment --application radix-test --environment test
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -140,5 +141,6 @@ func init() {
 	getDeploymentCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional, name of the environment. It cannot be used together with an option 'deployment'.")
 
 	_ = getDeploymentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = getDeploymentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	setContextSpecificPersistentFlags(getDeploymentCmd)
 }

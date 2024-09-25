@@ -20,6 +20,7 @@ import (
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 
 	log "github.com/sirupsen/logrus"
@@ -37,7 +38,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 	Short: "Will trigger promote of a Radix application",
 	Long:  `Triggers promote of a Radix application deployment`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}

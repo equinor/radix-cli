@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
@@ -33,7 +34,7 @@ var getBranchEnvironmentCmd = &cobra.Command{
 			return errors.New("config can only come from radixconfig file in current folder")
 		}
 
-		_, err := getRadixApplicationFromFile()
+		_, err := config.GetRadixApplicationFromFile()
 		if err != nil {
 			return err
 		}
@@ -44,7 +45,7 @@ var getBranchEnvironmentCmd = &cobra.Command{
 			return errors.New("`branch` is required")
 		}
 
-		environment, err := getEnvironmentFromConfig(cmd, branch)
+		environment, err := config.GetEnvironmentFromConfig(cmd, branch)
 		if err != nil {
 			return err
 		}

@@ -25,6 +25,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
@@ -53,7 +54,7 @@ Examples:
   rx get logs component -a radix-test -e dev --component web-app -p
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -183,6 +184,7 @@ func init() {
 	logsEnvironmentComponentCmd.Flags().DurationP(flagnames.Since, "s", settings.DeltaRefreshApplication, "If set, start get logs from the specified time, eg. 5m or 12h")
 
 	_ = logsEnvironmentComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = logsEnvironmentComponentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	_ = logsEnvironmentComponentCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(logsEnvironmentComponentCmd)
 }
