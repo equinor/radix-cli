@@ -21,6 +21,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -89,5 +90,6 @@ func init() {
 	createApplyConfigPipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to apply-config")
 	createApplyConfigPipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the apply-config")
 	createApplyConfigPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow applyConfig")
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createApplyConfigPipelineJobCmd)
 }

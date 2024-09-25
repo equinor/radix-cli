@@ -20,6 +20,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/pipeline_job"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -67,5 +68,7 @@ func init() {
 	restartCmd.AddCommand(restartPipelineJobCmd)
 	restartPipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application for the job")
 	restartPipelineJobCmd.Flags().StringP(flagnames.Job, "j", "", "The job to restart")
+
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(restartPipelineJobCmd)
 }

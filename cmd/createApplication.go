@@ -25,6 +25,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -132,5 +133,6 @@ func init() {
 	createApplicationCmd.Flags().StringSliceP(flagnames.ReaderADGroups, "", []string{}, "Reader groups")
 	createApplicationCmd.Flags().StringP(flagnames.ConfigurationItem, "", "", "Configuration item")
 	createApplicationCmd.Flags().Bool(flagnames.AcknowledgeWarnings, false, "Acknowledge warnings and proceed")
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createApplicationCmd)
 }

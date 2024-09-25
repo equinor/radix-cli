@@ -20,6 +20,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -78,5 +79,6 @@ func init() {
 	startComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 	startComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 	startComponentCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to start")
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(startComponentCmd)
 }

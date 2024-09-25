@@ -25,6 +25,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -155,7 +156,8 @@ func init() {
 	setExternalDnsTlsCmd.MarkFlagsOneRequired(flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
 	setExternalDnsTlsCmd.MarkFlagsMutuallyExclusive(flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
 
-	setContextSpecificPersistentFlags(setExternalDnsTlsCmd)
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 
+	setContextSpecificPersistentFlags(setExternalDnsTlsCmd)
 	setCmd.AddCommand(setExternalDnsTlsCmd)
 }

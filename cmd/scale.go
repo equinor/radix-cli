@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -39,5 +40,7 @@ func init() {
 	scaleCmd.PersistentFlags().Bool(flagnames.Reset, false, "Reset manualy scaled component to use replica count from RadixConfig or managed by horizontal autoscaling")
 	scaleCmd.MarkFlagsOneRequired(flagnames.Replicas, flagnames.Reset)
 	scaleCmd.MarkFlagsMutuallyExclusive(flagnames.Replicas, flagnames.Reset)
+
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(scaleComponentCmd)
 }

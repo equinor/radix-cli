@@ -21,7 +21,6 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/pkg/client"
-	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/json"
@@ -58,7 +57,7 @@ var getApplicationCmd = &cobra.Command{
 					fmt.Println(application.Name)
 					appNames = append(appNames, application.Name)
 				}
-				config.SetCache(completion.KnownApps, strings.Join(appNames, ","), config.DefaultCacheDuration)
+				completion.UpdateAppNamesCache(appNames)
 
 				return nil
 			}

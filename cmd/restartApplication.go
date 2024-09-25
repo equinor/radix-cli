@@ -20,6 +20,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -58,5 +59,7 @@ var restartApplicationCmd = &cobra.Command{
 func init() {
 	restartCmd.AddCommand(restartApplicationCmd)
 	restartApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(restartApplicationCmd)
 }

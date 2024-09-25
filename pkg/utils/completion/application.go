@@ -13,7 +13,7 @@ import (
 	"k8s.io/utils/strings/slices"
 )
 
-const KnownApps = "known_apps"
+const knownApps = "known_apps"
 
 func ApplicationCompletion(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	if content, ok := config.GetCache[[]string]("known_apps"); ok {
@@ -39,7 +39,11 @@ func ApplicationCompletion(cmd *cobra.Command, args []string, toComplete string)
 	applications := slices.Filter(nil, appNames, func(appName string) bool {
 		return strings.HasPrefix(appName, toComplete)
 	})
-	config.SetCache(KnownApps, applications, config.DefaultCacheDuration)
+	config.SetCache(knownApps, applications, config.DefaultCacheDuration)
 
 	return applications, cobra.ShellCompDirectiveNoFileComp
+}
+
+func UpdateAppNamesCache(appNames []string) {
+	config.SetCache(knownApps, appNames, config.DefaultCacheDuration)
 }

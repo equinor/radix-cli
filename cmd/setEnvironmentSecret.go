@@ -24,6 +24,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -136,5 +137,7 @@ func init() {
 	setEnvironmentSecretCmd.Flags().StringP(flagnames.Secret, "s", "", "Name of the secret to set")
 	setEnvironmentSecretCmd.Flags().StringP(flagnames.Value, "v", "", "Value of the secret to set")
 	setEnvironmentSecretCmd.Flags().Bool(flagnames.AwaitReconcile, true, "Await reconciliation in Radix. Default is true")
+
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(setEnvironmentSecretCmd)
 }

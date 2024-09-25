@@ -26,6 +26,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/log"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -181,5 +182,7 @@ func init() {
 
 	logsJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application for the job")
 	logsJobCmd.Flags().StringP(flagnames.Job, "j", "", "The job to get logs for")
+
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(logsJobCmd)
 }

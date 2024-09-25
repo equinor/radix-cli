@@ -20,6 +20,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -55,6 +56,7 @@ var deleteApplicationCmd = &cobra.Command{
 
 func init() {
 	deleteCmd.AddCommand(deleteApplicationCmd)
-	deleteApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to create")
+	deleteApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to delete")
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(deleteApplicationCmd)
 }
