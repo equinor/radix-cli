@@ -40,7 +40,7 @@ var setEnvironmentSecretCmd = &cobra.Command{
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -77,7 +77,7 @@ var setEnvironmentSecretCmd = &cobra.Command{
 
 		if awaitReconcile {
 			reconciledOk := awaitReconciliation(func() bool {
-				return isComponentSecretReconciled(apiClient, *appName, environmentName, component, secretName)
+				return isComponentSecretReconciled(apiClient, appName, environmentName, component, secretName)
 			})
 
 			if !reconciledOk {
@@ -90,7 +90,7 @@ var setEnvironmentSecretCmd = &cobra.Command{
 		componentSecret.SecretValue = &secretValue
 
 		changeComponentSecretParameters := environment.NewChangeComponentSecretParams()
-		changeComponentSecretParameters.SetAppName(*appName)
+		changeComponentSecretParameters.SetAppName(appName)
 		changeComponentSecretParameters.SetEnvName(environmentName)
 		changeComponentSecretParameters.SetComponentName(component)
 		changeComponentSecretParameters.SetSecretName(secretName)

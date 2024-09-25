@@ -45,7 +45,7 @@ rx get logs environment --application radix-test --environment dev`,
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -64,12 +64,12 @@ rx get logs environment --application radix-test --environment dev`,
 			return err
 		}
 
-		componentReplicas, err := getComponentReplicasForEnvironment(apiClient, *appName, environmentName)
+		componentReplicas, err := getComponentReplicasForEnvironment(apiClient, appName, environmentName)
 		if err != nil {
 			return err
 		}
 
-		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, since, componentReplicas, previousLog)
+		return logForComponentReplicas(cmd, apiClient, appName, environmentName, since, componentReplicas, previousLog)
 	},
 }
 

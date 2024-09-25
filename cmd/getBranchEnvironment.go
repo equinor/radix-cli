@@ -50,7 +50,7 @@ var getBranchEnvironmentCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Print(*environment)
+		fmt.Print(environment)
 		return nil
 	},
 }

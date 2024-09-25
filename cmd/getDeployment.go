@@ -52,7 +52,7 @@ Examples:
 		if err != nil {
 			return err
 		}
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required field")
 		}
 
@@ -76,12 +76,12 @@ Examples:
 		}
 
 		if deploymentName == "" && envName == "" {
-			return getDeploymentForAllEnvironments(apiClient, *appName)
+			return getDeploymentForAllEnvironments(apiClient, appName)
 		}
 		if deploymentName != "" {
-			return getDeployment(apiClient, *appName, deploymentName)
+			return getDeployment(apiClient, appName, deploymentName)
 		}
-		return getDeploymentForEnvironment(apiClient, *appName, envName)
+		return getDeploymentForEnvironment(apiClient, appName, envName)
 	},
 }
 

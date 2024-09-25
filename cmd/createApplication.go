@@ -52,7 +52,7 @@ var createApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		if appName == nil || *appName == "" || repository == "" || configBranch == "" || configurationItem == "" {
+		if appName == "" || repository == "" || configBranch == "" || configurationItem == "" {
 			return errors.New("application name, repository, configuration item and config branch are required fields")
 		}
 
@@ -68,7 +68,7 @@ var createApplicationCmd = &cobra.Command{
 				AdGroups:            adGroups,
 				ConfigBranch:        &configBranch,
 				ConfigurationItem:   configurationItem,
-				Name:                appName,
+				Name:                &appName,
 				RadixConfigFullName: configFile,
 				ReaderAdGroups:      readerAdGroups,
 				Repository:          &repository,
@@ -99,7 +99,7 @@ var createApplicationCmd = &cobra.Command{
 
 		}
 		deployKeyAndSecretParams := application.NewGetDeployKeyAndSecretParams()
-		deployKeyAndSecretParams.SetAppName(*appName)
+		deployKeyAndSecretParams.SetAppName(appName)
 		getRadixRegistrationNoAccessErrorCount := 3
 		getRadixRegistrationNoAccessErrorPause := 2 * time.Second
 		for {

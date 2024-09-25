@@ -42,7 +42,7 @@ var setEnvironmentVariableCmd = &cobra.Command{
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -79,7 +79,7 @@ var setEnvironmentVariableCmd = &cobra.Command{
 
 		if awaitReconcile {
 			reconciledOk := awaitReconciliation(func() bool {
-				return isComponentVariableReconciled(apiClient, *appName, environmentName, componentName, variableName)
+				return isComponentVariableReconciled(apiClient, appName, environmentName, componentName, variableName)
 			})
 
 			if !reconciledOk {
@@ -93,7 +93,7 @@ var setEnvironmentVariableCmd = &cobra.Command{
 		componentVariable.Value = &variableValue
 
 		changeComponentVariableParameters := component.NewChangeEnvVarParams()
-		changeComponentVariableParameters.SetAppName(*appName)
+		changeComponentVariableParameters.SetAppName(appName)
 		changeComponentVariableParameters.SetEnvName(environmentName)
 		changeComponentVariableParameters.SetComponentName(componentName)
 		changeComponentVariableParameters.SetEnvVarParameter([]*models.EnvVarParameter{&componentVariable})

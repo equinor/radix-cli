@@ -40,7 +40,7 @@ var restartComponentCmd = &cobra.Command{
 
 		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
-		if err != nil || appName == nil || *appName == "" {
+		if err != nil || appName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
@@ -52,7 +52,7 @@ var restartComponentCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		parameters := component.NewRestartComponentParams().
-			WithAppName(*appName).
+			WithAppName(appName).
 			WithEnvName(envName).
 			WithComponentName(cmpName)
 

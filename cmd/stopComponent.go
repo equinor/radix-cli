@@ -39,7 +39,7 @@ var stopComponentCmd = &cobra.Command{
 
 		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
-		if err != nil || appName == nil || *appName == "" || envName == "" {
+		if err != nil || appName == "" || envName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
@@ -51,7 +51,7 @@ var stopComponentCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		parameters := component.NewStopComponentParams().
-			WithAppName(*appName).
+			WithAppName(appName).
 			WithEnvName(envName).
 			WithComponentName(cmpName)
 

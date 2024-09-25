@@ -46,7 +46,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		commitID, _ := cmd.Flags().GetString(flagnames.CommitID)
 		follow, _ := cmd.Flags().GetBool(flagnames.Follow)
 
-		if appName == nil || *appName == "" || branch == "" {
+		if appName == "" || branch == "" {
 			return errors.New("application name and branch are required")
 		}
 		cmd.SilenceUsage = true
@@ -57,7 +57,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		}
 
 		triggerPipelineParams := application.NewTriggerPipelineBuildDeployParams()
-		triggerPipelineParams.SetAppName(*appName)
+		triggerPipelineParams.SetAppName(appName)
 		triggerPipelineParams.SetPipelineParametersBuild(&models.PipelineParametersBuild{
 			Branch:                branch,
 			CommitID:              commitID,
@@ -74,7 +74,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		if !follow {
 			return nil
 		}
-		return getLogsJob(cmd, apiClient, *appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, jobName)
 	},
 }
 

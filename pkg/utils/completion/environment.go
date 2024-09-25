@@ -15,10 +15,7 @@ import (
 
 func EnvironmentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
-	if err != nil {
-		return nil, cobra.ShellCompDirectiveNoFileComp
-	}
-	if appName == nil || *appName == "" {
+	if err != nil || appName == "" {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
@@ -28,7 +25,7 @@ func EnvironmentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([
 	}
 
 	getApplicationParams := application.NewGetApplicationParams()
-	getApplicationParams.SetAppName(*appName)
+	getApplicationParams.SetAppName(appName)
 	resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp

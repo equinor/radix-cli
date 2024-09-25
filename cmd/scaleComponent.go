@@ -65,7 +65,7 @@ rx scale component --application radix-test --environment dev --component compon
 		if err != nil {
 			return err
 		}
-		if appName == nil || *appName == "" || envName == "" || cmpName == "" {
+		if appName == "" || envName == "" || cmpName == "" {
 			return errors.New("application name, environment name and component name are required fields")
 		}
 		if !reset && (replicas < 0 || replicas > 20) {
@@ -80,9 +80,9 @@ rx scale component --application radix-test --environment dev --component compon
 		cmd.SilenceUsage = true
 
 		if reset {
-			return resetScaledComponent(apiClient, *appName, envName, cmpName)
+			return resetScaledComponent(apiClient, appName, envName, cmpName)
 		}
-		return scaleComponent(apiClient, *appName, envName, cmpName, strconv.Itoa(replicas))
+		return scaleComponent(apiClient, appName, envName, cmpName, strconv.Itoa(replicas))
 	},
 }
 

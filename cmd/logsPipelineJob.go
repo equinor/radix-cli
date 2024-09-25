@@ -61,7 +61,7 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -78,7 +78,7 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 			return err
 		}
 
-		return getLogsJob(cmd, apiClient, *appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, jobName)
 	},
 }
 

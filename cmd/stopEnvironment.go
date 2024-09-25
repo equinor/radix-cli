@@ -39,14 +39,14 @@ var stopEnvironmentCmd = &cobra.Command{
 
 		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
-		if err != nil || appName == nil || *appName == "" || envName == "" {
+		if err != nil || appName == "" || envName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
 		cmd.SilenceUsage = true
 
 		parameters := environment.NewStopEnvironmentParams().
-			WithAppName(*appName).
+			WithAppName(appName).
 			WithEnvName(envName)
 
 		apiClient, err := client.GetForCommand(cmd)

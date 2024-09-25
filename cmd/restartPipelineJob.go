@@ -39,7 +39,7 @@ var restartPipelineJobCmd = &cobra.Command{
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -57,7 +57,7 @@ var restartPipelineJobCmd = &cobra.Command{
 		}
 
 		params := pipeline_job.NewRerunApplicationJobParams()
-		params.AppName = *appName
+		params.AppName = appName
 		params.JobName = jobName
 
 		_, err = apiClient.PipelineJob.RerunApplicationJob(params, nil)

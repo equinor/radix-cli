@@ -57,7 +57,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 			return errors.New("you cannot set use-active-deployment and specify deployment name at the same time")
 		}
 
-		if appName == nil || *appName == "" || fromEnvironment == "" || toEnvironment == "" {
+		if appName == "" || fromEnvironment == "" || toEnvironment == "" {
 			return errors.New("application name, from and to environments are required")
 		}
 
@@ -69,7 +69,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 		}
 
 		if useActiveDeployment {
-			d, err := getActiveDeploymentName(apiClient, *appName, fromEnvironment)
+			d, err := getActiveDeploymentName(apiClient, appName, fromEnvironment)
 			if err != nil {
 				return err
 			}
@@ -78,7 +78,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 		}
 
 		triggerPipelineParams := application.NewTriggerPipelinePromoteParams()
-		triggerPipelineParams.SetAppName(*appName)
+		triggerPipelineParams.SetAppName(appName)
 		triggerPipelineParams.SetPipelineParametersPromote(&models.PipelineParametersPromote{
 			DeploymentName:  deploymentName,
 			FromEnvironment: fromEnvironment,
@@ -97,7 +97,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 			return nil
 		}
 
-		return getLogsJob(cmd, apiClient, *appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, jobName)
 	},
 }
 

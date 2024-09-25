@@ -54,7 +54,7 @@ Currently applied changes in properties DNS alias, build secrets, create new or 
 		if len(errs) > 0 {
 			return errors.Join(errs...)
 		}
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -66,7 +66,7 @@ Currently applied changes in properties DNS alias, build secrets, create new or 
 		}
 
 		triggerPipelineParams := application.NewTriggerPipelineApplyConfigParams()
-		triggerPipelineParams.SetAppName(*appName)
+		triggerPipelineParams.SetAppName(appName)
 		parametersApplyConfig := models.PipelineParametersApplyConfig{
 			TriggeredBy: triggeredByUser,
 		}
@@ -82,7 +82,7 @@ Currently applied changes in properties DNS alias, build secrets, create new or 
 		if !follow {
 			return nil
 		}
-		return getLogsJob(cmd, apiClient, *appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, jobName)
 	},
 }
 

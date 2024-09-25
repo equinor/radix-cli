@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func GetAppNameFromConfigOrFromParameter(cmd *cobra.Command, appNameField string) (*string, error) {
+func GetAppNameFromConfigOrFromParameter(cmd *cobra.Command, appNameField string) (string, error) {
 	var appName string
 	var err error
 
@@ -20,42 +20,42 @@ func GetAppNameFromConfigOrFromParameter(cmd *cobra.Command, appNameField string
 	if fromConfig {
 		radicConfig, err := GetRadixApplicationFromFile()
 		if err != nil {
-			return nil, err
+			return "", err
 		}
 
 		appName = radicConfig.GetName()
 	} else {
 		appName, err = cmd.Flags().GetString(appNameField)
 		if err != nil {
-			return nil, err
+			return "", err
 		}
 	}
 
-	return &appName, nil
+	return appName, nil
 }
 
-func GetEnvironmentFromConfig(cmd *cobra.Command, branchName string) (*string, error) {
+func GetEnvironmentFromConfig(cmd *cobra.Command, branchName string) (string, error) {
 	var err error
 
 	fromConfig, _ := cmd.Flags().GetBool(flagnames.FromConfig)
 	if !fromConfig {
-		return nil, errors.New("--from-config is required when getting environment from branch")
+		return "", errors.New("--from-config is required when getting environment from branch")
 	}
 
 	cmd.SilenceUsage = true
 
 	radicConfig, err := GetRadixApplicationFromFile()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	for _, environment := range radicConfig.Spec.Environments {
 		if environment.Build.From != "" && environment.Build.From == branchName {
-			return &environment.Name, nil
+			return environment.Name, nil
 		}
 	}
 
-	return nil, fmt.Errorf("no environment found which maps to branch name `%s`", branchName)
+	return "", fmt.Errorf("no environment found which maps to branch name `%s`", branchName)
 }
 
 func GetRadixApplicationFromFile() (*v1.RadixApplication, error) {

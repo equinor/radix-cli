@@ -73,7 +73,7 @@ var createDeployPipelineJobCmd = &cobra.Command{
 		if len(errs) > 0 {
 			return errors.Join(errs...)
 		}
-		if appName == nil || *appName == "" || targetEnvironment == "" {
+		if appName == "" || targetEnvironment == "" {
 			return errors.New("application name and target environment are required")
 		}
 		commitID, _ := cmd.Flags().GetString(flagnames.CommitID)
@@ -94,7 +94,7 @@ var createDeployPipelineJobCmd = &cobra.Command{
 		}
 
 		triggerPipelineParams := application.NewTriggerPipelineDeployParams()
-		triggerPipelineParams.SetAppName(*appName)
+		triggerPipelineParams.SetAppName(appName)
 		parametersDeploy := models.PipelineParametersDeploy{
 			ToEnvironment:      targetEnvironment,
 			ImageTagNames:      imageTagNames,
@@ -114,7 +114,7 @@ var createDeployPipelineJobCmd = &cobra.Command{
 		if !follow {
 			return nil
 		}
-		return getLogsJob(cmd, apiClient, *appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, jobName)
 	},
 }
 

@@ -42,7 +42,7 @@ rx set external-dns-tls --application myapp --environment prod --component web -
 		if err != nil {
 			return err
 		}
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -88,7 +88,7 @@ rx set external-dns-tls --application myapp --environment prod --component web -
 
 		if awaitReconcile {
 			reconciledOk := awaitReconciliation(func() bool {
-				return isComponentExternalDNSReconciled(apiClient, *appName, environmentName, componentName, fqdn)
+				return isComponentExternalDNSReconciled(apiClient, appName, environmentName, componentName, fqdn)
 			})
 
 			if !reconciledOk {
@@ -97,7 +97,7 @@ rx set external-dns-tls --application myapp --environment prod --component web -
 			}
 		}
 		updateExternalDNSTLS := component.NewUpdateComponentExternalDNSTLSParams().
-			WithAppName(*appName).
+			WithAppName(appName).
 			WithEnvName(environmentName).
 			WithComponentName(componentName).
 			WithFqdn(fqdn).

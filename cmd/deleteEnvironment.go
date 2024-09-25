@@ -38,14 +38,14 @@ var deleteEnvironmentCmd = &cobra.Command{
 
 		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
-		if err != nil || appName == nil || *appName == "" {
+		if err != nil || appName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
 		cmd.SilenceUsage = true
 
 		parameters := environment.NewDeleteEnvironmentParams().
-			WithAppName(*appName).
+			WithAppName(appName).
 			WithEnvName(envName)
 
 		apiClient, err := client.GetForCommand(cmd)

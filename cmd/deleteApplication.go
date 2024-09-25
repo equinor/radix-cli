@@ -36,14 +36,14 @@ var deleteApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is a required field")
 		}
 
 		cmd.SilenceUsage = true
 
 		deleteApplicationParams := application.NewDeleteApplicationParams()
-		deleteApplicationParams.SetAppName(*appName)
+		deleteApplicationParams.SetAppName(appName)
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {

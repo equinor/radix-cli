@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/platform"
@@ -46,7 +45,7 @@ var getApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		if appName == nil || strings.EqualFold(*appName, "") {
+		if appName == "" {
 			// List applications
 			showApplicationParams := platform.NewShowApplicationsParams()
 			resp, err := apiClient.Platform.ShowApplications(showApplicationParams, nil)
@@ -66,7 +65,7 @@ var getApplicationCmd = &cobra.Command{
 			return err
 		}
 		getApplicationParams := application.NewGetApplicationParams()
-		getApplicationParams.SetAppName(*appName)
+		getApplicationParams.SetAppName(appName)
 		resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
 		if err != nil {
 			return err

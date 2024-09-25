@@ -37,14 +37,14 @@ var stopApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		if err != nil || appName == nil || *appName == "" {
+		if err != nil || appName == "" {
 			return errors.New("application name is required fields")
 		}
 
 		cmd.SilenceUsage = true
 
 		parameters := application.NewStopApplicationParams().
-			WithAppName(*appName)
+			WithAppName(appName)
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {

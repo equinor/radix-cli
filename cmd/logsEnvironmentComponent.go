@@ -59,7 +59,7 @@ Examples:
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -79,7 +79,7 @@ Examples:
 			return err
 		}
 
-		_, replicas, err := getReplicasForComponent(apiClient, *appName, environmentName, componentName)
+		_, replicas, err := getReplicasForComponent(apiClient, appName, environmentName, componentName)
 		if err != nil {
 			return err
 		}
@@ -87,7 +87,7 @@ Examples:
 		componentReplicas := make(map[string][]string)
 		componentReplicas[componentName] = replicas
 
-		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, since, componentReplicas, previousLog)
+		return logForComponentReplicas(cmd, apiClient, appName, environmentName, since, componentReplicas, previousLog)
 	},
 }
 
