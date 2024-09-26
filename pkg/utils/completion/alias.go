@@ -7,6 +7,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/spf13/cobra"
 	"k8s.io/utils/strings/slices"
 )
@@ -40,7 +41,7 @@ func AliasCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]strin
 		if component.Name != nil && *component.Name == componentName {
 			for _, externalDns := range component.ExternalDNS {
 				if externalDns.FQDN != nil {
-					names = append(names, *externalDns.FQDN)
+					names = append(names, pointers.Val(externalDns.FQDN))
 				}
 			}
 		}

@@ -10,6 +10,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
 	"k8s.io/utils/strings/slices"
@@ -54,7 +55,7 @@ func getEnvironmentDeployments(appName, envName string, apiClient *apiclient.Rad
 	}
 
 	return slice.Map(resp.Payload.Deployments, func(item *models.DeploymentSummary) string {
-		return *item.Name
+		return pointers.Val(item.Name)
 	})
 }
 
@@ -66,6 +67,6 @@ func getAllDeployments(appName string, apiClient *apiclient.Radixapi) []string {
 	}
 
 	return slice.Map(resp.Payload, func(item *models.DeploymentSummary) string {
-		return *item.Name
+		return pointers.Val(item.Name)
 	})
 }

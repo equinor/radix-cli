@@ -37,8 +37,8 @@ func VariableCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]st
 
 	var names []string
 	for _, comp := range resp.Payload.ActiveDeployment.Components {
-		if *comp.Name == componentName {
-			for variable, _ := range comp.Variables {
+		if comp.Name != nil && *comp.Name == componentName {
+			for variable := range comp.Variables {
 				names = append(names, variable)
 			}
 		}

@@ -71,5 +71,6 @@ func init() {
 	restartPipelineJobCmd.Flags().StringP(flagnames.Job, "j", "", "The job to restart")
 
 	_ = restartPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = restartPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Job, completion.JobCompletion)
 	setContextSpecificPersistentFlags(restartPipelineJobCmd)
 }
