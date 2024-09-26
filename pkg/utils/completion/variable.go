@@ -45,7 +45,7 @@ func VariableCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]st
 	}
 
 	filteredNames := slices.Filter(nil, names, func(name string) bool {
-		return strings.HasPrefix(name, toComplete)
+		return strings.HasPrefix(name, toComplete) && !strings.HasPrefix(name, "RADIX_")
 	})
 
 	return filteredNames, cobra.ShellCompDirectiveNoFileComp
