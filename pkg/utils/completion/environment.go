@@ -10,7 +10,6 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
-	"k8s.io/utils/strings/slices"
 )
 
 func EnvironmentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -34,7 +33,7 @@ func EnvironmentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([
 	names := slice.Map(resp.Payload.Environments, func(item *models.EnvironmentSummary) string {
 		return item.Name
 	})
-	filteredNames := slices.Filter(nil, names, func(name string) bool {
+	filteredNames := slice.FindAll(names, func(name string) bool {
 		return strings.HasPrefix(name, toComplete)
 	})
 

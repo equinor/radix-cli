@@ -11,7 +11,6 @@ import (
 	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
-	"k8s.io/utils/strings/slices"
 )
 
 func ComponentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -40,7 +39,7 @@ func ComponentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]s
 		return pointers.Val(component.Name)
 	})
 
-	filteredNames := slices.Filter(nil, names, func(appName string) bool {
+	filteredNames := slice.FindAll(names, func(appName string) bool {
 		return strings.HasPrefix(appName, toComplete)
 	})
 

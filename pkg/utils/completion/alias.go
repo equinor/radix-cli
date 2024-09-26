@@ -8,8 +8,8 @@ import (
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-common/utils/pointers"
+	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
-	"k8s.io/utils/strings/slices"
 )
 
 func AliasCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -47,7 +47,7 @@ func AliasCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]strin
 		}
 	}
 
-	filteredNames := slices.Filter(nil, names, func(name string) bool {
+	filteredNames := slice.FindAll(names, func(name string) bool {
 		return strings.HasPrefix(name, toComplete)
 	})
 

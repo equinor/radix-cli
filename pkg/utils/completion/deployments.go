@@ -13,7 +13,6 @@ import (
 	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
-	"k8s.io/utils/strings/slices"
 )
 
 func CreateDeploymentCompletion(environmentFlagName string, envRequired bool) func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -39,7 +38,7 @@ func CreateDeploymentCompletion(environmentFlagName string, envRequired bool) fu
 			names = getEnvironmentDeployments(appName, envName, apiClient)
 		}
 
-		filteredNames := slices.Filter(nil, names, func(name string) bool {
+		filteredNames := slice.FindAll(names, func(name string) bool {
 			return strings.HasPrefix(name, toComplete)
 		})
 

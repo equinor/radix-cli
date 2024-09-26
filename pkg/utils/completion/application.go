@@ -9,7 +9,6 @@ import (
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
-	"k8s.io/utils/strings/slices"
 )
 
 const knownApps = "known_apps"
@@ -32,7 +31,7 @@ func ApplicationCompletion(cmd *cobra.Command, _ []string, toComplete string) ([
 	appNames := slice.Map(resp.Payload, func(app *models.ApplicationSummary) string {
 		return app.Name
 	})
-	applications := slices.Filter(nil, appNames, func(appName string) bool {
+	applications := slice.FindAll(appNames, func(appName string) bool {
 		return strings.HasPrefix(appName, toComplete)
 	})
 	config.SetCache(knownApps, applications, config.DefaultCacheDuration)

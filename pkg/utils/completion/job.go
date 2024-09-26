@@ -10,7 +10,6 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
-	"k8s.io/utils/strings/slices"
 )
 
 func JobCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -34,7 +33,7 @@ func JobCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string,
 		return component.Name
 	})
 
-	filteredNames := slices.Filter(nil, names, func(appName string) bool {
+	filteredNames := slice.FindAll(names, func(appName string) bool {
 		return strings.HasPrefix(appName, toComplete)
 	})
 
