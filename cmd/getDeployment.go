@@ -68,8 +68,6 @@ Examples:
 			return errors.New("options 'deployment' and 'environment' cannot be used together")
 		}
 
-		completion.CreateDeploymentCompletion(flagnames.Environment, false)(cmd, []string{}, "")
-
 		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetForCommand(cmd)
@@ -141,6 +139,8 @@ func init() {
 	getDeploymentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	getDeploymentCmd.Flags().StringP(flagnames.Deployment, "d", "", "Optional, name of a deployment. It cannot be used together with an option 'environment'.")
 	getDeploymentCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional, name of the environment. It cannot be used together with an option 'deployment'.")
+	getDeploymentCmd.MarkFlagsOneRequired(flagnames.Environment, flagnames.Deployment)
+	getDeploymentCmd.MarkFlagsMutuallyExclusive(flagnames.Environment, flagnames.Deployment)
 
 	_ = getDeploymentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = getDeploymentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)

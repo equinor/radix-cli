@@ -31,7 +31,7 @@ func VariableCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]st
 
 	params := environment.NewGetEnvironmentParams().WithEnvName(envName).WithAppName(appName)
 	resp, err := apiClient.Environment.GetEnvironment(params, nil)
-	if err != nil {
+	if err != nil || resp.Payload == nil || resp.Payload.ActiveDeployment == nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 

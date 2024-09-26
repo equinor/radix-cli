@@ -27,7 +27,7 @@ func EnvironmentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([
 	getApplicationParams := application.NewGetApplicationParams()
 	getApplicationParams.SetAppName(appName)
 	resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
-	if err != nil {
+	if err != nil || resp.Payload == nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 

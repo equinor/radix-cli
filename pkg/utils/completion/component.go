@@ -32,7 +32,7 @@ func ComponentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]s
 
 	GetEnvironmentParams := environment.NewGetEnvironmentParams().WithEnvName(envName).WithAppName(appName)
 	resp, err := apiClient.Environment.GetEnvironment(GetEnvironmentParams, nil)
-	if err != nil {
+	if err != nil || resp.Payload == nil || resp.Payload.ActiveDeployment == nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 

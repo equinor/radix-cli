@@ -29,7 +29,6 @@ func ApplicationCompletion(cmd *cobra.Command, _ []string, toComplete string) ([
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
-
 	appNames := slice.Map(resp.Payload, func(app *models.ApplicationSummary) string {
 		return app.Name
 	})

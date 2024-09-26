@@ -49,7 +49,7 @@ func CreateDeploymentCompletion(environmentFlagName string, envRequired bool) fu
 func getEnvironmentDeployments(appName, envName string, apiClient *apiclient.Radixapi) []string {
 	params := environment.NewGetEnvironmentParams().WithEnvName(envName).WithAppName(appName)
 	resp, err := apiClient.Environment.GetEnvironment(params, nil)
-	if err != nil {
+	if err != nil || resp.Payload == nil {
 		return nil
 	}
 

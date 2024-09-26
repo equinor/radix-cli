@@ -4,16 +4,14 @@ import (
 	"strings"
 
 	"github.com/equinor/radix-cli/generated-client/client/environment"
-	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
-	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
 	"k8s.io/utils/strings/slices"
 )
 
-func SecretCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+func AliasCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 	if err != nil || appName == "" {
 		return nil, cobra.ShellCompDirectiveNoFileComp
@@ -33,13 +31,20 @@ func SecretCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]stri
 
 	params := environment.NewGetEnvironmentParams().WithEnvName(envName).WithAppName(appName)
 	resp, err := apiClient.Environment.GetEnvironment(params, nil)
-	if err != nil || resp.Payload == nil {
+	if err != nil || resp.Payload == nil || resp.Payload.ActiveDeployment == nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	names := slice.Map(resp.Payload.Secrets, func(item *models.Secret) string {
-		return *item.Name
-	})
+	var names []string
+	for _, component := range resp.Payload.ActiveDeployment.Components {
+		if component.Name != nil && *component.Name == componentName {
+			for _, externalDns := range component.ExternalDNS {
+				if externalDns.FQDN != nil {
+					names = append(names, *externalDns.FQDN)
+				}
+			}
+		}
+	}
 
 	filteredNames := slices.Filter(nil, names, func(name string) bool {
 		return strings.HasPrefix(name, toComplete)
