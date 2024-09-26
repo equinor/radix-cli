@@ -38,6 +38,9 @@ var setExternalDnsTlsCmd = &cobra.Command{
 	Example: `# Read certificate and private key from file
 rx set external-dns-tls --application myapp --environment prod --component web --alias myapp.example.com --certificate-from-file "cert.crt" --private-key-from-file "cert.key" `,
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		completion.AliasCompletion(cmd, []string{}, "")
+
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
@@ -143,7 +146,7 @@ func isComponentExternalDNSReconciled(apiClient *apiclient.Radixapi, appName, en
 func init() {
 	setExternalDnsTlsCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	setExternalDnsTlsCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment")
-	setExternalDnsTlsCmd.Flags().String(flagnames.Component, "", "Name of the component")
+	setExternalDnsTlsCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component")
 	setExternalDnsTlsCmd.Flags().String(flagnames.Alias, "", "External DNS alias to update")
 	setExternalDnsTlsCmd.Flags().String(flagnames.Certificate, "", "Certificate (PEM format)")
 	setExternalDnsTlsCmd.Flags().String(flagnames.CertificateFromFile, "", "Read certificate (PEM format) from file")
@@ -160,6 +163,7 @@ func init() {
 	_ = setExternalDnsTlsCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = setExternalDnsTlsCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	_ = setExternalDnsTlsCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
+	_ = setExternalDnsTlsCmd.RegisterFlagCompletionFunc(flagnames.Alias, completion.AliasCompletion)
 
 	setContextSpecificPersistentFlags(setExternalDnsTlsCmd)
 	setCmd.AddCommand(setExternalDnsTlsCmd)
