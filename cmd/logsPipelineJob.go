@@ -24,8 +24,10 @@ import (
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/pipeline_job"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/log"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -54,12 +56,12 @@ It may take few seconds to get the log.`,
 rx get logs pipeline-job --application radix-test --job radix-pipeline-20230323185013-ehvnz`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -76,7 +78,7 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 			return err
 		}
 
-		return getLogsJob(cmd, apiClient, *appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, jobName)
 	},
 }
 
@@ -181,5 +183,8 @@ func init() {
 
 	logsJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application for the job")
 	logsJobCmd.Flags().StringP(flagnames.Job, "j", "", "The job to get logs for")
+
+	_ = logsJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = logsJobCmd.RegisterFlagCompletionFunc(flagnames.Job, completion.JobCompletion)
 	setContextSpecificPersistentFlags(logsJobCmd)
 }

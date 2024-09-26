@@ -19,7 +19,9 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -29,19 +31,19 @@ var deleteApplicationCmd = &cobra.Command{
 	Short: "Delete application",
 	Long:  `Will delete an application from the cluster`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is a required field")
 		}
 
 		cmd.SilenceUsage = true
 
 		deleteApplicationParams := application.NewDeleteApplicationParams()
-		deleteApplicationParams.SetAppName(*appName)
+		deleteApplicationParams.SetAppName(appName)
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
@@ -55,6 +57,7 @@ var deleteApplicationCmd = &cobra.Command{
 
 func init() {
 	deleteCmd.AddCommand(deleteApplicationCmd)
-	deleteApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to create")
+	deleteApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to delete")
+	_ = deleteApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(deleteApplicationCmd)
 }

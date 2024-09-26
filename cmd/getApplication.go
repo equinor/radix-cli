@@ -16,12 +16,13 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/json"
 	"github.com/spf13/cobra"
 )
@@ -32,7 +33,7 @@ var getApplicationCmd = &cobra.Command{
 	Short: "Gets Radix application",
 	Long:  `Gets a list of Radix applications or a single application if provided`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -44,21 +45,27 @@ var getApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		if appName == nil || strings.EqualFold(*appName, "") {
+		if appName == "" {
 			// List applications
 			showApplicationParams := platform.NewShowApplicationsParams()
 			resp, err := apiClient.Platform.ShowApplications(showApplicationParams, nil)
 
+			var appNames []string
+
 			if err == nil {
 				for _, application := range resp.Payload {
 					fmt.Println(application.Name)
+					appNames = append(appNames, application.Name)
 				}
+				completion.UpdateAppNamesCache(appNames)
+
 				return nil
 			}
+
 			return err
 		}
 		getApplicationParams := application.NewGetApplicationParams()
-		getApplicationParams.SetAppName(*appName)
+		getApplicationParams.SetAppName(appName)
 		resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
 		if err != nil {
 			return err
@@ -75,5 +82,6 @@ var getApplicationCmd = &cobra.Command{
 func init() {
 	getCmd.AddCommand(getApplicationCmd)
 	getApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
+	_ = getApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(getApplicationCmd)
 }

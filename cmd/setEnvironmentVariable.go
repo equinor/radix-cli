@@ -24,7 +24,9 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -35,12 +37,12 @@ var setEnvironmentVariableCmd = &cobra.Command{
 	Long:    "Will set an environment variable",
 	Example: `rx set environment-variable --application your-application-name --environment test --component component-abc --variable LOG_LEVEL --value INFO`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -77,7 +79,7 @@ var setEnvironmentVariableCmd = &cobra.Command{
 
 		if awaitReconcile {
 			reconciledOk := awaitReconciliation(func() bool {
-				return isComponentVariableReconciled(apiClient, *appName, environmentName, componentName, variableName)
+				return isComponentVariableReconciled(apiClient, appName, environmentName, componentName, variableName)
 			})
 
 			if !reconciledOk {
@@ -91,7 +93,7 @@ var setEnvironmentVariableCmd = &cobra.Command{
 		componentVariable.Value = &variableValue
 
 		changeComponentVariableParameters := component.NewChangeEnvVarParams()
-		changeComponentVariableParameters.SetAppName(*appName)
+		changeComponentVariableParameters.SetAppName(appName)
 		changeComponentVariableParameters.SetEnvName(environmentName)
 		changeComponentVariableParameters.SetComponentName(componentName)
 		changeComponentVariableParameters.SetEnvVarParameter([]*models.EnvVarParameter{&componentVariable})
@@ -138,5 +140,10 @@ func init() {
 	setEnvironmentVariableCmd.Flags().StringP(flagnames.Variable, "", "", "Name of the variable to set")
 	setEnvironmentVariableCmd.Flags().StringP(flagnames.Value, "v", "", "Value of the variable to set")
 	setEnvironmentVariableCmd.Flags().Bool(flagnames.AwaitReconcile, true, "Await reconciliation in Radix. Default is true")
+
+	_ = setEnvironmentVariableCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = setEnvironmentVariableCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
+	_ = setEnvironmentVariableCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
+	_ = setEnvironmentVariableCmd.RegisterFlagCompletionFunc(flagnames.Variable, completion.VariableCompletion)
 	setContextSpecificPersistentFlags(setEnvironmentVariableCmd)
 }

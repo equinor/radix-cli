@@ -20,7 +20,9 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -37,7 +39,7 @@ Currently applied changes in properties DNS alias, build secrets, create new or 
   rx create job apply-config -a radix-test`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			errs = append(errs, err)
 		}
@@ -52,7 +54,7 @@ Currently applied changes in properties DNS alias, build secrets, create new or 
 		if len(errs) > 0 {
 			return errors.Join(errs...)
 		}
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -64,7 +66,7 @@ Currently applied changes in properties DNS alias, build secrets, create new or 
 		}
 
 		triggerPipelineParams := application.NewTriggerPipelineApplyConfigParams()
-		triggerPipelineParams.SetAppName(*appName)
+		triggerPipelineParams.SetAppName(appName)
 		parametersApplyConfig := models.PipelineParametersApplyConfig{
 			TriggeredBy: triggeredByUser,
 		}
@@ -80,7 +82,7 @@ Currently applied changes in properties DNS alias, build secrets, create new or 
 		if !follow {
 			return nil
 		}
-		return getLogsJob(cmd, apiClient, *appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, jobName)
 	},
 }
 
@@ -89,5 +91,6 @@ func init() {
 	createApplyConfigPipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to apply-config")
 	createApplyConfigPipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the apply-config")
 	createApplyConfigPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow applyConfig")
+	_ = createApplyConfigPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createApplyConfigPipelineJobCmd)
 }

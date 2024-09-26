@@ -24,7 +24,9 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -36,11 +38,14 @@ var setExternalDnsTlsCmd = &cobra.Command{
 	Example: `# Read certificate and private key from file
 rx set external-dns-tls --application myapp --environment prod --component web --alias myapp.example.com --certificate-from-file "cert.crt" --private-key-from-file "cert.key" `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+
+		completion.AliasCompletion(cmd, []string{}, "")
+
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -59,7 +64,7 @@ rx set external-dns-tls --application myapp --environment prod --component web -
 			return errors.New("`alias` is required")
 		}
 
-		certificate, err := getStringFromFlagValueOrFlagFile(cmd, flagnames.Certificate, flagnames.CertificateFromFile)
+		certificate, err := config.GetStringFromFlagValueOrFlagFile(cmd, flagnames.Certificate, flagnames.CertificateFromFile)
 		if err != nil {
 			return err
 		}
@@ -67,7 +72,7 @@ rx set external-dns-tls --application myapp --environment prod --component web -
 			return errors.New("certificate value cannot be empty")
 		}
 
-		privateKey, err := getStringFromFlagValueOrFlagFile(cmd, flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
+		privateKey, err := config.GetStringFromFlagValueOrFlagFile(cmd, flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
 		if err != nil {
 			return err
 		}
@@ -86,7 +91,7 @@ rx set external-dns-tls --application myapp --environment prod --component web -
 
 		if awaitReconcile {
 			reconciledOk := awaitReconciliation(func() bool {
-				return isComponentExternalDNSReconciled(apiClient, *appName, environmentName, componentName, fqdn)
+				return isComponentExternalDNSReconciled(apiClient, appName, environmentName, componentName, fqdn)
 			})
 
 			if !reconciledOk {
@@ -95,7 +100,7 @@ rx set external-dns-tls --application myapp --environment prod --component web -
 			}
 		}
 		updateExternalDNSTLS := component.NewUpdateComponentExternalDNSTLSParams().
-			WithAppName(*appName).
+			WithAppName(appName).
 			WithEnvName(environmentName).
 			WithComponentName(componentName).
 			WithFqdn(fqdn).
@@ -155,7 +160,11 @@ func init() {
 	setExternalDnsTlsCmd.MarkFlagsOneRequired(flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
 	setExternalDnsTlsCmd.MarkFlagsMutuallyExclusive(flagnames.PrivateKey, flagnames.PrivateKeyFromFile)
 
-	setContextSpecificPersistentFlags(setExternalDnsTlsCmd)
+	_ = setExternalDnsTlsCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = setExternalDnsTlsCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
+	_ = setExternalDnsTlsCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
+	_ = setExternalDnsTlsCmd.RegisterFlagCompletionFunc(flagnames.Alias, completion.AliasCompletion)
 
+	setContextSpecificPersistentFlags(setExternalDnsTlsCmd)
 	setCmd.AddCommand(setExternalDnsTlsCmd)
 }

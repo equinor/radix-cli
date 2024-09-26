@@ -21,6 +21,7 @@ import (
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -44,7 +45,7 @@ rx scale component -a radix-test -e dev -n component-abc -r 2
 rx scale component --application radix-test --environment dev --component component-abc --reset
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -64,7 +65,7 @@ rx scale component --application radix-test --environment dev --component compon
 		if err != nil {
 			return err
 		}
-		if appName == nil || *appName == "" || envName == "" || cmpName == "" {
+		if appName == "" || envName == "" || cmpName == "" {
 			return errors.New("application name, environment name and component name are required fields")
 		}
 		if !reset && (replicas < 0 || replicas > 20) {
@@ -79,9 +80,9 @@ rx scale component --application radix-test --environment dev --component compon
 		cmd.SilenceUsage = true
 
 		if reset {
-			return resetScaledComponent(apiClient, *appName, envName, cmpName)
+			return resetScaledComponent(apiClient, appName, envName, cmpName)
 		}
-		return scaleComponent(apiClient, *appName, envName, cmpName, strconv.Itoa(replicas))
+		return scaleComponent(apiClient, appName, envName, cmpName, strconv.Itoa(replicas))
 	},
 }
 

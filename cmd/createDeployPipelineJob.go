@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/equinor/radix-cli/pkg/config"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
@@ -48,7 +50,7 @@ var createDeployPipelineJobCmd = &cobra.Command{
   rx create job deploy -a radix-test -e dev --component web-app --component api-server`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			errs = append(errs, err)
 		}
@@ -71,7 +73,7 @@ var createDeployPipelineJobCmd = &cobra.Command{
 		if len(errs) > 0 {
 			return errors.Join(errs...)
 		}
-		if appName == nil || *appName == "" || targetEnvironment == "" {
+		if appName == "" || targetEnvironment == "" {
 			return errors.New("application name and target environment are required")
 		}
 		commitID, _ := cmd.Flags().GetString(flagnames.CommitID)
@@ -92,7 +94,7 @@ var createDeployPipelineJobCmd = &cobra.Command{
 		}
 
 		triggerPipelineParams := application.NewTriggerPipelineDeployParams()
-		triggerPipelineParams.SetAppName(*appName)
+		triggerPipelineParams.SetAppName(appName)
 		parametersDeploy := models.PipelineParametersDeploy{
 			ToEnvironment:      targetEnvironment,
 			ImageTagNames:      imageTagNames,
@@ -112,7 +114,7 @@ var createDeployPipelineJobCmd = &cobra.Command{
 		if !follow {
 			return nil
 		}
-		return getLogsJob(cmd, apiClient, *appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, jobName)
 	},
 }
 
@@ -137,7 +139,10 @@ func init() {
 	createDeployPipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the deploy")
 	createDeployPipelineJobCmd.Flags().StringToStringP(flagnames.ImageTagName, "t", map[string]string{}, "Image tag name for a component: component-name=tag-name. Multiple pairs can be specified.")
 	createDeployPipelineJobCmd.Flags().StringP(flagnames.CommitID, "i", "", "An optional 40 character commit id to tag the new pipeline job")
-	createDeployPipelineJobCmd.Flags().StringSlice(flagnames.Component, []string{}, "Optional component to deploy, when only specific component need to be deployed. Multiple components can be specified.")
+	createDeployPipelineJobCmd.Flags().StringSliceP(flagnames.Component, "n", []string{}, "Optional component to deploy, when only specific component need to be deployed. Multiple components can be specified.")
 	createDeployPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow deploy")
+	_ = createDeployPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = createDeployPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
+	_ = createDeployPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(createDeployPipelineJobCmd)
 }

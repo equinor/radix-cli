@@ -19,7 +19,9 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -31,19 +33,19 @@ var startApplicationCmd = &cobra.Command{
   - Pulls new images from image hub in radix configuration
   - Starts the application containers using up to date images`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		if err != nil || appName == nil || *appName == "" {
+		if err != nil || appName == "" {
 			return errors.New("application name is required fields")
 		}
 
 		cmd.SilenceUsage = true
 
 		parameters := application.NewStartApplicationParams().
-			WithAppName(*appName)
+			WithAppName(appName)
 
 		apiClient, err := client.GetForCommand(cmd)
 		if err != nil {
@@ -58,5 +60,6 @@ var startApplicationCmd = &cobra.Command{
 func init() {
 	startCmd.AddCommand(startApplicationCmd)
 	startApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	_ = startApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(startApplicationCmd)
 }
