@@ -134,7 +134,7 @@ func init() {
 	setCmd.AddCommand(setEnvironmentSecretCmd)
 	setEnvironmentSecretCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to set secret for")
 	setEnvironmentSecretCmd.Flags().StringP(flagnames.Environment, "e", "", "Environment to set secret in")
-	setEnvironmentSecretCmd.Flags().StringP(flagnames.Component, "n", "", "Component to set the secret for")
+	setEnvironmentSecretCmd.Flags().String(flagnames.Component, "", "Component to set the secret for")
 	setEnvironmentSecretCmd.Flags().StringP(flagnames.Secret, "s", "", "Name of the secret to set")
 	setEnvironmentSecretCmd.Flags().StringP(flagnames.Value, "v", "", "Value of the secret to set")
 	setEnvironmentSecretCmd.Flags().Bool(flagnames.AwaitReconcile, true, "Await reconciliation in Radix. Default is true")

@@ -146,7 +146,7 @@ func isComponentExternalDNSReconciled(apiClient *apiclient.Radixapi, appName, en
 func init() {
 	setExternalDnsTlsCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	setExternalDnsTlsCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment")
-	setExternalDnsTlsCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component")
+	setExternalDnsTlsCmd.Flags().String(flagnames.Component, "", "Name of the component")
 	setExternalDnsTlsCmd.Flags().String(flagnames.Alias, "", "External DNS alias to update")
 	setExternalDnsTlsCmd.Flags().String(flagnames.Certificate, "", "Certificate (PEM format)")
 	setExternalDnsTlsCmd.Flags().String(flagnames.CertificateFromFile, "", "Read certificate (PEM format) from file")
