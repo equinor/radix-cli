@@ -20,8 +20,8 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
-	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/json"
 	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/spf13/cobra"
@@ -32,12 +32,28 @@ var getResourcesCmd = &cobra.Command{
 	Use:   "resources",
 	Short: "Gets resources used by the Radix application",
 	Long:  `Gets resources used by the Radix application or its environment or a component`,
+	Example: `
+# Get resources used by the application for the last 30 days
+rx get resources -a myapp
+
+# Get resources used by the application in the environment for the last 30 days
+rx get resources -a myapp -e dev
+
+# Get resources used by the application in the environment for a component for the last 30 days
+rx get resources -a myapp -e dev -n mycomponent
+
+# Get resources used by the application in the environment for a component for the last 5 minutes
+rx get resources -a myapp -e dev -n mycomponent --duration 5m
+
+# Get resources used by the application in the environment for a component for the last 12 hours starting with two days ago
+rx get resources -a myapp -e dev -n mycomponent --duration 12h --since 2d
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required field")
 		}
 		envName, err := cmd.Flags().GetString(flagnames.Environment)
@@ -48,31 +64,24 @@ var getResourcesCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		since, err := cmd.Flags().GetDuration(flagnames.Since)
+		since, err := cmd.Flags().GetString(flagnames.Since)
 		if err != nil {
 			return err
 		}
-		duration, err := cmd.Flags().GetDuration(flagnames.Duration)
-		if err != nil {
-			return err
-		}
-		ignoreZeros, err := cmd.Flags().GetBool(flagnames.IgnoreZeros)
+		duration, err := cmd.Flags().GetString(flagnames.Duration)
 		if err != nil {
 			return err
 		}
 
 		getResourcesParams := application.NewGetResourcesParams()
-		getResourcesParams.SetAppName(*appName)
+		getResourcesParams.SetAppName(appName)
 		getResourcesParams.SetEnvironment(&envName)
 		getResourcesParams.SetComponent(&componentName)
-		if duration != settings.ZeroDuration {
-			getResourcesParams.SetDuration(pointers.Ptr(duration.String()))
+		if duration != "" {
+			getResourcesParams.SetDuration(pointers.Ptr(duration))
 		}
-		if since != settings.ZeroDuration {
-			getResourcesParams.SetDuration(pointers.Ptr(since.String()))
-		}
-		if ignoreZeros {
-			getResourcesParams.SetIgnorezero(pointers.Ptr("true"))
+		if since != "" {
+			getResourcesParams.SetSince(pointers.Ptr(since))
 		}
 
 		cmd.SilenceUsage = true
@@ -99,8 +108,7 @@ func init() {
 	getResourcesCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	getResourcesCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional, name of the environment")
 	getResourcesCmd.Flags().StringP(flagnames.Component, "n", "", "Optional, name of the component")
-	getResourcesCmd.Flags().Duration(flagnames.Duration, settings.ZeroDuration, "If set, get resources during the specified period (default is 30 days), eg. 5m or 12h")
-	getResourcesCmd.Flags().DurationP(flagnames.Since, "s", settings.ZeroDuration, "If set, get resources from the specified time, eg. 5m or 12h")
-	getResourcesCmd.Flags().Bool(flagnames.IgnoreZeros, false, "If set, metrics with zero value are not included to the output (default is false)")
+	getResourcesCmd.Flags().String(flagnames.Duration, "", "If set, get resources during the specified period (default is 30 days), eg. 5m or 12h")
+	getResourcesCmd.Flags().String(flagnames.Since, "", "If set, get resources starting from the specified time in the past, eg. 5m or 12h")
 	setContextSpecificPersistentFlags(getResourcesCmd)
 }

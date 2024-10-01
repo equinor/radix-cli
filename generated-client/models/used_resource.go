@@ -17,29 +17,17 @@ import (
 // swagger:model UsedResource
 type UsedResource struct {
 
-	// Average resource used
-	// Example: 120m
-	Average string `json:"average,omitempty"`
-
-	// AvgActual actual precise resource used
-	// Example: 0.00012
-	AvgActual float64 `json:"avgActual,omitempty"`
+	// Avg Average resource used
+	// Example: 0.00023
+	Avg float64 `json:"avg,omitempty"`
 
 	// Max resource used
-	// Example: 120m
-	Max string `json:"max,omitempty"`
-
-	// MaxActual actual precise resource used
 	// Example: 0.00037
-	MaxActual float64 `json:"maxActual,omitempty"`
+	Max float64 `json:"max,omitempty"`
 
 	// Min resource used
-	// Example: 120m
-	Min string `json:"min,omitempty"`
-
-	// MinActual actual precise resource used
 	// Example: 0.00012
-	MinActual float64 `json:"minActual,omitempty"`
+	Min float64 `json:"min,omitempty"`
 }
 
 // Validate validates this used resource

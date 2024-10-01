@@ -25,7 +25,7 @@ type UsedResources struct {
 	From *string `json:"from"`
 
 	// To timestamp
-	// Example: 2006-01-02T15:04:05Z
+	// Example: 2006-01-03T15:04:05Z
 	// Required: true
 	To *string `json:"to"`
 

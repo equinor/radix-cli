@@ -97,14 +97,6 @@ type GetResourcesParams struct {
 	*/
 	Environment *string
 
-	/* Ignorezero.
-
-	   Ignore metrics with zero value if true, default is false
-
-	   Format: boolean
-	*/
-	Ignorezero *string
-
 	/* Since.
 
 	   End time-point of the period in the past, default is now. Example 10m, 1h, 2d, 3w, where m-minutes, h-hours, d-days, w-weeks
@@ -230,17 +222,6 @@ func (o *GetResourcesParams) SetEnvironment(environment *string) {
 	o.Environment = environment
 }
 
-// WithIgnorezero adds the ignorezero to the get resources params
-func (o *GetResourcesParams) WithIgnorezero(ignorezero *string) *GetResourcesParams {
-	o.SetIgnorezero(ignorezero)
-	return o
-}
-
-// SetIgnorezero adds the ignorezero to the get resources params
-func (o *GetResourcesParams) SetIgnorezero(ignorezero *string) {
-	o.Ignorezero = ignorezero
-}
-
 // WithSince adds the since to the get resources params
 func (o *GetResourcesParams) WithSince(since *string) *GetResourcesParams {
 	o.SetSince(since)
@@ -327,23 +308,6 @@ func (o *GetResourcesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if qEnvironment != "" {
 
 			if err := r.SetQueryParam("environment", qEnvironment); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.Ignorezero != nil {
-
-		// query param ignorezero
-		var qrIgnorezero string
-
-		if o.Ignorezero != nil {
-			qrIgnorezero = *o.Ignorezero
-		}
-		qIgnorezero := qrIgnorezero
-		if qIgnorezero != "" {
-
-			if err := r.SetQueryParam("ignorezero", qIgnorezero); err != nil {
 				return err
 			}
 		}

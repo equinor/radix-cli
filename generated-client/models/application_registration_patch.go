@@ -20,6 +20,9 @@ type ApplicationRegistrationPatch struct {
 	// AdGroups the groups that should be able to access the application
 	AdGroups []string `json:"adGroups"`
 
+	// AdUsers the users/service-principals that should be able to access the application
+	AdUsers []string `json:"adUsers"`
+
 	// ConfigBranch information
 	ConfigBranch string `json:"configBranch,omitempty"`
 
@@ -36,6 +39,9 @@ type ApplicationRegistrationPatch struct {
 
 	// ReaderAdGroups the groups that should be able to read the application
 	ReaderAdGroups []string `json:"readerAdGroups"`
+
+	// ReaderAdUsers the users/service-principals that should be able to read the application
+	ReaderAdUsers []string `json:"readerAdUsers"`
 
 	// Repository the github repository
 	Repository string `json:"repository,omitempty"`
