@@ -19,7 +19,9 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -31,21 +33,21 @@ var restartEnvironmentCmd = &cobra.Command{
   - Starts the environment's containers, using up to date images
   - Stops the application environment's old containers`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
 		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
-		if err != nil || appName == nil || *appName == "" || envName == "" {
+		if err != nil || appName == "" || envName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
 		cmd.SilenceUsage = true
 
 		parameters := environment.NewRestartEnvironmentParams().
-			WithAppName(*appName).
+			WithAppName(appName).
 			WithEnvName(envName)
 
 		apiClient, err := client.GetForCommand(cmd)
@@ -62,5 +64,8 @@ func init() {
 	restartCmd.AddCommand(restartEnvironmentCmd)
 	restartEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 	restartEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
+
+	_ = restartComponentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
+	_ = restartComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(restartEnvironmentCmd)
 }

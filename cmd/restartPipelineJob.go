@@ -19,7 +19,9 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/pipeline_job"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -32,12 +34,12 @@ var restartPipelineJobCmd = &cobra.Command{
 	Example: `rx restart pipeline-job --application radix-test --job radix-pipeline-20230323185013-ehvnz`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -55,7 +57,7 @@ var restartPipelineJobCmd = &cobra.Command{
 		}
 
 		params := pipeline_job.NewRerunApplicationJobParams()
-		params.AppName = *appName
+		params.AppName = appName
 		params.JobName = jobName
 
 		_, err = apiClient.PipelineJob.RerunApplicationJob(params, nil)
@@ -67,5 +69,8 @@ func init() {
 	restartCmd.AddCommand(restartPipelineJobCmd)
 	restartPipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application for the job")
 	restartPipelineJobCmd.Flags().StringP(flagnames.Job, "j", "", "The job to restart")
+
+	_ = restartPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = restartPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Job, completion.JobCompletion)
 	setContextSpecificPersistentFlags(restartPipelineJobCmd)
 }

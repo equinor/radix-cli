@@ -19,7 +19,9 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -35,14 +37,14 @@ Deprecated: Use 'rx scale component --reset' instead
 Resets a manully scaled component to resume normal operations again.`,
 	Deprecated: " Use 'rx scale component --reset' instead. Will be removed after September 2025",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
 		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
-		if err != nil || appName == nil || *appName == "" || envName == "" {
+		if err != nil || appName == "" || envName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
@@ -54,7 +56,7 @@ Resets a manully scaled component to resume normal operations again.`,
 		cmd.SilenceUsage = true
 
 		parameters := component.NewStartComponentParams().
-			WithAppName(*appName).
+			WithAppName(appName).
 			WithEnvName(envName).
 			WithComponentName(cmpName)
 
@@ -77,6 +79,9 @@ func init() {
 	startCmd.AddCommand(startComponentCmd)
 	startComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 	startComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
-	startComponentCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to start")
+	startComponentCmd.Flags().String(flagnames.Component, "", "Name of the component to start")
+	_ = startComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = startComponentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
+	_ = startComponentCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(startComponentCmd)
 }

@@ -17,7 +17,9 @@ package cmd
 import (
 	"errors"
 
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/model"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/equinor/radix-cli/generated-client/client/application"
@@ -35,7 +37,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 	Short: "Will trigger build-deploy of a Radix application",
 	Long:  `Triggers build-deploy of Radix application, if branch to environment map exists for the branch in the Radix config`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -44,7 +46,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		commitID, _ := cmd.Flags().GetString(flagnames.CommitID)
 		follow, _ := cmd.Flags().GetBool(flagnames.Follow)
 
-		if appName == nil || *appName == "" || branch == "" {
+		if appName == "" || branch == "" {
 			return errors.New("application name and branch are required")
 		}
 		cmd.SilenceUsage = true
@@ -55,7 +57,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		}
 
 		triggerPipelineParams := application.NewTriggerPipelineBuildDeployParams()
-		triggerPipelineParams.SetAppName(*appName)
+		triggerPipelineParams.SetAppName(appName)
 		triggerPipelineParams.SetPipelineParametersBuild(&models.PipelineParametersBuild{
 			Branch:                branch,
 			CommitID:              commitID,
@@ -72,7 +74,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		if !follow {
 			return nil
 		}
-		return getLogsJob(cmd, apiClient, *appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, jobName)
 	},
 }
 
@@ -84,5 +86,6 @@ func init() {
 	createBuildDeployApplicationCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build-deploy")
 	createBuildDeployApplicationCmd.Flags().Var(&overrideUseBuildCache, flagnames.UseBuildCache, "Optional. Overrides configured or default useBuildCache option. It is applicable when the useBuildKit option is set as true.")
 
+	_ = createBuildDeployApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createBuildDeployApplicationCmd)
 }

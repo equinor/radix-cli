@@ -19,7 +19,9 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -29,21 +31,21 @@ var createEnvironmentCmd = &cobra.Command{
 	Short: "Create environment",
 	Long:  `Creates a Radix environment for the application`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
 		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
-		if err != nil || appName == nil || *appName == "" {
+		if err != nil || appName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
 		cmd.SilenceUsage = true
 
 		parameters := environment.NewCreateEnvironmentParams().
-			WithAppName(*appName).
+			WithAppName(appName).
 			WithEnvName(envName)
 
 		apiClient, err := client.GetForCommand(cmd)
@@ -60,5 +62,7 @@ func init() {
 	createCmd.AddCommand(createEnvironmentCmd)
 	createEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 	createEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment to create")
+	_ = createEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = createEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	setContextSpecificPersistentFlags(createEnvironmentCmd)
 }

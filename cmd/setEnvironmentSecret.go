@@ -23,7 +23,9 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -33,12 +35,12 @@ var setEnvironmentSecretCmd = &cobra.Command{
 	Short: "Will set an environment secret",
 	Long:  `Will set an environment secret`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -75,7 +77,7 @@ var setEnvironmentSecretCmd = &cobra.Command{
 
 		if awaitReconcile {
 			reconciledOk := awaitReconciliation(func() bool {
-				return isComponentSecretReconciled(apiClient, *appName, environmentName, component, secretName)
+				return isComponentSecretReconciled(apiClient, appName, environmentName, component, secretName)
 			})
 
 			if !reconciledOk {
@@ -88,7 +90,7 @@ var setEnvironmentSecretCmd = &cobra.Command{
 		componentSecret.SecretValue = &secretValue
 
 		changeComponentSecretParameters := environment.NewChangeComponentSecretParams()
-		changeComponentSecretParameters.SetAppName(*appName)
+		changeComponentSecretParameters.SetAppName(appName)
 		changeComponentSecretParameters.SetEnvName(environmentName)
 		changeComponentSecretParameters.SetComponentName(component)
 		changeComponentSecretParameters.SetSecretName(secretName)
@@ -136,5 +138,10 @@ func init() {
 	setEnvironmentSecretCmd.Flags().StringP(flagnames.Secret, "s", "", "Name of the secret to set")
 	setEnvironmentSecretCmd.Flags().StringP(flagnames.Value, "v", "", "Value of the secret to set")
 	setEnvironmentSecretCmd.Flags().Bool(flagnames.AwaitReconcile, true, "Await reconciliation in Radix. Default is true")
+
+	_ = setEnvironmentSecretCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = setEnvironmentSecretCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
+	_ = setEnvironmentSecretCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
+	_ = setEnvironmentSecretCmd.RegisterFlagCompletionFunc(flagnames.Secret, completion.SecretCompletion)
 	setContextSpecificPersistentFlags(setEnvironmentSecretCmd)
 }

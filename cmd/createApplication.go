@@ -24,6 +24,7 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/platform"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
@@ -35,7 +36,7 @@ var createApplicationCmd = &cobra.Command{
 	Long:    "Creates a Radix application in the cluster",
 	Example: `rx create application --application your-application-name --repository https://github.com/your-repository --config-branch main --ad-groups abcdef-1234-5678-9aaa-abcdefgf --reader-ad-groups=23456789--9123-4567-8901-23456701 --shared-secret someSecretPhrase12345 --acknowledge-warnings --configuration-item "YOUR PROJECT CONFIG ITEM" --context playground`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -51,7 +52,7 @@ var createApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		if appName == nil || *appName == "" || repository == "" || configBranch == "" || configurationItem == "" {
+		if appName == "" || repository == "" || configBranch == "" || configurationItem == "" {
 			return errors.New("application name, repository, configuration item and config branch are required fields")
 		}
 
@@ -67,7 +68,7 @@ var createApplicationCmd = &cobra.Command{
 				AdGroups:            adGroups,
 				ConfigBranch:        &configBranch,
 				ConfigurationItem:   configurationItem,
-				Name:                appName,
+				Name:                &appName,
 				RadixConfigFullName: configFile,
 				ReaderAdGroups:      readerAdGroups,
 				Repository:          &repository,
@@ -98,7 +99,7 @@ var createApplicationCmd = &cobra.Command{
 
 		}
 		deployKeyAndSecretParams := application.NewGetDeployKeyAndSecretParams()
-		deployKeyAndSecretParams.SetAppName(*appName)
+		deployKeyAndSecretParams.SetAppName(appName)
 		getRadixRegistrationNoAccessErrorCount := 3
 		getRadixRegistrationNoAccessErrorPause := 2 * time.Second
 		for {

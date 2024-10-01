@@ -20,6 +20,8 @@ import (
 
 	apiclient "github.com/equinor/radix-cli/generated-client/client"
 	"github.com/equinor/radix-cli/generated-client/client/environment"
+	"github.com/equinor/radix-cli/pkg/config"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 
 	log "github.com/sirupsen/logrus"
 
@@ -36,7 +38,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 	Short: "Will trigger promote of a Radix application",
 	Long:  `Triggers promote of a Radix application deployment`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
@@ -55,7 +57,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 			return errors.New("you cannot set use-active-deployment and specify deployment name at the same time")
 		}
 
-		if appName == nil || *appName == "" || fromEnvironment == "" || toEnvironment == "" {
+		if appName == "" || fromEnvironment == "" || toEnvironment == "" {
 			return errors.New("application name, from and to environments are required")
 		}
 
@@ -67,7 +69,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 		}
 
 		if useActiveDeployment {
-			d, err := getActiveDeploymentName(apiClient, *appName, fromEnvironment)
+			d, err := getActiveDeploymentName(apiClient, appName, fromEnvironment)
 			if err != nil {
 				return err
 			}
@@ -76,7 +78,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 		}
 
 		triggerPipelineParams := application.NewTriggerPipelinePromoteParams()
-		triggerPipelineParams.SetAppName(*appName)
+		triggerPipelineParams.SetAppName(appName)
 		triggerPipelineParams.SetPipelineParametersPromote(&models.PipelineParametersPromote{
 			DeploymentName:  deploymentName,
 			FromEnvironment: fromEnvironment,
@@ -95,7 +97,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 			return nil
 		}
 
-		return getLogsJob(cmd, apiClient, *appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, jobName)
 	},
 }
 
@@ -125,5 +127,9 @@ func init() {
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the promote pipeline job")
 	createPromotePipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow the promote pipeline job log")
 	createPromotePipelineJobCmd.Flags().BoolP(flagnames.UseActiveDeployment, "", false, "Promote the active deployment")
+	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.FromEnvironment, completion.EnvironmentCompletion)
+	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.ToEnvironment, completion.EnvironmentCompletion)
+	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Deployment, completion.CreateDeploymentCompletion(flagnames.FromEnvironment, true))
 	setContextSpecificPersistentFlags(createPromotePipelineJobCmd)
 }

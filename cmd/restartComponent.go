@@ -19,7 +19,9 @@ import (
 
 	"github.com/equinor/radix-cli/generated-client/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
 
@@ -31,14 +33,14 @@ var restartComponentCmd = &cobra.Command{
   - Starts the component's container, using up to date image
   - Stops the application component's old containers`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
 		envName, err := cmd.Flags().GetString(flagnames.Environment)
 
-		if err != nil || appName == nil || *appName == "" {
+		if err != nil || appName == "" {
 			return errors.New("environment name and application name are required fields")
 		}
 
@@ -50,7 +52,7 @@ var restartComponentCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		parameters := component.NewRestartComponentParams().
-			WithAppName(*appName).
+			WithAppName(appName).
 			WithEnvName(envName).
 			WithComponentName(cmpName)
 
@@ -69,5 +71,9 @@ func init() {
 	restartComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
 	restartComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 	restartComponentCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to restart")
+
+	_ = restartComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = restartComponentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
+	_ = restartComponentCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(restartComponentCmd)
 }

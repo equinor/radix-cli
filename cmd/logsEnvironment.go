@@ -21,8 +21,10 @@ import (
 	"github.com/equinor/radix-cli/generated-client/client/environment"
 	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
 )
@@ -38,12 +40,12 @@ It may take few seconds to get the log.
 	Example: `# Get logs for all components in an environment. Log lines from different components have different colors
 rx get logs environment --application radix-test --environment dev`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		appName, err := getAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
 		}
 
-		if appName == nil || *appName == "" {
+		if appName == "" {
 			return errors.New("application name is required")
 		}
 
@@ -62,12 +64,12 @@ rx get logs environment --application radix-test --environment dev`,
 			return err
 		}
 
-		componentReplicas, err := getComponentReplicasForEnvironment(apiClient, *appName, environmentName)
+		componentReplicas, err := getComponentReplicasForEnvironment(apiClient, appName, environmentName)
 		if err != nil {
 			return err
 		}
 
-		return logForComponentReplicas(cmd, apiClient, *appName, environmentName, since, componentReplicas, previousLog)
+		return logForComponentReplicas(cmd, apiClient, appName, environmentName, since, componentReplicas, previousLog)
 	},
 }
 
@@ -104,5 +106,8 @@ func init() {
 	logsEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Environment the component runs in")
 	logsEnvironmentCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
 	logsEnvironmentCmd.Flags().DurationP(flagnames.Since, "s", settings.DeltaRefreshApplication, "If set, start get logs from the specified time, eg. 5m or 12h")
+
+	_ = logsEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = logsEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	setContextSpecificPersistentFlags(logsEnvironmentCmd)
 }
