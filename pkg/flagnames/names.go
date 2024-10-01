@@ -49,5 +49,4 @@ const (
 	Variable            = "variable"
 	Verbose             = "verbose"
 	Value               = "value"
-	IgnoreZeros         = "ignorezero"
 )
