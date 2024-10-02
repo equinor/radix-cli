@@ -22,6 +22,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/json"
 	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/spf13/cobra"
@@ -110,5 +111,6 @@ func init() {
 	getResourcesCmd.Flags().StringP(flagnames.Component, "n", "", "Optional, name of the component")
 	getResourcesCmd.Flags().String(flagnames.Duration, "", "If set, get resources during the specified period (default is 30 days), eg. 5m or 12h")
 	getResourcesCmd.Flags().String(flagnames.Since, "", "If set, get resources starting from the specified time in the past, eg. 5m or 12h")
+	_ = restartApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(getResourcesCmd)
 }
