@@ -35,6 +35,7 @@ const (
 	Schema              = "schema"
 	Secret              = "secret"
 	SharedSecret        = "shared-secret"
+	Duration            = "duration"
 	Since               = "since"
 	SkipValidation      = "skip-validation"
 	StrictValidation    = "strict-validation"

@@ -19,6 +19,11 @@ import (
 // swagger:model Port
 type Port struct {
 
+	// IsPublic indicates that the port is accessible from the Internet by proxying traffic from 443
+	// Example: true
+	// Required: true
+	IsPublic *bool `json:"isPublic"`
+
 	// Component port name. From radixconfig.yaml
 	// Example: http
 	// Required: true
@@ -26,14 +31,23 @@ type Port struct {
 
 	// Component port number. From radixconfig.yaml
 	// Example: 8080
-	Port int32 `json:"port,omitempty"`
+	// Required: true
+	Port *int32 `json:"port"`
 }
 
 // Validate validates this port
 func (m *Port) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateIsPublic(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePort(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -43,9 +57,27 @@ func (m *Port) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Port) validateIsPublic(formats strfmt.Registry) error {
+
+	if err := validate.Required("isPublic", "body", m.IsPublic); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *Port) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Port) validatePort(formats strfmt.Registry) error {
+
+	if err := validate.Required("port", "body", m.Port); err != nil {
 		return err
 	}
 
