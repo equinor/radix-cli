@@ -112,5 +112,7 @@ func init() {
 	getResourcesCmd.Flags().String(flagnames.Duration, "", "If set, get resources during the specified period (default is 30 days), eg. 5m or 12h")
 	getResourcesCmd.Flags().String(flagnames.Since, "", "If set, get resources starting from the specified time in the past, eg. 5m or 12h")
 	_ = restartApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = restartApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.EnvironmentCompletion)
+	_ = restartApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ComponentCompletion)
 	setContextSpecificPersistentFlags(getResourcesCmd)
 }
