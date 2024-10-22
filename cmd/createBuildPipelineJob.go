@@ -76,5 +76,6 @@ func init() {
 	if err := createBuildPipelineJobCmd.MarkFlagRequired(flagnames.Branch); err != nil {
 		log.Fatalf("Error during command initialization: %v", err)
 	}
+	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createBuildPipelineJobCmd)
 }
