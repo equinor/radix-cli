@@ -22,6 +22,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/utils/completion"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
