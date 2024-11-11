@@ -46,6 +46,10 @@ type PipelineParametersBuild struct {
 	// Example: true
 	PushImage string `json:"pushImage,omitempty"`
 
+	// Name of environment to build for
+	// Example: prod
+	ToEnvironment string `json:"toEnvironment,omitempty"`
+
 	// TriggeredBy of the job - if empty will use user token upn (user principle name)
 	// Example: a_user@equinor.com
 	TriggeredBy string `json:"triggeredBy,omitempty"`

@@ -20,6 +20,10 @@ import (
 // swagger:model DeploymentSummaryPipelineJobInfo
 type DeploymentSummaryPipelineJobInfo struct {
 
+	// Name of the branch used to build the deployment
+	// Example: main
+	BuiltFromBranch string `json:"builtFromBranch,omitempty"`
+
 	// CommitID the commit ID of the branch to build
 	// Example: 4faca8595c5283a9d0f17a623b9255a0d9866a2e
 	CommitID string `json:"commitID,omitempty"`

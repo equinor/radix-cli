@@ -38,6 +38,10 @@ type Job struct {
 	// Example: 2006-01-02T15:04:05Z
 	Created string `json:"created,omitempty"`
 
+	// DeployedToEnvironment the name of the environment that was deployed to
+	// Example: qa
+	DeployedToEnvironment string `json:"deployedToEnvironment,omitempty"`
+
 	// Array of deployments
 	Deployments []*DeploymentSummary `json:"deployments"`
 

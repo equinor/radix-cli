@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var overrideUseBuildCache model.BoolPtr
+var overrideUseBuildCacheForBuildDeploy model.BoolPtr
 
 // createBuildDeployApplicationCmd represents the buildApplication command
 var createBuildDeployApplicationCmd = &cobra.Command{
@@ -37,17 +37,31 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 	Short: "Will trigger build-deploy of a Radix application",
 	Long:  `Triggers build-deploy of Radix application, if branch to environment map exists for the branch in the Radix config`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		var errs []error
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
-			return err
+			errs = append(errs, err)
 		}
 
-		branch, _ := cmd.Flags().GetString(flagnames.Branch)
-		commitID, _ := cmd.Flags().GetString(flagnames.CommitID)
-		follow, _ := cmd.Flags().GetBool(flagnames.Follow)
+		branch, err := cmd.Flags().GetString(flagnames.Branch)
+		if err != nil {
+			errs = append(errs, err)
+		}
+		commitID, err := cmd.Flags().GetString(flagnames.CommitID)
+		if err != nil {
+			errs = append(errs, err)
+		}
+		targetEnvironment, err := cmd.Flags().GetString(flagnames.Environment)
+		if err != nil {
+			errs = append(errs, err)
+		}
+		follow, err := cmd.Flags().GetBool(flagnames.Follow)
+		if err != nil {
+			errs = append(errs, err)
+		}
 
 		if appName == "" || branch == "" {
-			return errors.New("application name and branch are required")
+			errs = append(errs, errors.New("application name and branch are required"))
 		}
 		cmd.SilenceUsage = true
 
@@ -60,8 +74,9 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		triggerPipelineParams.SetAppName(appName)
 		triggerPipelineParams.SetPipelineParametersBuild(&models.PipelineParametersBuild{
 			Branch:                branch,
+			ToEnvironment:         targetEnvironment,
 			CommitID:              commitID,
-			OverrideUseBuildCache: overrideUseBuildCache.Get(),
+			OverrideUseBuildCache: overrideUseBuildCacheForBuildDeploy.Get(),
 		})
 
 		newJob, err := apiClient.Application.TriggerPipelineBuildDeploy(triggerPipelineParams, nil)
@@ -82,9 +97,10 @@ func init() {
 	createJobCmd.AddCommand(createBuildDeployApplicationCmd)
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to build-deploy")
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Branch, "b", "master", "Branch to build-deploy from")
+	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional. Target environment to deploy in ('prod', 'dev', 'playground'), when multiple environments are built from the selected branch.")
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.CommitID, "i", "", "Commit id")
 	createBuildDeployApplicationCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build-deploy")
-	createBuildDeployApplicationCmd.Flags().Var(&overrideUseBuildCache, flagnames.UseBuildCache, "Optional. Overrides configured or default useBuildCache option. It is applicable when the useBuildKit option is set as true.")
+	createBuildDeployApplicationCmd.Flags().Var(&overrideUseBuildCacheForBuildDeploy, flagnames.UseBuildCache, "Optional. Overrides configured or default useBuildCache option. It is applicable when the useBuildKit option is set as true.")
 
 	_ = createBuildDeployApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createBuildDeployApplicationCmd)

@@ -28,6 +28,10 @@ type Deployment struct {
 	// Example: 2006-01-02T15:04:05Z
 	ActiveTo string `json:"activeTo,omitempty"`
 
+	// Name of the branch used to build the deployment
+	// Example: main
+	BuiltFromBranch string `json:"builtFromBranch,omitempty"`
+
 	// Array of components
 	Components []*Component `json:"components"`
 

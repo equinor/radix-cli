@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -18,6 +19,9 @@ import (
 // swagger:model ObjectState
 type ObjectState struct {
 
+	// Details about the ingress rules for an ingress related event
+	IngressRules []*IngressRule `json:"ingressRules"`
+
 	// pod
 	Pod *PodState `json:"pod,omitempty"`
 }
@@ -26,6 +30,10 @@ type ObjectState struct {
 func (m *ObjectState) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateIngressRules(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validatePod(formats); err != nil {
 		res = append(res, err)
 	}
@@ -33,6 +41,32 @@ func (m *ObjectState) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ObjectState) validateIngressRules(formats strfmt.Registry) error {
+	if swag.IsZero(m.IngressRules) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.IngressRules); i++ {
+		if swag.IsZero(m.IngressRules[i]) { // not required
+			continue
+		}
+
+		if m.IngressRules[i] != nil {
+			if err := m.IngressRules[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("ingressRules" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("ingressRules" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -59,6 +93,10 @@ func (m *ObjectState) validatePod(formats strfmt.Registry) error {
 func (m *ObjectState) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateIngressRules(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidatePod(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -66,6 +104,31 @@ func (m *ObjectState) ContextValidate(ctx context.Context, formats strfmt.Regist
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ObjectState) contextValidateIngressRules(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.IngressRules); i++ {
+
+		if m.IngressRules[i] != nil {
+
+			if swag.IsZero(m.IngressRules[i]) { // not required
+				return nil
+			}
+
+			if err := m.IngressRules[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("ingressRules" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("ingressRules" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
