@@ -38,6 +38,9 @@ type Job struct {
 	// Example: 2006-01-02T15:04:05Z
 	Created string `json:"created,omitempty"`
 
+	// DeployExternalDNS deploy external DNS
+	DeployExternalDNS *bool `json:"deployExternalDNS,omitempty"`
+
 	// DeployedToEnvironment the name of the environment that was deployed to
 	// Example: qa
 	DeployedToEnvironment string `json:"deployedToEnvironment,omitempty"`
@@ -57,9 +60,12 @@ type Job struct {
 	// Example: radix-pipeline-20181029135644-algpv-6hznh
 	Name string `json:"name,omitempty"`
 
+	// OverrideUseBuildCache override default or configured build cache option
+	OverrideUseBuildCache *bool `json:"overrideUseBuildCache,omitempty"`
+
 	// Name of the pipeline
 	// Example: build-deploy
-	// Enum: ["build","build-deploy","promote","deploy"]
+	// Enum: ["build","build-deploy","promote","deploy","apply-config"]
 	Pipeline string `json:"pipeline,omitempty"`
 
 	// RadixDeployment name, which is promoted
@@ -180,7 +186,7 @@ var jobTypePipelinePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["build","build-deploy","promote","deploy"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["build","build-deploy","promote","deploy","apply-config"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -201,6 +207,9 @@ const (
 
 	// JobPipelineDeploy captures enum value "deploy"
 	JobPipelineDeploy string = "deploy"
+
+	// JobPipelineApplyDashConfig captures enum value "apply-config"
+	JobPipelineApplyDashConfig string = "apply-config"
 )
 
 // prop value enum

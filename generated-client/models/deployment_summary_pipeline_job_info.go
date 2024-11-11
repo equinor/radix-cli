@@ -33,7 +33,7 @@ type DeploymentSummaryPipelineJobInfo struct {
 
 	// Type of pipeline job
 	// Example: build-deploy
-	// Enum: ["build","build-deploy","promote","deploy"]
+	// Enum: ["build","build-deploy","promote","deploy","apply-config"]
 	PipelineJobType string `json:"pipelineJobType,omitempty"`
 
 	// Name of the environment the deployment was promoted from
@@ -60,7 +60,7 @@ var deploymentSummaryPipelineJobInfoTypePipelineJobTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["build","build-deploy","promote","deploy"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["build","build-deploy","promote","deploy","apply-config"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -81,6 +81,9 @@ const (
 
 	// DeploymentSummaryPipelineJobInfoPipelineJobTypeDeploy captures enum value "deploy"
 	DeploymentSummaryPipelineJobInfoPipelineJobTypeDeploy string = "deploy"
+
+	// DeploymentSummaryPipelineJobInfoPipelineJobTypeApplyDashConfig captures enum value "apply-config"
+	DeploymentSummaryPipelineJobInfoPipelineJobTypeApplyDashConfig string = "apply-config"
 )
 
 // prop value enum
