@@ -63,6 +63,10 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		if appName == "" || branch == "" {
 			errs = append(errs, errors.New("application name and branch are required"))
 		}
+		if len(errs) > 0 {
+			return errors.Join(errs...)
+		}
+
 		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetForCommand(cmd)
