@@ -70,6 +70,8 @@ type ClientService interface {
 
 	GetAzureKeyVaultSecretVersions(params *GetAzureKeyVaultSecretVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetAzureKeyVaultSecretVersionsOK, error)
 
+	GetComponentEvents(params *GetComponentEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentEventsOK, error)
+
 	GetEnvironment(params *GetEnvironmentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEnvironmentOK, error)
 
 	GetEnvironmentAlertingConfig(params *GetEnvironmentAlertingConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEnvironmentAlertingConfigOK, error)
@@ -77,6 +79,8 @@ type ClientService interface {
 	GetEnvironmentEvents(params *GetEnvironmentEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEnvironmentEventsOK, error)
 
 	GetEnvironmentSummary(params *GetEnvironmentSummaryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEnvironmentSummaryOK, error)
+
+	GetReplicaEvents(params *GetReplicaEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetReplicaEventsOK, error)
 
 	ResetManuallyScaledComponentsInEnvironment(params *ResetManuallyScaledComponentsInEnvironmentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ResetManuallyScaledComponentsInEnvironmentOK, error)
 
@@ -365,6 +369,45 @@ func (a *Client) GetAzureKeyVaultSecretVersions(params *GetAzureKeyVaultSecretVe
 }
 
 /*
+GetComponentEvents lists events for an application environment
+*/
+func (a *Client) GetComponentEvents(params *GetComponentEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentEventsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetComponentEventsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getComponentEvents",
+		Method:             "GET",
+		PathPattern:        "/applications/{appName}/environments/{envName}/events/components/{componentName}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &GetComponentEventsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetComponentEventsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for getComponentEvents: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
 GetEnvironment gets details for an application environment
 */
 func (a *Client) GetEnvironment(params *GetEnvironmentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEnvironmentOK, error) {
@@ -517,6 +560,45 @@ func (a *Client) GetEnvironmentSummary(params *GetEnvironmentSummaryParams, auth
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getEnvironmentSummary: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+GetReplicaEvents lists events for an application environment
+*/
+func (a *Client) GetReplicaEvents(params *GetReplicaEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetReplicaEventsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetReplicaEventsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getReplicaEvents",
+		Method:             "GET",
+		PathPattern:        "/applications/{appName}/environments/{envName}/events/components/{componentName}/replicas/{podName}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &GetReplicaEventsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetReplicaEventsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for getReplicaEvents: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

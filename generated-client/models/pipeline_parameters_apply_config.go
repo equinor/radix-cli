@@ -17,6 +17,9 @@ import (
 // swagger:model PipelineParametersApplyConfig
 type PipelineParametersApplyConfig struct {
 
+	// DeployExternalDNS deploy external DNS
+	DeployExternalDNS *bool `json:"deployExternalDNS,omitempty"`
+
 	// TriggeredBy of the job - if empty will use user token upn (user principle name)
 	// Example: a_user@equinor.com
 	TriggeredBy string `json:"triggeredBy,omitempty"`

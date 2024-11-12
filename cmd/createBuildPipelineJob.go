@@ -22,26 +22,42 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/model"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-// createBuildPipelineJobCmd represents the createBuildPipelineJob command
+var overrideUseBuildCacheForBuild model.BoolPtr
+
 var createBuildPipelineJobCmd = &cobra.Command{
 	Use:   "build",
 	Short: "Will trigger build of a Radix application",
 	Long:  `Triggers build of Radix application, for branches that are mapped to a environment in the Radix config`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		var errs []error
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
-			return err
+			errs = append(errs, err)
 		}
 		if appName == "" {
-			return errors.New("application name is required")
+			errs = append(errs, errors.New("application name is required"))
 		}
-		branch, _ := cmd.Flags().GetString(flagnames.Branch)
-		follow, _ := cmd.Flags().GetBool(flagnames.Follow)
+		branch, err := cmd.Flags().GetString(flagnames.Branch)
+		if err != nil {
+			errs = append(errs, err)
+		}
+		targetEnvironment, err := cmd.Flags().GetString(flagnames.Environment)
+		if err != nil {
+			errs = append(errs, err)
+		}
+		follow, err := cmd.Flags().GetBool(flagnames.Follow)
+		if err != nil {
+			errs = append(errs, err)
+		}
+		if len(errs) > 0 {
+			return errors.Join(errs...)
+		}
 
 		cmd.SilenceUsage = true
 
@@ -52,7 +68,9 @@ var createBuildPipelineJobCmd = &cobra.Command{
 		triggerDeployParams := application.NewTriggerPipelineBuildParams()
 		triggerDeployParams.SetAppName(appName)
 		triggerDeployParams.SetPipelineParametersBuild(&models.PipelineParametersBuild{
-			Branch: branch,
+			Branch:                branch,
+			ToEnvironment:         targetEnvironment,
+			OverrideUseBuildCache: overrideUseBuildCacheForBuild.Get(),
 		})
 		newJob, err := apiClient.Application.TriggerPipelineBuild(triggerDeployParams, nil)
 		if err != nil {
@@ -73,7 +91,9 @@ func init() {
 	createJobCmd.AddCommand(createBuildPipelineJobCmd)
 	createBuildPipelineJobCmd.Flags().StringP(flagnames.Branch, "b", "master", "Branch to build from")
 	createBuildPipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to build")
+	createBuildPipelineJobCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional. Target environment to deploy in ('prod', 'dev', 'playground'), when multiple environments are built from the selected branch.")
 	createBuildPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build")
+	createBuildPipelineJobCmd.Flags().Var(&overrideUseBuildCacheForBuild, flagnames.UseBuildCache, "Optional. Overrides configured or default useBuildCache option. It is applicable when the useBuildKit option is set as true.")
 	if err := createBuildPipelineJobCmd.MarkFlagRequired(flagnames.Branch); err != nil {
 		log.Fatalf("Error during command initialization: %v", err)
 	}

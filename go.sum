@@ -18,10 +18,10 @@ github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/emicklei/go-restful/v3 v3.12.1 h1:PJMDIM/ak7btuL8Ex0iYET9hxM3CI2sjZtzpL63nKAU=
 github.com/emicklei/go-restful/v3 v3.12.1/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
-github.com/equinor/radix-common v1.9.4 h1:ErSnB2tqlRwaQuQdaA0qzsReDtHDgubcvqRO098ncEw=
-github.com/equinor/radix-common v1.9.4/go.mod h1:+g0Wj0D40zz29DjNkYKVmCVeYy4OsFWKI7Qi9rA6kpY=
-github.com/equinor/radix-operator v1.58.3 h1:F4YhNkQ4uRONP125OTfG8hdy9PiyKlOWVO8/p2NIi70=
-github.com/equinor/radix-operator v1.58.3/go.mod h1:DTPXOxU3uHPvji7qBGSK1b03iXROpX3l94kYjcOHkPM=
+github.com/equinor/radix-common v1.9.5 h1:p1xldkYUoavwIMguoxxOyVkOXLPA6K8qMsgzeztQtQw=
+github.com/equinor/radix-common v1.9.5/go.mod h1:+g0Wj0D40zz29DjNkYKVmCVeYy4OsFWKI7Qi9rA6kpY=
+github.com/equinor/radix-operator v1.66.0 h1:3gRM6mrmmaLMKnpF/hzfAFFuqeW8512XDlQRW1B0kXQ=
+github.com/equinor/radix-operator v1.66.0/go.mod h1:bYXKrNGkeRL7ctqj4fwytRFsgHj4XR5ZRks7wXwqjXo=
 github.com/evanphx/json-patch v5.9.0+incompatible h1:fBXyNpNMuTTDdquAq/uisOr2lShz4oaXpDTX2bLe7ls=
 github.com/evanphx/json-patch v5.9.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
 github.com/evanphx/json-patch/v5 v5.9.0 h1:kcBlZQbplgElYIlo/n1hJbls2z/1awpXxpRi0/FOJfg=

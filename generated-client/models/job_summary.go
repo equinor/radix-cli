@@ -36,6 +36,9 @@ type JobSummary struct {
 	// Example: 2006-01-02T15:04:05Z
 	Created string `json:"created,omitempty"`
 
+	// DeployExternalDNS deploy external DNS
+	DeployExternalDNS *bool `json:"deployExternalDNS,omitempty"`
+
 	// Ended timestamp
 	// Example: 2006-01-02T15:04:05Z
 	Ended string `json:"ended,omitempty"`
@@ -57,7 +60,7 @@ type JobSummary struct {
 
 	// Name of the pipeline
 	// Example: build-deploy
-	// Enum: ["build","build-deploy","promote","deploy"]
+	// Enum: ["build","build-deploy","promote","deploy","apply-config"]
 	Pipeline string `json:"pipeline,omitempty"`
 
 	// RadixDeployment name, which is promoted
@@ -105,7 +108,7 @@ var jobSummaryTypePipelinePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["build","build-deploy","promote","deploy"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["build","build-deploy","promote","deploy","apply-config"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -126,6 +129,9 @@ const (
 
 	// JobSummaryPipelineDeploy captures enum value "deploy"
 	JobSummaryPipelineDeploy string = "deploy"
+
+	// JobSummaryPipelineApplyDashConfig captures enum value "apply-config"
+	JobSummaryPipelineApplyDashConfig string = "apply-config"
 )
 
 // prop value enum

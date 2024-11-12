@@ -6,8 +6,8 @@ toolchain go1.22.5
 
 require (
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.2.2
-	github.com/equinor/radix-common v1.9.4
-	github.com/equinor/radix-operator v1.58.3
+	github.com/equinor/radix-common v1.9.5
+	github.com/equinor/radix-operator v1.66.0
 	github.com/fatih/color v1.17.0
 	github.com/go-openapi/errors v0.22.0
 	github.com/go-openapi/runtime v0.28.0
