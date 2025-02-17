@@ -2,7 +2,7 @@ module github.com/equinor/radix-cli
 
 go 1.23.0
 
-toolchain go1.23.4
+toolchain go1.23.6
 
 require (
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.2.2
