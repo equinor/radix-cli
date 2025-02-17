@@ -33,15 +33,16 @@ type JobSummary struct {
 	CommitID string `json:"commitID,omitempty"`
 
 	// Created timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Created string `json:"created,omitempty"`
+	// Required: true
+	// Format: date-time
+	Created *strfmt.DateTime `json:"created"`
 
 	// DeployExternalDNS deploy external DNS
 	DeployExternalDNS *bool `json:"deployExternalDNS,omitempty"`
 
 	// Ended timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Ended string `json:"ended,omitempty"`
+	// Format: date-time
+	Ended strfmt.DateTime `json:"ended,omitempty"`
 
 	// Environments the job deployed to
 	// Example: ["dev","qa"]
@@ -53,7 +54,8 @@ type JobSummary struct {
 
 	// Name of the job
 	// Example: radix-pipeline-20181029135644-algpv-6hznh
-	Name string `json:"name,omitempty"`
+	// Required: true
+	Name *string `json:"name"`
 
 	// OverrideUseBuildCache override default or configured build cache option
 	OverrideUseBuildCache *bool `json:"overrideUseBuildCache,omitempty"`
@@ -73,8 +75,8 @@ type JobSummary struct {
 	PromotedToEnvironment string `json:"promotedToEnvironment,omitempty"`
 
 	// Started timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Started string `json:"started,omitempty"`
+	// Format: date-time
+	Started strfmt.DateTime `json:"started,omitempty"`
 
 	// Status of the job
 	// Example: Waiting
@@ -90,7 +92,23 @@ type JobSummary struct {
 func (m *JobSummary) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCreated(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEnded(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validatePipeline(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStarted(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -101,6 +119,40 @@ func (m *JobSummary) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *JobSummary) validateCreated(formats strfmt.Registry) error {
+
+	if err := validate.Required("created", "body", m.Created); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("created", "body", "date-time", m.Created.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *JobSummary) validateEnded(formats strfmt.Registry) error {
+	if swag.IsZero(m.Ended) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("ended", "body", "date-time", m.Ended.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *JobSummary) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -149,6 +201,18 @@ func (m *JobSummary) validatePipeline(formats strfmt.Registry) error {
 
 	// value enum
 	if err := m.validatePipelineEnum("pipeline", "body", m.Pipeline); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *JobSummary) validateStarted(formats strfmt.Registry) error {
+	if swag.IsZero(m.Started) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("started", "body", "date-time", m.Started.String(), formats); err != nil {
 		return err
 	}
 

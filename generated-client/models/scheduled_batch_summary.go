@@ -25,23 +25,19 @@ type ScheduledBatchSummary struct {
 	BatchID string `json:"batchId,omitempty"`
 
 	// Created timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Created string `json:"created,omitempty"`
+	// Format: date-time
+	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// DeploymentName name of RadixDeployment for the batch
 	// Required: true
 	DeploymentName *string `json:"deploymentName"`
 
 	// Ended timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Ended string `json:"ended,omitempty"`
+	// Format: date-time
+	Ended strfmt.DateTime `json:"ended,omitempty"`
 
 	// Jobs within the batch of ScheduledJobSummary
 	JobList []*ScheduledJobSummary `json:"jobList"`
-
-	// Deprecated: Message of a status, if any, of the job
-	// Example: \"Error occurred\
-	Message string `json:"message,omitempty"`
 
 	// Name of the scheduled batch
 	// Example: batch-20181029135644-algpv-6hznh
@@ -49,8 +45,8 @@ type ScheduledBatchSummary struct {
 	Name *string `json:"name"`
 
 	// Started timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Started string `json:"started,omitempty"`
+	// Format: date-time
+	Started strfmt.DateTime `json:"started,omitempty"`
 
 	// Status of the job
 	// Running ScheduledBatchJobStatusRunning  ScheduledBatchJobStatusRunning Active
@@ -70,16 +66,21 @@ type ScheduledBatchSummary struct {
 	// Example: 5
 	// Required: true
 	TotalJobCount *int64 `json:"totalJobCount"`
-
-	// replica
-	Replica *ReplicaSummary `json:"replica,omitempty"`
 }
 
 // Validate validates this scheduled batch summary
 func (m *ScheduledBatchSummary) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCreated(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateDeploymentName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEnded(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -91,15 +92,15 @@ func (m *ScheduledBatchSummary) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateStarted(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateTotalJobCount(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateReplica(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -109,9 +110,33 @@ func (m *ScheduledBatchSummary) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ScheduledBatchSummary) validateCreated(formats strfmt.Registry) error {
+	if swag.IsZero(m.Created) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created", "body", "date-time", m.Created.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ScheduledBatchSummary) validateDeploymentName(formats strfmt.Registry) error {
 
 	if err := validate.Required("deploymentName", "body", m.DeploymentName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ScheduledBatchSummary) validateEnded(formats strfmt.Registry) error {
+	if swag.IsZero(m.Ended) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("ended", "body", "date-time", m.Ended.String(), formats); err != nil {
 		return err
 	}
 
@@ -147,6 +172,18 @@ func (m *ScheduledBatchSummary) validateJobList(formats strfmt.Registry) error {
 func (m *ScheduledBatchSummary) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ScheduledBatchSummary) validateStarted(formats strfmt.Registry) error {
+	if swag.IsZero(m.Started) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("started", "body", "date-time", m.Started.String(), formats); err != nil {
 		return err
 	}
 
@@ -223,34 +260,11 @@ func (m *ScheduledBatchSummary) validateTotalJobCount(formats strfmt.Registry) e
 	return nil
 }
 
-func (m *ScheduledBatchSummary) validateReplica(formats strfmt.Registry) error {
-	if swag.IsZero(m.Replica) { // not required
-		return nil
-	}
-
-	if m.Replica != nil {
-		if err := m.Replica.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("replica")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("replica")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
 // ContextValidate validate this scheduled batch summary based on the context it is used
 func (m *ScheduledBatchSummary) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateJobList(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateReplica(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -280,27 +294,6 @@ func (m *ScheduledBatchSummary) contextValidateJobList(ctx context.Context, form
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *ScheduledBatchSummary) contextValidateReplica(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Replica != nil {
-
-		if swag.IsZero(m.Replica) { // not required
-			return nil
-		}
-
-		if err := m.Replica.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("replica")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("replica")
-			}
-			return err
-		}
 	}
 
 	return nil
