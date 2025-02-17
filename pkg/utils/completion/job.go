@@ -30,7 +30,10 @@ func JobCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string,
 	}
 
 	names := slice.Map(resp.Payload.Jobs, func(component *models.JobSummary) string {
-		return component.Name
+		if component == nil {
+			return ""
+		}
+		return *component.Name
 	})
 
 	filteredNames := slice.FindAll(names, func(appName string) bool {

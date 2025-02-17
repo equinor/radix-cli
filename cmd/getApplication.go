@@ -54,8 +54,8 @@ var getApplicationCmd = &cobra.Command{
 
 			if err == nil {
 				for _, application := range resp.Payload {
-					fmt.Println(application.Name)
-					appNames = append(appNames, application.Name)
+					fmt.Println(*application.Name)
+					appNames = append(appNames, *application.Name)
 				}
 				completion.UpdateAppNamesCache(appNames)
 

@@ -29,7 +29,10 @@ func ApplicationCompletion(cmd *cobra.Command, _ []string, toComplete string) ([
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 	appNames := slice.Map(resp.Payload, func(app *models.ApplicationSummary) string {
-		return app.Name
+		if app == nil {
+			return ""
+		}
+		return *app.Name
 	})
 	applications := slice.FindAll(appNames, func(appName string) bool {
 		return strings.HasPrefix(appName, toComplete)
