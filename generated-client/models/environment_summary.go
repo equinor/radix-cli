@@ -25,7 +25,8 @@ type EnvironmentSummary struct {
 
 	// Name of the environment
 	// Example: prod
-	Name string `json:"name,omitempty"`
+	// Required: true
+	Name *string `json:"name"`
 
 	// Status of the environment
 	// Pending = Environment exists in Radix config, but not in cluster
@@ -43,6 +44,10 @@ type EnvironmentSummary struct {
 func (m *EnvironmentSummary) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
@@ -54,6 +59,15 @@ func (m *EnvironmentSummary) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *EnvironmentSummary) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
 	return nil
 }
 

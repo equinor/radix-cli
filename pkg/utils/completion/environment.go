@@ -31,7 +31,10 @@ func EnvironmentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([
 	}
 
 	names := slice.Map(resp.Payload.Environments, func(item *models.EnvironmentSummary) string {
-		return item.Name
+		if item == nil {
+			return ""
+		}
+		return *item.Name
 	})
 	filteredNames := slice.FindAll(names, func(name string) bool {
 		return strings.HasPrefix(name, toComplete)

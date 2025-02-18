@@ -31,15 +31,16 @@ type ScheduledJobSummary struct {
 	BatchName string `json:"batchName,omitempty"`
 
 	// Created timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Created string `json:"created,omitempty"`
+	// Format: date-time
+	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// DeploymentName name of RadixDeployment for the job
-	DeploymentName string `json:"deploymentName,omitempty"`
+	// Required: true
+	DeploymentName *string `json:"deploymentName"`
 
 	// Ended timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Ended string `json:"ended,omitempty"`
+	// Format: date-time
+	Ended strfmt.DateTime `json:"ended,omitempty"`
 
 	// FailedCount is the number of times the job has failed
 	// Example: 1
@@ -56,7 +57,8 @@ type ScheduledJobSummary struct {
 
 	// Name of the scheduled job
 	// Example: job-component-20181029135644-algpv-6hznh
-	Name string `json:"name,omitempty"`
+	// Required: true
+	Name *string `json:"name"`
 
 	// Array of ReplicaSummary
 	ReplicaList []*ReplicaSummary `json:"replicaList"`
@@ -66,8 +68,8 @@ type ScheduledJobSummary struct {
 	Restart string `json:"Restart,omitempty"`
 
 	// Started timestamp
-	// Example: 2006-01-02T15:04:05Z
-	Started string `json:"started,omitempty"`
+	// Format: date-time
+	Started strfmt.DateTime `json:"started,omitempty"`
 
 	// Status of the job
 	// Running ScheduledBatchJobStatusRunning  ScheduledBatchJobStatusRunning Active
@@ -105,11 +107,31 @@ func (m *ScheduledJobSummary) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCreated(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDeploymentName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEnded(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateFailedCount(formats); err != nil {
 		res = append(res, err)
 	}
 
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateReplicaList(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStarted(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -144,9 +166,51 @@ func (m *ScheduledJobSummary) validateBackoffLimit(formats strfmt.Registry) erro
 	return nil
 }
 
+func (m *ScheduledJobSummary) validateCreated(formats strfmt.Registry) error {
+	if swag.IsZero(m.Created) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("created", "body", "date-time", m.Created.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ScheduledJobSummary) validateDeploymentName(formats strfmt.Registry) error {
+
+	if err := validate.Required("deploymentName", "body", m.DeploymentName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ScheduledJobSummary) validateEnded(formats strfmt.Registry) error {
+	if swag.IsZero(m.Ended) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("ended", "body", "date-time", m.Ended.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ScheduledJobSummary) validateFailedCount(formats strfmt.Registry) error {
 
 	if err := validate.Required("failedCount", "body", m.FailedCount); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ScheduledJobSummary) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
 	}
 
@@ -174,6 +238,18 @@ func (m *ScheduledJobSummary) validateReplicaList(formats strfmt.Registry) error
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *ScheduledJobSummary) validateStarted(formats strfmt.Registry) error {
+	if swag.IsZero(m.Started) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("started", "body", "date-time", m.Started.String(), formats); err != nil {
+		return err
 	}
 
 	return nil

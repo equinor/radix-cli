@@ -25,7 +25,8 @@ type ApplicationSummary struct {
 
 	// Name the name of the application
 	// Example: radix-canary-golang
-	Name string `json:"name,omitempty"`
+	// Required: true
+	Name *string `json:"name"`
 
 	// latest job
 	LatestJob *JobSummary `json:"latestJob,omitempty"`
@@ -36,6 +37,10 @@ func (m *ApplicationSummary) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateEnvironmentActiveComponents(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -73,6 +78,15 @@ func (m *ApplicationSummary) validateEnvironmentActiveComponents(formats strfmt.
 
 		}
 
+	}
+
+	return nil
+}
+
+func (m *ApplicationSummary) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
 	}
 
 	return nil

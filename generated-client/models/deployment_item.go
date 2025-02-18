@@ -20,13 +20,13 @@ import (
 type DeploymentItem struct {
 
 	// ActiveFrom Timestamp when the deployment starts (or created)
-	// Example: 2006-01-02T15:04:05Z
 	// Required: true
-	ActiveFrom *string `json:"activeFrom"`
+	// Format: date-time
+	ActiveFrom *strfmt.DateTime `json:"activeFrom"`
 
 	// ActiveTo Timestamp when the deployment ends
-	// Example: 2006-01-02T15:04:05Z
-	ActiveTo string `json:"activeTo,omitempty"`
+	// Format: date-time
+	ActiveTo strfmt.DateTime `json:"activeTo,omitempty"`
 
 	// GitCommitHash the hash of the git commit from which radixconfig.yaml was parsed
 	// Example: 4faca8595c5283a9d0f17a623b9255a0d9866a2e
@@ -46,6 +46,10 @@ func (m *DeploymentItem) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateActiveTo(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -59,6 +63,22 @@ func (m *DeploymentItem) Validate(formats strfmt.Registry) error {
 func (m *DeploymentItem) validateActiveFrom(formats strfmt.Registry) error {
 
 	if err := validate.Required("activeFrom", "body", m.ActiveFrom); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("activeFrom", "body", "date-time", m.ActiveFrom.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *DeploymentItem) validateActiveTo(formats strfmt.Registry) error {
+	if swag.IsZero(m.ActiveTo) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("activeTo", "body", "date-time", m.ActiveTo.String(), formats); err != nil {
 		return err
 	}
 

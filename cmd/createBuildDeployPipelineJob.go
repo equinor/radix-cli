@@ -89,11 +89,11 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		}
 
 		jobName := newJob.GetPayload().Name
-		log.Infof("Build-deploy pipeline job triggered with the name %s\n", jobName)
+		log.Infof("Build-deploy pipeline job triggered with the name %s\n", *jobName)
 		if !follow {
 			return nil
 		}
-		return getLogsJob(cmd, apiClient, appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, *jobName)
 	},
 }
 

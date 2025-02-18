@@ -78,12 +78,12 @@ var createBuildPipelineJobCmd = &cobra.Command{
 		}
 
 		jobName := newJob.GetPayload().Name
-		log.Infof("Build pipeline job triggered with the name %s\n", jobName)
+		log.Infof("Build pipeline job triggered with the name %s\n", *jobName)
 		if !follow {
 			return nil
 		}
 
-		return getLogsJob(cmd, apiClient, appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, *jobName)
 	},
 }
 

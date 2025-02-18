@@ -34,7 +34,8 @@ type Application struct {
 
 	// Name the name of the application
 	// Example: radix-canary-golang
-	Name string `json:"name,omitempty"`
+	// Required: true
+	Name *string `json:"name"`
 
 	// UserIsAdmin if user is member of application's admin groups
 	// Required: true
@@ -44,7 +45,8 @@ type Application struct {
 	AppAlias *ApplicationAlias `json:"appAlias,omitempty"`
 
 	// registration
-	Registration *ApplicationRegistration `json:"registration,omitempty"`
+	// Required: true
+	Registration *ApplicationRegistration `json:"registration"`
 }
 
 // Validate validates this application
@@ -64,6 +66,10 @@ func (m *Application) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateJobs(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -189,6 +195,15 @@ func (m *Application) validateJobs(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Application) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *Application) validateUserIsAdmin(formats strfmt.Registry) error {
 
 	if err := validate.Required("userIsAdmin", "body", m.UserIsAdmin); err != nil {
@@ -218,8 +233,9 @@ func (m *Application) validateAppAlias(formats strfmt.Registry) error {
 }
 
 func (m *Application) validateRegistration(formats strfmt.Registry) error {
-	if swag.IsZero(m.Registration) { // not required
-		return nil
+
+	if err := validate.Required("registration", "body", m.Registration); err != nil {
+		return err
 	}
 
 	if m.Registration != nil {
@@ -394,10 +410,6 @@ func (m *Application) contextValidateAppAlias(ctx context.Context, formats strfm
 func (m *Application) contextValidateRegistration(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Registration != nil {
-
-		if swag.IsZero(m.Registration) { // not required
-			return nil
-		}
 
 		if err := m.Registration.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {

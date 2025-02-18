@@ -92,12 +92,12 @@ var createPromotePipelineJobCmd = &cobra.Command{
 		}
 
 		jobName := newJob.GetPayload().Name
-		log.Infof("Promote pipeline job triggered with the name %s\n", jobName)
+		log.Infof("Promote pipeline job triggered with the name %s\n", *jobName)
 		if !follow {
 			return nil
 		}
 
-		return getLogsJob(cmd, apiClient, appName, jobName)
+		return getLogsJob(cmd, apiClient, appName, *jobName)
 	},
 }
 
@@ -111,11 +111,11 @@ func getActiveDeploymentName(apiClient *apiclient.Radixapi, appName, envName str
 		return "", fmt.Errorf("failed to get environment details: %w", err)
 	}
 
-	if resp.Payload.ActiveDeployment == nil || resp.Payload.ActiveDeployment.Name == "" {
+	if resp.Payload.ActiveDeployment == nil || resp.Payload.ActiveDeployment.Name == nil || *resp.Payload.ActiveDeployment.Name == "" {
 		return "", fmt.Errorf("environment '%s' does not have any active deployments", envName)
 	}
 
-	return resp.Payload.ActiveDeployment.Name, nil
+	return *resp.Payload.ActiveDeployment.Name, nil
 }
 
 func init() {

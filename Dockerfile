@@ -1,6 +1,8 @@
-FROM golang:1.22-alpine3.20 as builder
-
-ENV GO111MODULE=on
+FROM --platform=$BUILDPLATFORM docker.io/golang:golang:1.23.6-alpine3.21 AS builder
+ARG TARGETARCH
+ENV CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=${TARGETARCH}
 
 RUN apk update && \
     apk add bash jq alpine-sdk sed gawk git ca-certificates curl mc && \
@@ -18,7 +20,7 @@ COPY . /app
 RUN addgroup -S -g 1000 radix && adduser -S -u 1000 -G radix radix
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o ./rootfs/rx ./cli/rx
+RUN go build -ldflags "-s -w" -a -installsuffix cgo -o ./rootfs/rx ./cli/rx
 
 ## Run operator
 FROM scratch
