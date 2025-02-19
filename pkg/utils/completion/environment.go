@@ -18,7 +18,7 @@ func EnvironmentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	apiClient, err := client.GetForCommand(cmd)
+	apiClient, err := client.GetRadixApiForCommand(cmd)
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}

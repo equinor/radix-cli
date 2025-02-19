@@ -45,7 +45,7 @@ var deleteApplicationCmd = &cobra.Command{
 		deleteApplicationParams := application.NewDeleteApplicationParams()
 		deleteApplicationParams.SetAppName(appName)
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

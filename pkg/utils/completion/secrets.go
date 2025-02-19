@@ -26,7 +26,7 @@ func SecretCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]stri
 	if err != nil || componentName == "" {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
-	apiClient, err := client.GetForCommand(cmd)
+	apiClient, err := client.GetRadixApiForCommand(cmd)
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}

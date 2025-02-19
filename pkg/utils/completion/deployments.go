@@ -26,7 +26,7 @@ func CreateDeploymentCompletion(environmentFlagName string, envRequired bool) fu
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}

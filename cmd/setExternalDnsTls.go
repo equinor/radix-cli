@@ -84,7 +84,7 @@ rx set external-dns-tls --application myapp --environment prod --component web -
 		awaitReconcile, _ := cmd.Flags().GetBool(flagnames.AwaitReconcile)
 		cmd.SilenceUsage = true
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

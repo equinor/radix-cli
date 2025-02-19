@@ -73,7 +73,7 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 
 		cmd.SilenceUsage = true
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

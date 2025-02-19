@@ -56,7 +56,7 @@ var restartComponentCmd = &cobra.Command{
 			WithEnvName(envName).
 			WithComponentName(cmpName)
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

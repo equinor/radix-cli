@@ -46,7 +46,7 @@ var stopApplicationCmd = &cobra.Command{
 		parameters := application.NewStopApplicationParams().
 			WithAppName(appName)
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

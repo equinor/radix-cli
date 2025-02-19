@@ -24,7 +24,7 @@ func ComponentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]s
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	apiClient, err := client.GetForCommand(cmd)
+	apiClient, err := client.GetRadixApiForCommand(cmd)
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}

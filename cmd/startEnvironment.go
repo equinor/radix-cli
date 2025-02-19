@@ -50,7 +50,7 @@ var startEnvironmentCmd = &cobra.Command{
 			WithAppName(appName).
 			WithEnvName(envName)
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

@@ -47,7 +47,7 @@ var restartApplicationCmd = &cobra.Command{
 		parameters := application.NewRestartApplicationParams().
 			WithAppName(appName)
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

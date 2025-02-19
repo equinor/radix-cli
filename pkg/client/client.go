@@ -30,8 +30,8 @@ const (
 	tenantID = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
 )
 
-// GetForCommand Gets radixapi for command
-func GetForCommand(cmd *cobra.Command) (*radixapi.Radixapi, error) {
+// GetRadixApiForCommand Gets radixapi for command
+func GetRadixApiForCommand(cmd *cobra.Command) (*radixapi.Radixapi, error) {
 	radixConfig, err := radixconfig.GetRadixConfig()
 	if err != nil {
 		return nil, err

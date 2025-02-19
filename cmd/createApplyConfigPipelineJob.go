@@ -66,7 +66,7 @@ By default it applies changes to properties DNS alias, build secrets, and create
 
 		cmd.SilenceUsage = true
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

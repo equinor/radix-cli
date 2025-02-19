@@ -59,7 +59,7 @@ rx get logs environment --application radix-test --environment dev`,
 
 		cmd.SilenceUsage = true
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

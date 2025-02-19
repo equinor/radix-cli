@@ -18,7 +18,7 @@ func ApplicationCompletion(cmd *cobra.Command, _ []string, toComplete string) ([
 		return content, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	apiClient, err := client.GetForCommand(cmd)
+	apiClient, err := client.GetRadixApiForCommand(cmd)
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}

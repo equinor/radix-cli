@@ -61,7 +61,7 @@ var createBuildPipelineJobCmd = &cobra.Command{
 
 		cmd.SilenceUsage = true
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

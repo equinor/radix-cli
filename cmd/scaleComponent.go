@@ -72,7 +72,7 @@ rx scale component --application radix-test --environment dev --component compon
 			return errors.New("required field replicas must be between 0 and 20")
 		}
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}
