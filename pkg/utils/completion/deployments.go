@@ -3,10 +3,10 @@ package completion
 import (
 	"strings"
 
-	apiclient "github.com/equinor/radix-cli/generated-client/client"
-	"github.com/equinor/radix-cli/generated-client/client/application"
-	"github.com/equinor/radix-cli/generated-client/client/environment"
-	"github.com/equinor/radix-cli/generated-client/models"
+	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
+	"github.com/equinor/radix-cli/generated/radixapi/client/application"
+	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
+	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -46,7 +46,7 @@ func CreateDeploymentCompletion(environmentFlagName string, envRequired bool) fu
 	}
 }
 
-func getEnvironmentDeployments(appName, envName string, apiClient *apiclient.Radixapi) []string {
+func getEnvironmentDeployments(appName, envName string, apiClient *radixapi.Radixapi) []string {
 	params := environment.NewGetEnvironmentParams().WithEnvName(envName).WithAppName(appName)
 	resp, err := apiClient.Environment.GetEnvironment(params, nil)
 	if err != nil || resp.Payload == nil {
@@ -58,7 +58,7 @@ func getEnvironmentDeployments(appName, envName string, apiClient *apiclient.Rad
 	})
 }
 
-func getAllDeployments(appName string, apiClient *apiclient.Radixapi) []string {
+func getAllDeployments(appName string, apiClient *radixapi.Radixapi) []string {
 	params := application.NewGetDeploymentsParams().WithAppName(appName)
 	resp, err := apiClient.Application.GetDeployments(params, nil)
 	if err != nil {

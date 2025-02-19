@@ -18,15 +18,15 @@ import (
 	"errors"
 	"fmt"
 
-	apiclient "github.com/equinor/radix-cli/generated-client/client"
-	"github.com/equinor/radix-cli/generated-client/client/environment"
+	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
+	"github.com/equinor/radix-cli/generated/radixapi/client/application"
+	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
+	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/equinor/radix-cli/generated-client/client/application"
-	"github.com/equinor/radix-cli/generated-client/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
@@ -101,7 +101,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 	},
 }
 
-func getActiveDeploymentName(apiClient *apiclient.Radixapi, appName, envName string) (string, error) {
+func getActiveDeploymentName(apiClient *radixapi.Radixapi, appName, envName string) (string, error) {
 	params := environment.NewGetEnvironmentParams()
 	params.SetAppName(appName)
 	params.SetEnvName(envName)

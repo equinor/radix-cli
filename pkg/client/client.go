@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	apiclient "github.com/equinor/radix-cli/generated-client/client"
+	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/pkg/client/auth"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -30,8 +30,8 @@ const (
 	tenantID = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
 )
 
-// GetForCommand Gets client for command
-func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
+// GetForCommand Gets radixapi for command
+func GetForCommand(cmd *cobra.Command) (*radixapi.Radixapi, error) {
 	radixConfig, err := radixconfig.GetRadixConfig()
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
 	}
 	verboseOutput, _ := cmd.Flags().GetBool(flagnames.Verbose)
 	transport := getTransport(endpoint, authWriter, verboseOutput)
-	return apiclient.New(transport, strfmt.Default), nil
+	return radixapi.New(transport, strfmt.Default), nil
 }
 
 func getTransport(endpoint string, authWriter runtime.ClientAuthInfoWriter, verbose bool) *httptransport.Runtime {
@@ -83,7 +83,7 @@ func getAuthWriter(cmd *cobra.Command, config *radixconfig.RadixConfig) (runtime
 	return getAuthProvider(config)
 }
 
-// LoginCommand Login client for command
+// LoginCommand Login radixapi for command
 func LoginCommand(cmd *cobra.Command, useDeviceCode bool) error {
 	return LoginContext(useDeviceCode)
 }

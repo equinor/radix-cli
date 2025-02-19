@@ -17,9 +17,9 @@ package cmd
 import (
 	"errors"
 
-	apiclient "github.com/equinor/radix-cli/generated-client/client"
-	"github.com/equinor/radix-cli/generated-client/client/environment"
-	"github.com/equinor/radix-cli/generated-client/models"
+	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
+	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
+	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -73,7 +73,7 @@ rx get logs environment --application radix-test --environment dev`,
 	},
 }
 
-func getComponentReplicasForEnvironment(apiClient *apiclient.Radixapi, appName, environmentName string) (map[string][]string, error) {
+func getComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, environmentName string) (map[string][]string, error) {
 	// Get active deployment
 	environmentParams := environment.NewGetEnvironmentParams()
 	environmentParams.SetAppName(appName)

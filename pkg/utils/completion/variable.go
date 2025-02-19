@@ -3,7 +3,7 @@ package completion
 import (
 	"strings"
 
-	"github.com/equinor/radix-cli/generated-client/client/environment"
+	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"

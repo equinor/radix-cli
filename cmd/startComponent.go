@@ -17,7 +17,7 @@ package cmd
 import (
 	"errors"
 
-	"github.com/equinor/radix-cli/generated-client/client/component"
+	"github.com/equinor/radix-cli/generated/radixapi/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"

@@ -21,8 +21,8 @@ import (
 	"strings"
 	"time"
 
-	apiclient "github.com/equinor/radix-cli/generated-client/client"
-	"github.com/equinor/radix-cli/generated-client/client/pipeline_job"
+	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
+	"github.com/equinor/radix-cli/generated/radixapi/client/pipeline_job"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -82,7 +82,7 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 	},
 }
 
-func getLogsJob(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, jobName string) error {
+func getLogsJob(cmd *cobra.Command, apiClient *radixapi.Radixapi, appName, jobName string) error {
 	timeout := time.NewTimer(settings.DeltaTimeout)
 	refreshLog := time.Tick(settings.DeltaRefreshApplication)
 

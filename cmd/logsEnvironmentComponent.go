@@ -20,10 +20,10 @@ import (
 	"strings"
 	"time"
 
-	apiclient "github.com/equinor/radix-cli/generated-client/client"
-	"github.com/equinor/radix-cli/generated-client/client/component"
-	"github.com/equinor/radix-cli/generated-client/client/environment"
-	"github.com/equinor/radix-cli/generated-client/models"
+	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
+	"github.com/equinor/radix-cli/generated/radixapi/client/component"
+	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
+	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -91,7 +91,7 @@ Examples:
 	},
 }
 
-func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, appName, environmentName string, since time.Duration, componentReplicas map[string][]string, previousLog bool) error {
+func logForComponentReplicas(cmd *cobra.Command, apiClient *radixapi.Radixapi, appName, environmentName string, since time.Duration, componentReplicas map[string][]string, previousLog bool) error {
 	refreshLog := time.Tick(settings.DeltaRefreshApplication)
 
 	// Sometimes, even though we get delta, the log is the same as previous
@@ -144,7 +144,7 @@ func logForComponentReplicas(cmd *cobra.Command, apiClient *apiclient.Radixapi, 
 	return nil
 }
 
-func getReplicasForComponent(apiClient *apiclient.Radixapi, appName, environmentName, componentName string) (*string, []string, error) {
+func getReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentName, componentName string) (*string, []string, error) {
 	// Get active deployment
 	environmentParams := environment.NewGetEnvironmentParams()
 	environmentParams.SetAppName(appName)

@@ -3,8 +3,8 @@ package completion
 import (
 	"strings"
 
-	"github.com/equinor/radix-cli/generated-client/client/platform"
-	"github.com/equinor/radix-cli/generated-client/models"
+	"github.com/equinor/radix-cli/generated/radixapi/client/platform"
+	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-common/utils/slice"
