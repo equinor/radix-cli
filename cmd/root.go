@@ -55,7 +55,7 @@ func setContextSpecificPersistentFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().Bool(flagnames.TokenStdin, false, "(Optional) Take the token from stdin")
 	setContextPersistentFlags(cmd)
 	cmd.PersistentFlags().String(flagnames.Cluster, "", "(Optional) Set cluster to override context")
-	cmd.PersistentFlags().String(flagnames.ApiEnvironment, "prod", "(Optional) The API api-environment to run with (default prod)")
+	cmd.PersistentFlags().String(flagnames.ApiEnvironment, "", "(Optional) The API api-environment to run with (default prod)")
 	setVerbosePersistentFlag(cmd)
 }
 
