@@ -7,7 +7,7 @@ swagger: bootstrap
 	mkdir -p ./generated/radixapi
 	mkdir -p ./generated/vulnscanapi
 	swagger generate client -t ./generated/radixapi -f https://api.radix.equinor.com/swaggerui/swagger.json -A radixapi
-	swagger generate client -t ./generated/vulnscanapi -f https://server-radix-vulnerability-scanner-api-qa.radix.equinor.com/swaggerui/swagger.json -A vulnscanapi
+	swagger generate client -t ./generated/vulnscanapi -f https://server-radix-vulnerability-scanner-api-prod.radix.equinor.com/swaggerui/swagger.json -A vulnscanapi
 
 .PHONY: push
 push:
