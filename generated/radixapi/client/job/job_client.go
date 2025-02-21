@@ -82,6 +82,10 @@ type ClientService interface {
 
 	RestartJob(params *RestartJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RestartJobNoContent, error)
 
+	StopAllBatches(params *StopAllBatchesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopAllBatchesNoContent, error)
+
+	StopAllJobs(params *StopAllJobsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopAllJobsNoContent, error)
+
 	StopBatch(params *StopBatchParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopBatchNoContent, error)
 
 	StopJob(params *StopJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopJobNoContent, error)
@@ -593,6 +597,84 @@ func (a *Client) RestartJob(params *RestartJobParams, authInfo runtime.ClientAut
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for restartJob: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+StopAllBatches stops scheduled batch
+*/
+func (a *Client) StopAllBatches(params *StopAllBatchesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopAllBatchesNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewStopAllBatchesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "stopAllBatches",
+		Method:             "POST",
+		PathPattern:        "/applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/batches/stop",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &StopAllBatchesReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*StopAllBatchesNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for stopAllBatches: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+StopAllJobs stops all scheduled jobs
+*/
+func (a *Client) StopAllJobs(params *StopAllJobsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopAllJobsNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewStopAllJobsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "stopAllJobs",
+		Method:             "POST",
+		PathPattern:        "/applications/{appName}/environments/{envName}/jobcomponents/{jobComponentName}/jobs/stop",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &StopAllJobsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*StopAllJobsNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for stopAllJobs: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

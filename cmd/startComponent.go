@@ -77,7 +77,7 @@ Resets a manully scaled component to resume normal operations again.`,
 
 func init() {
 	startCmd.AddCommand(startComponentCmd)
-	startComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	startComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	startComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 	startComponentCmd.Flags().String(flagnames.Component, "", "Name of the component to start")
 	_ = startComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)

@@ -36,13 +36,13 @@ var createApplyConfigPipelineJobCmd = &cobra.Command{
 	Long:  "Triggers applyConfig of a Radix application according to the radix config in its repository's master branch.",
 	Example: `  # Create a Radix pipeline apply-config job to apply the radixconfig properties without re-building or re-deploying components.
 By default it applies changes to properties DNS alias, build secrets, and create new or soft-delete existing environments.
-  rx create job apply-config --application radix-test
+  rx create pipeline-job apply-config --application radix-test
   
   # Create a Radix pipeline applyConfig-only job, short option versions 
-  rx create job apply-config -a radix-test
+  rx create pipeline-job apply-config -a radix-test
 
   # Create a Radix pipeline apply-config job with external DNS aliases
-  rx create job apply-config -a radix-test --deploy-external-dns-alias true`,
+  rx create pipeline-job apply-config -a radix-test --deploy-external-dns-alias true`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)

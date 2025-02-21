@@ -21,12 +21,11 @@ import (
 
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
+	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/equinor/radix-cli/pkg/client"
-	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
 )
 
@@ -35,19 +34,19 @@ var createDeployPipelineJobCmd = &cobra.Command{
 	Short: "Will trigger deploy of a Radix application",
 	Long:  "Triggers deploy of a Radix application according to the radix config in its repository's master branch.",
 	Example: `  # Create a Radix pipeline deploy-only job to deploy an application "radix-test" to an environment "dev" 
-  rx create job deploy --application radix-test --environment dev
+  rx create pipeline-job deploy --application radix-test --environment dev
 
   # Create a Radix pipeline deploy-only job, short option versions 
-  rx create job deploy -a radix-test -e dev
+  rx create pipeline-job deploy -a radix-test -e dev
 
   # Create a Radix pipeline deploy-only job to deploy an application with re-defined image-tags. These image tags will re-define  
-  rx create job deploy --application radix-test --environment dev --image-tag web-app=web-app-v2.1
+  rx create pipeline-job deploy --application radix-test --environment dev --image-tag web-app=web-app-v2.1
 
   # Create a Radix pipeline deploy-only job with re-defined image-tags for components, short option versions 
-  rx create job deploy -a radix-test -e dev -t web-app=web-app-v2.1 -t api-server=api-v1.0
+  rx create pipeline-job deploy -a radix-test -e dev -t web-app=web-app-v2.1 -t api-server=api-v1.0
 
   # Create a Radix pipeline deploy-only job to deploy only specific components 
-  rx create job deploy -a radix-test -e dev --component web-app --component api-server`,
+  rx create pipeline-job deploy -a radix-test -e dev --component web-app --component api-server`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var errs []error
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
