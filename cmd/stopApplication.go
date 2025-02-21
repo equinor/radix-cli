@@ -17,7 +17,7 @@ package cmd
 import (
 	"errors"
 
-	"github.com/equinor/radix-cli/generated-client/client/application"
+	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -46,7 +46,7 @@ var stopApplicationCmd = &cobra.Command{
 		parameters := application.NewStopApplicationParams().
 			WithAppName(appName)
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

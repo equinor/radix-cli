@@ -4,7 +4,10 @@ RELEASE_NOTE ?= "First release"
 
 .PHONY: swagger
 swagger: bootstrap
-	swagger generate client -t ./generated-client -f https://api.radix.equinor.com/swaggerui/swagger.json -A radixapi
+	mkdir -p ./generated/radixapi
+	mkdir -p ./generated/vulnscanapi
+	swagger generate client -t ./generated/radixapi -f https://api.radix.equinor.com/swaggerui/swagger.json -A radixapi
+	swagger generate client -t ./generated/vulnscanapi -f https://server-radix-vulnerability-scanner-api-prod.radix.equinor.com/swaggerui/swagger.json -A vulnscanapi
 
 .PHONY: push
 push:

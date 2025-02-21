@@ -8,7 +8,8 @@ import (
 	"os"
 	"strings"
 
-	apiclient "github.com/equinor/radix-cli/generated-client/client"
+	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
+	vulnscanapi "github.com/equinor/radix-cli/generated/vulnscanapi/client"
 	"github.com/equinor/radix-cli/pkg/client/auth"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -19,9 +20,6 @@ import (
 )
 
 const (
-	apiEndpointPatternForContext = "api.%sradix.equinor.com"
-	apiEndpointPatternForCluster = "server-radix-api-%s.%s.dev.radix.equinor.com"
-
 	// TokenEnvironmentName Name of environment variable to load token from
 	TokenEnvironmentName = "APP_SERVICE_ACCOUNT_TOKEN"
 
@@ -30,8 +28,8 @@ const (
 	tenantID = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
 )
 
-// GetForCommand Gets client for command
-func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
+// GetRadixApiForCommand Gets radixapi for command
+func GetRadixApiForCommand(cmd *cobra.Command) (*radixapi.Radixapi, error) {
 	radixConfig, err := radixconfig.GetRadixConfig()
 	if err != nil {
 		return nil, err
@@ -40,13 +38,52 @@ func GetForCommand(cmd *cobra.Command) (*apiclient.Radixapi, error) {
 	if err != nil {
 		return nil, nil
 	}
-	endpoint, err := getAPIEndpoint(cmd, radixConfig)
+	context, cluster, apiEnvironment := getContextClusterApiEnvironment(cmd, radixConfig)
+	endpoint := getEndpoint("server-radix-api", apiEnvironment, context, cluster)
+	verboseOutput, _ := cmd.Flags().GetBool(flagnames.Verbose)
+	transport := getTransport(endpoint, authWriter, verboseOutput)
+	return radixapi.New(transport, strfmt.Default), nil
+}
+
+// GetVulnerabilityScanApiForCommand Gets radixapi for command
+func GetVulnerabilityScanApiForCommand(cmd *cobra.Command) (*vulnscanapi.Vulnscanapi, error) {
+	radixConfig, err := radixconfig.GetRadixConfig()
 	if err != nil {
 		return nil, err
 	}
+	authWriter, err := getAuthWriter(cmd, radixConfig)
+	if err != nil {
+		return nil, nil
+	}
+	context, cluster, apiEnvironment := getContextClusterApiEnvironment(cmd, radixConfig)
+	endpoint := getEndpoint("server-radix-vulnerability-scanner-api", apiEnvironment, context, cluster)
 	verboseOutput, _ := cmd.Flags().GetBool(flagnames.Verbose)
 	transport := getTransport(endpoint, authWriter, verboseOutput)
-	return apiclient.New(transport, strfmt.Default), nil
+	return vulnscanapi.New(transport, strfmt.Default), nil
+}
+
+func getContextClusterApiEnvironment(cmd *cobra.Command, config *radixconfig.RadixConfig) (string, string, string) {
+	context, _ := cmd.Flags().GetString("context")
+	cluster, _ := cmd.Flags().GetString(flagnames.Cluster)
+	apiEnvironment, _ := cmd.Flags().GetString(flagnames.ApiEnvironment)
+
+	if strings.TrimSpace(context) == "" {
+		context = config.CustomConfig.Context
+	}
+	return context, cluster, apiEnvironment
+}
+
+func getEndpoint(service, env, context, cluster string) string {
+	zoneDomain, defaultEnv := getPatternForContext(context)
+	if strings.TrimSpace(env) == "" {
+		env = defaultEnv
+	}
+
+	if cluster != "" {
+		return fmt.Sprintf("%s-%s.%s.%sradix.equinor.com", service, env, cluster, zoneDomain)
+	}
+
+	return fmt.Sprintf("%s-%s.%sradix.equinor.com", service, env, zoneDomain)
 }
 
 func getTransport(endpoint string, authWriter runtime.ClientAuthInfoWriter, verbose bool) *httptransport.Runtime {
@@ -54,20 +91,6 @@ func getTransport(endpoint string, authWriter runtime.ClientAuthInfoWriter, verb
 	transport.DefaultAuthentication = authWriter
 	transport.Debug = verbose
 	return transport
-}
-
-func getAPIEndpoint(cmd *cobra.Command, config *radixconfig.RadixConfig) (string, error) {
-	context, cluster, err := getContextAndCluster(cmd)
-	if err != nil {
-		return "", err
-	}
-
-	if cluster != "" {
-		apiEnvironment, _ := cmd.Flags().GetString(flagnames.ApiEnvironment)
-		return getAPIEndpointForCluster(cluster, apiEnvironment), nil
-	}
-
-	return getAPIEndpointForContext(context, config), nil
 }
 
 func getAuthWriter(cmd *cobra.Command, config *radixconfig.RadixConfig) (runtime.ClientAuthInfoWriter, error) {
@@ -83,8 +106,8 @@ func getAuthWriter(cmd *cobra.Command, config *radixconfig.RadixConfig) (runtime
 	return getAuthProvider(config)
 }
 
-// LoginCommand Login client for command
-func LoginCommand(cmd *cobra.Command, useDeviceCode bool) error {
+// LoginCommand Login radixapi for command
+func LoginCommand(_ *cobra.Command, useDeviceCode bool) error {
 	return LoginContext(useDeviceCode)
 }
 
@@ -99,16 +122,6 @@ func LogoutCommand() error {
 		return err
 	}
 	return provider.Logout(context.Background())
-}
-
-func getContextAndCluster(cmd *cobra.Command) (string, string, error) {
-	context, _ := cmd.Flags().GetString("context")
-	cluster, _ := cmd.Flags().GetString(flagnames.Cluster)
-
-	if context != "" && cluster != "" {
-		return "", "", errors.New("cannot use both context and cluster as arguments at the same time")
-	}
-	return context, cluster, nil
 }
 
 // LoginContext Performs login
@@ -135,25 +148,19 @@ func getAuthProvider(radixConfig *radixconfig.RadixConfig) (auth.MSALAuthProvide
 	return provider, nil
 }
 
-func getAPIEndpointForContext(context string, radixConfig *radixconfig.RadixConfig) string {
-	if strings.TrimSpace(context) == "" {
-		context = radixConfig.CustomConfig.Context
+func getPatternForContext(context string) (string, string) {
+	switch context {
+	case radixconfig.ContextDevelopment:
+		return "dev.", "qa"
+	case radixconfig.ContextPlayground:
+		return "playground.", "prod"
+	case radixconfig.ContextPlatform2:
+		return "c2.", "prod"
+	case radixconfig.ContextProduction, radixconfig.ContextPlatform:
+		return "", "prod"
+	default:
+		return "", "prod"
 	}
-	return fmt.Sprintf(apiEndpointPatternForContext, getPatternForContext(context))
-}
-
-func getAPIEndpointForCluster(cluster, environment string) string {
-	return fmt.Sprintf(apiEndpointPatternForCluster, environment, cluster)
-}
-
-func getPatternForContext(context string) string {
-	contextToPattern := make(map[string]string)
-	contextToPattern[radixconfig.ContextDevelopment] = "dev."
-	contextToPattern[radixconfig.ContextPlayground] = "playground."
-	contextToPattern[radixconfig.ContextPlatform2] = "c2."
-	contextToPattern[radixconfig.ContextProduction] = ""
-	contextToPattern[radixconfig.ContextPlatform] = ""
-	return contextToPattern[context]
 }
 
 func getTokenFromFlagSet(cmd *cobra.Command) (*string, error) {

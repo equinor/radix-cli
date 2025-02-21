@@ -17,7 +17,7 @@ package cmd
 import (
 	"errors"
 
-	"github.com/equinor/radix-cli/generated-client/client/component"
+	"github.com/equinor/radix-cli/generated/radixapi/client/component"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -60,7 +60,7 @@ Resets a manully scaled component to resume normal operations again.`,
 			WithEnvName(envName).
 			WithComponentName(cmpName)
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

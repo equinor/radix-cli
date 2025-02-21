@@ -17,7 +17,7 @@ package cmd
 import (
 	"errors"
 
-	"github.com/equinor/radix-cli/generated-client/client/environment"
+	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -48,7 +48,7 @@ var deleteEnvironmentCmd = &cobra.Command{
 			WithAppName(appName).
 			WithEnvName(envName)
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}

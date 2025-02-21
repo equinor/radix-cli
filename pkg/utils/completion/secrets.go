@@ -3,8 +3,8 @@ package completion
 import (
 	"strings"
 
-	"github.com/equinor/radix-cli/generated-client/client/environment"
-	"github.com/equinor/radix-cli/generated-client/models"
+	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
+	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -26,7 +26,7 @@ func SecretCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]stri
 	if err != nil || componentName == "" {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
-	apiClient, err := client.GetForCommand(cmd)
+	apiClient, err := client.GetRadixApiForCommand(cmd)
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}

@@ -19,9 +19,9 @@ import (
 	"fmt"
 	"os"
 
-	apiclient "github.com/equinor/radix-cli/generated-client/client"
-	"github.com/equinor/radix-cli/generated-client/client/environment"
-	"github.com/equinor/radix-cli/generated-client/models"
+	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
+	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
+	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -70,7 +70,7 @@ var setEnvironmentSecretCmd = &cobra.Command{
 
 		cmd.SilenceUsage = true
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}
@@ -101,7 +101,7 @@ var setEnvironmentSecretCmd = &cobra.Command{
 	},
 }
 
-func isComponentSecretReconciled(apiClient *apiclient.Radixapi, appName, environmentName, componentName, secretName string) bool {
+func isComponentSecretReconciled(apiClient *radixapi.Radixapi, appName, environmentName, componentName, secretName string) bool {
 	getEnvironmentParameters := environment.NewGetEnvironmentParams()
 	getEnvironmentParameters.SetAppName(appName)
 	getEnvironmentParameters.SetEnvName(environmentName)

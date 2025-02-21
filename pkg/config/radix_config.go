@@ -27,6 +27,7 @@ var (
 	RadixConfigDir          = path.Join(getUserHomeDir(), radixConfigDir)
 	RadixConfigFileFullName = path.Join(RadixConfigDir, radixConfigFileName)
 	ValidContexts           = []string{ContextProduction, ContextPlatform, ContextPlatform2, ContextPlayground, ContextDevelopment}
+	ValidOutputs            = []string{"json", "text"}
 )
 
 func getUserHomeDir() string {

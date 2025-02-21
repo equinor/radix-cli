@@ -18,15 +18,15 @@ import (
 	"errors"
 	"fmt"
 
-	apiclient "github.com/equinor/radix-cli/generated-client/client"
-	"github.com/equinor/radix-cli/generated-client/client/application"
-	"github.com/equinor/radix-cli/generated-client/client/environment"
+	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
+	"github.com/equinor/radix-cli/generated/radixapi/client/application"
+	"github.com/equinor/radix-cli/generated/radixapi/client/deployment"
+	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/json"
 
-	"github.com/equinor/radix-cli/generated-client/client/deployment"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
@@ -70,7 +70,7 @@ Examples:
 
 		cmd.SilenceUsage = true
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}
@@ -85,7 +85,7 @@ Examples:
 	},
 }
 
-func getDeployment(apiClient *apiclient.Radixapi, appName, deploymentName string) error {
+func getDeployment(apiClient *radixapi.Radixapi, appName, deploymentName string) error {
 	params := deployment.NewGetDeploymentParams()
 	params.WithAppName(appName)
 	if deploymentName != "" {
@@ -103,7 +103,7 @@ func getDeployment(apiClient *apiclient.Radixapi, appName, deploymentName string
 	return nil
 }
 
-func getDeploymentForAllEnvironments(apiClient *apiclient.Radixapi, appName string) error {
+func getDeploymentForAllEnvironments(apiClient *radixapi.Radixapi, appName string) error {
 	params := application.NewGetDeploymentsParams()
 	params.WithAppName(appName)
 	resp, err := apiClient.Application.GetDeployments(params, nil)
@@ -118,7 +118,7 @@ func getDeploymentForAllEnvironments(apiClient *apiclient.Radixapi, appName stri
 	return nil
 }
 
-func getDeploymentForEnvironment(apiClient *apiclient.Radixapi, appName, envName string) error {
+func getDeploymentForEnvironment(apiClient *radixapi.Radixapi, appName, envName string) error {
 	params := environment.NewGetApplicationEnvironmentDeploymentsParams()
 	params.WithAppName(appName)
 	params.WithEnvName(envName)

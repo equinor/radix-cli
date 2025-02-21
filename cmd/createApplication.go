@@ -20,9 +20,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/equinor/radix-cli/generated-client/client/application"
-	"github.com/equinor/radix-cli/generated-client/client/platform"
-	"github.com/equinor/radix-cli/generated-client/models"
+	"github.com/equinor/radix-cli/generated/radixapi/client/application"
+	"github.com/equinor/radix-cli/generated/radixapi/client/platform"
+	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -76,7 +76,7 @@ var createApplicationCmd = &cobra.Command{
 			},
 		})
 
-		apiClient, err := client.GetForCommand(cmd)
+		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
 			return err
 		}
