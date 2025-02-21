@@ -32,8 +32,17 @@ var stopScheduledJobsCmd = &cobra.Command{
 	Long: `Stop one or all scheduled jobs
   - Stops scheduled jobs for a job component`,
 	Example: `
-	  # Stop all scheduled jobs for a job component
-	  rx stop scheduled-job --application radix-test --environment dev --component jobcomponent --all
+	  # Stop all scheduled single jobs for a job component
+	  rx stop scheduled-job --application radix-test --environment dev --component my-job-component --all-jobs
+
+	  # Stop a scheduled job for a job component
+	  rx stop scheduled-job --application radix-test --environment dev --component my-job-component --job an-unique-single-job-name
+
+	  # Stop all scheduled batches for a job component
+	  rx stop scheduled-job --application radix-test --environment dev --component my-job-component --all-batches
+
+	  # Stop a scheduled batch for a job component
+	  rx stop scheduled-job --application radix-test --environment dev --component my-job-component --batch an-unique-batch-name
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
@@ -160,8 +169,8 @@ func init() {
 	stopScheduledJobsCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the job component")
 	stopScheduledJobsCmd.Flags().StringP(flagnames.Batch, "", "", "The name of the scheduled batch")
 	stopScheduledJobsCmd.Flags().StringP(flagnames.Job, "j", "", "The name of the scheduled single job")
-	stopScheduledJobsCmd.Flags().BoolP(flagnames.AllJobs, "", false, "Stop all jobs for the job component")
 	stopScheduledJobsCmd.Flags().BoolP(flagnames.AllBatches, "", false, "Stop all batches for the job component")
+	stopScheduledJobsCmd.Flags().BoolP(flagnames.AllJobs, "", false, "Stop all jobs for the job component")
 	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
