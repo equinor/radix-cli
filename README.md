@@ -64,7 +64,7 @@ Visit https://github.com/equinor/radix-cli/releases/latest and download the appr
 Either run the tar command to extract the contents (replacing the filename with the one you downloaded)
 
 ```batch
-tar -xf radix-cli_0.0.16_Windows_x86_64.tar.gz
+tar -xf radix-cli_1.26.0_Windows_x86_64.tar.gz
 ```
 
 or use a third-party tool like _WinZip_, _WinRar_ or _7zip_ to extract it.
@@ -148,7 +148,7 @@ Want to [contribute](./CONTRIBUTING.md)?
 
 Client code is generated from swagger contract definition of the latest contract of the Radix API server. We use [go-swagger](https://github.com/go-swagger/go-swagger/blob/master/docs/install.md). Install it by:
 ```
-go install github.com/go-swagger/go-swagger/cmd/swagger@v0.30.5
+go install github.com/go-swagger/go-swagger/cmd/swagger@v0.31.0
 ```
 The generated code should not be checked in, but will be generated on build of the CLI. When go-swagger is installed you can generate code using this command:
 ```
