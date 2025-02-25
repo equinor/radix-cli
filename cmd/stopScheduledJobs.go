@@ -174,5 +174,7 @@ func init() {
 	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
+	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Batch, completion.ScheduledBatchCompletion)
+	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Job, completion.ScheduledJobCompletion)
 	setContextSpecificPersistentFlags(stopScheduledJobsCmd)
 }
