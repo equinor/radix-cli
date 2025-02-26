@@ -88,11 +88,17 @@ var stopScheduledJobsCmd = &cobra.Command{
 
 		if jobName == "" && batchName == "" {
 			if allJobs {
-				return stopAllJobs(cmd, appName, envName, cmpName)
-			} else if allBatches {
-				return stopAllBatches(cmd, appName, envName, cmpName)
+				if err := stopAllJobs(cmd, appName, envName, cmpName); err != nil {
+  				    return err
+				}
 			}
-			return errors.New("when batch and/or job name are not specified, options --all-jobs or --all-batches are expected")
+			
+			if allBatches {
+				if err :=stopAllBatches(cmd, appName, envName, cmpName); err != nil {
+  				    return err
+				}
+			}
+			return nil
 		}
 		if allJobs || allBatches {
 			return errors.New("batch and job names and the option --all-jobs or --all-batches cannot be used at the same time")
