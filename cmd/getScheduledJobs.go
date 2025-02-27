@@ -23,7 +23,9 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/flagvalues"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
+	"github.com/equinor/radix-cli/pkg/utils/json"
 	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -92,15 +94,10 @@ var getScheduledJobsCmd = &cobra.Command{
 
 		if jobName == "" && batchName == "" {
 			if allJobs {
-				if err := getAllJobs(apiClient, appName, envName, cmpName, outputFormat); err != nil {
-					return err
-				}
+				return getAllJobs(apiClient, appName, envName, cmpName, outputFormat)
 			}
 			if allBatches {
-				if err := getAllBatches(apiClient, appName, envName, cmpName, outputFormat); err != nil {
-					return err
-				}
-
+				return getAllBatches(apiClient, appName, envName, cmpName, outputFormat)
 			}
 			return errors.New("when options --batch and --job are not defined, options --jobs or --batches are required")
 		}
@@ -126,12 +123,12 @@ func getBatch(apiClient *radixapi.Radixapi, appName, envName, cmpName, batchName
 	if err != nil {
 		return err
 	}
+	if outputFormat == flagvalues.OutputFormatJson {
+		return json.PrettyPrintJson(resp.Payload)
+	}
 	if resp == nil || resp.Payload == nil {
 		color.Green("Batch is not found")
 		return nil
-	}
-	if outputFormat == "json" {
-		return prettyPrintJson(resp.Payload)
 	}
 	fmt.Printf("# %s environment:\n", envName)
 	fmt.Println("Scheduled batch:")
@@ -149,12 +146,12 @@ func getJob(apiClient *radixapi.Radixapi, appName, envName, cmpName, jobName, ou
 	if err != nil {
 		return err
 	}
+	if outputFormat == flagvalues.OutputFormatJson {
+		return json.PrettyPrintJson(resp.Payload)
+	}
 	if resp == nil || resp.Payload == nil {
 		color.Green("Job is not found")
 		return nil
-	}
-	if outputFormat == "json" {
-		return prettyPrintJson(resp.Payload)
 	}
 	fmt.Printf("# %s environment:\n", envName)
 	jobSummary := *resp.Payload
@@ -176,11 +173,18 @@ func getAllBatches(apiClient *radixapi.Radixapi, appName, envName, cmpName, outp
 	if err != nil {
 		return err
 	}
+	if outputFormat == flagvalues.OutputFormatJson {
+		if resp == nil {
+			return json.PrettyPrintJson([]*models.ScheduledBatchSummary{})
+		}
+		return json.PrettyPrintJson(resp.Payload)
+	}
 	if resp == nil || len(resp.Payload) == 0 {
 		color.Green("No batches found")
 		return nil
 	}
-	return printBatchSummary(resp, outputFormat, err, envName)
+	prettyPrintTextScheduledBatches(envName, resp.Payload)
+	return nil
 }
 
 func getAllJobs(apiClient *radixapi.Radixapi, appName, envName, cmpName, outputFormat string) error {
@@ -192,6 +196,12 @@ func getAllJobs(apiClient *radixapi.Radixapi, appName, envName, cmpName, outputF
 	if err != nil {
 		return err
 	}
+	if outputFormat == flagvalues.OutputFormatJson {
+		if resp == nil {
+			return json.PrettyPrintJson([]*models.ScheduledJobSummary{})
+		}
+		return json.PrettyPrintJson(resp.Payload)
+	}
 	if resp == nil || len(resp.Payload) == 0 {
 		color.Green("No jobs found")
 		return nil
@@ -202,39 +212,30 @@ func getAllJobs(apiClient *radixapi.Radixapi, appName, envName, cmpName, outputF
 	return nil
 }
 
-func printBatchSummary(resp *job.GetBatchesOK, outputFormat string, err error, envName string) error {
-	batchSummaries := resp.Payload
-	if outputFormat == "json" {
-		return prettyPrintJson(batchSummaries)
-	}
-	prettyPrintTextScheduledBatches(envName, resp.Payload)
-	return nil
-}
-
-func prettyPrintTextScheduledBatches(envName string, batches []*models.ScheduledBatchSummary) {
+func prettyPrintTextScheduledBatches(envName string, batchSummaries []*models.ScheduledBatchSummary) {
 	fmt.Printf("# %s environment:\n", envName)
 	fmt.Println("Scheduled batches:")
-	for _, batch := range batches {
+	for _, batch := range batchSummaries {
 		prettyPrintTextScheduledBatch(batch, "  ")
 	}
 	fmt.Println()
 }
 
-func prettyPrintTextScheduledBatch(batch *models.ScheduledBatchSummary, indent string) {
-	if batch == nil {
+func prettyPrintTextScheduledBatch(batchSummary *models.ScheduledBatchSummary, indent string) {
+	if batchSummary == nil {
 		return
 	}
-	prettyPrintTextScheduledBatchSummary(*batch, indent)
+	prettyPrintTextScheduledBatchSummary(*batchSummary, indent)
 	fmt.Printf("%s- Jobs:\n", indent)
-	prettyPrintTextScheduledJobs((*batch).JobList, indent+"    ")
+	prettyPrintTextScheduledJobs((*batchSummary).JobList, indent+"    ")
 }
 
-func prettyPrintTextScheduledJobs(jobs []*models.ScheduledJobSummary, indent string) {
-	for _, job := range jobs {
-		if job == nil {
+func prettyPrintTextScheduledJobs(jobSummaries []*models.ScheduledJobSummary, indent string) {
+	for _, jobSummary := range jobSummaries {
+		if jobSummary == nil {
 			continue
 		}
-		prettyPrintTextScheduledJobSummary(*job, indent, true)
+		prettyPrintTextScheduledJobSummary(*jobSummary, indent, true)
 	}
 }
 
@@ -269,14 +270,16 @@ func init() {
 	getScheduledJobsCmd.Flags().StringP(flagnames.Application, "a", "", "Name of an application.")
 	getScheduledJobsCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of an application environment.")
 	getScheduledJobsCmd.Flags().StringP(flagnames.Component, "n", "", "Name of a job component.")
-	getScheduledJobsCmd.Flags().StringP(flagnames.Batch, "", "", "The name of a scheduled batch.")
-	getScheduledJobsCmd.Flags().StringP(flagnames.Job, "j", "", "The name of a scheduled job.")
-	getScheduledJobsCmd.Flags().BoolP(flagnames.Batches, "", false, "Get all scheduled batches.")
-	getScheduledJobsCmd.Flags().BoolP(flagnames.Jobs, "", false, "Get all scheduled jobs.")
+	getScheduledJobsCmd.Flags().StringP(flagnames.Batch, "", "", "(Optional) The name of a scheduled batch.")
+	getScheduledJobsCmd.Flags().StringP(flagnames.Job, "j", "", "(Optional) The name of a scheduled job.")
+	getScheduledJobsCmd.Flags().BoolP(flagnames.Batches, "", false, "(Optional) Get all scheduled batches.")
+	getScheduledJobsCmd.Flags().BoolP(flagnames.Jobs, "", false, "(Optional) Get all scheduled jobs.")
+	getScheduledJobsCmd.Flags().StringP(flagnames.Output, "o", "text", "(Optional) Output format. json or not set (plain text)")
 	_ = getScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = getScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	_ = getScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
 	_ = getScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Batch, completion.ScheduledBatchCompletion)
 	_ = getScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Job, completion.ScheduledJobCompletion)
+	_ = getScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Output, completion.Output)
 	setContextSpecificPersistentFlags(getScheduledJobsCmd)
 }
