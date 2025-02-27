@@ -1,9 +1,7 @@
 package completion
 
 import (
-	"strings"
-
-	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
+	"github.com/equinor/radix-cli/generated/radixapi/client/job"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
@@ -11,10 +9,10 @@ import (
 	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
-func ComponentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-
+func ScheduledBatchCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 	if err != nil || appName == "" {
 		return nil, cobra.ShellCompDirectiveNoFileComp
@@ -23,24 +21,31 @@ func ComponentCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]s
 	if err != nil || envName == "" {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
+	componentName, err := cmd.Flags().GetString(flagnames.Component)
+	if err != nil || componentName == "" {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
 
 	apiClient, err := client.GetRadixApiForCommand(cmd)
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	GetEnvironmentParams := environment.NewGetEnvironmentParams().WithEnvName(envName).WithAppName(appName)
-	resp, err := apiClient.Environment.GetEnvironment(GetEnvironmentParams, nil)
-	if err != nil || resp.Payload == nil || resp.Payload.ActiveDeployment == nil {
+	getBatchesParams := job.NewGetBatchesParams().WithAppName(appName).WithEnvName(envName).WithJobComponentName(componentName)
+	resp, err := apiClient.Job.GetBatches(getBatchesParams, nil)
+	if err != nil || resp.Payload == nil {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	names := slice.Map(resp.Payload.ActiveDeployment.Components, func(component *models.Component) string {
-		return pointers.Val(component.Name)
+	batchNames := slice.Map(resp.Payload, func(batchSummary *models.ScheduledBatchSummary) string {
+		if batchSummary == nil {
+			return ""
+		}
+		return pointers.Val(batchSummary.Name)
 	})
 
-	filteredNames := slice.FindAll(names, func(componentName string) bool {
-		return strings.HasPrefix(componentName, toComplete)
+	filteredNames := slice.FindAll(batchNames, func(batchName string) bool {
+		return strings.HasPrefix(batchName, toComplete)
 	})
 
 	return filteredNames, cobra.ShellCompDirectiveNoFileComp

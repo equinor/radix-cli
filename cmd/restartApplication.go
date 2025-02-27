@@ -59,7 +59,7 @@ var restartApplicationCmd = &cobra.Command{
 
 func init() {
 	restartCmd.AddCommand(restartApplicationCmd)
-	restartApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	restartApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 
 	_ = restartApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(restartApplicationCmd)

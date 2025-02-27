@@ -61,7 +61,7 @@ var stopEnvironmentCmd = &cobra.Command{
 
 func init() {
 	stopCmd.AddCommand(stopEnvironmentCmd)
-	stopEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	stopEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	stopEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 
 	_ = stopEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)

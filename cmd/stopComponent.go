@@ -67,7 +67,7 @@ var stopComponentCmd = &cobra.Command{
 
 func init() {
 	stopCmd.AddCommand(stopComponentCmd)
-	stopComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	stopComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	stopComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 	stopComponentCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to stop")
 	_ = stopComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)

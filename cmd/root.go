@@ -56,6 +56,7 @@ func setContextSpecificPersistentFlags(cmd *cobra.Command) {
 	setContextPersistentFlags(cmd)
 	cmd.PersistentFlags().String(flagnames.Cluster, "", "(Optional) Set cluster to override context")
 	cmd.PersistentFlags().String(flagnames.ApiEnvironment, "", "(Optional) The API api-environment to run with (default prod)")
+	cmd.PersistentFlags().Bool(flagnames.SilenceError, false, "(Optional) Suppress output of errors")
 	setVerbosePersistentFlag(cmd)
 }
 
