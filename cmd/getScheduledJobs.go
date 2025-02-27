@@ -273,6 +273,73 @@ func prettyPrintTextScheduledJobSummary(job models.ScheduledJobSummary, indent s
 	if !job.Ended.IsZero() {
 		fmt.Printf("%s  Ended: %s\n", indent, job.Ended.String())
 	}
+	if job.Status != nil {
+		fmt.Printf("%s  Status: %s\n", indent, *job.Status)
+	}
+	if job.FailedCount != nil {
+		fmt.Printf("%s  Ended: %d\n", indent, *job.FailedCount)
+	}
+	if len(job.Restart) > 0 {
+		fmt.Printf("%s  Restarted: %s\n", indent, job.Restart)
+	}
+	fmt.Printf("%s  Time limit (seconds): %d\n", indent, job.TimeLimitSeconds)
+	if job.Runtime != nil {
+		fmt.Printf("%s  Runtime: %s\n", indent, (*job.Runtime).Architecture)
+	}
+	prettyPrintTextResources(job.Resources, indent)
+	prettyPrintReplicaList(job.ReplicaList, indent)
+}
+
+func prettyPrintReplicaList(replicaList []*models.ReplicaSummary, indent string) {
+	if replicaList == nil {
+		return
+	}
+	fmt.Printf("%s  Replicas:\n", indent)
+	for _, replica := range replicaList {
+		if replica == nil {
+			continue
+		}
+		fmt.Printf("%s    Name: %s\n", indent, pointers.Val(replica.Name))
+		if replica.Created != nil {
+			fmt.Printf("%s    Created: %s\n", indent, replica.Created.String())
+		}
+		if !replica.ContainerStarted.IsZero() {
+			fmt.Printf("%s    Container started: %s\n", indent, replica.ContainerStarted.String())
+		}
+		if !replica.EndTime.IsZero() {
+			fmt.Printf("%s    Ended: %s\n", indent, replica.EndTime.String())
+		}
+		if replica.ReplicaStatus != nil && replica.ReplicaStatus.Status != nil {
+			fmt.Printf("%s    Status: %s\n", indent, *replica.ReplicaStatus.Status)
+		}
+		fmt.Printf("%s    Image: %s\n", indent, replica.Image)
+		fmt.Printf("%s    Image ID: %s\n", indent, replica.ImageID)
+	}
+}
+
+func prettyPrintTextResources(resources *models.ResourceRequirements, indent string) {
+	if resources == nil {
+		return
+	}
+	fmt.Printf("%s  Resources:\n", indent)
+	if resources.Requests != nil {
+		fmt.Printf("%s    Requests:\n", indent)
+		if len(resources.Requests.CPU) > 0 {
+			fmt.Printf("%s      CPU: %s\n", indent, resources.Requests.CPU)
+		}
+		if len(resources.Requests.Memory) > 0 {
+			fmt.Printf("%s      Memory: %s\n", indent, resources.Requests.Memory)
+		}
+	}
+	if resources.Limits != nil {
+		fmt.Printf("%s    Limits:\n", indent)
+		if len(resources.Limits.CPU) > 0 {
+			fmt.Printf("%s      CPU: %s\n", indent, resources.Limits.CPU)
+		}
+		if len(resources.Limits.Memory) > 0 {
+			fmt.Printf("%s      Memory: %s\n", indent, resources.Limits.Memory)
+		}
+	}
 }
 
 func init() {
