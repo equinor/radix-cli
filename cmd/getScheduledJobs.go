@@ -160,7 +160,7 @@ func getJob(apiClient *radixapi.Radixapi, appName, envName, cmpName, jobName, ou
 	} else {
 		fmt.Println("Scheduled single job:")
 	}
-	prettyPrintTextScheduledJobSummary(jobSummary, "", false)
+	prettyPrintTextScheduledJobSummary(jobSummary, "", false, false)
 	return nil
 }
 
@@ -208,7 +208,7 @@ func getAllJobs(apiClient *radixapi.Radixapi, appName, envName, cmpName, outputF
 	}
 	fmt.Printf("# %s environment:\n", envName)
 	fmt.Println("Scheduled jobs:")
-	prettyPrintTextScheduledJobs(resp.Payload, "    ")
+	prettyPrintTextScheduledJobs(resp.Payload, "    ", false)
 	return nil
 }
 
@@ -227,23 +227,33 @@ func prettyPrintTextScheduledBatch(batchSummary *models.ScheduledBatchSummary, i
 	}
 	prettyPrintTextScheduledBatchSummary(*batchSummary, indent)
 	fmt.Printf("%s- Jobs:\n", indent)
-	prettyPrintTextScheduledJobs((*batchSummary).JobList, indent+"    ")
+	prettyPrintTextScheduledJobs((*batchSummary).JobList, indent+"    ", true)
 }
 
-func prettyPrintTextScheduledJobs(jobSummaries []*models.ScheduledJobSummary, indent string) {
+func prettyPrintTextScheduledJobs(jobSummaries []*models.ScheduledJobSummary, indent string, hideBatchName bool) {
 	for _, jobSummary := range jobSummaries {
 		if jobSummary == nil {
 			continue
 		}
-		prettyPrintTextScheduledJobSummary(*jobSummary, indent, true)
+		prettyPrintTextScheduledJobSummary(*jobSummary, indent, true, hideBatchName)
 	}
 }
 
 func prettyPrintTextScheduledBatchSummary(batch models.ScheduledBatchSummary, indent string) {
 	fmt.Printf("%sName: %s\n", indent, pointers.Val(batch.Name))
+	fmt.Printf("%sDeployment name: %s\n", indent, pointers.Val(batch.DeploymentName))
+	fmt.Printf("%sCreated: %s\n", indent, batch.Created.String())
+	if !batch.Started.IsZero() {
+		fmt.Printf("%sStarted: %s\n", indent, batch.Started.String())
+	}
+	if !batch.Ended.IsZero() {
+		fmt.Printf("%sEnded: %s\n", indent, batch.Ended.String())
+	}
+	fmt.Printf("%sStatus: %s\n", indent, pointers.Val(batch.Status))
+	fmt.Printf("%sTotal jobs count: %d\n", indent, pointers.Val(batch.TotalJobCount))
 }
 
-func prettyPrintTextScheduledJobSummary(job models.ScheduledJobSummary, indent string, itemSeparator bool) {
+func prettyPrintTextScheduledJobSummary(job models.ScheduledJobSummary, indent string, itemSeparator bool, hideBatchName bool) {
 	itemSeparatorValue := " "
 	if itemSeparator {
 		itemSeparatorValue = "-"
@@ -252,7 +262,7 @@ func prettyPrintTextScheduledJobSummary(job models.ScheduledJobSummary, indent s
 	if len(job.JobID) > 0 {
 		fmt.Printf("%s  Job ID: %s\n", indent, job.JobID)
 	}
-	if len(job.BatchName) > 0 {
+	if !hideBatchName && len(job.BatchName) > 0 {
 		fmt.Printf("%s  Batch: %s\n", indent, job.BatchName)
 	}
 	fmt.Printf("%s  Deployment name: %s\n", indent, pointers.Val(job.DeploymentName))
