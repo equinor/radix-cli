@@ -42,6 +42,8 @@ func GetRadixApiForCommand(cmd *cobra.Command) (*radixapi.Radixapi, error) {
 	endpoint := getEndpoint("server-radix-api", apiEnvironment, context, cluster)
 	verboseOutput, _ := cmd.Flags().GetBool(flagnames.Verbose)
 	transport := getTransport(endpoint, authWriter, verboseOutput)
+	silenceError, _ := cmd.Flags().GetBool(flagnames.SilenceError)
+	cmd.SilenceErrors = silenceError
 	return radixapi.New(transport, strfmt.Default), nil
 }
 

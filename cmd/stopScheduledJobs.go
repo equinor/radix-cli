@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/job"
 	"github.com/equinor/radix-cli/pkg/client"
@@ -104,14 +105,10 @@ var stopScheduledJobsCmd = &cobra.Command{
 
 		if jobName == "" && batchName == "" {
 			if allJobs || allBatchesAndJobs {
-				if err := stopAllJobs(apiClient, appName, envName, cmpName); err != nil {
-					return err
-				}
+				return stopAllJobs(apiClient, appName, envName, cmpName)
 			}
 			if allBatches || allBatchesAndJobs {
-				if err := stopAllBatches(apiClient, appName, envName, cmpName); err != nil {
-					return err
-				}
+				return stopAllBatches(apiClient, appName, envName, cmpName)
 			}
 			return errors.New("when options --batch and --job are not defined, options --all, --jobs or --batches are required")
 		}

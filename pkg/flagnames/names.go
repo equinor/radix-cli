@@ -56,4 +56,5 @@ const (
 	Batches                = "batches"
 	Batch                  = "batch"
 	Job                    = "job"
+	SilenceError           = "silence-error"
 )
