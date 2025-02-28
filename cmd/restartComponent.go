@@ -68,7 +68,7 @@ var restartComponentCmd = &cobra.Command{
 
 func init() {
 	restartCmd.AddCommand(restartComponentCmd)
-	restartComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	restartComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	restartComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 	restartComponentCmd.Flags().StringP(flagnames.Component, "n", "", "Name of the component to restart")
 

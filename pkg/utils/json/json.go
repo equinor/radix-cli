@@ -3,6 +3,7 @@ package json
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"sync"
@@ -71,4 +72,14 @@ func Pretty(data interface{}) (*string, error) {
 
 	jsonString := prettyJSON.String()
 	return &jsonString, nil
+}
+
+// PrettyPrintJson prints json from data
+func PrettyPrintJson(data interface{}) error {
+	prettyJSON, err := Pretty(data)
+	if err != nil {
+		return err
+	}
+	fmt.Println(*prettyJSON)
+	return nil
 }

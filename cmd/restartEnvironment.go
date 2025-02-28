@@ -62,7 +62,7 @@ var restartEnvironmentCmd = &cobra.Command{
 
 func init() {
 	restartCmd.AddCommand(restartEnvironmentCmd)
-	restartEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	restartEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	restartEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 
 	_ = restartComponentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)

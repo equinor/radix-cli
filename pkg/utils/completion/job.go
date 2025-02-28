@@ -29,11 +29,11 @@ func JobCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string,
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	names := slice.Map(resp.Payload.Jobs, func(component *models.JobSummary) string {
-		if component == nil {
+	names := slice.Map(resp.Payload.Jobs, func(jobSummary *models.JobSummary) string {
+		if jobSummary == nil {
 			return ""
 		}
-		return *component.Name
+		return *jobSummary.Name
 	})
 
 	filteredNames := slice.FindAll(names, func(appName string) bool {

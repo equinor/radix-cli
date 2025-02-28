@@ -25,7 +25,6 @@ const (
 	FromConfig             = "from-config"
 	FromEnvironment        = "from-environment"
 	ImageTagName           = "image-tag-name"
-	Job                    = "job"
 	Output                 = "output"
 	Previous               = "previous"
 	Print                  = "print"
@@ -52,4 +51,10 @@ const (
 	Variable               = "variable"
 	Verbose                = "verbose"
 	Value                  = "value"
+	All                    = "all"
+	Jobs                   = "jobs"
+	Batches                = "batches"
+	Batch                  = "batch"
+	Job                    = "job"
+	SilenceError           = "silence-error"
 )

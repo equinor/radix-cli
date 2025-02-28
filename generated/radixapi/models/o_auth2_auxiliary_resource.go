@@ -22,6 +22,9 @@ type OAuth2AuxiliaryResource struct {
 	// deployment
 	// Required: true
 	Deployment *AuxiliaryResourceDeployment `json:"deployment"`
+
+	// identity
+	Identity *Identity `json:"identity,omitempty"`
 }
 
 // Validate validates this o auth2 auxiliary resource
@@ -29,6 +32,10 @@ func (m *OAuth2AuxiliaryResource) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateDeployment(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIdentity(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -58,11 +65,34 @@ func (m *OAuth2AuxiliaryResource) validateDeployment(formats strfmt.Registry) er
 	return nil
 }
 
+func (m *OAuth2AuxiliaryResource) validateIdentity(formats strfmt.Registry) error {
+	if swag.IsZero(m.Identity) { // not required
+		return nil
+	}
+
+	if m.Identity != nil {
+		if err := m.Identity.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("identity")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("identity")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this o auth2 auxiliary resource based on the context it is used
 func (m *OAuth2AuxiliaryResource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateDeployment(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateIdentity(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -81,6 +111,27 @@ func (m *OAuth2AuxiliaryResource) contextValidateDeployment(ctx context.Context,
 				return ve.ValidateName("deployment")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("deployment")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *OAuth2AuxiliaryResource) contextValidateIdentity(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Identity != nil {
+
+		if swag.IsZero(m.Identity) { // not required
+			return nil
+		}
+
+		if err := m.Identity.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("identity")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("identity")
 			}
 			return err
 		}

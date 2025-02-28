@@ -33,7 +33,7 @@ var scaleCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(scaleCmd)
-	scaleCmd.PersistentFlags().StringP(flagnames.Application, "a", "", "Name of the application namespace")
+	scaleCmd.PersistentFlags().StringP(flagnames.Application, "a", "", "Name of the application")
 	scaleCmd.PersistentFlags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 	scaleCmd.PersistentFlags().StringP(flagnames.Component, "n", "", "Name of the component to scale")
 	scaleCmd.PersistentFlags().IntP(flagnames.Replicas, "r", 1, "The new desired number of replicas")
