@@ -92,10 +92,6 @@ var stopScheduledJobsCmd = &cobra.Command{
 			return errors.New("an option --all cannot be used with options --batches and --jobs at the same time")
 		}
 
-		if len(cmpName) == 0 && !allBatchesAndJobs {
-			return errors.New("when a component name is not defined, an option --all is required to stop all scheduled batches or jobs in an environment")
-		}
-
 		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetRadixApiForCommand(cmd)
@@ -104,24 +100,49 @@ var stopScheduledJobsCmd = &cobra.Command{
 		}
 
 		if jobName == "" && batchName == "" {
-			if allJobs || allBatchesAndJobs {
-				return stopAllJobs(apiClient, appName, envName, cmpName)
+			if !allJobs && !allBatches && !allBatchesAndJobs {
+				return errors.New("when options --batch and --job are not defined, options --all, --jobs or --batches are required")
 			}
-			if allBatches || allBatchesAndJobs {
-				return stopAllBatches(apiClient, appName, envName, cmpName)
+			if len(cmpName) == 0 && !allBatchesAndJobs {
+				return errors.New("when a component name is not defined, an option --all is required to stop all scheduled batches or jobs in an environment")
 			}
-			return errors.New("when options --batch and --job are not defined, options --all, --jobs or --batches are required")
+			return stopBatchListOrJobList(apiClient, appName, envName, cmpName, allJobs, allBatches, allBatchesAndJobs)
 		}
 
+		if len(cmpName) == 0 {
+			return errors.New("options --batch and --job require a component name")
+		}
 		if allJobs || allBatches || allBatchesAndJobs {
 			return errors.New("options --batch and --job and options --all, --jobs or --batches cannot be used at the same time")
 		}
+
 		if len(batchName) > 0 {
 			return stopBatch(apiClient, appName, envName, cmpName, batchName)
-
 		}
 		return stopJob(apiClient, appName, envName, cmpName, jobName)
 	},
+}
+
+func stopBatchListOrJobList(apiClient *radixapi.Radixapi, appName, envName, cmpName string, allJobs, allBatches, allBatchesAndJobs bool) error {
+	if len(cmpName) == 0 {
+		return stopAllBatchesAndJobsForEnvironment(apiClient, appName, envName)
+	}
+
+	var errs []error
+	if allJobs || allBatchesAndJobs {
+		if err := stopAllJobs(apiClient, appName, envName, cmpName); err != nil {
+			errs = append(errs, err)
+		}
+	}
+	if allBatches || allBatchesAndJobs {
+		if err := stopAllBatches(apiClient, appName, envName, cmpName); err != nil {
+			errs = append(errs, err)
+		}
+	}
+	if len(errs) > 0 {
+		return errors.Join(errs...)
+	}
+	return nil
 }
 
 func stopBatch(apiClient *radixapi.Radixapi, appName, envName, cmpName, batchName string) error {
@@ -159,6 +180,14 @@ func stopAllJobs(apiClient *radixapi.Radixapi, appName, envName, cmpName string)
 		WithEnvName(envName).
 		WithJobComponentName(cmpName)
 	_, err := apiClient.Job.StopAllJobs(parameters, nil)
+	return err
+}
+
+func stopAllBatchesAndJobsForEnvironment(apiClient *radixapi.Radixapi, appName, envName string) error {
+	parameters := job.NewStopAllBatchesAndJobsForEnvironmentParams().
+		WithAppName(appName).
+		WithEnvName(envName)
+	_, err := apiClient.Job.StopAllBatchesAndJobsForEnvironment(parameters, nil)
 	return err
 }
 
