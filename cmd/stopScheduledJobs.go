@@ -15,13 +15,15 @@
 package cmd
 
 import (
+	"encoding/json"
 	"errors"
-
+	"fmt"
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/job"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/model"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
 )
@@ -52,6 +54,7 @@ var stopScheduledJobsCmd = &cobra.Command{
 	  rx stop scheduled-job --application radix-test --environment dev --all
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		outputFormat, _ := cmd.Flags().GetString(flagnames.Output)
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
@@ -117,10 +120,38 @@ var stopScheduledJobsCmd = &cobra.Command{
 		}
 
 		if len(batchName) > 0 {
-			return stopBatch(apiClient, appName, envName, cmpName, batchName)
+			requestResult, err := stopBatch(apiClient, appName, envName, cmpName, batchName)
+			printResult(requestResult, outputFormat)
+			return err
 		}
 		return stopJob(apiClient, appName, envName, cmpName, jobName)
 	},
+}
+
+func printResult(result model.ApiRequestResult, outputFormat string) {
+	responseBody := result.GetResponseBody()
+	if outputFormat == "json" {
+		fmt.Println(responseBody)
+		return
+	}
+	fmt.Printf("Response code: %d\n", result.GetResponseCode())
+	fmt.Printf("Response message: %s\n", result.GetResponseMessage())
+	type ResponseBody struct {
+		responseType string `json:"type"`
+		message      string `json:"message"`
+		errorMessage string `json:"error"`
+	}
+	body := &ResponseBody{}
+	bytes := []byte(responseBody)
+	if err := json.Unmarshal(bytes, body); err == nil {
+		fmt.Printf("Type: %s\n", body.responseType)
+		fmt.Printf("Message: %s\n", body.message)
+		if len(body.errorMessage) > 0 {
+			fmt.Printf("Error: %s\n", body.errorMessage)
+		}
+	} else {
+		fmt.Printf("Response body: %s\n", responseBody)
+	}
 }
 
 func stopBatchListOrJobList(apiClient *radixapi.Radixapi, appName, envName, cmpName string, allJobs, allBatches, allBatchesAndJobs bool) error {
@@ -145,14 +176,15 @@ func stopBatchListOrJobList(apiClient *radixapi.Radixapi, appName, envName, cmpN
 	return nil
 }
 
-func stopBatch(apiClient *radixapi.Radixapi, appName, envName, cmpName, batchName string) error {
+func stopBatch(apiClient *radixapi.Radixapi, appName, envName, cmpName, batchName string) (model.ApiRequestResult, error) {
 	parameters := job.NewStopBatchParams().
 		WithAppName(appName).
 		WithEnvName(envName).
 		WithJobComponentName(cmpName).
 		WithBatchName(batchName)
-	_, err := apiClient.Job.StopBatch(parameters, nil)
-	return err
+	apiRequestResult := model.NewApiRequestResult()
+	_, err := apiClient.Job.StopBatch(parameters, nil, apiRequestResult.ResponseReaderClientOption)
+	return apiRequestResult, err
 }
 
 func stopJob(apiClient *radixapi.Radixapi, appName, envName, cmpName, jobName string) error {
@@ -201,6 +233,7 @@ func init() {
 	stopScheduledJobsCmd.Flags().BoolP(flagnames.Batches, "", false, "Stop all scheduled batches.")
 	stopScheduledJobsCmd.Flags().BoolP(flagnames.Jobs, "", false, "Stop all scheduled jobs.")
 	stopScheduledJobsCmd.Flags().BoolP(flagnames.All, "", false, "Stop all scheduled batches and jobs.")
+	stopScheduledJobsCmd.Flags().StringP(flagnames.Output, "o", "text", "(Optional) Output format. json or not set (plain text)")
 	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
 	_ = stopScheduledJobsCmd.RegisterFlagCompletionFunc(flagnames.Component, completion.ComponentCompletion)
