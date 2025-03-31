@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/job"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
