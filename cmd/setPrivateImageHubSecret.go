@@ -15,6 +15,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
@@ -53,8 +55,11 @@ var setPrivateImageHubSecretCmd = &cobra.Command{
 		params.SetServerName(domain)
 		params.SetImageHubSecret(secretParams)
 
-		_, err = apiClient.Application.UpdatePrivateImageHubsSecretValue(params, nil)
-		return err
+		if _, err = apiClient.Application.UpdatePrivateImageHubsSecretValue(params, nil); err != nil {
+			return err
+		}
+		fmt.Printf("Successfully set private image hub secret for domain %s in app %s\n", domain, appName)
+		return nil
 	},
 }
 

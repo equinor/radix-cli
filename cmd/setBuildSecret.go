@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
@@ -59,8 +60,11 @@ var setBuildSecretCmd = &cobra.Command{
 		params.SetSecretName(secretName)
 		params.SetSecretValue(&componentSecret)
 
-		_, err = apiClient.Application.UpdateBuildSecretsSecretValue(params, nil)
-		return err
+		if _, err = apiClient.Application.UpdateBuildSecretsSecretValue(params, nil); err != nil {
+			return err
+		}
+		fmt.Printf("Successfully set build secret %s for app %s\n", secretName, appName)
+		return nil
 	},
 }
 
