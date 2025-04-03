@@ -60,6 +60,9 @@ type Secret struct {
 	// Example: client-cert
 	// Enum: ["generic","azure-blob-fuse-volume","csi-azure-blob-volume","csi-azure-key-vault-creds","csi-azure-key-vault-item","client-cert-auth","oauth2-proxy"]
 	Type string `json:"type,omitempty"`
+
+	// Updated timestamp of the last change
+	Updated interface{} `json:"updated,omitempty"`
 }
 
 // Validate validates this secret
