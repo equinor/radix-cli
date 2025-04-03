@@ -81,7 +81,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 
 		if commitId != "" {
 			if deploymentName != "" {
-				return errors.New("deployment name or use-active-deployment and commit ID cannot be used at the same time")
+				return errors.New("deployment name or use-active-deployment and commitID cannot be used at the same time")
 			}
 			name, err := getLastDeploymentNameByCommitId(apiClient, appName, fromEnvironment, commitId)
 			if err != nil {
@@ -142,7 +142,7 @@ func getLastDeploymentNameByCommitId(apiClient *radixapi.Radixapi, appName, envN
 	}
 	deploymentSummaries := slice.FindAll(resp.Payload.Deployments, func(item *models.DeploymentSummary) bool { return item.GitCommitHash == commitId })
 	if len(deploymentSummaries) == 0 {
-		return "", fmt.Errorf("no deployments found with commit ID '%s'", commitId)
+		return "", fmt.Errorf("no deployments found with commitID '%s'", commitId)
 	}
 	if len(deploymentSummaries) == 1 {
 		return *deploymentSummaries[0].Name, nil
@@ -167,7 +167,7 @@ func init() {
 	createJobCmd.AddCommand(createPromotePipelineJobCmd)
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to be promoted")
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.Deployment, "d", "", "(Optional) Name of a deployment to be promoted. This cannot be used together with the option commitID")
-	createPromotePipelineJobCmd.Flags().StringP(flagnames.CommitID, "i", "", "(Optional) An optional 40 character commit id of the deployment to promote. This cannot be used together with an option deployment")
+	createPromotePipelineJobCmd.Flags().StringP(flagnames.CommitID, "i", "", "(Optional) An optional 40 character commitID of the deployment to promote. This cannot be used together with an option deployment. The latest deployment is promoted if there are multiple deployments with the same commitID")
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.FromEnvironment, "", "", "The deployment source environment")
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.ToEnvironment, "", "", "The deployment target environment")
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the promote pipeline job")
