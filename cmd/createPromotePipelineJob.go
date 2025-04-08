@@ -17,6 +17,9 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/equinor/radix-common/utils/slice"
+	"sort"
+	"time"
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
@@ -43,12 +46,13 @@ var createPromotePipelineJobCmd = &cobra.Command{
 
 		useActiveDeployment, _ := cmd.Flags().GetBool(flagnames.UseActiveDeployment)
 		deploymentName, _ := cmd.Flags().GetString(flagnames.Deployment)
+		commitId, _ := cmd.Flags().GetString(flagnames.CommitID)
 		fromEnvironment, _ := cmd.Flags().GetString(flagnames.FromEnvironment)
 		toEnvironment, _ := cmd.Flags().GetString(flagnames.ToEnvironment)
 		triggeredByUser, _ := cmd.Flags().GetString(flagnames.User)
 		follow, _ := cmd.Flags().GetBool(flagnames.Follow)
 
-		if !useActiveDeployment && deploymentName == "" {
+		if !useActiveDeployment && deploymentName == "" && commitId == "" {
 			return errors.New("specifying deployment name or setting use-active-deployment is required")
 		}
 		if useActiveDeployment && deploymentName != "" {
@@ -67,12 +71,23 @@ var createPromotePipelineJobCmd = &cobra.Command{
 		}
 
 		if useActiveDeployment {
-			d, err := getActiveDeploymentName(apiClient, appName, fromEnvironment)
+			name, err := getActiveDeploymentName(apiClient, appName, fromEnvironment)
 			if err != nil {
 				return err
 			}
 
-			deploymentName = d
+			deploymentName = name
+		}
+
+		if commitId != "" {
+			if deploymentName != "" {
+				return errors.New("deployment name or use-active-deployment and commitID cannot be used at the same time")
+			}
+			name, err := getLastDeploymentNameByCommitId(apiClient, appName, fromEnvironment, commitId)
+			if err != nil {
+				return err
+			}
+			deploymentName = name
 		}
 
 		triggerPipelineParams := application.NewTriggerPipelinePromoteParams()
@@ -116,18 +131,52 @@ func getActiveDeploymentName(apiClient *radixapi.Radixapi, appName, envName stri
 	return *resp.Payload.ActiveDeployment.Name, nil
 }
 
+func getLastDeploymentNameByCommitId(apiClient *radixapi.Radixapi, appName, envName, commitId string) (string, error) {
+	params := environment.NewGetEnvironmentParams()
+	params.SetAppName(appName)
+	params.SetEnvName(envName)
+
+	resp, err := apiClient.Environment.GetEnvironment(params, nil)
+	if err != nil || resp.Payload == nil {
+		return "", fmt.Errorf("failed to get environment details: %w", err)
+	}
+	deploymentSummaries := slice.FindAll(resp.Payload.Deployments, func(item *models.DeploymentSummary) bool { return item.GitCommitHash == commitId })
+	if len(deploymentSummaries) == 0 {
+		return "", fmt.Errorf("no deployments found with commitID '%s'", commitId)
+	}
+	if len(deploymentSummaries) == 1 {
+		return *deploymentSummaries[0].Name, nil
+	}
+
+	sort.Slice(deploymentSummaries, func(i, j int) bool {
+		if deploymentSummaries[i].ActiveFrom == nil && deploymentSummaries[j].ActiveFrom == nil {
+			return false
+		}
+		if deploymentSummaries[i].ActiveFrom == nil {
+			return true
+		}
+		if deploymentSummaries[j].ActiveFrom == nil {
+			return false
+		}
+		return time.Time(*deploymentSummaries[i].ActiveFrom).Before(time.Time(*deploymentSummaries[j].ActiveFrom))
+	})
+	return *deploymentSummaries[len(deploymentSummaries)-1].Name, nil
+}
+
 func init() {
 	createJobCmd.AddCommand(createPromotePipelineJobCmd)
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to be promoted")
-	createPromotePipelineJobCmd.Flags().StringP(flagnames.Deployment, "d", "", "Name of a deployment to be promoted")
+	createPromotePipelineJobCmd.Flags().StringP(flagnames.Deployment, "d", "", "(Optional) Name of a deployment to be promoted. This cannot be used together with the option commitID")
+	createPromotePipelineJobCmd.Flags().StringP(flagnames.CommitID, "i", "", "(Optional) An optional 40 character commitID of the deployment to promote. This cannot be used together with an option deployment. The latest deployment is promoted if there are multiple deployments with the same commitID")
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.FromEnvironment, "", "", "The deployment source environment")
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.ToEnvironment, "", "", "The deployment target environment")
 	createPromotePipelineJobCmd.Flags().StringP(flagnames.User, "u", "", "The user who triggered the promote pipeline job")
 	createPromotePipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow the promote pipeline job log")
-	createPromotePipelineJobCmd.Flags().BoolP(flagnames.UseActiveDeployment, "", false, "Promote the active deployment")
+	createPromotePipelineJobCmd.Flags().BoolP(flagnames.UseActiveDeployment, "", false, "(Optional) Promote the active deployment")
 	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.FromEnvironment, completion.EnvironmentCompletion)
 	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.ToEnvironment, completion.EnvironmentCompletion)
 	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Deployment, completion.CreateDeploymentCompletion(flagnames.FromEnvironment, true))
+	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.CommitID, completion.CreateDeploymentCommitIDCompletion(flagnames.FromEnvironment, true))
 	setContextSpecificPersistentFlags(createPromotePipelineJobCmd)
 }
