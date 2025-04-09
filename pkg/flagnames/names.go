@@ -19,6 +19,7 @@ const (
 	ConfigFile             = "config-file"
 	Context                = "context"
 	Deployment             = "deployment"
+	Server                 = "server"
 	Environment            = "environment"
 	FailCritical           = "fail-on-critical"
 	Follow                 = "follow"
