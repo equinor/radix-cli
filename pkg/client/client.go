@@ -105,7 +105,7 @@ func getAuthWriter(cmd *cobra.Command, config *radixconfig.RadixConfig) (runtime
 }
 
 // LoginCommand Login radixapi for command
-func LoginCommand(ctx context.Context, useInteractiveLogin, useDeviceCode bool, azureClientId, federatedTokenFile, azureClientSecret string) error {
+func LoginCommand(ctx context.Context, useInteractiveLogin, useDeviceCode, useGithubCredentials bool, azureClientId, federatedTokenFile, azureClientSecret string) error {
 	radixConfig, err := radixconfig.GetRadixConfig()
 	if err != nil {
 		return err
@@ -117,7 +117,7 @@ func LoginCommand(ctx context.Context, useInteractiveLogin, useDeviceCode bool, 
 	if err != nil {
 		return err
 	}
-	return provider.Login(ctx, useInteractiveLogin, useDeviceCode, azureClientId, federatedTokenFile, azureClientSecret)
+	return provider.Login(ctx, useInteractiveLogin, useDeviceCode, useGithubCredentials, azureClientId, federatedTokenFile, azureClientSecret)
 }
 
 // LogoutCommand Logout command

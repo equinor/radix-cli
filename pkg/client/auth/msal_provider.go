@@ -2,8 +2,13 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"os"
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
@@ -17,15 +22,18 @@ import (
 )
 
 const (
-	RadixCliClientID    = "ed6cb804-8193-4e55-9d3d-8b88688482b3"
-	AzureTenantID       = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
-	AccessTokenCacheKey = "access_token"
-	ConfigCacheKey      = "auth"
+	RadixCliClientID           = "ed6cb804-8193-4e55-9d3d-8b88688482b3"
+	AzureTenantID              = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
+	AccessTokenCacheKey        = "access_token"
+	ConfigCacheKey             = "auth"
+	azureADAudience            = "api://AzureADTokenExchange"
+	actionsIDTokenRequestToken = "ACTIONS_ID_TOKEN_REQUEST_TOKEN"
+	actionsIDTokenRequestURL   = "ACTIONS_ID_TOKEN_REQUEST_URL"
 )
 
 // MSALAuthProvider is an AuthProvider that uses MSAL
 type MSALAuthProvider interface {
-	Login(ctx context.Context, useInteractiveLogin, useDeviceCode bool, azureClientId, federatedTokenFile, azureClientSecret string) error
+	Login(ctx context.Context, useInteractiveLogin, useDeviceCode, useGithubCredentials bool, azureClientId, federatedTokenFile, azureClientSecret string) error
 	Logout(ctx context.Context) error
 	runtime.ClientAuthInfoWriter
 }
@@ -38,10 +46,15 @@ type msalAuthProvider struct {
 }
 
 type LoginConfig struct {
-	UseInteractiveLogin bool
-	UseDeviceCode       bool
-	AzureClientId       string
-	FederatedTokenFile  string
+	UseInteractiveLogin  bool
+	UseGithubCredentials bool
+	UseDeviceCode        bool
+	AzureClientId        string
+	FederatedTokenFile   string
+}
+
+type githubTokenResponse struct {
+	Value string `json:"value"`
 }
 
 // NewMSALAuthProvider creates a new MSALAuthProvider
@@ -63,12 +76,13 @@ func NewMSALAuthProvider(radixConfig *radixconfig.RadixConfig) (MSALAuthProvider
 
 // Login allows the plugin to initialize its configuration. It must not
 // require direct user interaction.
-func (provider *msalAuthProvider) Login(ctx context.Context, useInteractiveLogin, useDeviceCode bool, azureClientId, federatedTokenFile, azureClientSecret string) error {
+func (provider *msalAuthProvider) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, useGithubCredentials bool, azureClientId, federatedTokenFile, azureClientSecret string) error {
 	provider.config = LoginConfig{
-		UseInteractiveLogin: useInteractiveLogin,
-		UseDeviceCode:       useDeviceCode,
-		AzureClientId:       azureClientId,
-		FederatedTokenFile:  federatedTokenFile,
+		UseInteractiveLogin:  useInteractiveLogin,
+		UseDeviceCode:        useDeviceCode,
+		AzureClientId:        azureClientId,
+		FederatedTokenFile:   federatedTokenFile,
+		UseGithubCredentials: useGithubCredentials,
 	}
 	config.SetCache(ConfigCacheKey, provider.config, 365*24*time.Hour)
 
@@ -79,10 +93,22 @@ func (provider *msalAuthProvider) Login(ctx context.Context, useInteractiveLogin
 	case provider.config.UseDeviceCode:
 		_, err := provider.loginDeviceCode(ctx)
 		return err
-	case provider.config.AzureClientId != "" && provider.config.FederatedTokenFile != "":
+	case provider.config.UseGithubCredentials:
+		if provider.config.AzureClientId == "" {
+			return errors.New("missing Azure Client ID")
+		}
+		_, err := provider.loginGithubFederatedCredentials(ctx)
+		return err
+	case provider.config.FederatedTokenFile != "":
+		if provider.config.AzureClientId == "" {
+			return errors.New("missing Azure Client ID")
+		}
 		_, err := provider.loginFederatedCredentials(ctx)
 		return err
-	case provider.config.AzureClientId != "" && azureClientSecret != "":
+	case azureClientSecret != "":
+		if provider.config.AzureClientId == "" {
+			return errors.New("missing Azure Client ID")
+		}
 		_, err := provider.loginClientSecret(ctx, azureClientSecret)
 		return err
 	}
@@ -116,6 +142,8 @@ func (provider *msalAuthProvider) AuthenticateRequest(r runtime.ClientRequest, _
 		token, err = provider.GetMsalToken(context.Background())
 	case provider.config.UseDeviceCode:
 		token, err = provider.GetMsalToken(context.Background())
+	case provider.config.UseGithubCredentials:
+		token, err = provider.loginGithubFederatedCredentials(context.Background())
 	case provider.config.AzureClientId != "" && provider.config.FederatedTokenFile != "":
 		token, err = provider.loginFederatedCredentials(context.Background())
 	case provider.config.AzureClientId != "":
@@ -203,6 +231,92 @@ func (provider *msalAuthProvider) loginFederatedCredentials(ctx context.Context)
 
 	config.SetCache(AccessTokenCacheKey, authResult.Token, authResult.ExpiresOn.Sub(time.Now()))
 	return authResult.Token, nil
+}
+
+func (provider *msalAuthProvider) loginGithubFederatedCredentials(ctx context.Context) (string, error) {
+	// Mostly copied from kubelogin\pkg\internal\token\githubactionscredential.go:newGithubActionsCredential()
+	if token, ok := config.GetCache[string](AccessTokenCacheKey); ok {
+		return token, nil
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, 100*time.Second)
+	defer cancel()
+
+	cred := confidential.NewCredFromAssertionCallback(func(ctx context.Context, _ confidential.AssertionRequestOptions) (string, error) {
+		return getGithubFedCred(ctx)
+	})
+
+	client, err := confidential.New(provider.authority, provider.config.AzureClientId, cred)
+	if err != nil {
+		return "", fmt.Errorf("failed to create github actions credential: %w", err)
+	}
+
+	authResult, err := client.AcquireTokenByCredential(ctx, getScopes())
+	if err != nil {
+		return "", err
+	}
+
+	config.SetCache(AccessTokenCacheKey, authResult.AccessToken, authResult.ExpiresOn.Sub(time.Now()))
+	return authResult.AccessToken, nil
+}
+
+func getGithubFedCred(ctx context.Context) (string, error) {
+	// All code copied from kubelogins kubelogin\pkg\internal\token\githubactionscredential.go:getGithubToken()
+	reqToken := os.Getenv(actionsIDTokenRequestToken)
+	reqURL := os.Getenv(actionsIDTokenRequestURL)
+
+	if reqToken == "" || reqURL == "" {
+		return "", errors.New("ACTIONS_ID_TOKEN_REQUEST_TOKEN or ACTIONS_ID_TOKEN_REQUEST_URL is not set")
+	}
+
+	u, err := url.Parse(reqURL)
+	if err != nil {
+		return "", fmt.Errorf("unable to parse ACTIONS_ID_TOKEN_REQUEST_URL: %w", err)
+	}
+	q := u.Query()
+	q.Set("audience", azureADAudience)
+	u.RawQuery = q.Encode()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", u.String(), nil)
+	if err != nil {
+		return "", err
+	}
+
+	// reference:
+	// https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect
+	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", reqToken))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json; api-version=2.0")
+
+	client := http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		var body string
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			body = err.Error()
+		} else {
+			body = string(b)
+		}
+
+		return "", fmt.Errorf("github actions ID token request failed with status code: %d, response body: %s", resp.StatusCode, body)
+	}
+
+	var tokenResp githubTokenResponse
+	if err := json.NewDecoder(resp.Body).Decode(&tokenResp); err != nil {
+		return "", err
+	}
+
+	if tokenResp.Value == "" {
+		return "", errors.New("github actions ID token is empty")
+	}
+
+	return tokenResp.Value, nil
 }
 
 func (provider *msalAuthProvider) loginClientSecret(ctx context.Context, azureClientSecret string) (string, error) {

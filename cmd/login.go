@@ -35,6 +35,7 @@ var loginCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
 
+		useGithubCredentials, _ := cmd.Flags().GetBool(flagnames.UseGithubCredentials)
 		useInteractiveLogin, _ := cmd.Flags().GetBool(flagnames.UseInteractiveLogin)
 		useDeviceCode, _ := cmd.Flags().GetBool(flagnames.UseDeviceCode)
 		federatedTokenFile, _ := cmd.Flags().GetString(flagnames.FederatedTokenFile)
@@ -48,7 +49,7 @@ var loginCmd = &cobra.Command{
 			useInteractiveLogin = true
 		}
 
-		err := client.LoginCommand(context.Background(), useInteractiveLogin, useDeviceCode, azureClientId, federatedTokenFile, azureClientSecret)
+		err := client.LoginCommand(context.Background(), useInteractiveLogin, useDeviceCode, useGithubCredentials, azureClientId, federatedTokenFile, azureClientSecret)
 		if err != nil {
 			return err
 		}
