@@ -22,10 +22,6 @@ import (
 const (
 	// TokenEnvironmentName Name of environment variable to load token from
 	TokenEnvironmentName = "APP_SERVICE_ACCOUNT_TOKEN"
-
-	// MSAL authentication
-	clientID = "ed6cb804-8193-4e55-9d3d-8b88688482b3"
-	tenantID = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
 )
 
 // GetRadixApiForCommand Gets radixapi for command
@@ -109,8 +105,19 @@ func getAuthWriter(cmd *cobra.Command, config *radixconfig.RadixConfig) (runtime
 }
 
 // LoginCommand Login radixapi for command
-func LoginCommand(_ *cobra.Command, useDeviceCode bool) error {
-	return LoginContext(useDeviceCode)
+func LoginCommand(ctx context.Context, useInteractiveLogin, useDeviceCode bool, azureClientId, federatedTokenFile, azureClientSecret string) error {
+	radixConfig, err := radixconfig.GetRadixConfig()
+	if err != nil {
+		return err
+	}
+	contextName := radixConfig.CustomConfig.Context
+	radixConfig = radixconfig.GetDefaultRadixConfig()
+	radixConfig.CustomConfig.Context = contextName
+	provider, err := getAuthProvider(radixConfig)
+	if err != nil {
+		return err
+	}
+	return provider.Login(ctx, useInteractiveLogin, useDeviceCode, azureClientId, federatedTokenFile, azureClientSecret)
 }
 
 // LogoutCommand Logout command
@@ -126,24 +133,8 @@ func LogoutCommand() error {
 	return provider.Logout(context.Background())
 }
 
-// LoginContext Performs login
-func LoginContext(useDeviceCode bool) error {
-	radixConfig, err := radixconfig.GetRadixConfig()
-	if err != nil {
-		return err
-	}
-	contextName := radixConfig.CustomConfig.Context
-	radixConfig = radixconfig.GetDefaultRadixConfig()
-	radixConfig.CustomConfig.Context = contextName
-	provider, err := getAuthProvider(radixConfig)
-	if err != nil {
-		return err
-	}
-	return provider.Login(context.Background(), useDeviceCode)
-}
-
 func getAuthProvider(radixConfig *radixconfig.RadixConfig) (auth.MSALAuthProvider, error) {
-	provider, err := auth.NewMSALAuthProvider(radixConfig, clientID, tenantID)
+	provider, err := auth.NewMSALAuthProvider(radixConfig)
 	if err != nil {
 		return nil, err
 	}
