@@ -109,6 +109,7 @@ func GetCache[T any](key string) (content T, ok bool) {
 	}
 	return content, ok
 }
+
 func SetCache[T any](key string, content T, ttl time.Duration) {
 	config, _ := GetRadixConfig()
 
