@@ -174,11 +174,6 @@ func LoadProviderFromCache(globalCache cache.Cache, authCacheFilename, authority
 
 // Logout removes all cached accounts with tokens
 func (a *auth) Logout() error {
-	config.ClearCache(ConfigCacheKey)
-	config.ClearCache(AccessTokenCacheKey)
-	config.ClearCache(authProviderTypeCacheKey)
-	config.ClearCache(authProviderCacheKey)
-
 	authFilesGlob := fmt.Sprintf(authFileFormat, config.RadixConfigDir, "*")
 	files, err := filepath.Glob(authFilesGlob)
 	if err != nil {
