@@ -34,6 +34,8 @@ const (
 	providerAzureClientSecret         = "azure_client_secret"
 	providerAzureFederatedCredentials = "azure_federated_credentials"
 	providerAzureGithub               = "azure_github"
+
+	authFileFormat = "%s/auth.%s.json"
 )
 
 var (
@@ -67,7 +69,7 @@ type githubTokenResponse struct {
 // NewMSALAuthProvider creates a new Provider
 func NewMSALAuthProvider(radixConfig *config.RadixConfig) (Provider, error) {
 	authority := fmt.Sprintf("https://login.microsoftonline.com/%s", AzureTenantID)
-	authCacheFilename := fmt.Sprintf("%s/auth.%s.json", config.RadixConfigDir, radixConfig.CustomConfig.Context)
+	authCacheFilename := fmt.Sprintf(authFileFormat, config.RadixConfigDir, radixConfig.CustomConfig.Context)
 	globalCache := cache.New(authCacheFilename, "global")
 
 	provider, err := LoadProviderFromCache(globalCache, authCacheFilename, authority)
@@ -177,7 +179,7 @@ func (a *auth) Logout() error {
 	config.ClearCache(authProviderTypeCacheKey)
 	config.ClearCache(authProviderCacheKey)
 
-	authFilesGlob := fmt.Sprintf("%s/auth.*.json", config.RadixConfigDir)
+	authFilesGlob := fmt.Sprintf(authFileFormat, config.RadixConfigDir, "*")
 	files, err := filepath.Glob(authFilesGlob)
 	if err != nil {
 		log.Printf("Error fetching auth files (%s): %s", authFilesGlob, err)
