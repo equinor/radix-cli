@@ -133,7 +133,7 @@ func LogoutCommand() error {
 	return provider.Logout()
 }
 
-func getAuthProvider(radixConfig *radixconfig.RadixConfig) (auth.MSALAuthProvider, error) {
+func getAuthProvider(radixConfig *radixconfig.RadixConfig) (auth.Provider, error) {
 	provider, err := auth.NewMSALAuthProvider(radixConfig)
 	if err != nil {
 		return nil, err

@@ -14,7 +14,7 @@ type MsalInteractive struct {
 	authority string
 }
 
-var _ Provider = &MsalInteractive{}
+var _ GetAccessTokener = &MsalInteractive{}
 
 func NewMsalInteractive(cache cache.ExportReplace, authority string) (*MsalInteractive, error) {
 

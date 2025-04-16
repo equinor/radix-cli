@@ -13,7 +13,7 @@ type MsalDeviceCode struct {
 	client *public.Client
 }
 
-var _ Provider = &MsalDeviceCode{}
+var _ GetAccessTokener = &MsalDeviceCode{}
 
 func NewMsalDeviceCode(cache cache.ExportReplace, authority string) (*MsalDeviceCode, error) {
 

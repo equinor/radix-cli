@@ -14,7 +14,7 @@ type AzureFederatedCredentials struct {
 	cache cache.Cache
 }
 
-var _ Provider = &AzureFederatedCredentials{}
+var _ GetAccessTokener = &AzureFederatedCredentials{}
 
 func NewAzureFederatedCredentials(cache cache.Cache) *AzureFederatedCredentials {
 

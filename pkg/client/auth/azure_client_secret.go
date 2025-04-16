@@ -14,7 +14,7 @@ type AzureClientSecret struct {
 	cache     cache2.Cache
 }
 
-var _ Provider = &AzureClientSecret{}
+var _ GetAccessTokener = &AzureClientSecret{}
 
 func NewAzureClientSecret(cache cache2.Cache, authority string) *AzureClientSecret {
 	return &AzureClientSecret{
