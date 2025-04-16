@@ -130,7 +130,7 @@ func LogoutCommand() error {
 	if err != nil {
 		return err
 	}
-	return provider.Logout(context.Background())
+	return provider.Logout()
 }
 
 func getAuthProvider(radixConfig *radixconfig.RadixConfig) (auth.MSALAuthProvider, error) {
