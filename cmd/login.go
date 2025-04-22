@@ -62,6 +62,7 @@ func init() {
 	rootCmd.AddCommand(loginCmd)
 	loginCmd.Flags().Bool(flagnames.UseInteractiveLogin, false, "Authenticate with Azure Interactive Login. Default if no other option is specified")
 	loginCmd.Flags().Bool(flagnames.UseDeviceCode, false, "Authenticate with Azure Device Code")
+	loginCmd.Flags().Bool(flagnames.UseGithubCredentials, false, "Authenticate with Github Workload Identity")
 	loginCmd.Flags().String(flagnames.AzureClientId, "", "Authenticate with Azure Client Id and federated token or client secret")
 	loginCmd.Flags().String(flagnames.FederatedTokenFile, "", "Authenticate with Federated Credentials and Azure Client Id")
 	loginCmd.Flags().String(flagnames.AzureClientSecret, "", "Authenticate with Azure Client Secret and Azure Client Id")
