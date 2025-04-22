@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"encoding/json"
 	"errors"
 	"os"
 	"time"
@@ -87,19 +86,6 @@ func (c *Cache) GetItem(key string) (string, bool) {
 
 	return item.Content, ok
 }
-func (c *Cache) GetItemUnmarsjalJson(key string, v any) bool {
-	blob, ok := c.GetItem(key)
-	if !ok {
-		return false
-	}
-
-	err := json.Unmarshal([]byte(blob), v)
-	if err != nil {
-		return false
-	}
-	return true
-}
-
 func (c *Cache) ClearItem(key string) error {
 	items, err := c.read()
 	if err != nil {
