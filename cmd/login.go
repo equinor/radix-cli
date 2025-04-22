@@ -15,9 +15,16 @@
 package cmd
 
 import (
+	"context"
+	"errors"
+
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/spf13/cobra"
+)
+
+var (
+	errInvalidAzureClientFlags = errors.New("azure client id must be used together with azure client secret or federated token")
 )
 
 // loginCmd represents the login command
@@ -28,8 +35,21 @@ var loginCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
 
+		useGithubCredentials, _ := cmd.Flags().GetBool(flagnames.UseGithubCredentials)
+		useInteractiveLogin, _ := cmd.Flags().GetBool(flagnames.UseInteractiveLogin)
 		useDeviceCode, _ := cmd.Flags().GetBool(flagnames.UseDeviceCode)
-		err := client.LoginCommand(cmd, useDeviceCode)
+		federatedTokenFile, _ := cmd.Flags().GetString(flagnames.FederatedTokenFile)
+		azureClientId, _ := cmd.Flags().GetString(flagnames.AzureClientId)
+		azureClientSecret, _ := cmd.Flags().GetString(flagnames.AzureClientSecret)
+
+		if azureClientId != "" && azureClientSecret == "" && federatedTokenFile == "" {
+			return errInvalidAzureClientFlags
+		}
+		if !useInteractiveLogin && !useDeviceCode && !useGithubCredentials && azureClientId == "" {
+			useInteractiveLogin = true
+		}
+
+		err := client.LoginCommand(context.Background(), useInteractiveLogin, useDeviceCode, useGithubCredentials, azureClientId, federatedTokenFile, azureClientSecret)
 		if err != nil {
 			return err
 		}
@@ -40,6 +60,13 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
-	loginCmd.Flags().Bool(flagnames.UseDeviceCode, false, "Use CLI's old authentication flow based on device code. The device code flow does not work for compliant device policy enabled accounts.")
+	loginCmd.Flags().Bool(flagnames.UseInteractiveLogin, false, "Authenticate with Azure Interactive Login. Default if no other option is specified")
+	loginCmd.Flags().Bool(flagnames.UseDeviceCode, false, "Authenticate with Azure Device Code")
+	loginCmd.Flags().Bool(flagnames.UseGithubCredentials, false, "Authenticate with Github Workload Identity")
+	loginCmd.Flags().String(flagnames.AzureClientId, "", "Authenticate with Azure Client Id and federated token or client secret")
+	loginCmd.Flags().String(flagnames.FederatedTokenFile, "", "Authenticate with Federated Credentials and Azure Client Id")
+	loginCmd.Flags().String(flagnames.AzureClientSecret, "", "Authenticate with Azure Client Secret and Azure Client Id")
+
+	loginCmd.MarkFlagsMutuallyExclusive(flagnames.UseInteractiveLogin, flagnames.AzureClientSecret, flagnames.UseGithubCredentials, flagnames.FederatedTokenFile, flagnames.UseDeviceCode)
 	setVerbosePersistentFlag(loginCmd)
 }
