@@ -55,8 +55,8 @@ func (p *AzureGithub) Authenticate(ctx context.Context, azureClientId string) (s
 		return "", err
 	}
 
-	p.cache.SetItem(azureClientIdCacheKey, azureClientId, authResult.ExpiresOn.Sub(time.Now()))
-	p.cache.SetItem(AccessTokenCacheKey, authResult.AccessToken, authResult.ExpiresOn.Sub(time.Now()))
+	p.cache.SetItem(azureClientIdCacheKey, azureClientId, time.Until(authResult.ExpiresOn))
+	p.cache.SetItem(AccessTokenCacheKey, authResult.AccessToken, time.Until(authResult.ExpiresOn))
 	return authResult.AccessToken, nil
 }
 

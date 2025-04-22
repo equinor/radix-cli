@@ -39,6 +39,9 @@ func (p *AzureFederatedCredentials) Authenticate(ctx context.Context, azureClien
 		TenantID:      AzureTenantID,
 		TokenFilePath: federatedTokenFile,
 	})
+	if err != nil {
+		return "", err
+	}
 
 	authResult, err := cred.GetToken(ctx, policy.TokenRequestOptions{
 		Scopes:   getScopes(),
@@ -48,9 +51,9 @@ func (p *AzureFederatedCredentials) Authenticate(ctx context.Context, azureClien
 		return "", err
 	}
 
-	p.cache.SetItem(azureClientIdCacheKey, azureClientId, authResult.ExpiresOn.Sub(time.Now()))
-	p.cache.SetItem(federatedTokenFileCacheKey, federatedTokenFile, authResult.ExpiresOn.Sub(time.Now()))
-	p.cache.SetItem(AccessTokenCacheKey, authResult.Token, authResult.ExpiresOn.Sub(time.Now()))
+	p.cache.SetItem(azureClientIdCacheKey, azureClientId, time.Until(authResult.ExpiresOn))
+	p.cache.SetItem(federatedTokenFileCacheKey, federatedTokenFile, time.Until(authResult.ExpiresOn))
+	p.cache.SetItem(AccessTokenCacheKey, authResult.Token, time.Until(authResult.ExpiresOn))
 	return authResult.Token, nil
 }
 
