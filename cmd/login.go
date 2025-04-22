@@ -67,6 +67,6 @@ func init() {
 	loginCmd.Flags().String(flagnames.FederatedTokenFile, "", "Authenticate with Federated Credentials and Azure Client Id")
 	loginCmd.Flags().String(flagnames.AzureClientSecret, "", "Authenticate with Azure Client Secret and Azure Client Id")
 
-	loginCmd.MarkFlagsMutuallyExclusive(flagnames.UseInteractiveLogin, flagnames.AzureClientId, flagnames.UseDeviceCode)
+	loginCmd.MarkFlagsMutuallyExclusive(flagnames.UseInteractiveLogin, flagnames.AzureClientSecret, flagnames.UseGithubCredentials, flagnames.FederatedTokenFile, flagnames.UseDeviceCode)
 	setVerbosePersistentFlag(loginCmd)
 }
