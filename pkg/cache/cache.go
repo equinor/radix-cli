@@ -136,7 +136,7 @@ func (c *Cache) ClearAllItemsInNamespace() error {
 	}
 	delete(content, c.namespace)
 
-	return jsonutils.Save(c.filename, *c)
+	return jsonutils.Save(c.filename, content)
 }
 
 func (c *Cache) save(items namespaceItems) error {
