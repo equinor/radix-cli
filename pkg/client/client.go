@@ -30,7 +30,7 @@ func GetRadixApiForCommand(cmd *cobra.Command) (*radixapi.Radixapi, error) {
 	if err != nil {
 		return nil, err
 	}
-	authWriter, err := getAuthWriter(cmd, radixConfig)
+	authWriter, err := getAuthWriter(cmd)
 	if err != nil {
 		return nil, nil
 	}
@@ -49,7 +49,7 @@ func GetVulnerabilityScanApiForCommand(cmd *cobra.Command) (*vulnscanapi.Vulnsca
 	if err != nil {
 		return nil, err
 	}
-	authWriter, err := getAuthWriter(cmd, radixConfig)
+	authWriter, err := getAuthWriter(cmd)
 	if err != nil {
 		return nil, nil
 	}
@@ -91,7 +91,7 @@ func getTransport(endpoint string, authWriter runtime.ClientAuthInfoWriter, verb
 	return transport
 }
 
-func getAuthWriter(cmd *cobra.Command, config *radixconfig.RadixConfig) (runtime.ClientAuthInfoWriter, error) {
+func getAuthWriter(cmd *cobra.Command) (runtime.ClientAuthInfoWriter, error) {
 	token, err := getTokenFromFlagSet(cmd)
 	if err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ func getAuthWriter(cmd *cobra.Command, config *radixconfig.RadixConfig) (runtime
 		return httptransport.BearerToken(*token), nil
 	}
 
-	return getAuthProvider(config)
+	return getAuthProvider()
 }
 
 // LoginCommand Login radixapi for command
@@ -113,7 +113,7 @@ func LoginCommand(ctx context.Context, useInteractiveLogin, useDeviceCode, useGi
 	contextName := radixConfig.CustomConfig.Context
 	radixConfig = radixconfig.GetDefaultRadixConfig()
 	radixConfig.CustomConfig.Context = contextName
-	provider, err := getAuthProvider(radixConfig)
+	provider, err := getAuthProvider()
 	if err != nil {
 		return err
 	}
@@ -122,19 +122,15 @@ func LoginCommand(ctx context.Context, useInteractiveLogin, useDeviceCode, useGi
 
 // LogoutCommand Logout command
 func LogoutCommand() error {
-	radixConfig, err := radixconfig.GetRadixConfig()
-	if err != nil {
-		return err
-	}
-	provider, err := getAuthProvider(radixConfig)
+	provider, err := getAuthProvider()
 	if err != nil {
 		return err
 	}
 	return provider.Logout()
 }
 
-func getAuthProvider(radixConfig *radixconfig.RadixConfig) (auth.Provider, error) {
-	provider, err := auth.NewMSALAuthProvider(radixConfig)
+func getAuthProvider() (auth.Provider, error) {
+	provider, err := auth.New()
 	if err != nil {
 		return nil, err
 	}
