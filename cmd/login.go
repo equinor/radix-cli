@@ -42,7 +42,7 @@ var loginCmd = &cobra.Command{
 		azureClientId, _ := cmd.Flags().GetString(flagnames.AzureClientId)
 		azureClientSecret, _ := cmd.Flags().GetString(flagnames.AzureClientSecret)
 
-		if azureClientId != "" && azureClientSecret == "" && federatedTokenFile == "" {
+		if !useGithubCredentials && azureClientId != "" && azureClientSecret == "" && federatedTokenFile == "" {
 			return errInvalidAzureClientFlags
 		}
 		if !useInteractiveLogin && !useDeviceCode && !useGithubCredentials && azureClientId == "" {
