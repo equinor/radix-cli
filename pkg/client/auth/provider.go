@@ -72,7 +72,7 @@ func NewMSALAuthProvider(radixConfig *config.RadixConfig) (Provider, error) {
 	authCacheFilename := fmt.Sprintf(authFileFormat, config.RadixConfigDir, radixConfig.CustomConfig.Context)
 	globalCache := cache.New(authCacheFilename, "global")
 
-	provider, err := LoadProviderFromCache(globalCache, authCacheFilename, authority)
+	provider, err := loadProviderFromCache(globalCache, authCacheFilename, authority)
 	if err != nil && !errors.Is(err, errProviderNotSet) {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func (a *auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 	return errors.New("invalid auth arguments")
 }
 
-func LoadProviderFromCache(globalCache cache.Cache, authCacheFilename, authority string) (GetAccessTokener, error) {
+func loadProviderFromCache(globalCache cache.Cache, authCacheFilename, authority string) (GetAccessTokener, error) {
 
 	providerType, ok := globalCache.GetItem(authProviderTypeCacheKey)
 	if !ok || providerType == "" {
