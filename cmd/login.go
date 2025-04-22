@@ -45,7 +45,7 @@ var loginCmd = &cobra.Command{
 		if azureClientId != "" && azureClientSecret == "" && federatedTokenFile == "" {
 			return errInvalidAzureClientFlags
 		}
-		if !useInteractiveLogin && !useDeviceCode && azureClientId == "" {
+		if !useInteractiveLogin && !useDeviceCode && !useGithubCredentials && azureClientId == "" {
 			useInteractiveLogin = true
 		}
 
