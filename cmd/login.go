@@ -24,7 +24,8 @@ import (
 )
 
 var (
-	errInvalidAzureClientFlags = fmt.Errorf("%s must be used together with %s, %s or %s", flagnames.AzureClientId, flagnames.AzureClientSecret, flagnames.FederatedTokenFile, flagnames.UseGithubCredentials)
+	errInvalidAzureClientFlags   = fmt.Errorf("%s must be used together with %s, %s or %s", flagnames.AzureClientId, flagnames.AzureClientSecret, flagnames.FederatedTokenFile, flagnames.UseGithubCredentials)
+	errMissingAzureClientIdFlags = fmt.Errorf("%s, %s or %s must be used together with %s", flagnames.AzureClientSecret, flagnames.FederatedTokenFile, flagnames.UseGithubCredentials, flagnames.AzureClientId)
 )
 
 // loginCmd represents the login command
@@ -44,6 +45,9 @@ var loginCmd = &cobra.Command{
 
 		if azureClientId != "" && !useGithubCredentials && azureClientSecret == "" && federatedTokenFile == "" {
 			return errInvalidAzureClientFlags
+		}
+		if (useGithubCredentials || federatedTokenFile != "" || azureClientSecret != "") && azureClientId == "" {
+			return errMissingAzureClientIdFlags
 		}
 		if !useInteractiveLogin && !useDeviceCode && !useGithubCredentials && azureClientId == "" {
 			useInteractiveLogin = true
