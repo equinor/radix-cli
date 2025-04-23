@@ -16,7 +16,7 @@ package cmd
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -24,7 +24,7 @@ import (
 )
 
 var (
-	errInvalidAzureClientFlags = errors.New("azure client id must be used together with azure client secret or federated token")
+	errInvalidAzureClientFlags = fmt.Errorf("%s must be used together with %s, %s or %s", flagnames.AzureClientId, flagnames.AzureClientSecret, flagnames.FederatedTokenFile, flagnames.UseGithubCredentials)
 )
 
 // loginCmd represents the login command
@@ -42,7 +42,7 @@ var loginCmd = &cobra.Command{
 		azureClientId, _ := cmd.Flags().GetString(flagnames.AzureClientId)
 		azureClientSecret, _ := cmd.Flags().GetString(flagnames.AzureClientSecret)
 
-		if !useGithubCredentials && azureClientId != "" && azureClientSecret == "" && federatedTokenFile == "" {
+		if azureClientId != "" && !useGithubCredentials && azureClientSecret == "" && federatedTokenFile == "" {
 			return errInvalidAzureClientFlags
 		}
 		if !useInteractiveLogin && !useDeviceCode && !useGithubCredentials && azureClientId == "" {
