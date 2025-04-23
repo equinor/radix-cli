@@ -43,7 +43,7 @@ func (p *AzureClientSecret) Authenticate(ctx context.Context, azureClientId, azu
 		return "", err
 	}
 
-	p.cache.SetItem(azureClientIdCacheKey, azureClientId, time.Until(authResult.ExpiresOn))
+	p.cache.SetItem(azureClientIdCacheKey, azureClientId, 365*24*time.Hour)
 	p.cache.SetItem(AccessTokenCacheKey, authResult.AccessToken, time.Until(authResult.ExpiresOn))
 	return authResult.AccessToken, nil
 }

@@ -51,8 +51,8 @@ func (p *AzureFederatedCredentials) Authenticate(ctx context.Context, azureClien
 		return "", err
 	}
 
-	p.cache.SetItem(azureClientIdCacheKey, azureClientId, time.Until(authResult.ExpiresOn))
-	p.cache.SetItem(federatedTokenFileCacheKey, federatedTokenFile, time.Until(authResult.ExpiresOn))
+	p.cache.SetItem(azureClientIdCacheKey, azureClientId, 365*24*time.Hour)
+	p.cache.SetItem(federatedTokenFileCacheKey, federatedTokenFile, 365*24*time.Hour)
 	p.cache.SetItem(AccessTokenCacheKey, authResult.Token, time.Until(authResult.ExpiresOn))
 	return authResult.Token, nil
 }
