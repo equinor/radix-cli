@@ -114,7 +114,7 @@ func (a *auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerAzureGithub, 365*24*time.Hour)
 
-		_, err := provider.Authenticate(ctx, azureClientSecret)
+		_, err := provider.Authenticate(ctx, azureClientId)
 		return err
 
 	case federatedTokenFile != "":
