@@ -66,6 +66,8 @@ type ClientService interface {
 
 	GetTektonPipelineRunTask(params *GetTektonPipelineRunTaskParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunTaskOK, error)
 
+	GetTektonPipelineRunTaskStep(params *GetTektonPipelineRunTaskStepParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunTaskStepOK, error)
+
 	GetTektonPipelineRunTaskStepLogs(params *GetTektonPipelineRunTaskStepLogsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunTaskStepLogsOK, error)
 
 	GetTektonPipelineRunTaskSteps(params *GetTektonPipelineRunTaskStepsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunTaskStepsOK, error)
@@ -273,6 +275,45 @@ func (a *Client) GetTektonPipelineRunTask(params *GetTektonPipelineRunTaskParams
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getTektonPipelineRunTask: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+GetTektonPipelineRunTaskStep gets a step for a pipeline run task of a pipeline job
+*/
+func (a *Client) GetTektonPipelineRunTaskStep(params *GetTektonPipelineRunTaskStepParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunTaskStepOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetTektonPipelineRunTaskStepParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getTektonPipelineRunTaskStep",
+		Method:             "GET",
+		PathPattern:        "/applications/{appName}/jobs/{jobName}/pipelineruns/{pipelineRunName}/tasks/{taskName}/step/{stepName}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &GetTektonPipelineRunTaskStepReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetTektonPipelineRunTaskStepOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for getTektonPipelineRunTaskStep: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

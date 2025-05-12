@@ -37,6 +37,12 @@ type Application struct {
 	// Required: true
 	Name *string `json:"name"`
 
+	// UseBuildCache if build cache is used for building the application. Applicable when UseBuildKit is true. Default is true.
+	UseBuildCache bool `json:"useBuildCache,omitempty"`
+
+	// UseBuildKit if buildkit is used for building the application
+	UseBuildKit bool `json:"useBuildKit,omitempty"`
+
 	// UserIsAdmin if user is member of application's admin groups
 	// Required: true
 	UserIsAdmin *bool `json:"userIsAdmin"`

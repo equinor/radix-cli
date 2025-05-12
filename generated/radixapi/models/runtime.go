@@ -20,6 +20,10 @@ type Runtime struct {
 	// CPU architecture
 	// Example: amd64
 	Architecture string `json:"architecture,omitempty"`
+
+	// NodeType is the node type of the component
+	// Example: memory-optimized-2-v1
+	NodeType string `json:"nodeType,omitempty"`
 }
 
 // Validate validates this runtime
