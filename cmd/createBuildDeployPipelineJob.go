@@ -28,7 +28,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var overrideUseBuildCacheForBuildDeploy model.BoolPtr
+var overrideUseBuildCacheForBuildDeploy, refreshBuildCacheForBuildDeploy model.BoolPtr
 
 // createBuildDeployApplicationCmd represents the buildApplication command
 var createBuildDeployApplicationCmd = &cobra.Command{
@@ -80,6 +80,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 			ToEnvironment:         targetEnvironment,
 			CommitID:              commitID,
 			OverrideUseBuildCache: overrideUseBuildCacheForBuildDeploy.Get(),
+			RefreshBuildCache:     refreshBuildCacheForBuildDeploy.Get(),
 		})
 
 		newJob, err := apiClient.Application.TriggerPipelineBuildDeploy(triggerPipelineParams, nil)
@@ -104,6 +105,7 @@ func init() {
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.CommitID, "i", "", "Commit id")
 	createBuildDeployApplicationCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build-deploy")
 	createBuildDeployApplicationCmd.Flags().Var(&overrideUseBuildCacheForBuildDeploy, flagnames.UseBuildCache, "Optional. Overrides configured or default useBuildCache option. It is applicable when the useBuildKit option is set as true.")
+	createBuildDeployApplicationCmd.Flags().Var(&refreshBuildCacheForBuildDeploy, flagnames.RefreshBuildCache, "Optional. Refreshes the build cache. It is applicable when the useBuildKit option is set as true.")
 
 	_ = createBuildDeployApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createBuildDeployApplicationCmd)

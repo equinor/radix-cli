@@ -28,7 +28,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var overrideUseBuildCacheForBuild model.BoolPtr
+var overrideUseBuildCacheForBuild, refreshBuildCacheForBuild model.BoolPtr
 
 var createBuildPipelineJobCmd = &cobra.Command{
 	Use:   "build",
@@ -71,6 +71,7 @@ var createBuildPipelineJobCmd = &cobra.Command{
 			Branch:                branch,
 			ToEnvironment:         targetEnvironment,
 			OverrideUseBuildCache: overrideUseBuildCacheForBuild.Get(),
+			RefreshBuildCache:     refreshBuildCacheForBuild.Get(),
 		})
 		newJob, err := apiClient.Application.TriggerPipelineBuild(triggerDeployParams, nil)
 		if err != nil {
@@ -94,6 +95,7 @@ func init() {
 	createBuildPipelineJobCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional. Target environment to deploy in ('prod', 'dev', 'playground'), when multiple environments are built from the selected branch.")
 	createBuildPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build")
 	createBuildPipelineJobCmd.Flags().Var(&overrideUseBuildCacheForBuild, flagnames.UseBuildCache, "Optional. Overrides configured or default useBuildCache option. It is applicable when the useBuildKit option is set as true.")
+	createBuildPipelineJobCmd.Flags().Var(&refreshBuildCacheForBuild, flagnames.RefreshBuildCache, "Optional. Refreshes the build cache. It is applicable when the useBuildKit option is set as true.")
 	if err := createBuildPipelineJobCmd.MarkFlagRequired(flagnames.Branch); err != nil {
 		log.Fatalf("Error during command initialization: %v", err)
 	}
