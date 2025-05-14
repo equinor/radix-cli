@@ -39,6 +39,9 @@ type Step struct {
 	// Example: Waiting
 	// Enum: ["Queued","Waiting","Running","Succeeded","Failed","Stopped","StoppedNoChanges"]
 	Status string `json:"status,omitempty"`
+
+	// sub pipeline task step
+	SubPipelineTaskStep *SubPipelineTaskStep `json:"subPipelineTaskStep,omitempty"`
 }
 
 // Validate validates this step
@@ -54,6 +57,10 @@ func (m *Step) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSubPipelineTaskStep(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -144,8 +151,57 @@ func (m *Step) validateStatus(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this step based on context it is used
+func (m *Step) validateSubPipelineTaskStep(formats strfmt.Registry) error {
+	if swag.IsZero(m.SubPipelineTaskStep) { // not required
+		return nil
+	}
+
+	if m.SubPipelineTaskStep != nil {
+		if err := m.SubPipelineTaskStep.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("subPipelineTaskStep")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("subPipelineTaskStep")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this step based on the context it is used
 func (m *Step) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateSubPipelineTaskStep(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Step) contextValidateSubPipelineTaskStep(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SubPipelineTaskStep != nil {
+
+		if swag.IsZero(m.SubPipelineTaskStep) { // not required
+			return nil
+		}
+
+		if err := m.SubPipelineTaskStep.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("subPipelineTaskStep")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("subPipelineTaskStep")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

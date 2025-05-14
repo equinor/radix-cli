@@ -71,6 +71,15 @@ type DeploymentSummary struct {
 	// Applies only for pipeline jobs of type 'promote'
 	// Example: qa
 	PromotedFromEnvironment string `json:"promotedFromEnvironment,omitempty"`
+
+	// RefreshBuildCache forces to rebuild cache when UseBuildCache is true in the RadixApplication or OverrideUseBuildCache is true
+	RefreshBuildCache *bool `json:"refreshBuildCache,omitempty"`
+
+	// Defaults to true and requires useBuildKit to have an effect.
+	UseBuildCache *bool `json:"useBuildCache,omitempty"`
+
+	// Enables BuildKit when building Dockerfile.
+	UseBuildKit *bool `json:"useBuildKit,omitempty"`
 }
 
 // Validate validates this deployment summary

@@ -49,6 +49,9 @@ type PipelineParametersBuild struct {
 	// Example: true
 	PushImage string `json:"pushImage,omitempty"`
 
+	// RefreshBuildCache forces to rebuild cache when UseBuildCache is true in the RadixApplication or OverrideUseBuildCache is true
+	RefreshBuildCache *bool `json:"refreshBuildCache,omitempty"`
+
 	// Name of environment to build for
 	// Example: prod
 	ToEnvironment string `json:"toEnvironment,omitempty"`

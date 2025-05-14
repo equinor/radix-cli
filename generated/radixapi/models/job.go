@@ -79,6 +79,9 @@ type Job struct {
 	// Example: qa
 	PromotedToEnvironment string `json:"promotedToEnvironment,omitempty"`
 
+	// RefreshBuildCache forces to rebuild cache when UseBuildCache is true in the RadixApplication or OverrideUseBuildCache is true
+	RefreshBuildCache *bool `json:"refreshBuildCache,omitempty"`
+
 	// RerunFromJob The source name of the job if this job was restarted from it
 	// Example: radix-pipeline-20231011104617-urynf
 	RerunFromJob string `json:"rerunFromJob,omitempty"`
@@ -98,6 +101,16 @@ type Job struct {
 	// TriggeredBy user that triggered the job. If through webhook = sender.login. If through api = usertoken.upn
 	// Example: a_user@equinor.com
 	TriggeredBy string `json:"triggeredBy,omitempty"`
+
+	// TriggeredFromWebhook If true, the job was triggered from a webhook
+	// Required: true
+	TriggeredFromWebhook *bool `json:"triggeredFromWebhook"`
+
+	// Defaults to true and requires useBuildKit to have an effect.
+	UseBuildCache *bool `json:"useBuildCache,omitempty"`
+
+	// Enables BuildKit when building Dockerfile.
+	UseBuildKit *bool `json:"useBuildKit,omitempty"`
 }
 
 // Validate validates this job
@@ -121,6 +134,10 @@ func (m *Job) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateSteps(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTriggeredFromWebhook(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -314,6 +331,15 @@ func (m *Job) validateSteps(formats strfmt.Registry) error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *Job) validateTriggeredFromWebhook(formats strfmt.Registry) error {
+
+	if err := validate.Required("triggeredFromWebhook", "body", m.TriggeredFromWebhook); err != nil {
+		return err
 	}
 
 	return nil

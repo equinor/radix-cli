@@ -49,6 +49,7 @@ const (
 	TokenStdin             = "token-stdin"
 	UseActiveDeployment    = "use-active-deployment"
 	UseBuildCache          = "use-build-cache"
+	RefreshBuildCache      = "refresh-build-cache"
 	UseDeviceCode          = "use-device-code"
 	UseGithubCredentials   = "use-github-credentials"
 	UseInteractiveLogin    = "use-interactive-login"

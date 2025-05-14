@@ -29,15 +29,15 @@ type PipelineRun struct {
 	// Required: true
 	Env *string `json:"env"`
 
+	// KubeName Name of the pipeline run in the namespace
+	// Example: radix-tekton-pipelinerun-dev-2022-05-09-abcde
+	// Required: true
+	KubeName *string `json:"kubeName"`
+
 	// Name Original name of the pipeline run
 	// Example: build-pipeline
 	// Required: true
 	Name *string `json:"name"`
-
-	// RealName Name of the pipeline run in the namespace
-	// Example: radix-tekton-pipelinerun-dev-2022-05-09-abcde
-	// Required: true
-	RealName *string `json:"realName"`
 
 	// Started timestamp
 	// Example: 2006-01-02T15:04:05Z
@@ -75,11 +75,11 @@ func (m *PipelineRun) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateName(formats); err != nil {
+	if err := m.validateKubeName(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateRealName(formats); err != nil {
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -102,18 +102,18 @@ func (m *PipelineRun) validateEnv(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *PipelineRun) validateName(formats strfmt.Registry) error {
+func (m *PipelineRun) validateKubeName(formats strfmt.Registry) error {
 
-	if err := validate.Required("name", "body", m.Name); err != nil {
+	if err := validate.Required("kubeName", "body", m.KubeName); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *PipelineRun) validateRealName(formats strfmt.Registry) error {
+func (m *PipelineRun) validateName(formats strfmt.Registry) error {
 
-	if err := validate.Required("realName", "body", m.RealName); err != nil {
+	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
 	}
 

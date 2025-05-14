@@ -24,6 +24,11 @@ type PipelineRunTask struct {
 	// Example: 2006-01-02T15:04:05Z
 	Ended string `json:"ended,omitempty"`
 
+	// KubeName Name of the pipeline run in the namespace
+	// Example: radix-tekton-task-dev-2022-05-09-abcde
+	// Required: true
+	KubeName *string `json:"kubeName"`
+
 	// Name of the task
 	// Example: build
 	// Required: true
@@ -38,11 +43,6 @@ type PipelineRunTask struct {
 	// Example: prod
 	// Required: true
 	PipelineRunEnv *string `json:"pipelineRunEnv"`
-
-	// RealName Name of the pipeline run in the namespace
-	// Example: radix-tekton-task-dev-2022-05-09-abcde
-	// Required: true
-	RealName *string `json:"realName"`
 
 	// Started timestamp
 	// Example: 2006-01-02T15:04:05Z
@@ -93,6 +93,10 @@ type PipelineRunTask struct {
 func (m *PipelineRunTask) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateKubeName(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -105,10 +109,6 @@ func (m *PipelineRunTask) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateRealName(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
@@ -116,6 +116,15 @@ func (m *PipelineRunTask) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *PipelineRunTask) validateKubeName(formats strfmt.Registry) error {
+
+	if err := validate.Required("kubeName", "body", m.KubeName); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -140,15 +149,6 @@ func (m *PipelineRunTask) validatePipelineName(formats strfmt.Registry) error {
 func (m *PipelineRunTask) validatePipelineRunEnv(formats strfmt.Registry) error {
 
 	if err := validate.Required("pipelineRunEnv", "body", m.PipelineRunEnv); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *PipelineRunTask) validateRealName(formats strfmt.Registry) error {
-
-	if err := validate.Required("realName", "body", m.RealName); err != nil {
 		return err
 	}
 

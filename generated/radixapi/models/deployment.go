@@ -62,10 +62,19 @@ type Deployment struct {
 	// Required: true
 	Namespace *string `json:"namespace"`
 
+	// RefreshBuildCache forces to rebuild cache when UseBuildCache is true in the RadixApplication or OverrideUseBuildCache is true
+	RefreshBuildCache *bool `json:"refreshBuildCache,omitempty"`
+
 	// Repository the GitHub repository that the deployment was built from
 	// Example: https://github.com/equinor/radix-canary-golang
 	// Required: true
 	Repository *string `json:"repository"`
+
+	// Defaults to true and requires useBuildKit to have an effect.
+	UseBuildCache *bool `json:"useBuildCache,omitempty"`
+
+	// Enables BuildKit when building Dockerfile.
+	UseBuildKit *bool `json:"useBuildKit,omitempty"`
 }
 
 // Validate validates this deployment
