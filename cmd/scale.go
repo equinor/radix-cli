@@ -37,7 +37,7 @@ func init() {
 	scaleCmd.PersistentFlags().StringP(flagnames.Environment, "e", "", "Name of the environment of the application")
 	scaleCmd.PersistentFlags().StringP(flagnames.Component, "n", "", "Name of the component to scale")
 	scaleCmd.PersistentFlags().IntP(flagnames.Replicas, "r", 1, "The new desired number of replicas")
-	scaleCmd.PersistentFlags().Bool(flagnames.Reset, false, "Reset manualy scaled component to use replica count from RadixConfig or managed by horizontal autoscaling")
+	scaleCmd.PersistentFlags().Bool(flagnames.Reset, false, "Reset manually scaled component to use replica count from RadixConfig or managed by horizontal autoscaling")
 	scaleCmd.MarkFlagsOneRequired(flagnames.Replicas, flagnames.Reset)
 	scaleCmd.MarkFlagsMutuallyExclusive(flagnames.Replicas, flagnames.Reset)
 

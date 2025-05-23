@@ -43,7 +43,10 @@ var createBuildPipelineJobCmd = &cobra.Command{
 		if appName == "" {
 			errs = append(errs, errors.New("application name is required"))
 		}
-		branch, err := cmd.Flags().GetString(flagnames.Branch)
+		gitRef, gitRefType, err := getGitRefAndType(cmd)
+		if err != nil {
+			errs = append(errs, err)
+		}
 		if err != nil {
 			errs = append(errs, err)
 		}
@@ -68,7 +71,8 @@ var createBuildPipelineJobCmd = &cobra.Command{
 		triggerDeployParams := application.NewTriggerPipelineBuildParams()
 		triggerDeployParams.SetAppName(appName)
 		triggerDeployParams.SetPipelineParametersBuild(&models.PipelineParametersBuild{
-			Branch:                branch,
+			GitRef:                gitRef,
+			GitRefType:            gitRefType,
 			ToEnvironment:         targetEnvironment,
 			OverrideUseBuildCache: overrideUseBuildCacheForBuild.Get(),
 			RefreshBuildCache:     refreshBuildCacheForBuild.Get(),
@@ -90,15 +94,14 @@ var createBuildPipelineJobCmd = &cobra.Command{
 
 func init() {
 	createJobCmd.AddCommand(createBuildPipelineJobCmd)
-	createBuildPipelineJobCmd.Flags().StringP(flagnames.Branch, "b", "master", "Branch to build from")
 	createBuildPipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to build")
+	createBuildPipelineJobCmd.Flags().StringP(flagnames.Branch, "b", "", "GitHub branch to build from")
+	createBuildPipelineJobCmd.Flags().StringP(flagnames.Tag, "", "", "GitHub tag to build from")
+	createBuildPipelineJobCmd.Flags().StringP(flagnames.FromType, "", "", "GitHub source to build from. Valid values are 'branch', 'tag' or not set. If not set, the command applicable for both branch and tag.")
 	createBuildPipelineJobCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional. Target environment to deploy in ('prod', 'dev', 'playground'), when multiple environments are built from the selected branch.")
 	createBuildPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build")
 	createBuildPipelineJobCmd.Flags().Var(&overrideUseBuildCacheForBuild, flagnames.UseBuildCache, "Optional. Overrides configured or default useBuildCache option. It is applicable when the useBuildKit option is set as true.")
 	createBuildPipelineJobCmd.Flags().Var(&refreshBuildCacheForBuild, flagnames.RefreshBuildCache, "Optional. Refreshes the build cache. It is applicable when the useBuildKit option is set as true.")
-	if err := createBuildPipelineJobCmd.MarkFlagRequired(flagnames.Branch); err != nil {
-		log.Fatalf("Error during command initialization: %v", err)
-	}
 	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createBuildPipelineJobCmd)
 }

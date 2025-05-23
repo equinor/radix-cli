@@ -52,6 +52,20 @@ type Job struct {
 	// Example: 2006-01-02T15:04:05Z
 	Ended string `json:"ended,omitempty"`
 
+	// GitRef Branch or tag to build from
+	// Example: master
+	GitRef string `json:"gitRef,omitempty"`
+
+	// GitRefType When the pipeline job should be built from branch or tag specified in GitRef:
+	// branch
+	// tag
+	// <empty> - either branch or tag
+	//
+	// required false
+	// Example: \"branch\
+	// Enum: ["branch","tag","\"\""]
+	GitRefType string `json:"gitRefType,omitempty"`
+
 	// Image tags names for components - if empty will use default logic
 	// Example: component1: tag1,component2: tag2
 	ImageTagNames map[string]string `json:"imageTagNames,omitempty"`
@@ -125,6 +139,10 @@ func (m *Job) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateGitRefType(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validatePipeline(formats); err != nil {
 		res = append(res, err)
 	}
@@ -194,6 +212,51 @@ func (m *Job) validateDeployments(formats strfmt.Registry) error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+var jobTypeGitRefTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["branch","tag","\"\""]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		jobTypeGitRefTypePropEnum = append(jobTypeGitRefTypePropEnum, v)
+	}
+}
+
+const (
+
+	// JobGitRefTypeBranch captures enum value "branch"
+	JobGitRefTypeBranch string = "branch"
+
+	// JobGitRefTypeTag captures enum value "tag"
+	JobGitRefTypeTag string = "tag"
+
+	// JobGitRefType captures enum value "\"\""
+	JobGitRefType string = "\"\""
+)
+
+// prop value enum
+func (m *Job) validateGitRefTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, jobTypeGitRefTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Job) validateGitRefType(formats strfmt.Registry) error {
+	if swag.IsZero(m.GitRefType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateGitRefTypeEnum("gitRefType", "body", m.GitRefType); err != nil {
+		return err
 	}
 
 	return nil

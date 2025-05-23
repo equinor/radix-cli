@@ -42,7 +42,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 			errs = append(errs, err)
 		}
 
-		branch, err := cmd.Flags().GetString(flagnames.Branch)
+		gitRef, gitRefType, err := getGitRefAndType(cmd)
 		if err != nil {
 			errs = append(errs, err)
 		}
@@ -59,8 +59,8 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 			errs = append(errs, err)
 		}
 
-		if appName == "" || branch == "" {
-			errs = append(errs, errors.New("application name and branch are required"))
+		if appName == "" || gitRef == "" {
+			errs = append(errs, errors.New("application name and branch or tag are required"))
 		}
 		if len(errs) > 0 {
 			return errors.Join(errs...)
@@ -76,7 +76,8 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		triggerPipelineParams := application.NewTriggerPipelineBuildDeployParams()
 		triggerPipelineParams.SetAppName(appName)
 		triggerPipelineParams.SetPipelineParametersBuild(&models.PipelineParametersBuild{
-			Branch:                branch,
+			GitRef:                gitRef,
+			GitRefType:            gitRefType,
 			ToEnvironment:         targetEnvironment,
 			CommitID:              commitID,
 			OverrideUseBuildCache: overrideUseBuildCacheForBuildDeploy.Get(),
@@ -100,13 +101,16 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 func init() {
 	createJobCmd.AddCommand(createBuildDeployApplicationCmd)
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to build-deploy")
-	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Branch, "b", "master", "Branch to build-deploy from")
+	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Branch, "b", "", "GitHub branch to build-deploy from")
+	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Tag, "", "", "GitHub tag to build-deploy from")
+	createBuildDeployApplicationCmd.Flags().StringP(flagnames.FromType, "", "", "GitHub source to build-deploy from. Valid values are 'branch', 'tag' or not set. If not set, the command applicable for both branch and tag.")
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional. Target environment to deploy in ('prod', 'dev', 'playground'), when multiple environments are built from the selected branch.")
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.CommitID, "i", "", "Commit id")
 	createBuildDeployApplicationCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build-deploy")
 	createBuildDeployApplicationCmd.Flags().Var(&overrideUseBuildCacheForBuildDeploy, flagnames.UseBuildCache, "Optional. Overrides configured or default useBuildCache option. It is applicable when the useBuildKit option is set as true.")
 	createBuildDeployApplicationCmd.Flags().Var(&refreshBuildCacheForBuildDeploy, flagnames.RefreshBuildCache, "Optional. Refreshes the build cache. It is applicable when the useBuildKit option is set as true.")
 
+	createBuildDeployApplicationCmd.MarkFlagsMutuallyExclusive(flagnames.Branch, flagnames.Tag)
 	_ = createBuildDeployApplicationCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createBuildDeployApplicationCmd)
 }

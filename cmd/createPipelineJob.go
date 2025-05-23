@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 
 	"github.com/spf13/cobra"
 )
@@ -34,4 +35,34 @@ var createJobCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createJobCmd)
 	setContextSpecificPersistentFlags(createJobCmd)
+}
+
+func getGitRefAndType(cmd *cobra.Command) (string, string, error) {
+	var errs []error
+	branch, err := cmd.Flags().GetString(flagnames.Branch)
+	if err != nil {
+		errs = append(errs, err)
+	}
+	tag, err := cmd.Flags().GetString(flagnames.Tag)
+	if err != nil {
+		errs = append(errs, err)
+	}
+	gitRefType, err := cmd.Flags().GetString(flagnames.FromType)
+	if err != nil {
+		errs = append(errs, err)
+	}
+	if len(gitRefType) == 0 && len(tag) > 0 {
+		errs = append(errs, errors.New("option tag require option from-type"))
+	}
+	if len(gitRefType) > 0 && gitRefType != "branch" && len(branch) > 0 {
+		errs = append(errs, errors.New("option branch require option from-type having value 'branch' or not set"))
+	}
+	gitRef := branch
+	if gitRefType == "tag" {
+		gitRef = tag
+	}
+	if len(errs) > 0 {
+		return "", "", errors.Join(errs...)
+	}
+	return gitRef, gitRefType, nil
 }

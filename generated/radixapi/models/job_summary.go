@@ -24,6 +24,7 @@ type JobSummary struct {
 	// Example: radix-pipeline-20181029135644-algpv-6hznh
 	AppName string `json:"appName,omitempty"`
 
+	// Deprecated: use GitRef instead
 	// Branch to build from
 	// Example: master
 	Branch string `json:"branch,omitempty"`
@@ -47,6 +48,20 @@ type JobSummary struct {
 	// Environments the job deployed to
 	// Example: ["dev","qa"]
 	Environments []string `json:"environments"`
+
+	// GitRef Branch or tag to build from
+	// Example: master
+	GitRef string `json:"gitRef,omitempty"`
+
+	// GitRefType When the pipeline job should be built from branch or tag specified in GitRef:
+	// branch
+	// tag
+	// <empty> - either branch or tag
+	//
+	// required false
+	// Example: \"branch\
+	// Enum: ["branch","tag","\"\""]
+	GitRefType string `json:"gitRefType,omitempty"`
 
 	// Image tags names for components - if empty will use default logic
 	// Example: component1: tag1,component2: tag2
@@ -113,6 +128,10 @@ func (m *JobSummary) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateGitRefType(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -158,6 +177,51 @@ func (m *JobSummary) validateEnded(formats strfmt.Registry) error {
 	}
 
 	if err := validate.FormatOf("ended", "body", "date-time", m.Ended.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var jobSummaryTypeGitRefTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["branch","tag","\"\""]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		jobSummaryTypeGitRefTypePropEnum = append(jobSummaryTypeGitRefTypePropEnum, v)
+	}
+}
+
+const (
+
+	// JobSummaryGitRefTypeBranch captures enum value "branch"
+	JobSummaryGitRefTypeBranch string = "branch"
+
+	// JobSummaryGitRefTypeTag captures enum value "tag"
+	JobSummaryGitRefTypeTag string = "tag"
+
+	// JobSummaryGitRefType captures enum value "\"\""
+	JobSummaryGitRefType string = "\"\""
+)
+
+// prop value enum
+func (m *JobSummary) validateGitRefTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, jobSummaryTypeGitRefTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *JobSummary) validateGitRefType(formats strfmt.Registry) error {
+	if swag.IsZero(m.GitRefType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateGitRefTypeEnum("gitRefType", "body", m.GitRefType); err != nil {
 		return err
 	}
 
