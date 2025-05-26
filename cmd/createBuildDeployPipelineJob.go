@@ -103,7 +103,6 @@ func init() {
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to build-deploy")
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Branch, "b", "", "GitHub branch to build-deploy from")
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Tag, "", "", "GitHub tag to build-deploy from")
-	createBuildDeployApplicationCmd.Flags().StringP(flagnames.FromType, "", "", "GitHub source to build-deploy from. Valid values are 'branch', 'tag' or not set. If not set, the command applicable for both branch and tag.")
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional. Target environment to deploy in ('prod', 'dev', 'playground'), when multiple environments are built from the selected branch.")
 	createBuildDeployApplicationCmd.Flags().StringP(flagnames.CommitID, "i", "", "Commit id")
 	createBuildDeployApplicationCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build-deploy")

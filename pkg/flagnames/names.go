@@ -28,7 +28,6 @@ const (
 	FederatedTokenFile     = "federated-credentials-file"
 	Follow                 = "follow"
 	FromConfig             = "from-config"
-	FromType               = "from-type"
 	FromEnvironment        = "from-environment"
 	ImageTagName           = "image-tag-name"
 	Output                 = "output"

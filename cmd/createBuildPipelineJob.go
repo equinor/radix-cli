@@ -97,11 +97,12 @@ func init() {
 	createBuildPipelineJobCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to build")
 	createBuildPipelineJobCmd.Flags().StringP(flagnames.Branch, "b", "", "GitHub branch to build from")
 	createBuildPipelineJobCmd.Flags().StringP(flagnames.Tag, "", "", "GitHub tag to build from")
-	createBuildPipelineJobCmd.Flags().StringP(flagnames.FromType, "", "", "GitHub source to build from. Valid values are 'branch', 'tag' or not set. If not set, the command applicable for both branch and tag.")
 	createBuildPipelineJobCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional. Target environment to deploy in ('prod', 'dev', 'playground'), when multiple environments are built from the selected branch.")
 	createBuildPipelineJobCmd.Flags().BoolP(flagnames.Follow, "f", false, "Follow build")
 	createBuildPipelineJobCmd.Flags().Var(&overrideUseBuildCacheForBuild, flagnames.UseBuildCache, "Optional. Overrides configured or default useBuildCache option. It is applicable when the useBuildKit option is set as true.")
 	createBuildPipelineJobCmd.Flags().Var(&refreshBuildCacheForBuild, flagnames.RefreshBuildCache, "Optional. Refreshes the build cache. It is applicable when the useBuildKit option is set as true.")
-	_ = createPromotePipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+
+	createBuildPipelineJobCmd.MarkFlagsMutuallyExclusive(flagnames.Branch, flagnames.Tag)
+	_ = createBuildPipelineJobCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	setContextSpecificPersistentFlags(createBuildPipelineJobCmd)
 }

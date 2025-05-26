@@ -47,22 +47,11 @@ func getGitRefAndType(cmd *cobra.Command) (string, string, error) {
 	if err != nil {
 		errs = append(errs, err)
 	}
-	gitRefType, err := cmd.Flags().GetString(flagnames.FromType)
-	if err != nil {
-		errs = append(errs, err)
-	}
-	if len(gitRefType) == 0 && len(tag) > 0 {
-		errs = append(errs, errors.New("option tag require option from-type"))
-	}
-	if len(gitRefType) > 0 && gitRefType != "branch" && len(branch) > 0 {
-		errs = append(errs, errors.New("option branch require option from-type having value 'branch' or not set"))
-	}
-	gitRef := branch
-	if gitRefType == "tag" {
-		gitRef = tag
-	}
 	if len(errs) > 0 {
 		return "", "", errors.Join(errs...)
 	}
-	return gitRef, gitRefType, nil
+	if len(tag) > 0 {
+		return tag, "tag", nil
+	}
+	return branch, "branch", nil
 }
