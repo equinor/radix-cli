@@ -7,9 +7,12 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // PipelineParametersBuild PipelineParametersBuild describe branch to build and its commit ID
@@ -17,6 +20,7 @@ import (
 // swagger:model PipelineParametersBuild
 type PipelineParametersBuild struct {
 
+	// Deprecated: use GitRef instead
 	// Branch the branch to build
 	// REQUIRED for "build" and "build-deploy" pipelines
 	// Example: master
@@ -29,6 +33,21 @@ type PipelineParametersBuild struct {
 
 	// DeployExternalDNS deploy external DNS
 	DeployExternalDNS *bool `json:"deployExternalDNS,omitempty"`
+
+	// GitRef Branch or tag to build from
+	// REQUIRED for "build" and "build-deploy" pipelines
+	// Example: master
+	GitRef string `json:"gitRef,omitempty"`
+
+	// GitRefType When the pipeline job should be built from branch or tag specified in GitRef:
+	// branch
+	// tag
+	// <empty> - either branch or tag
+	//
+	// required false
+	// Example: \"branch\
+	// Enum: ["branch","tag","\"\""]
+	GitRefType string `json:"gitRefType,omitempty"`
 
 	// ImageName of the component, without repository name and image-tag
 	// Example: radix-component
@@ -63,6 +82,60 @@ type PipelineParametersBuild struct {
 
 // Validate validates this pipeline parameters build
 func (m *PipelineParametersBuild) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateGitRefType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var pipelineParametersBuildTypeGitRefTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["branch","tag","\"\""]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		pipelineParametersBuildTypeGitRefTypePropEnum = append(pipelineParametersBuildTypeGitRefTypePropEnum, v)
+	}
+}
+
+const (
+
+	// PipelineParametersBuildGitRefTypeBranch captures enum value "branch"
+	PipelineParametersBuildGitRefTypeBranch string = "branch"
+
+	// PipelineParametersBuildGitRefTypeTag captures enum value "tag"
+	PipelineParametersBuildGitRefTypeTag string = "tag"
+
+	// PipelineParametersBuildGitRefType captures enum value "\"\""
+	PipelineParametersBuildGitRefType string = "\"\""
+)
+
+// prop value enum
+func (m *PipelineParametersBuild) validateGitRefTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, pipelineParametersBuildTypeGitRefTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PipelineParametersBuild) validateGitRefType(formats strfmt.Registry) error {
+	if swag.IsZero(m.GitRefType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateGitRefTypeEnum("gitRefType", "body", m.GitRefType); err != nil {
+		return err
+	}
+
 	return nil
 }
 

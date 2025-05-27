@@ -11,6 +11,7 @@ const (
 	DeployExternalDNSAlias = "deploy-external-dns-alias"
 	AwaitReconcile         = "await-reconcile"
 	Branch                 = "branch"
+	Tag                    = "tag"
 	Certificate            = "certificate"
 	CertificateFromFile    = "certificate-from-file"
 	Cluster                = "cluster"

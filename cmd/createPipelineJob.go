@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"github.com/equinor/radix-cli/pkg/flagnames"
 
 	"github.com/spf13/cobra"
 )
@@ -34,4 +35,23 @@ var createJobCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createJobCmd)
 	setContextSpecificPersistentFlags(createJobCmd)
+}
+
+func getGitRefAndType(cmd *cobra.Command) (string, string, error) {
+	var errs []error
+	branch, err := cmd.Flags().GetString(flagnames.Branch)
+	if err != nil {
+		errs = append(errs, err)
+	}
+	tag, err := cmd.Flags().GetString(flagnames.Tag)
+	if err != nil {
+		errs = append(errs, err)
+	}
+	if len(errs) > 0 {
+		return "", "", errors.Join(errs...)
+	}
+	if len(tag) > 0 {
+		return tag, "tag", nil
+	}
+	return branch, "branch", nil
 }

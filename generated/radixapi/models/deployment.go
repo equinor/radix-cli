@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -47,6 +48,20 @@ type Deployment struct {
 	// GitCommitHash the hash of the git commit from which radixconfig.yaml was parsed
 	// Example: 4faca8595c5283a9d0f17a623b9255a0d9866a2e
 	GitCommitHash string `json:"gitCommitHash,omitempty"`
+
+	// GitRef Branch or tag to build from
+	// Example: master
+	GitRef string `json:"gitRef,omitempty"`
+
+	// GitRefType When the pipeline job should be built from branch or tag specified in GitRef:
+	// branch
+	// tag
+	// <empty> - either branch or tag
+	//
+	// required false
+	// Example: \"branch\
+	// Enum: ["branch","tag","\"\""]
+	GitRefType string `json:"gitRefType,omitempty"`
 
 	// GitTags the git tags that the git commit hash points to
 	// Example: \"v1.22.1 v1.22.3\
@@ -94,6 +109,10 @@ func (m *Deployment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEnvironment(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateGitRefType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -169,6 +188,51 @@ func (m *Deployment) validateComponents(formats strfmt.Registry) error {
 func (m *Deployment) validateEnvironment(formats strfmt.Registry) error {
 
 	if err := validate.Required("environment", "body", m.Environment); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var deploymentTypeGitRefTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["branch","tag","\"\""]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		deploymentTypeGitRefTypePropEnum = append(deploymentTypeGitRefTypePropEnum, v)
+	}
+}
+
+const (
+
+	// DeploymentGitRefTypeBranch captures enum value "branch"
+	DeploymentGitRefTypeBranch string = "branch"
+
+	// DeploymentGitRefTypeTag captures enum value "tag"
+	DeploymentGitRefTypeTag string = "tag"
+
+	// DeploymentGitRefType captures enum value "\"\""
+	DeploymentGitRefType string = "\"\""
+)
+
+// prop value enum
+func (m *Deployment) validateGitRefTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, deploymentTypeGitRefTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Deployment) validateGitRefType(formats strfmt.Registry) error {
+	if swag.IsZero(m.GitRefType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateGitRefTypeEnum("gitRefType", "body", m.GitRefType); err != nil {
 		return err
 	}
 
