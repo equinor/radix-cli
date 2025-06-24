@@ -31,6 +31,20 @@ type DeploymentSummaryPipelineJobInfo struct {
 	// Name of job creating deployment
 	CreatedByJob string `json:"createdByJob,omitempty"`
 
+	// GitRef Branch or tag to build from
+	// Example: master
+	GitRef string `json:"gitRef,omitempty"`
+
+	// GitRefType When the pipeline job should be built from branch or tag specified in GitRef:
+	// branch
+	// tag
+	// <empty> - either branch or tag
+	//
+	// required false
+	// Example: \"branch\
+	// Enum: ["branch","tag","\"\""]
+	GitRefType string `json:"gitRefType,omitempty"`
+
 	// Type of pipeline job
 	// Example: build-deploy
 	// Enum: ["build","build-deploy","promote","deploy","apply-config"]
@@ -46,6 +60,10 @@ type DeploymentSummaryPipelineJobInfo struct {
 func (m *DeploymentSummaryPipelineJobInfo) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateGitRefType(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validatePipelineJobType(formats); err != nil {
 		res = append(res, err)
 	}
@@ -53,6 +71,51 @@ func (m *DeploymentSummaryPipelineJobInfo) Validate(formats strfmt.Registry) err
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+var deploymentSummaryPipelineJobInfoTypeGitRefTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["branch","tag","\"\""]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		deploymentSummaryPipelineJobInfoTypeGitRefTypePropEnum = append(deploymentSummaryPipelineJobInfoTypeGitRefTypePropEnum, v)
+	}
+}
+
+const (
+
+	// DeploymentSummaryPipelineJobInfoGitRefTypeBranch captures enum value "branch"
+	DeploymentSummaryPipelineJobInfoGitRefTypeBranch string = "branch"
+
+	// DeploymentSummaryPipelineJobInfoGitRefTypeTag captures enum value "tag"
+	DeploymentSummaryPipelineJobInfoGitRefTypeTag string = "tag"
+
+	// DeploymentSummaryPipelineJobInfoGitRefType captures enum value "\"\""
+	DeploymentSummaryPipelineJobInfoGitRefType string = "\"\""
+)
+
+// prop value enum
+func (m *DeploymentSummaryPipelineJobInfo) validateGitRefTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, deploymentSummaryPipelineJobInfoTypeGitRefTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *DeploymentSummaryPipelineJobInfo) validateGitRefType(formats strfmt.Registry) error {
+	if swag.IsZero(m.GitRefType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateGitRefTypeEnum("gitRefType", "body", m.GitRefType); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -121,6 +121,12 @@ type GetOAuthPodLogParams struct {
 	*/
 	SinceTime *strfmt.DateTime
 
+	/* Type.
+
+	   Type of auxiliary resource (oauth|oauth-redis)
+	*/
+	Type string
+
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -273,6 +279,17 @@ func (o *GetOAuthPodLogParams) SetSinceTime(sinceTime *strfmt.DateTime) {
 	o.SinceTime = sinceTime
 }
 
+// WithType adds the typeVar to the get o auth pod log params
+func (o *GetOAuthPodLogParams) WithType(typeVar string) *GetOAuthPodLogParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the get o auth pod log params
+func (o *GetOAuthPodLogParams) SetType(typeVar string) {
+	o.Type = typeVar
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *GetOAuthPodLogParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -366,6 +383,11 @@ func (o *GetOAuthPodLogParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 				return err
 			}
 		}
+	}
+
+	// path param type
+	if err := r.SetPathParam("type", o.Type); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

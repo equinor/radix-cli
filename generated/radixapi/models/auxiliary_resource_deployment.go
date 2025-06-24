@@ -29,6 +29,10 @@ type AuxiliaryResourceDeployment struct {
 	// Required: true
 	// Enum: ["Stopped","Consistent","Reconciling"]
 	Status *string `json:"status"`
+
+	// Name of the auxiliary resource's deployment
+	// Enum: ["oauth","oauth-redis","\"\""]
+	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this auxiliary resource deployment
@@ -40,6 +44,10 @@ func (m *AuxiliaryResourceDeployment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -115,6 +123,51 @@ func (m *AuxiliaryResourceDeployment) validateStatus(formats strfmt.Registry) er
 
 	// value enum
 	if err := m.validateStatusEnum("status", "body", *m.Status); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var auxiliaryResourceDeploymentTypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["oauth","oauth-redis","\"\""]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		auxiliaryResourceDeploymentTypeTypePropEnum = append(auxiliaryResourceDeploymentTypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// AuxiliaryResourceDeploymentTypeOauth captures enum value "oauth"
+	AuxiliaryResourceDeploymentTypeOauth string = "oauth"
+
+	// AuxiliaryResourceDeploymentTypeOauthDashRedis captures enum value "oauth-redis"
+	AuxiliaryResourceDeploymentTypeOauthDashRedis string = "oauth-redis"
+
+	// AuxiliaryResourceDeploymentType captures enum value "\"\""
+	AuxiliaryResourceDeploymentType string = "\"\""
+)
+
+// prop value enum
+func (m *AuxiliaryResourceDeployment) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, auxiliaryResourceDeploymentTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *AuxiliaryResourceDeployment) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
 		return err
 	}
 

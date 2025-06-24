@@ -85,7 +85,7 @@ type RegenerateDeployKeyParams struct {
 
 	   Regenerate deploy key and secret data
 	*/
-	RegenerateDeployKeyAndSecretData *models.RegenerateDeployKeyAndSecretData
+	RegenerateDeployKeyAndSecretData *models.RegenerateDeployKeyData
 
 	timeout    time.Duration
 	Context    context.Context
@@ -174,13 +174,13 @@ func (o *RegenerateDeployKeyParams) SetAppName(appName string) {
 }
 
 // WithRegenerateDeployKeyAndSecretData adds the regenerateDeployKeyAndSecretData to the regenerate deploy key params
-func (o *RegenerateDeployKeyParams) WithRegenerateDeployKeyAndSecretData(regenerateDeployKeyAndSecretData *models.RegenerateDeployKeyAndSecretData) *RegenerateDeployKeyParams {
+func (o *RegenerateDeployKeyParams) WithRegenerateDeployKeyAndSecretData(regenerateDeployKeyAndSecretData *models.RegenerateDeployKeyData) *RegenerateDeployKeyParams {
 	o.SetRegenerateDeployKeyAndSecretData(regenerateDeployKeyAndSecretData)
 	return o
 }
 
 // SetRegenerateDeployKeyAndSecretData adds the regenerateDeployKeyAndSecretData to the regenerate deploy key params
-func (o *RegenerateDeployKeyParams) SetRegenerateDeployKeyAndSecretData(regenerateDeployKeyAndSecretData *models.RegenerateDeployKeyAndSecretData) {
+func (o *RegenerateDeployKeyParams) SetRegenerateDeployKeyAndSecretData(regenerateDeployKeyAndSecretData *models.RegenerateDeployKeyData) {
 	o.RegenerateDeployKeyAndSecretData = regenerateDeployKeyAndSecretData
 }
 
