@@ -213,7 +213,7 @@ func (a *Client) GetOAuthPodLog(params *GetOAuthPodLogParams, authInfo runtime.C
 	op := &runtime.ClientOperation{
 		ID:                 "getOAuthPodLog",
 		Method:             "GET",
-		PathPattern:        "/applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/replicas/{podName}/logs",
+		PathPattern:        "/applications/{appName}/environments/{envName}/components/{componentName}/aux/{type}/replicas/{podName}/logs",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -408,7 +408,7 @@ func (a *Client) RestartOAuthAuxiliaryResource(params *RestartOAuthAuxiliaryReso
 	op := &runtime.ClientOperation{
 		ID:                 "restartOAuthAuxiliaryResource",
 		Method:             "POST",
-		PathPattern:        "/applications/{appName}/environments/{envName}/components/{componentName}/aux/oauth/restart",
+		PathPattern:        "/applications/{appName}/environments/{envName}/components/{componentName}/aux/{type}/restart",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

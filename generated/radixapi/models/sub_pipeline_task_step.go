@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -41,6 +42,11 @@ type SubPipelineTaskStep struct {
 	// Required: true
 	PipelineRunName *string `json:"pipelineRunName"`
 
+	// Status of the step
+	// Example: Waiting
+	// Enum: ["Starting","Started","Running","Succeeded","Failed","Waiting","ToBeRetried","TaskRunCancelled","TaskRunTimeout","ResolvingTaskRef","ResolvingStepActionRef","TaskRunImagePullFailed","TaskRunResultLargerThanAllowedLimit","TaskRunStopSidecarFailed","InvalidParamValue","TaskRunResolutionFailed","TaskRunValidationFailedTaskValidationFailed","ResourceVerificationFailed","FailureIgnored","Error"]
+	Status string `json:"status,omitempty"`
+
 	// TaskName of the task
 	// Example: task-abc
 	// Required: true
@@ -68,6 +74,10 @@ func (m *SubPipelineTaskStep) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePipelineRunName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -120,6 +130,102 @@ func (m *SubPipelineTaskStep) validatePipelineName(formats strfmt.Registry) erro
 func (m *SubPipelineTaskStep) validatePipelineRunName(formats strfmt.Registry) error {
 
 	if err := validate.Required("pipelineRunName", "body", m.PipelineRunName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var subPipelineTaskStepTypeStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Starting","Started","Running","Succeeded","Failed","Waiting","ToBeRetried","TaskRunCancelled","TaskRunTimeout","ResolvingTaskRef","ResolvingStepActionRef","TaskRunImagePullFailed","TaskRunResultLargerThanAllowedLimit","TaskRunStopSidecarFailed","InvalidParamValue","TaskRunResolutionFailed","TaskRunValidationFailedTaskValidationFailed","ResourceVerificationFailed","FailureIgnored","Error"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		subPipelineTaskStepTypeStatusPropEnum = append(subPipelineTaskStepTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// SubPipelineTaskStepStatusStarting captures enum value "Starting"
+	SubPipelineTaskStepStatusStarting string = "Starting"
+
+	// SubPipelineTaskStepStatusStarted captures enum value "Started"
+	SubPipelineTaskStepStatusStarted string = "Started"
+
+	// SubPipelineTaskStepStatusRunning captures enum value "Running"
+	SubPipelineTaskStepStatusRunning string = "Running"
+
+	// SubPipelineTaskStepStatusSucceeded captures enum value "Succeeded"
+	SubPipelineTaskStepStatusSucceeded string = "Succeeded"
+
+	// SubPipelineTaskStepStatusFailed captures enum value "Failed"
+	SubPipelineTaskStepStatusFailed string = "Failed"
+
+	// SubPipelineTaskStepStatusWaiting captures enum value "Waiting"
+	SubPipelineTaskStepStatusWaiting string = "Waiting"
+
+	// SubPipelineTaskStepStatusToBeRetried captures enum value "ToBeRetried"
+	SubPipelineTaskStepStatusToBeRetried string = "ToBeRetried"
+
+	// SubPipelineTaskStepStatusTaskRunCancelled captures enum value "TaskRunCancelled"
+	SubPipelineTaskStepStatusTaskRunCancelled string = "TaskRunCancelled"
+
+	// SubPipelineTaskStepStatusTaskRunTimeout captures enum value "TaskRunTimeout"
+	SubPipelineTaskStepStatusTaskRunTimeout string = "TaskRunTimeout"
+
+	// SubPipelineTaskStepStatusResolvingTaskRef captures enum value "ResolvingTaskRef"
+	SubPipelineTaskStepStatusResolvingTaskRef string = "ResolvingTaskRef"
+
+	// SubPipelineTaskStepStatusResolvingStepActionRef captures enum value "ResolvingStepActionRef"
+	SubPipelineTaskStepStatusResolvingStepActionRef string = "ResolvingStepActionRef"
+
+	// SubPipelineTaskStepStatusTaskRunImagePullFailed captures enum value "TaskRunImagePullFailed"
+	SubPipelineTaskStepStatusTaskRunImagePullFailed string = "TaskRunImagePullFailed"
+
+	// SubPipelineTaskStepStatusTaskRunResultLargerThanAllowedLimit captures enum value "TaskRunResultLargerThanAllowedLimit"
+	SubPipelineTaskStepStatusTaskRunResultLargerThanAllowedLimit string = "TaskRunResultLargerThanAllowedLimit"
+
+	// SubPipelineTaskStepStatusTaskRunStopSidecarFailed captures enum value "TaskRunStopSidecarFailed"
+	SubPipelineTaskStepStatusTaskRunStopSidecarFailed string = "TaskRunStopSidecarFailed"
+
+	// SubPipelineTaskStepStatusInvalidParamValue captures enum value "InvalidParamValue"
+	SubPipelineTaskStepStatusInvalidParamValue string = "InvalidParamValue"
+
+	// SubPipelineTaskStepStatusTaskRunResolutionFailed captures enum value "TaskRunResolutionFailed"
+	SubPipelineTaskStepStatusTaskRunResolutionFailed string = "TaskRunResolutionFailed"
+
+	// SubPipelineTaskStepStatusTaskRunValidationFailedTaskValidationFailed captures enum value "TaskRunValidationFailedTaskValidationFailed"
+	SubPipelineTaskStepStatusTaskRunValidationFailedTaskValidationFailed string = "TaskRunValidationFailedTaskValidationFailed"
+
+	// SubPipelineTaskStepStatusResourceVerificationFailed captures enum value "ResourceVerificationFailed"
+	SubPipelineTaskStepStatusResourceVerificationFailed string = "ResourceVerificationFailed"
+
+	// SubPipelineTaskStepStatusFailureIgnored captures enum value "FailureIgnored"
+	SubPipelineTaskStepStatusFailureIgnored string = "FailureIgnored"
+
+	// SubPipelineTaskStepStatusError captures enum value "Error"
+	SubPipelineTaskStepStatusError string = "Error"
+)
+
+// prop value enum
+func (m *SubPipelineTaskStep) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, subPipelineTaskStepTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *SubPipelineTaskStep) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
 		return err
 	}
 

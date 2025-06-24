@@ -69,7 +69,7 @@ type ReplicaSummary struct {
 	// OAuth2 = Replica of a Radix OAuth2 component
 	// Undefined = Replica without defined type - to be extended
 	// Example: ComponentReplica
-	// Enum: ["ComponentReplica","ScheduledJobReplica","JobManager","JobManagerAux","OAuth2","Undefined"]
+	// Enum: ["ComponentReplica","ScheduledJobReplica","JobManager","JobManagerAux","OAuth2","OAuth2Redis","Undefined"]
 	Type string `json:"type,omitempty"`
 
 	// replica status
@@ -167,7 +167,7 @@ var replicaSummaryTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["ComponentReplica","ScheduledJobReplica","JobManager","JobManagerAux","OAuth2","Undefined"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ComponentReplica","ScheduledJobReplica","JobManager","JobManagerAux","OAuth2","OAuth2Redis","Undefined"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -191,6 +191,9 @@ const (
 
 	// ReplicaSummaryTypeOAuth2 captures enum value "OAuth2"
 	ReplicaSummaryTypeOAuth2 string = "OAuth2"
+
+	// ReplicaSummaryTypeOAuth2Redis captures enum value "OAuth2Redis"
+	ReplicaSummaryTypeOAuth2Redis string = "OAuth2Redis"
 
 	// ReplicaSummaryTypeUndefined captures enum value "Undefined"
 	ReplicaSummaryTypeUndefined string = "Undefined"

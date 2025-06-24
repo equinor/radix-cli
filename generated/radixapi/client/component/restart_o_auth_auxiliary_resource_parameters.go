@@ -91,6 +91,12 @@ type RestartOAuthAuxiliaryResourceParams struct {
 	*/
 	EnvName string
 
+	/* Type.
+
+	   Type of auxiliary resource (oauth|oauth-redis)
+	*/
+	Type string
+
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -199,6 +205,17 @@ func (o *RestartOAuthAuxiliaryResourceParams) SetEnvName(envName string) {
 	o.EnvName = envName
 }
 
+// WithType adds the typeVar to the restart o auth auxiliary resource params
+func (o *RestartOAuthAuxiliaryResourceParams) WithType(typeVar string) *RestartOAuthAuxiliaryResourceParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the restart o auth auxiliary resource params
+func (o *RestartOAuthAuxiliaryResourceParams) SetType(typeVar string) {
+	o.Type = typeVar
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *RestartOAuthAuxiliaryResourceParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -235,6 +252,11 @@ func (o *RestartOAuthAuxiliaryResourceParams) WriteToRequest(r runtime.ClientReq
 
 	// path param envName
 	if err := r.SetPathParam("envName", o.EnvName); err != nil {
+		return err
+	}
+
+	// path param type
+	if err := r.SetPathParam("type", o.Type); err != nil {
 		return err
 	}
 
