@@ -21,6 +21,9 @@ import (
 // swagger:model ScheduledJobSummary
 type ScheduledJobSummary struct {
 
+	// Args to the entrypoint specified for the job.
+	Args []string `json:"args"`
+
 	// BackoffLimit Amount of retries due to a logical error in configuration etc.
 	// Example: 1
 	// Required: true
@@ -29,6 +32,9 @@ type ScheduledJobSummary struct {
 	// BatchName Batch name, if any
 	// Example: \"batch-abc\
 	BatchName string `json:"batchName,omitempty"`
+
+	// Command is the entrypoint array specified for the job. Not executed within a shell.
+	Command []string `json:"command"`
 
 	// Created timestamp
 	// Format: date-time
@@ -88,6 +94,9 @@ type ScheduledJobSummary struct {
 	// TimeLimitSeconds How long the job supposed to run at maximum
 	// Example: 3600
 	TimeLimitSeconds int64 `json:"timeLimitSeconds,omitempty"`
+
+	// Variable names map to values specified for this job.
+	Variables map[string]string `json:"variables,omitempty"`
 
 	// node
 	Node *Node `json:"node,omitempty"`
