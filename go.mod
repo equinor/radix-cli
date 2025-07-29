@@ -9,7 +9,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.9.0
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.4.2
 	github.com/equinor/radix-common v1.11.0
-	github.com/equinor/radix-operator v1.85.0
+	github.com/equinor/radix-operator v1.87.0
 	github.com/fatih/color v1.18.0
 	github.com/go-openapi/errors v0.22.1
 	github.com/go-openapi/runtime v0.28.0

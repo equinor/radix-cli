@@ -27,6 +27,11 @@ type ApplicationRegistration struct {
 	// Required: true
 	AdUsers []string `json:"adUsers"`
 
+	// AppID the unique application ID, which is a ULID
+	// Example: 01JZ5GSH4B388RYMRYZPNR0104
+	// Required: true
+	AppID *string `json:"appId"`
+
 	// ConfigBranch information
 	// Required: true
 	ConfigBranch *string `json:"configBranch"`
@@ -68,9 +73,6 @@ type ApplicationRegistration struct {
 	// SharedSecret the shared secret of the webhook
 	// Required: true
 	SharedSecret *string `json:"sharedSecret"`
-
-	// WBS information
-	WBS string `json:"wbs,omitempty"`
 }
 
 // Validate validates this application registration
@@ -82,6 +84,10 @@ func (m *ApplicationRegistration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateAdUsers(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateAppID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -135,6 +141,15 @@ func (m *ApplicationRegistration) validateAdGroups(formats strfmt.Registry) erro
 func (m *ApplicationRegistration) validateAdUsers(formats strfmt.Registry) error {
 
 	if err := validate.Required("adUsers", "body", m.AdUsers); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ApplicationRegistration) validateAppID(formats strfmt.Registry) error {
+
+	if err := validate.Required("appId", "body", m.AppID); err != nil {
 		return err
 	}
 
