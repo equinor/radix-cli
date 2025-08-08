@@ -136,5 +136,3 @@ require (
 	sigs.k8s.io/secrets-store-csi-driver v1.4.5 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.6.0 // indirect
 )
-
-replace github.com/prometheus/prometheus => github.com/prometheus/prometheus v0.54.0
