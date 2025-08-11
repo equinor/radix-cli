@@ -32,7 +32,7 @@ func GetRadixApiForCommand(cmd *cobra.Command) (*radixapi.Radixapi, error) {
 	}
 	authWriter, err := getAuthWriter(cmd)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	context, cluster, apiEnvironment := getContextClusterApiEnvironment(cmd, radixConfig)
 	endpoint := getEndpoint("server-radix-api", apiEnvironment, context, cluster)
@@ -51,7 +51,7 @@ func GetVulnerabilityScanApiForCommand(cmd *cobra.Command) (*vulnscanapi.Vulnsca
 	}
 	authWriter, err := getAuthWriter(cmd)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	context, cluster, apiEnvironment := getContextClusterApiEnvironment(cmd, radixConfig)
 	endpoint := getEndpoint("server-radix-vulnerability-scanner-api", apiEnvironment, context, cluster)
