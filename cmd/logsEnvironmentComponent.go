@@ -16,8 +16,10 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
+	"io"
 	"strconv"
-	"strings"
+	"sync"
 	"time"
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
@@ -25,11 +27,13 @@ import (
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/client/consumer"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/log"
+	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
@@ -92,64 +96,103 @@ Examples:
 }
 
 func logForComponentReplicas(cmd *cobra.Command, apiClient *radixapi.Radixapi, appName, environmentName string, since time.Duration, componentReplicas map[string][]string, previousLog bool) error {
-	refreshLog := time.Tick(settings.DeltaRefreshApplication)
-
-	// Sometimes, even though we get delta, the log is the same as previous
-	previousLogForReplica := make(map[string]string)
 	previous := strconv.FormatBool(previousLog)
-
-	for range refreshLog {
-		i := 0
-		for componentName, replicas := range componentReplicas {
-			for _, replica := range replicas {
-				now := time.Now()
-				sinceTime := now.Add(-since)
-				sinceDt := strfmt.DateTime(sinceTime)
-
-				logParameters := component.NewLogParams()
+	now := time.Now()
+	sinceTime := now.Add(-since)
+	sinceDt := strfmt.DateTime(sinceTime)
+	wg := sync.WaitGroup{}
+	i := 0
+	for componentName, replicas := range componentReplicas {
+		for _, replica := range replicas {
+			i++
+			colorIndex := i
+			wg.Go(func() {
+				logParameters := component.NewLogParamsWithContext(cmd.Context())
 				logParameters.WithAppName(appName)
 				logParameters.WithDeploymentName("irrelevant")
 				logParameters.WithComponentName(componentName)
 				logParameters.WithPodName(replica)
-				if !previousLog {
-					logParameters.SetSinceTime(&sinceDt)
-				}
+				logParameters.WithFollow(pointers.Ptr("true"))
+				logParameters.SetSinceTime(&sinceDt)
 				logParameters.WithPrevious(&previous)
-				logData, err := apiClient.Component.Log(logParameters, nil)
-				if err != nil {
-					// Replicas may have died
-					_, newReplicas, err := getReplicasForComponent(apiClient, appName, environmentName, componentName)
-					if err != nil {
-						return err
-					}
-
-					componentReplicas[componentName] = newReplicas
-					break
-
-				} else {
-					// Sometimes, even though we get delta, the log is the same as previous
-					if len(logData.Payload) > 0 && !strings.EqualFold(logData.Payload, previousLogForReplica[replica]) {
-						logLines := strings.Split(strings.Replace(strings.TrimRight(logData.Payload, "\r\n"), "\r\n", "\n", -1), "\n")
-						if len(logLines) > 0 {
-							log.PrintLines(cmd, replica, []string{}, logLines, log.GetColor(i))
-							previousLogForReplica[replica] = logData.Payload
+				_, err := apiClient.Component.Log(logParameters, nil, consumer.CreateEventSourceClientOptions(func(event consumer.Event) {
+					switch event.Type {
+					case "error":
+						log.PrintLine(cmd, "error", fmt.Sprintf("Could not get log for component %s, replica %s: %s", componentName, replica, event.Message), log.Red)
+					case "event":
+						switch event.Message {
+						case "started":
+							log.PrintLine(cmd, replica, "stream started...", log.GetColor(colorIndex))
+						case "completed":
+							log.PrintLine(cmd, replica, "stream closed.", log.GetColor(colorIndex))
 						}
+					case "data":
+						log.PrintLine(cmd, replica, event.Message, log.GetColor(colorIndex))
 					}
-				}
+				}))
 
-				i++
-			}
+				if err != nil && !errors.Is(err, io.EOF) {
+					log.PrintLine(cmd, replica, log.Red(fmt.Sprintf("error: Could not get log: %s", err.Error())), log.GetColor(colorIndex))
+				}
+			})
 		}
 	}
+
+	// wg.Go(func() {
+	// 	ticker := time.NewTicker(time.Second * 15)
+	// 	for range ticker.C {
+	// 		// update replicas
+	// 		for componentName, replicas := range componentReplicas {
+	// 			_, newReplicas, err := getReplicasForComponent(apiClient, appName, environmentName, componentName)
+	// 			if err != nil {
+	// 				logrus.Infof("Failed to get replicas for component %s. %v", componentName, err)
+	// 				continue
+	// 			}
+
+	// 			addedReplicas := slice.Difference(newReplicas, replicas)
+	// 			if len(addedReplicas) > 0 {
+	// 				log.PrintLine(cmd, "info", fmt.Sprintf("New replicas for component %s: %v", componentName, addedReplicas), log.Yellow)
+	// 			}
+	// 			componentReplicas[componentName] = newReplicas
+
+	// 			for _, replica := range addedReplicas {
+	// 				i++
+	// 				wg.Go(func() {
+	// 					logParameters := component.NewLogParamsWithContext(cmd.Context())
+	// 					logParameters.WithAppName(appName)
+	// 					logParameters.WithDeploymentName("irrelevant")
+	// 					logParameters.WithComponentName(componentName)
+	// 					logParameters.WithPodName(replica)
+	// 					logParameters.WithFollow(pointers.Ptr("true"))
+	// 					logParameters.SetSinceTime(&sinceDt)
+	// 					logParameters.WithPrevious(&previous)
+
+	// 					_, err := apiClient.Component.Log(logParameters, nil, func(co *runtime.ClientOperation) {
+	// 						co.Reader = createLogReader(cmd, replica, i)
+	// 					})
+
+	// 					if err != nil {
+	// 						log.PrintLine(cmd, "error", fmt.Sprintf("Could not get log for component %s, replica %s: %v", componentName, replica, err), log.Red)
+	// 					}
+	// 				})
+	// 			}
+	// 		}
+	// 	}
+	// })
+
+	wg.Wait()
 	return nil
 }
 
 func getReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentName, componentName string) (*string, []string, error) {
 	// Get active deployment
+	start := time.Now()
 	environmentParams := environment.NewGetEnvironmentParams()
 	environmentParams.SetAppName(appName)
 	environmentParams.SetEnvName(environmentName)
 	environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
+	duration := time.Since(start)
+	fmt.Printf("Fetched environment details for %s in %s in %v\n", environmentName, appName, duration)
 
 	if err != nil {
 		return nil, nil, err

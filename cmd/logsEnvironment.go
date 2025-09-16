@@ -16,6 +16,8 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
+	"time"
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
@@ -75,10 +77,13 @@ rx get logs environment --application radix-test --environment dev`,
 
 func getComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, environmentName string) (map[string][]string, error) {
 	// Get active deployment
+	start := time.Now()
 	environmentParams := environment.NewGetEnvironmentParams()
 	environmentParams.SetAppName(appName)
 	environmentParams.SetEnvName(environmentName)
 	environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
+	duration := time.Since(start)
+	fmt.Printf("Fetched environment details for %s in %s in %v\n", environmentName, appName, duration)
 
 	if err != nil {
 		return nil, err

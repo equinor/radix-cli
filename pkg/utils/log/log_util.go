@@ -3,6 +3,7 @@ package log
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -17,6 +18,8 @@ var (
 	Magenta = color.New(color.FgHiMagenta, color.BgBlack).SprintFunc()
 
 	Colors = []func(a ...interface{}) string{Yellow, Green, Blue, Cyan, Red, Magenta}
+
+	writeMutex = sync.Mutex{}
 )
 
 // GetColor Rotates color
@@ -24,13 +27,18 @@ func GetColor(num int) func(a ...interface{}) string {
 	return Colors[num%len(Colors)]
 }
 
-// PrintLines logs lines with color
+// PrintLines logs lines with color, safe for concurrent use by multiple goroutines
 func PrintLines(cmd *cobra.Command, name string, previousLogLines, logLines []string, color func(a ...interface{}) string) {
 	for _, logLine := range logLines {
 		if !logged(logLine, previousLogLines) {
-			print(cmd, name, logLine, color)
+			PrintLine(cmd, name, logLine, color)
 		}
 	}
+}
+
+// PrintLine logs lines with color, safe for concurrent use by multiple goroutines
+func PrintLine(cmd *cobra.Command, name string, logLine string, color func(a ...interface{}) string) {
+	print(cmd, name, logLine, color)
 }
 
 func logged(logLine string, previousLogLines []string) bool {
@@ -42,7 +50,10 @@ func logged(logLine string, previousLogLines []string) bool {
 	return false
 }
 
-// print Output string to standard output
+// print Output string to standard output, safe for concurrent use by multiple goroutines
 func print(cmd *cobra.Command, name, logLine string, color func(a ...interface{}) string) {
-	fmt.Fprintf(cmd.OutOrStdout(), "\r\n[%s] : %s", color(name), color(logLine))
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
+
+	fmt.Fprintf(cmd.OutOrStdout(), "\r\n[%s]: %s", color(name), logLine)
 }
