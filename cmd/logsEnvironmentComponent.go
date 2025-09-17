@@ -19,14 +19,12 @@ import (
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
-	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/streaminglog"
-	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
 )
 
@@ -74,45 +72,45 @@ Examples:
 			return err
 		}
 
-		var getReplicas = func() (map[string][]string, error) {
-			_, replicas, err := getReplicasForComponent(apiClient, appName, environmentName, componentName)
-			componentReplicas := make(map[string][]string)
-			componentReplicas[componentName] = replicas
-			return componentReplicas, err
-		}
-		return streaminglog.NewStreamingReplicas(apiClient, cmd.OutOrStdout(), appName, since, previousLog, getReplicas).StreamLogs(cmd.Context())
+		return streaminglog.New(
+			cmd.OutOrStdout(),
+			getReplicasForComponent(apiClient, appName, environmentName, componentName),
+			getComponentLog(apiClient, appName, since, previousLog),
+		).StreamLogs(cmd.Context())
 	},
 }
 
-func getReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentName, componentName string) (*string, []string, error) {
-	// Get active deployment
-	environmentParams := environment.NewGetEnvironmentParams()
-	environmentParams.SetAppName(appName)
-	environmentParams.SetEnvName(environmentName)
-	environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
+func getReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentName, componentName string) streaminglog.GetReplicasFunc[ComponentItem] {
+	return func() ([]ComponentItem, error) {
+		environmentParams := environment.NewGetEnvironmentParams()
+		environmentParams.SetAppName(appName)
+		environmentParams.SetEnvName(environmentName)
+		environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
 
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var deploymentName string
-	if environmentDetails == nil || environmentDetails.Payload.ActiveDeployment == nil {
-		return nil, nil, errors.New("active deployment was not found in environment")
-	}
-
-	var replicas []string
-	deploymentName = *environmentDetails.Payload.ActiveDeployment.Name
-	for _, comp := range environmentDetails.Payload.ActiveDeployment.Components {
-		if comp.Name != nil &&
-			*comp.Name == componentName {
-			replicas = slice.Reduce(comp.ReplicaList, make([]string, 0), func(acc []string, replica *models.ReplicaSummary) []string {
-				return append(acc, *replica.Name)
-			})
-			break
+		if err != nil {
+			return nil, err
 		}
-	}
 
-	return &deploymentName, replicas, nil
+		if environmentDetails == nil || environmentDetails.Payload.ActiveDeployment == nil {
+			return nil, errors.New("active deployment was not found in environment")
+		}
+
+		var replicas []ComponentItem
+		for _, comp := range environmentDetails.Payload.ActiveDeployment.Components {
+			if comp.Name != nil && *comp.Name != componentName {
+				continue
+			}
+
+			for _, replica := range comp.ReplicaList {
+				replicas = append(replicas, ComponentItem{
+					Component: *comp.Name,
+					Replica:   *replica.Name,
+				})
+			}
+		}
+
+		return replicas, err
+	}
 }
 
 func init() {

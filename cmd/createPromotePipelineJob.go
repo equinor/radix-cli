@@ -17,9 +17,10 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/equinor/radix-common/utils/slice"
 	"sort"
 	"time"
+
+	"github.com/equinor/radix-common/utils/slice"
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
@@ -29,6 +30,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
+	"github.com/equinor/radix-cli/pkg/utils/streaminglog"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -110,7 +112,11 @@ var createPromotePipelineJobCmd = &cobra.Command{
 			return nil
 		}
 
-		return getLogsJob(cmd, apiClient, appName, *jobName)
+		return streaminglog.New(
+			cmd.OutOrStdout(),
+			getReplicasForJob(apiClient, appName, *jobName),
+			getLogsForJob(apiClient, appName, *jobName),
+		).StreamLogs(cmd.Context())
 	},
 }
 

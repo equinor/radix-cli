@@ -15,18 +15,24 @@
 package cmd
 
 import (
+	"context"
 	"errors"
+	"strconv"
+	"strings"
+	"time"
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
+	"github.com/equinor/radix-cli/generated/radixapi/client/component"
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
-	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/client/consumer"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/streaminglog"
-	"github.com/equinor/radix-common/utils/slice"
+	"github.com/equinor/radix-common/utils/pointers"
+	"github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
 )
 
@@ -65,38 +71,97 @@ rx get logs environment --application radix-test --environment dev`,
 			return err
 		}
 
-		var getReplicas = func() (map[string][]string, error) {
-			return getComponentReplicasForEnvironment(apiClient, appName, environmentName)
-		}
-		return streaminglog.NewStreamingReplicas(apiClient, cmd.OutOrStdout(), appName, since, previousLog, getReplicas).StreamLogs(cmd.Context())
+		return streaminglog.New(
+			cmd.OutOrStdout(),
+			getComponentReplicasForEnvironment(apiClient, appName, environmentName),
+			getComponentLog(apiClient, appName, since, previousLog),
+		).StreamLogs(cmd.Context())
 	},
 }
 
-func getComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, environmentName string) (map[string][]string, error) {
-	// Get active deployment
-	environmentParams := environment.NewGetEnvironmentParams()
-	environmentParams.SetAppName(appName)
-	environmentParams.SetEnvName(environmentName)
-	environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
+type ComponentItem struct {
+	Component string
+	Replica   string
+}
 
-	if err != nil {
-		return nil, err
-	}
+func (c ComponentItem) String() string {
+	return c.Component + "/" + c.Replica
+}
 
-	if environmentDetails == nil || environmentDetails.Payload.ActiveDeployment == nil {
-		return nil, errors.New("active deployment was not found in environment")
-	}
+func getComponentLog(apiClient *radixapi.Radixapi, appName string, since time.Duration, previous bool) streaminglog.GetLogFunc[ComponentItem] {
+	now := time.Now()
+	sinceTime := now.Add(-since)
+	sinceStr := strfmt.DateTime(sinceTime)
+	previousStr := strconv.FormatBool(previous)
 
-	componentReplicas := make(map[string][]string)
-	for _, component := range environmentDetails.Payload.ActiveDeployment.Components {
-		if component.Name != nil {
-			componentReplicas[*component.Name] = slice.Reduce(component.ReplicaList, make([]string, 0), func(acc []string, replica *models.ReplicaSummary) []string {
-				return append(acc, *replica.Name)
-			})
+	return func(ctx context.Context, item ComponentItem, print func(text string)) error {
+		logParameters := component.NewLogParamsWithContext(ctx)
+		logParameters.WithAppName(appName)
+		logParameters.WithDeploymentName("irrelevant")
+		logParameters.WithComponentName(item.Component)
+		logParameters.WithPodName(item.Replica)
+		logParameters.WithFollow(pointers.Ptr("true"))
+		logParameters.SetSinceTime(&sinceStr)
+		logParameters.WithPrevious(&previousStr)
+
+		resp, err := apiClient.Component.Log(logParameters, nil, consumer.NewEventSourceClientOptions(func(event consumer.Event) {
+			switch event.Type {
+			case "event":
+				switch event.Message {
+				case "started":
+					print("stream started...")
+				case "completed":
+					print("stream closed.")
+				}
+			case "data":
+				print(event.Message)
+			}
+		}))
+		if err != nil {
+			return err
 		}
-	}
 
-	return componentReplicas, nil
+		lines := strings.Split(resp.Payload, "\n")
+		for _, line := range lines {
+			print(line)
+		}
+		print("stream closed.")
+
+		return nil
+	}
+}
+
+func getComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, environmentName string) streaminglog.GetReplicasFunc[ComponentItem] {
+	return func() ([]ComponentItem, error) {
+		// Get active deployment
+		environmentParams := environment.NewGetEnvironmentParams()
+		environmentParams.SetAppName(appName)
+		environmentParams.SetEnvName(environmentName)
+		environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
+
+		if err != nil {
+			return nil, err
+		}
+
+		if environmentDetails == nil || environmentDetails.Payload.ActiveDeployment == nil {
+			return nil, errors.New("active deployment was not found in environment")
+		}
+
+		componentReplicas := make([]ComponentItem, 0, 50)
+		for _, component := range environmentDetails.Payload.ActiveDeployment.Components {
+			if component.Name != nil {
+				for _, replica := range component.ReplicaList {
+					componentReplicas = append(componentReplicas, ComponentItem{
+						Component: *component.Name,
+						Replica:   *replica.Name,
+					})
+				}
+				//
+			}
+		}
+
+		return componentReplicas, nil
+	}
 }
 
 func init() {

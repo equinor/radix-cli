@@ -258,7 +258,7 @@
 				"--application",
 				"radix-api",
 				"--environment",
-				"prod",
+				"qa",
 				"--component",
 				"server"
 			]

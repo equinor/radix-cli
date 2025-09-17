@@ -24,6 +24,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/model"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
+	"github.com/equinor/radix-cli/pkg/utils/streaminglog"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -94,7 +95,11 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		if !follow {
 			return nil
 		}
-		return getLogsJob(cmd, apiClient, appName, *jobName)
+		return streaminglog.New(
+			cmd.OutOrStdout(),
+			getReplicasForJob(apiClient, appName, *jobName),
+			getLogsForJob(apiClient, appName, *jobName),
+		).StreamLogs(cmd.Context())
 	},
 }
 
