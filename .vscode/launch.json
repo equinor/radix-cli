@@ -254,11 +254,13 @@
 			"args": [
 				"get",
 				"logs",
-				"environment",
+				"component",
 				"--application",
-				"edc2023-radix-wi-rihag",
+				"radix-api",
 				"--environment",
-				"dev"
+				"prod",
+				"--component",
+				"server"
 			]
 		}
 	]

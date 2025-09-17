@@ -125,7 +125,7 @@ func getLogsJob(cmd *cobra.Command, apiClient *radixapi.Radixapi, appName, jobNa
 				}
 				logLines := strings.Split(strings.Replace(jobStepLog.Payload, "\r\n", "\n", -1), "\n")
 				if len(logLines) > 0 && !strings.EqualFold(logLines[0], "") {
-					log.PrintLines(cmd, step.Name, previousLogLines, logLines, log.GetColor(i))
+					log.PrintLines(cmd.OutOrStdout(), step.Name, previousLogLines, logLines, log.GetColor(i))
 					loggedForJob = true
 					previousLogForStep[step.Name] = logLines
 				}

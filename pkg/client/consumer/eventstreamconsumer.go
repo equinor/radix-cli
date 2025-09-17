@@ -63,7 +63,7 @@ func NewEventSourceConsumer() runtime.Consumer {
 	})
 }
 
-func CreateEventSourceClientOptions(f func(event Event)) func(co *runtime.ClientOperation) {
+func NewEventSourceClientOptions(f func(event Event)) func(co *runtime.ClientOperation) {
 	return func(co *runtime.ClientOperation) {
 		// We will fallback to the old reader if the content-type is not event-stream
 		oldReader := co.Reader
@@ -76,6 +76,7 @@ func CreateEventSourceClientOptions(f func(event Event)) func(co *runtime.Client
 			}
 
 			eventStream := make(chan Event, 1000)
+			defer close(eventStream)
 			go func() {
 
 				for {

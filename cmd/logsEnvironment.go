@@ -16,8 +16,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-	"time"
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
@@ -27,6 +25,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
+	"github.com/equinor/radix-cli/pkg/utils/streaminglog"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
 )
@@ -66,24 +65,19 @@ rx get logs environment --application radix-test --environment dev`,
 			return err
 		}
 
-		componentReplicas, err := getComponentReplicasForEnvironment(apiClient, appName, environmentName)
-		if err != nil {
-			return err
+		var getReplicas = func() (map[string][]string, error) {
+			return getComponentReplicasForEnvironment(apiClient, appName, environmentName)
 		}
-
-		return logForComponentReplicas(cmd, apiClient, appName, environmentName, since, componentReplicas, previousLog)
+		return streaminglog.NewStreamingReplicas(apiClient, cmd.OutOrStdout(), appName, since, previousLog, getReplicas).StreamLogs(cmd.Context())
 	},
 }
 
 func getComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, environmentName string) (map[string][]string, error) {
 	// Get active deployment
-	start := time.Now()
 	environmentParams := environment.NewGetEnvironmentParams()
 	environmentParams.SetAppName(appName)
 	environmentParams.SetEnvName(environmentName)
 	environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
-	duration := time.Since(start)
-	fmt.Printf("Fetched environment details for %s in %s in %v\n", environmentName, appName, duration)
 
 	if err != nil {
 		return nil, err
