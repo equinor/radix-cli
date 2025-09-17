@@ -15,9 +15,13 @@
 package cmd
 
 import (
+	"context"
 	"errors"
+	"slices"
+	"time"
 
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
+	"github.com/equinor/radix-cli/generated/radixapi/client/pipeline_job"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
@@ -28,6 +32,15 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
+
+const (
+	jobStatusRunning   = "Running"
+	jobStatusFailed    = "Failed"
+	jobStatusSucceeded = "Succeeded"
+	jobStatusStopped   = "Stopped"
+)
+
+var completedJobStatuses = []string{jobStatusSucceeded, jobStatusStopped, jobStatusFailed}
 
 var overrideUseBuildCacheForBuildDeploy, refreshBuildCacheForBuildDeploy model.BoolPtr
 
@@ -95,12 +108,44 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		if !follow {
 			return nil
 		}
+
+		ctx, cancel := context.WithCancel(cmd.Context())
+		defer cancel()
+		go func() {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.Tick(5 * time.Second):
+					// check if job is completed
+					jobParameters := pipeline_job.NewGetApplicationJobParams()
+					jobParameters.SetAppName(appName)
+					jobParameters.SetJobName(*jobName)
+					respJob, err := apiClient.PipelineJob.GetApplicationJob(jobParameters, nil)
+					if err != nil {
+						log.Errorf("Failed to get job %s details: %v", *jobName, err)
+						cancel()
+						return
+					}
+					if isCompletedJob(respJob.Payload.Status) {
+						log.Printf("Job completed")
+						cancel()
+						return
+					}
+				}
+			}
+		}()
+
 		return streaminglog.New(
 			cmd.OutOrStdout(),
 			getReplicasForJob(apiClient, appName, *jobName),
 			getLogsForJob(apiClient, appName, *jobName),
-		).StreamLogs(cmd.Context())
+		).StreamLogs(ctx)
 	},
+}
+
+func isCompletedJob(status string) bool {
+	return slices.Contains(completedJobStatuses, status)
 }
 
 func init() {

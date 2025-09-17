@@ -63,8 +63,8 @@ func (c *streamingReplicas[T]) StreamLogs(ctx context.Context) error {
 		select {
 		case <-ctx.Done():
 			wg.Wait()
-			return ctx.Err()
-		case <-time.Tick(15 * time.Second):
+			return nil
+		case <-time.Tick(5 * time.Second):
 			continue // continue the for loop and refresh the replicas
 		}
 	}
@@ -78,7 +78,7 @@ func (c *streamingReplicas[T]) streamLogs(ctx context.Context, item T) error {
 		log.PrintLine(c.output, item.String(), text, color)
 	})
 	if err != nil {
-		if errors.Is(err, io.EOF) {
+		if errors.Is(err, io.EOF) || errors.Is(err, context.Canceled) {
 			return nil
 		}
 

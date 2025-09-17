@@ -57,5 +57,6 @@ func print(w io.Writer, name, logLine string, color ColorFunc) {
 	writeMutex.Lock()
 	defer writeMutex.Unlock()
 
-	fmt.Fprintf(w, "\r\n[%s]: %s", color(name), logLine)
+	logLine = strings.TrimSuffix(logLine, "\n")
+	fmt.Fprintf(w, "[%s]: %s\n", color(name), logLine)
 }

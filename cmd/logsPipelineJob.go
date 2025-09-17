@@ -112,11 +112,12 @@ func getLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) stream
 	return func(ctx context.Context, item Step, print func(text string)) error {
 
 		// Sometimes, even though we get delta, the log is the same as previous
-		stepLogsParams := pipeline_job.NewGetPipelineJobStepLogsParams()
+		stepLogsParams := pipeline_job.NewGetPipelineJobStepLogsParamsWithContext(ctx)
 		stepLogsParams.SetAppName(appName)
 		stepLogsParams.SetJobName(jobName)
 		stepLogsParams.SetStepName(string(item))
 		stepLogsParams.WithFollow(pointers.Ptr("true"))
+		stepLogsParams.WithContext(ctx)
 
 		jobStepLog, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil, consumer.NewEventSourceClientOptions(func(event consumer.Event) {
 			switch event.Type {
