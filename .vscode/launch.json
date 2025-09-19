@@ -262,6 +262,23 @@
 				"--component",
 				"server"
 			]
+		},
+		{
+			"name": "Launch radix-cli create pipeline-job build-deploy --application edc2023-radix-wi-rihag --branch main --follow",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"args": [
+				"create",
+				"pipeline-job",
+				"build-deploy",
+				"--application",
+				"edc2023-radix-wi-rihag",
+				"--branch",
+				"main",
+				"--follow"
+			]
 		}
 	]
 }

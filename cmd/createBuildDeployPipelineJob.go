@@ -137,7 +137,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		}()
 
 		return streaminglog.New(
-			cmd.OutOrStdout(),
+			cmd.ErrOrStderr(),
 			getReplicasForJob(apiClient, appName, *jobName),
 			getLogsForJob(apiClient, appName, *jobName),
 		).StreamLogs(ctx)

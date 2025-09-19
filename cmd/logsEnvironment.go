@@ -25,7 +25,6 @@ import (
 	"github.com/equinor/radix-cli/generated/radixapi/client/component"
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
 	"github.com/equinor/radix-cli/pkg/client"
-	"github.com/equinor/radix-cli/pkg/client/consumer"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
@@ -72,7 +71,7 @@ rx get logs environment --application radix-test --environment dev`,
 		}
 
 		return streaminglog.New(
-			cmd.OutOrStdout(),
+			cmd.ErrOrStderr(),
 			getComponentReplicasForEnvironment(apiClient, appName, environmentName),
 			getComponentLog(apiClient, appName, since, previousLog),
 		).StreamLogs(cmd.Context())
@@ -104,19 +103,7 @@ func getComponentLog(apiClient *radixapi.Radixapi, appName string, since time.Du
 		logParameters.SetSinceTime(&sinceStr)
 		logParameters.WithPrevious(&previousStr)
 
-		resp, err := apiClient.Component.Log(logParameters, nil, consumer.NewEventSourceClientOptions(func(event consumer.Event) {
-			switch event.Type {
-			case "event":
-				switch event.Message {
-				case "started":
-					print("stream started...")
-				case "completed":
-					print("stream closed.")
-				}
-			case "data":
-				print(event.Message)
-			}
-		}))
+		resp, err := apiClient.Component.Log(logParameters, nil, streaminglog.CreateLogStreamer(print))
 		if err != nil {
 			return err
 		}

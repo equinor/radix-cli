@@ -73,7 +73,7 @@ Examples:
 		}
 
 		return streaminglog.New(
-			cmd.OutOrStdout(),
+			cmd.ErrOrStderr(),
 			getReplicasForComponent(apiClient, appName, environmentName, componentName),
 			getComponentLog(apiClient, appName, since, previousLog),
 		).StreamLogs(cmd.Context())

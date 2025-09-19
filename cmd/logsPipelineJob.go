@@ -17,12 +17,12 @@ package cmd
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/pipeline_job"
 	"github.com/equinor/radix-cli/pkg/client"
-	"github.com/equinor/radix-cli/pkg/client/consumer"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
@@ -35,10 +35,27 @@ const (
 	stepStatusWaiting = "Waiting"
 )
 
-type Step string
+type Step struct {
+	stepName      string
+	containerName string
+	componentName string
+
+	isSubPipeline       bool
+	pipelineRunName     string
+	pipelineRunKubeName string
+	pipelineStepName    string
+}
 
 func (j Step) String() string {
-	return string(j)
+	if j.isSubPipeline {
+		return fmt.Sprintf("%s/%s", j.stepName, j.pipelineStepName)
+	}
+
+	if j.componentName != "" {
+		return fmt.Sprintf("%s/%s", j.componentName, j.stepName)
+	}
+
+	return j.stepName
 }
 
 // logsJobCmd represents the logsJobCmd command
@@ -76,7 +93,7 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 		}
 
 		return streaminglog.New(
-			cmd.OutOrStdout(),
+			cmd.ErrOrStderr(),
 			getReplicasForJob(apiClient, appName, jobName),
 			getLogsForJob(apiClient, appName, jobName),
 		).StreamLogs(cmd.Context())
@@ -102,7 +119,28 @@ func getReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) st
 			if step.Status == stepStatusWaiting {
 				continue
 			}
-			replicas = append(replicas, Step(step.Name))
+
+			component := strings.Join(step.Components, ",")
+
+			if step.SubPipelineTaskStep == nil {
+				replicas = append(replicas, Step{
+					stepName:      step.Name,
+					componentName: component,
+					isSubPipeline: false,
+				})
+				continue
+			}
+
+			replicas = append(replicas, Step{
+				stepName:            step.Name,
+				componentName:       component,
+				containerName:       *step.SubPipelineTaskStep.KubeName,
+				isSubPipeline:       true,
+				pipelineRunName:     *step.SubPipelineTaskStep.PipelineRunName,
+				pipelineRunKubeName: *step.SubPipelineTaskStep.KubeName,
+				pipelineStepName:    *step.SubPipelineTaskStep.Name,
+			})
+
 		}
 		return replicas, nil
 	}
@@ -111,27 +149,38 @@ func getReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) st
 func getLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) streaminglog.GetLogFunc[Step] {
 	return func(ctx context.Context, item Step, print func(text string)) error {
 
-		// Sometimes, even though we get delta, the log is the same as previous
+		// expected: /api/v1/applications/edc2023-radix-wi-rihag/jobs/radix-pipeline-20250917125617-55agd/pipelineruns/radix-pipelinerun-dev-kzlmc-20250917125723-m2d9p/tasks/radix-task-dev-kzlmc-iden-tewbe-20250917125624-m2d9p/logs/get-secret?lines=1000
+		// actual:   /api/v1/applications/edc2023-radix-wi-rihag/jobs/radix-pipeline-20250917130819-djs00/logs/sub-pipeline-step
+
+		if item.isSubPipeline {
+			logParameters := pipeline_job.NewGetTektonPipelineRunTaskStepLogsParamsWithContext(ctx)
+			logParameters.SetAppName(appName)
+			logParameters.SetJobName(jobName)
+			logParameters.SetPipelineRunName(item.pipelineRunName)
+			logParameters.SetTaskName(item.pipelineRunKubeName)
+			logParameters.SetStepName(item.pipelineStepName)
+			logParameters.WithFollow(pointers.Ptr("true"))
+			logParameters.WithContext(ctx)
+
+			jobStepLog, err := apiClient.PipelineJob.GetTektonPipelineRunTaskStepLogs(logParameters, nil, streaminglog.CreateLogStreamer(print))
+			if err != nil {
+				return err
+			}
+			logLines := strings.Split(jobStepLog.Payload, "\n")
+			for _, line := range logLines {
+				print(line)
+			}
+			return nil
+		}
+
 		stepLogsParams := pipeline_job.NewGetPipelineJobStepLogsParamsWithContext(ctx)
 		stepLogsParams.SetAppName(appName)
 		stepLogsParams.SetJobName(jobName)
-		stepLogsParams.SetStepName(string(item))
+		stepLogsParams.SetStepName(item.stepName)
 		stepLogsParams.WithFollow(pointers.Ptr("true"))
 		stepLogsParams.WithContext(ctx)
 
-		jobStepLog, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil, consumer.NewEventSourceClientOptions(func(event consumer.Event) {
-			switch event.Type {
-			case "event":
-				switch event.Message {
-				case "started":
-					print("stream started...")
-				case "completed":
-					print("stream closed.")
-				}
-			case "data":
-				print(event.Message)
-			}
-		}))
+		jobStepLog, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil, streaminglog.CreateLogStreamer(print))
 		if err != nil {
 			return err
 		}

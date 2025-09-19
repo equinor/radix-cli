@@ -9,7 +9,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/equinor/radix-cli/pkg/client/consumer"
 	"github.com/equinor/radix-cli/pkg/utils/log"
+	"github.com/go-openapi/runtime"
 )
 
 type GetReplicasFunc[T fmt.Stringer] func() ([]T, error)
@@ -64,7 +66,7 @@ func (c *streamingReplicas[T]) StreamLogs(ctx context.Context) error {
 		case <-ctx.Done():
 			wg.Wait()
 			return nil
-		case <-time.Tick(5 * time.Second):
+		case <-time.Tick(2 * time.Second):
 			continue // continue the for loop and refresh the replicas
 		}
 	}
@@ -86,4 +88,20 @@ func (c *streamingReplicas[T]) streamLogs(ctx context.Context, item T) error {
 		return err
 	}
 	return nil
+}
+
+func CreateLogStreamer(print func(text string)) func(co *runtime.ClientOperation) {
+	return consumer.NewEventSourceClientOptions(func(event consumer.Event) {
+		switch event.Type {
+		case "event":
+			switch event.Message {
+			case "started":
+				print("stream started...")
+			case "completed":
+				print("stream closed.")
+			}
+		case "data":
+			print(event.Message)
+		}
+	})
 }

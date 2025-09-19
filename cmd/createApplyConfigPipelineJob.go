@@ -91,7 +91,7 @@ By default it applies changes to properties DNS alias, build secrets, and create
 			return nil
 		}
 		return streaminglog.New(
-			cmd.OutOrStdout(),
+			cmd.ErrOrStderr(),
 			getReplicasForJob(apiClient, appName, *jobName),
 			getLogsForJob(apiClient, appName, *jobName),
 		).StreamLogs(cmd.Context())
