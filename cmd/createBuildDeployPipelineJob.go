@@ -34,13 +34,14 @@ import (
 )
 
 const (
-	jobStatusRunning   = "Running"
-	jobStatusFailed    = "Failed"
-	jobStatusSucceeded = "Succeeded"
-	jobStatusStopped   = "Stopped"
+	jobStatusRunning    = "Running"
+	jobStatusFailed     = "Failed"
+	jobStatusSucceeded  = "Succeeded"
+	jobStatusStopped    = "Stopped"
+	jobStoppedNoChanges = "StoppedNoChanges"
 )
 
-var completedJobStatuses = []string{jobStatusSucceeded, jobStatusStopped, jobStatusFailed}
+var completedJobStatuses = []string{jobStatusSucceeded, jobStatusStopped, jobStatusFailed, jobStoppedNoChanges}
 
 var overrideUseBuildCacheForBuildDeploy, refreshBuildCacheForBuildDeploy model.BoolPtr
 
@@ -140,6 +141,7 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 			cmd.ErrOrStderr(),
 			getReplicasForJob(apiClient, appName, *jobName),
 			getLogsForJob(apiClient, appName, *jobName),
+			time.Second, // not used
 		).StreamLogs(ctx)
 	},
 }
