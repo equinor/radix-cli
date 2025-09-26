@@ -1,15 +1,11 @@
-run:
-  timeout: 30m
-
+version: "2"
 linters:
   enable:
-    - errcheck
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - unused
     - zerologlint
+  exclusions:
+    generated: lax
+    presets:
+      - std-error-handling
 
 issues:
   max-same-issues: 0
