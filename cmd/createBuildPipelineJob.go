@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"time"
 
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
@@ -93,6 +94,7 @@ var createBuildPipelineJobCmd = &cobra.Command{
 			cmd.ErrOrStderr(),
 			getReplicasForJob(apiClient, appName, *jobName),
 			getLogsForJob(apiClient, appName, *jobName),
+			time.Second, // not used
 		).StreamLogs(cmd.Context())
 	},
 }

@@ -246,7 +246,7 @@
 			]
 		},
 		{
-			"name": "Launch radix-cli get logs environment --application edc2023-radix-wi-rihag --environment dev",
+			"name": "Launch radix-cli get logs environment --application rihag --environment dev",
 			"type": "go",
 			"request": "launch",
 			"mode": "auto",
@@ -264,7 +264,7 @@
 			]
 		},
 		{
-			"name": "Launch radix-cli create pipeline-job build-deploy --application edc2023-radix-wi-rihag --branch main --follow",
+			"name": "Launch radix-cli create pipeline-job build-deploy --application rihag --branch main --follow",
 			"type": "go",
 			"request": "launch",
 			"mode": "auto",
@@ -274,10 +274,31 @@
 				"pipeline-job",
 				"build-deploy",
 				"--application",
-				"edc2023-radix-wi-rihag",
+				"rihag",
 				"--branch",
 				"main",
 				"--follow"
+			]
+		},
+		{
+			"name": "Launch radix-cli get logs component --application rihag --component web --environment dev --previous --since 2h",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"args": [
+				"get",
+				"logs",
+				"component",
+				"--application",
+				"rihag",
+				"--component",
+				"web",
+				"--environment",
+				"dev",
+				"--previous",
+				"--since",
+				"2h"
 			]
 		}
 	]

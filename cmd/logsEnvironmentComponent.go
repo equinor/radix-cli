@@ -74,25 +74,26 @@ Examples:
 
 		return streaminglog.New(
 			cmd.ErrOrStderr(),
-			getReplicasForComponent(apiClient, appName, environmentName, componentName),
-			getComponentLog(apiClient, appName, since, previousLog),
+			getReplicasForComponent(apiClient, appName, environmentName, componentName, previousLog),
+			getComponentLog(apiClient, appName, previousLog),
+			since,
 		).StreamLogs(cmd.Context())
 	},
 }
 
-func getReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentName, componentName string) streaminglog.GetReplicasFunc[ComponentItem] {
-	return func() ([]ComponentItem, error) {
+func getReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentName, componentName string, previousLog bool) streaminglog.GetReplicasFunc[ComponentItem] {
+	return func() ([]ComponentItem, bool, error) {
 		environmentParams := environment.NewGetEnvironmentParams()
 		environmentParams.SetAppName(appName)
 		environmentParams.SetEnvName(environmentName)
 		environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
 
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 
 		if environmentDetails == nil || environmentDetails.Payload.ActiveDeployment == nil {
-			return nil, errors.New("active deployment was not found in environment")
+			return nil, false, errors.New("active deployment was not found in environment")
 		}
 
 		var replicas []ComponentItem
@@ -109,7 +110,8 @@ func getReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentN
 			}
 		}
 
-		return replicas, err
+		// if previous log is requested, return replicas only once
+		return replicas, previousLog, err
 	}
 }
 

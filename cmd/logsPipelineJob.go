@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/pipeline_job"
@@ -96,22 +97,23 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 			cmd.ErrOrStderr(),
 			getReplicasForJob(apiClient, appName, jobName),
 			getLogsForJob(apiClient, appName, jobName),
+			time.Second, // not used
 		).StreamLogs(cmd.Context())
 	},
 }
 
 func getReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) streaminglog.GetReplicasFunc[Step] {
-	return func() ([]Step, error) {
+	return func() ([]Step, bool, error) {
 		jobParameters := pipeline_job.NewGetApplicationJobParams()
 		jobParameters.SetAppName(appName)
 		jobParameters.SetJobName(jobName)
 		respJob, err := apiClient.PipelineJob.GetApplicationJob(jobParameters, nil)
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 
 		if respJob == nil {
-			return nil, nil
+			return nil, false, nil
 		}
 
 		replicas := make([]Step, 0)
@@ -142,16 +144,12 @@ func getReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) st
 			})
 
 		}
-		return replicas, nil
+		return replicas, false, nil
 	}
 }
 
 func getLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) streaminglog.GetLogFunc[Step] {
-	return func(ctx context.Context, item Step, print func(text string)) error {
-
-		// expected: /api/v1/applications/edc2023-radix-wi-rihag/jobs/radix-pipeline-20250917125617-55agd/pipelineruns/radix-pipelinerun-dev-kzlmc-20250917125723-m2d9p/tasks/radix-task-dev-kzlmc-iden-tewbe-20250917125624-m2d9p/logs/get-secret?lines=1000
-		// actual:   /api/v1/applications/edc2023-radix-wi-rihag/jobs/radix-pipeline-20250917130819-djs00/logs/sub-pipeline-step
-
+	return func(ctx context.Context, item Step, _ time.Time, print func(text string)) error {
 		if item.isSubPipeline {
 			logParameters := pipeline_job.NewGetTektonPipelineRunTaskStepLogsParamsWithContext(ctx)
 			logParameters.SetAppName(appName)

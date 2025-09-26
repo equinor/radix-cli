@@ -72,8 +72,9 @@ rx get logs environment --application radix-test --environment dev`,
 
 		return streaminglog.New(
 			cmd.ErrOrStderr(),
-			getComponentReplicasForEnvironment(apiClient, appName, environmentName),
-			getComponentLog(apiClient, appName, since, previousLog),
+			getComponentReplicasForEnvironment(apiClient, appName, environmentName, previousLog),
+			getComponentLog(apiClient, appName, previousLog),
+			since,
 		).StreamLogs(cmd.Context())
 	},
 }
@@ -87,20 +88,17 @@ func (c ComponentItem) String() string {
 	return c.Component + "/" + c.Replica
 }
 
-func getComponentLog(apiClient *radixapi.Radixapi, appName string, since time.Duration, previous bool) streaminglog.GetLogFunc[ComponentItem] {
-	now := time.Now()
-	sinceTime := now.Add(-since)
-	sinceStr := strfmt.DateTime(sinceTime)
+func getComponentLog(apiClient *radixapi.Radixapi, appName string, previous bool) streaminglog.GetLogFunc[ComponentItem] {
 	previousStr := strconv.FormatBool(previous)
 
-	return func(ctx context.Context, item ComponentItem, print func(text string)) error {
+	return func(ctx context.Context, item ComponentItem, since time.Time, print func(text string)) error {
 		logParameters := component.NewLogParamsWithContext(ctx)
 		logParameters.WithAppName(appName)
 		logParameters.WithDeploymentName("irrelevant")
 		logParameters.WithComponentName(item.Component)
 		logParameters.WithPodName(item.Replica)
 		logParameters.WithFollow(pointers.Ptr("true"))
-		logParameters.SetSinceTime(&sinceStr)
+		logParameters.SetSinceTime(pointers.Ptr(strfmt.DateTime(since)))
 		logParameters.WithPrevious(&previousStr)
 
 		resp, err := apiClient.Component.Log(logParameters, nil, streaminglog.CreateLogStreamer(print))
@@ -118,8 +116,9 @@ func getComponentLog(apiClient *radixapi.Radixapi, appName string, since time.Du
 	}
 }
 
-func getComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, environmentName string) streaminglog.GetReplicasFunc[ComponentItem] {
-	return func() ([]ComponentItem, error) {
+// getComponentReplicasForEnvironment returns all replicas for all components in an environment, if previousLog is true, only return replicas once
+func getComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, environmentName string, previousLog bool) streaminglog.GetReplicasFunc[ComponentItem] {
+	return func() ([]ComponentItem, bool, error) {
 		// Get active deployment
 		environmentParams := environment.NewGetEnvironmentParams()
 		environmentParams.SetAppName(appName)
@@ -127,11 +126,11 @@ func getComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, e
 		environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
 
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 
 		if environmentDetails == nil || environmentDetails.Payload.ActiveDeployment == nil {
-			return nil, errors.New("active deployment was not found in environment")
+			return nil, false, errors.New("active deployment was not found in environment")
 		}
 
 		componentReplicas := make([]ComponentItem, 0, 50)
@@ -147,7 +146,8 @@ func getComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, e
 			}
 		}
 
-		return componentReplicas, nil
+		// If previous log is requested, return replicas only once
+		return componentReplicas, previousLog, nil
 	}
 }
 

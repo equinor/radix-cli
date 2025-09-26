@@ -116,6 +116,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 			cmd.ErrOrStderr(),
 			getReplicasForJob(apiClient, appName, *jobName),
 			getLogsForJob(apiClient, appName, *jobName),
+			time.Second, // not used
 		).StreamLogs(cmd.Context())
 	},
 }
