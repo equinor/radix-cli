@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"io"
+	"iter"
 	"mime"
 	"strings"
 
@@ -14,6 +15,8 @@ type Event struct {
 	Type    string
 	Message string
 }
+
+type EventIterator iter.Seq[Event]
 
 const ContentTypeEventStream = "text/event-stream"
 
@@ -26,40 +29,42 @@ func NewEventSourceConsumer() runtime.Consumer {
 			return errors.New("nil destination for EventStreamConsumer")
 		}
 
-		es, ok := data.(chan Event)
+		eventIter, ok := data.(*EventIterator)
 		if !ok {
-			return errors.New("EventStreamConsumer requires a pointer to a channel of Event")
+			return errors.New("EventStreamConsumer requires a pointer to an EventIterator")
 		}
 
-		scanner := bufio.NewScanner(reader)
-		for scanner.Scan() {
-			line := scanner.Text()
-			if len(line) == 0 {
-				continue
-			}
+		*eventIter = func(yield func(Event) bool) {
+			scanner := bufio.NewScanner(reader)
+			for scanner.Scan() {
+				line := scanner.Text()
+				if len(line) == 0 {
+					continue
+				}
 
-			pos := strings.Index(line, ":")
-			if pos == -1 {
-				continue
-			}
-			if pos == 0 {
-				continue // ignore comments
-			}
+				pos := strings.Index(line, ":")
+				if pos == -1 {
+					continue
+				}
+				if pos == 0 {
+					continue // ignore comments
+				}
 
-			category := line[0:pos]
-			data := line[pos+2:]
+				category := line[0:pos]
+				data := line[pos+2:]
 
-			es <- Event{
-				Type:    category,
-				Message: data,
+				event := Event{
+					Type:    category,
+					Message: data,
+				}
+
+				if !yield(event) {
+					break
+				}
 			}
 		}
 
-		if scanner.Err() != nil {
-			return scanner.Err()
-		}
-
-		return io.EOF
+		return nil
 	})
 }
 
@@ -75,22 +80,24 @@ func NewEventSourceClientOptions(f func(event Event)) func(co *runtime.ClientOpe
 				return oldReader.ReadResponse(cr, c)
 			}
 
-			eventStream := make(chan Event, 1000)
-			defer close(eventStream)
-			go func() {
+			var eventIter EventIterator
+			err := c.Consume(cr.Body(), &eventIter)
+			if err != nil {
+				return nil, err
+			}
 
-				for {
-					select {
-					case event := <-eventStream:
-						f(event)
-					case <-co.Context.Done():
-						return
-					}
+			// Iterate over the events and call the callback function
+			for event := range eventIter {
+				select {
+				case <-co.Context.Done():
+					return nil, co.Context.Err()
+				default:
+					f(event)
 				}
-			}()
+			}
 
-			err := c.Consume(cr.Body(), eventStream)
-			return nil, err
+			// We must return some kind of error, so the Generated API client doesnt try to convert the nil-data to a json structure
+			return nil, io.EOF
 		})
 	}
 }
