@@ -20,7 +20,7 @@ type ComponentItem struct {
 	created   time.Time
 }
 
-func (c ComponentItem) String() string {
+func (c ComponentItem) Identifier() string {
 	return c.Component + "/" + c.Replica
 }
 func (c ComponentItem) Created() time.Time {
@@ -92,7 +92,7 @@ func GetComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, e
 			}
 		}
 
-		// If previous log is requested, return replicas only once 
+		// If previous log is requested, return replicas only once
 		return componentReplicas, previousLog, nil
 	}
 }

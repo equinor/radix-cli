@@ -35,7 +35,7 @@ type JobStep struct {
 	pipelineStepName    string
 }
 
-func (j JobStep) String() string {
+func (j JobStep) Identifier() string {
 	if j.isSubPipeline {
 		return fmt.Sprintf("%s/%s", j.stepName, j.pipelineStepName)
 	}

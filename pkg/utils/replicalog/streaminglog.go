@@ -16,7 +16,7 @@ import (
 )
 
 type Item interface {
-	String() string
+	Identifier() string
 	Created() time.Time
 }
 
@@ -59,17 +59,17 @@ func (c *streamingReplicas[T]) StreamLogs(ctx context.Context, exitOnFailure boo
 		}
 
 		for _, item := range componentReplicas {
-			if slices.Contains(syncingReplicas, item.String()) {
+			if slices.Contains(syncingReplicas, item.Identifier()) {
 				continue
 			}
 
 			wg.Go(func() {
 				mutex.Lock()
-				syncingReplicas = append(syncingReplicas, item.String())
+				syncingReplicas = append(syncingReplicas, item.Identifier())
 				mutex.Unlock()
 				if err := c.streamLogs(ctx, item); err != nil && !errors.Is(err, io.EOF) {
 					mutex.Lock()
-					syncingReplicas = slices.DeleteFunc(syncingReplicas, func(i string) bool { return i == item.String() })
+					syncingReplicas = slices.DeleteFunc(syncingReplicas, func(i string) bool { return i == item.Identifier() })
 					mutex.Unlock()
 				}
 			})
@@ -105,14 +105,14 @@ func (c *streamingReplicas[T]) streamLogs(ctx context.Context, item T) error {
 	}
 
 	err := c.getLogs(ctx, item, since, func(text string) {
-		PrintLine(c.output, item.String(), text, color)
+		PrintLine(c.output, item.Identifier(), text, color)
 	})
 	if err != nil {
 		if errors.Is(err, io.EOF) || errors.Is(err, context.Canceled) {
 			return nil
 		}
 
-		PrintLine(c.output, item.String(), Red(fmt.Sprintf("error: %s", err.Error())), color)
+		PrintLine(c.output, item.Identifier(), Red(fmt.Sprintf("error: %s", err.Error())), color)
 		return err
 	}
 	return nil
