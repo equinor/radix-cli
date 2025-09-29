@@ -26,7 +26,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
-	"github.com/equinor/radix-cli/pkg/utils/streaminglog"
+	log1 "github.com/equinor/radix-cli/pkg/utils/replicalog"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -115,10 +115,10 @@ var createDeployPipelineJobCmd = &cobra.Command{
 		if !follow {
 			return nil
 		}
-		return streaminglog.New(
+		return log1.New(
 			cmd.ErrOrStderr(),
-			streaminglog.GetReplicasForJob(apiClient, appName, *jobName),
-			streaminglog.GetLogsForJob(apiClient, appName, *jobName),
+			log1.GetReplicasForJob(apiClient, appName, *jobName),
+			log1.GetLogsForJob(apiClient, appName, *jobName),
 			time.Second, // not used
 		).StreamLogs(cmd.Context())
 	},

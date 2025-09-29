@@ -22,7 +22,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
-	"github.com/equinor/radix-cli/pkg/utils/streaminglog"
+	"github.com/equinor/radix-cli/pkg/utils/replicalog"
 	"github.com/spf13/cobra"
 )
 
@@ -70,10 +70,10 @@ Examples:
 			return err
 		}
 
-		return streaminglog.New(
+		return replicalog.New(
 			cmd.ErrOrStderr(),
-			streaminglog.GetReplicasForComponent(apiClient, appName, environmentName, componentName, previousLog),
-			streaminglog.GetComponentLog(apiClient, appName, previousLog),
+			replicalog.GetReplicasForComponent(apiClient, appName, environmentName, componentName, previousLog),
+			replicalog.GetComponentLog(apiClient, appName, previousLog),
 			since,
 		).StreamLogs(cmd.Context())
 	},

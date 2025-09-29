@@ -1,4 +1,4 @@
-package log
+package replicalog
 
 import (
 	"fmt"

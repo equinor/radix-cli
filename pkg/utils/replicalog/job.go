@@ -1,4 +1,4 @@
-package streaminglog
+package replicalog
 
 import (
 	"context"

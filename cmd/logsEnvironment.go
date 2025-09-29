@@ -22,7 +22,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
-	"github.com/equinor/radix-cli/pkg/utils/streaminglog"
+	"github.com/equinor/radix-cli/pkg/utils/replicalog"
 	"github.com/spf13/cobra"
 )
 
@@ -61,10 +61,10 @@ rx get logs environment --application radix-test --environment dev`,
 			return err
 		}
 
-		return streaminglog.New(
+		return replicalog.New(
 			cmd.ErrOrStderr(),
-			streaminglog.GetComponentReplicasForEnvironment(apiClient, appName, environmentName, previousLog),
-			streaminglog.GetComponentLog(apiClient, appName, previousLog),
+			replicalog.GetComponentReplicasForEnvironment(apiClient, appName, environmentName, previousLog),
+			replicalog.GetComponentLog(apiClient, appName, previousLog),
 			since,
 		).StreamLogs(cmd.Context())
 	},

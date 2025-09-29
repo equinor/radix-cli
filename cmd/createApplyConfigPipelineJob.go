@@ -25,7 +25,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/model"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
-	"github.com/equinor/radix-cli/pkg/utils/streaminglog"
+	log1 "github.com/equinor/radix-cli/pkg/utils/replicalog"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -91,10 +91,10 @@ By default it applies changes to properties DNS alias, build secrets, and create
 		if !follow {
 			return nil
 		}
-		return streaminglog.New[streaminglog.Step](
+		return log1.New[log1.Step](
 			cmd.ErrOrStderr(),
-			streaminglog.GetReplicasForJob(apiClient, appName, *jobName),
-			streaminglog.GetLogsForJob(apiClient, appName, *jobName),
+			log1.GetReplicasForJob(apiClient, appName, *jobName),
+			log1.GetLogsForJob(apiClient, appName, *jobName),
 			time.Second, // not used
 		).StreamLogs(cmd.Context())
 	},

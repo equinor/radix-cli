@@ -1,4 +1,4 @@
-package streaminglog
+package replicalog
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/equinor/radix-cli/pkg/client/consumer"
-	"github.com/equinor/radix-cli/pkg/utils/log"
 	"github.com/go-openapi/runtime"
 )
 
@@ -90,16 +89,16 @@ func (c *streamingReplicas[T]) StreamLogs(ctx context.Context) error {
 
 func (c *streamingReplicas[T]) streamLogs(ctx context.Context, item T) error {
 	c.colorIndex++
-	color := log.GetColor(c.colorIndex)
+	color := GetColor(c.colorIndex)
 	err := c.getLogs(ctx, item, c.since, func(text string) {
-		log.PrintLine(c.output, item.String(), text, color)
+		PrintLine(c.output, item.String(), text, color)
 	})
 	if err != nil {
 		if errors.Is(err, io.EOF) || errors.Is(err, context.Canceled) {
 			return nil
 		}
 
-		log.PrintLine(c.output, item.String(), log.Red(fmt.Sprintf("error: %s", err.Error())), color)
+		PrintLine(c.output, item.String(), Red(fmt.Sprintf("error: %s", err.Error())), color)
 		return err
 	}
 	return nil

@@ -22,7 +22,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
-	"github.com/equinor/radix-cli/pkg/utils/streaminglog"
+	"github.com/equinor/radix-cli/pkg/utils/replicalog"
 	"github.com/spf13/cobra"
 )
 
@@ -60,10 +60,10 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 			return err
 		}
 
-		return streaminglog.New(
+		return replicalog.New(
 			cmd.ErrOrStderr(),
-			streaminglog.GetReplicasForJob(apiClient, appName, jobName),
-			streaminglog.GetLogsForJob(apiClient, appName, jobName),
+			replicalog.GetReplicasForJob(apiClient, appName, jobName),
+			replicalog.GetLogsForJob(apiClient, appName, jobName),
 			time.Second, // not used
 		).StreamLogs(cmd.Context())
 	},
