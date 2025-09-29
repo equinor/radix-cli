@@ -91,10 +91,10 @@ By default it applies changes to properties DNS alias, build secrets, and create
 		if !follow {
 			return nil
 		}
-		return streaminglog.New(
+		return streaminglog.New[streaminglog.Step](
 			cmd.ErrOrStderr(),
-			getReplicasForJob(apiClient, appName, *jobName),
-			getLogsForJob(apiClient, appName, *jobName),
+			streaminglog.GetReplicasForJob(apiClient, appName, *jobName),
+			streaminglog.GetLogsForJob(apiClient, appName, *jobName),
 			time.Second, // not used
 		).StreamLogs(cmd.Context())
 	},

@@ -117,8 +117,8 @@ var createDeployPipelineJobCmd = &cobra.Command{
 		}
 		return streaminglog.New(
 			cmd.ErrOrStderr(),
-			getReplicasForJob(apiClient, appName, *jobName),
-			getLogsForJob(apiClient, appName, *jobName),
+			streaminglog.GetReplicasForJob(apiClient, appName, *jobName),
+			streaminglog.GetLogsForJob(apiClient, appName, *jobName),
 			time.Second, // not used
 		).StreamLogs(cmd.Context())
 	},

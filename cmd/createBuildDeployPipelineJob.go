@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"errors"
-	"slices"
 	"time"
 
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
@@ -30,16 +29,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
-
-const (
-	jobStatusRunning    = "Running"
-	jobStatusFailed     = "Failed"
-	jobStatusSucceeded  = "Succeeded"
-	jobStatusStopped    = "Stopped"
-	jobStoppedNoChanges = "StoppedNoChanges"
-)
-
-var completedJobStatuses = []string{jobStatusSucceeded, jobStatusStopped, jobStatusFailed, jobStoppedNoChanges}
 
 var overrideUseBuildCacheForBuildDeploy, refreshBuildCacheForBuildDeploy model.BoolPtr
 
@@ -110,15 +99,11 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 
 		return streaminglog.New(
 			cmd.ErrOrStderr(),
-			getReplicasForJob(apiClient, appName, *jobName),
-			getLogsForJob(apiClient, appName, *jobName),
+			streaminglog.GetReplicasForJob(apiClient, appName, *jobName),
+			streaminglog.GetLogsForJob(apiClient, appName, *jobName),
 			time.Second, // not used
 		).StreamLogs(cmd.Context())
 	},
-}
-
-func isCompletedJob(status string) bool {
-	return slices.Contains(completedJobStatuses, status)
 }
 
 func init() {
