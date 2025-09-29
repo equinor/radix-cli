@@ -5,20 +5,27 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"slices"
 	"sync"
 	"time"
 
 	"github.com/equinor/radix-cli/pkg/client/consumer"
 	"github.com/go-openapi/runtime"
+	"github.com/sirupsen/logrus"
 )
 
+type Item interface {
+	String() string
+	Created() time.Time
+}
+
 // GetReplicasFunc is a function type that returns a list of items (replicas) to stream logs from, a boolean indicating if we are finished, and an error if any occurred.
-type GetReplicasFunc[T fmt.Stringer] func() ([]T, bool, error)
+type GetReplicasFunc[T Item] func() ([]T, bool, error)
 
-type GetLogFunc[T fmt.Stringer] func(ctx context.Context, item T, since time.Time, print func(text string)) error
+type GetLogFunc[T Item] func(ctx context.Context, item T, since time.Time, print func(text string)) error
 
-type streamingReplicas[T fmt.Stringer] struct {
+type streamingReplicas[T Item] struct {
 	output      io.Writer
 	colorIndex  int
 	since       time.Time
@@ -28,7 +35,7 @@ type streamingReplicas[T fmt.Stringer] struct {
 
 var loopDuration = 2 * time.Second
 
-func New[T fmt.Stringer](output io.Writer, getReplicas GetReplicasFunc[T], getLogs GetLogFunc[T], since time.Duration) *streamingReplicas[T] {
+func New[T Item](output io.Writer, getReplicas GetReplicasFunc[T], getLogs GetLogFunc[T], since time.Duration) *streamingReplicas[T] {
 	sinceTime := time.Now().Add(-since)
 
 	return &streamingReplicas[T]{
@@ -40,14 +47,14 @@ func New[T fmt.Stringer](output io.Writer, getReplicas GetReplicasFunc[T], getLo
 	}
 }
 
-func (c *streamingReplicas[T]) StreamLogs(ctx context.Context) error {
+func (c *streamingReplicas[T]) StreamLogs(ctx context.Context, exitOnFailure bool) error {
 	mutex := sync.Mutex{}
 	syncingReplicas := make([]string, 0)
 	wg := sync.WaitGroup{}
 
 	for {
 		componentReplicas, finished, err := c.getReplicas()
-		if err != nil {
+		if err != nil && !errors.Is(err, ErrJobFailed) {
 			return err
 		}
 
@@ -71,11 +78,13 @@ func (c *streamingReplicas[T]) StreamLogs(ctx context.Context) error {
 		// If we are finished, dont loop again
 		if finished {
 			wg.Wait()
+			if errors.Is(err, ErrJobFailed) && exitOnFailure {
+				logrus.Error(err.Error())
+				os.Exit(2)
+			}
 			return nil
 		}
 
-		// Wait for either context cancellation or loop duration to elapse
-		c.since = time.Now().Add(-loopDuration)
 		select {
 		case <-ctx.Done():
 			wg.Wait()
@@ -84,13 +93,18 @@ func (c *streamingReplicas[T]) StreamLogs(ctx context.Context) error {
 			continue // continue the for loop and refresh the replicas
 		}
 	}
-
 }
 
 func (c *streamingReplicas[T]) streamLogs(ctx context.Context, item T) error {
 	c.colorIndex++
 	color := GetColor(c.colorIndex)
-	err := c.getLogs(ctx, item, c.since, func(text string) {
+
+	since := c.since
+	if item.Created().After(since) {
+		since = item.Created()
+	}
+
+	err := c.getLogs(ctx, item, since, func(text string) {
 		PrintLine(c.output, item.String(), text, color)
 	})
 	if err != nil {

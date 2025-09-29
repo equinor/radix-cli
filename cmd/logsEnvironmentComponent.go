@@ -75,7 +75,7 @@ Examples:
 			replicalog.GetReplicasForComponent(apiClient, appName, environmentName, componentName, previousLog),
 			replicalog.GetComponentLog(apiClient, appName, previousLog),
 			since,
-		).StreamLogs(cmd.Context())
+		).StreamLogs(cmd.Context(), false)
 	},
 }
 

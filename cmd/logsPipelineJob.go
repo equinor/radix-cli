@@ -65,7 +65,7 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 			replicalog.GetReplicasForJob(apiClient, appName, jobName),
 			replicalog.GetLogsForJob(apiClient, appName, jobName),
 			time.Second, // not used
-		).StreamLogs(cmd.Context())
+		).StreamLogs(cmd.Context(), true)
 	},
 }
 

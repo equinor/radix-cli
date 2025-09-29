@@ -25,7 +25,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/model"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
-	log1 "github.com/equinor/radix-cli/pkg/utils/replicalog"
+	"github.com/equinor/radix-cli/pkg/utils/replicalog"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -90,12 +90,12 @@ var createBuildPipelineJobCmd = &cobra.Command{
 			return nil
 		}
 
-		return log1.New(
+		return replicalog.New(
 			cmd.ErrOrStderr(),
-			log1.GetReplicasForJob(apiClient, appName, *jobName),
-			log1.GetLogsForJob(apiClient, appName, *jobName),
+			replicalog.GetReplicasForJob(apiClient, appName, *jobName),
+			replicalog.GetLogsForJob(apiClient, appName, *jobName),
 			time.Second, // not used
-		).StreamLogs(cmd.Context())
+		).StreamLogs(cmd.Context(), true)
 	},
 }
 

@@ -2,6 +2,7 @@ package replicalog
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -20,9 +21,10 @@ const (
 	jobStoppedNoChanges = "StoppedNoChanges"
 )
 
+var ErrJobFailed = errors.New("job has failed")
 var completedJobStatuses = []string{jobStatusSucceeded, jobStatusStopped, jobStatusFailed, jobStoppedNoChanges}
 
-type Step struct {
+type JobStep struct {
 	stepName      string
 	containerName string
 	componentName string
@@ -33,7 +35,7 @@ type Step struct {
 	pipelineStepName    string
 }
 
-func (j Step) String() string {
+func (j JobStep) String() string {
 	if j.isSubPipeline {
 		return fmt.Sprintf("%s/%s", j.stepName, j.pipelineStepName)
 	}
@@ -44,9 +46,12 @@ func (j Step) String() string {
 
 	return j.stepName
 }
+func (c JobStep) Created() time.Time {
+	return time.Time{} // We dont care about time for pipeline jobs
+}
 
-func GetReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) GetReplicasFunc[Step] {
-	return func() ([]Step, bool, error) {
+func GetReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) GetReplicasFunc[JobStep] {
+	return func() ([]JobStep, bool, error) {
 		jobParameters := pipeline_job.NewGetApplicationJobParams()
 		jobParameters.SetAppName(appName)
 		jobParameters.SetJobName(jobName)
@@ -59,7 +64,7 @@ func GetReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) Ge
 			return nil, false, nil
 		}
 
-		replicas := make([]Step, 0)
+		replicas := make([]JobStep, 0)
 		for _, step := range respJob.Payload.Steps {
 			if step.Status == stepStatusWaiting {
 				continue
@@ -68,7 +73,7 @@ func GetReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) Ge
 			component := strings.Join(step.Components, ",")
 
 			if step.SubPipelineTaskStep == nil {
-				replicas = append(replicas, Step{
+				replicas = append(replicas, JobStep{
 					stepName:      step.Name,
 					componentName: component,
 					isSubPipeline: false,
@@ -76,7 +81,7 @@ func GetReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) Ge
 				continue
 			}
 
-			replicas = append(replicas, Step{
+			replicas = append(replicas, JobStep{
 				stepName:            step.Name,
 				componentName:       component,
 				containerName:       *step.SubPipelineTaskStep.KubeName,
@@ -89,12 +94,15 @@ func GetReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) Ge
 		}
 
 		jobCompleted := isCompletedJob(respJob.Payload.Status)
-		return replicas, jobCompleted, nil
+		if respJob.Payload.Status == jobStatusFailed {
+			err = ErrJobFailed
+		}
+		return replicas, jobCompleted, err
 	}
 }
 
-func GetLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) GetLogFunc[Step] {
-	return func(ctx context.Context, item Step, _ time.Time, print func(text string)) error {
+func GetLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) GetLogFunc[JobStep] {
+	return func(ctx context.Context, item JobStep, _ time.Time, print func(text string)) error {
 		if item.isSubPipeline {
 			logParameters := pipeline_job.NewGetTektonPipelineRunTaskStepLogsParamsWithContext(ctx)
 			logParameters.SetAppName(appName)

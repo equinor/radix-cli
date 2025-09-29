@@ -29,31 +29,9 @@ func GetColor(num int) ColorFunc {
 	return Colors[num%len(Colors)]
 }
 
-// PrintLines logs lines with color, safe for concurrent use by multiple goroutines
-func PrintLines(w io.Writer, name string, previousLogLines, logLines []string, color ColorFunc) {
-	for _, logLine := range logLines {
-		if !logged(logLine, previousLogLines) {
-			PrintLine(w, name, logLine, color)
-		}
-	}
-}
-
 // PrintLine logs lines with color, safe for concurrent use by multiple goroutines
 func PrintLine(w io.Writer, name string, logLine string, color ColorFunc) {
-	print(w, name, logLine, color)
-}
 
-func logged(logLine string, previousLogLines []string) bool {
-	for _, previousLogLine := range previousLogLines {
-		if strings.EqualFold(previousLogLine, logLine) {
-			return true
-		}
-	}
-	return false
-}
-
-// print Output string to standard output, safe for concurrent use by multiple goroutines
-func print(w io.Writer, name, logLine string, color ColorFunc) {
 	writeMutex.Lock()
 	defer writeMutex.Unlock()
 

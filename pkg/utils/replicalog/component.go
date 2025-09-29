@@ -17,10 +17,14 @@ import (
 type ComponentItem struct {
 	Component string
 	Replica   string
+	created   time.Time
 }
 
 func (c ComponentItem) String() string {
 	return c.Component + "/" + c.Replica
+}
+func (c ComponentItem) Created() time.Time {
+	return c.created
 }
 
 func GetReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentName, componentName string, previousLog bool) GetReplicasFunc[ComponentItem] {
@@ -48,6 +52,7 @@ func GetReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentN
 				replicas = append(replicas, ComponentItem{
 					Component: *comp.Name,
 					Replica:   *replica.Name,
+					created:   time.Time(*replica.Created),
 				})
 			}
 		}
@@ -87,7 +92,7 @@ func GetComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, e
 			}
 		}
 
-		// If previous log is requested, return replicas only once
+		// If previous log is requested, return replicas only once 
 		return componentReplicas, previousLog, nil
 	}
 }

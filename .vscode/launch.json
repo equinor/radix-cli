@@ -254,30 +254,13 @@
 			"args": [
 				"get",
 				"logs",
-				"component",
-				"--application",
-				"radix-api",
-				"--environment",
-				"qa",
-				"--component",
-				"server"
-			]
-		},
-		{
-			"name": "Launch radix-cli create pipeline-job build-deploy --application rihag --branch main --follow",
-			"type": "go",
-			"request": "launch",
-			"mode": "auto",
-			"program": "${workspaceFolder}/cli/rx/main.go",
-			"args": [
-				"create",
-				"pipeline-job",
-				"build-deploy",
+				"environment",
 				"--application",
 				"rihag",
-				"--branch",
-				"main",
-				"--follow"
+				"--environment",
+				"dev",
+				"--since",
+				"10m"
 			]
 		},
 		{
@@ -299,6 +282,23 @@
 				"--previous",
 				"--since",
 				"2h"
+			]
+		},
+		{
+			"name": "Launch radix-cli create pipeline-job build-deploy --application rihag --branch main --follow",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"args": [
+				"create",
+				"pipeline-job",
+				"build-deploy",
+				"--application",
+				"rihag",
+				"--branch",
+				"main",
+				"--follow"
 			]
 		}
 	]
