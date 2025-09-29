@@ -144,7 +144,9 @@ func getReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) st
 			})
 
 		}
-		return replicas, false, nil
+
+		jobCompleted := isCompletedJob(respJob.Payload.Status)
+		return replicas, jobCompleted, nil
 	}
 }
 

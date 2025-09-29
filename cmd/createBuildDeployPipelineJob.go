@@ -15,13 +15,11 @@
 package cmd
 
 import (
-	"context"
 	"errors"
 	"slices"
 	"time"
 
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
-	"github.com/equinor/radix-cli/generated/radixapi/client/pipeline_job"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
@@ -110,39 +108,12 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 			return nil
 		}
 
-		ctx, cancel := context.WithCancel(cmd.Context())
-		defer cancel()
-		go func() {
-			for {
-				select {
-				case <-ctx.Done():
-					return
-				case <-time.Tick(5 * time.Second):
-					// check if job is completed
-					jobParameters := pipeline_job.NewGetApplicationJobParams()
-					jobParameters.SetAppName(appName)
-					jobParameters.SetJobName(*jobName)
-					respJob, err := apiClient.PipelineJob.GetApplicationJob(jobParameters, nil)
-					if err != nil {
-						log.Errorf("Failed to get job %s details: %v", *jobName, err)
-						cancel()
-						return
-					}
-					if isCompletedJob(respJob.Payload.Status) {
-						log.Printf("Job completed")
-						cancel()
-						return
-					}
-				}
-			}
-		}()
-
 		return streaminglog.New(
 			cmd.ErrOrStderr(),
 			getReplicasForJob(apiClient, appName, *jobName),
 			getLogsForJob(apiClient, appName, *jobName),
 			time.Second, // not used
-		).StreamLogs(ctx)
+		).StreamLogs(cmd.Context())
 	},
 }
 
