@@ -10,6 +10,7 @@ import (
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/pipeline_job"
+	"github.com/equinor/radix-cli/pkg/client/consumer"
 	"github.com/equinor/radix-common/utils/pointers"
 )
 
@@ -102,7 +103,7 @@ func GetReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) Ge
 }
 
 func GetLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) GetLogFunc[JobStep] {
-	return func(ctx context.Context, item JobStep, _ time.Time, print func(text string)) error {
+	return func(ctx context.Context, item JobStep, _ time.Time, callback consumer.EventCallback) error {
 		if item.isSubPipeline {
 			logParameters := pipeline_job.NewGetTektonPipelineRunTaskStepLogsParamsWithContext(ctx)
 			logParameters.SetAppName(appName)
@@ -113,15 +114,8 @@ func GetLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) GetLog
 			logParameters.WithFollow(pointers.Ptr("true"))
 			logParameters.WithContext(ctx)
 
-			jobStepLog, err := apiClient.PipelineJob.GetTektonPipelineRunTaskStepLogs(logParameters, nil, CreateLogStreamer(print))
-			if err != nil {
-				return err
-			}
-			logLines := strings.Split(jobStepLog.Payload, "\n")
-			for _, line := range logLines {
-				print(line)
-			}
-			return nil
+			_, err := apiClient.PipelineJob.GetTektonPipelineRunTaskStepLogs(logParameters, nil, consumer.NewEventSourceClientOptions(callback))
+			return err
 		}
 
 		stepLogsParams := pipeline_job.NewGetPipelineJobStepLogsParamsWithContext(ctx)
@@ -131,16 +125,8 @@ func GetLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) GetLog
 		stepLogsParams.WithFollow(pointers.Ptr("true"))
 		stepLogsParams.WithContext(ctx)
 
-		jobStepLog, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil, CreateLogStreamer(print))
-		if err != nil {
-			return err
-		}
-		logLines := strings.Split(jobStepLog.Payload, "\n")
-		for _, line := range logLines {
-			print(line)
-		}
-
-		return nil
+		_, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil, consumer.NewEventSourceClientOptions(callback))
+		return err
 	}
 }
 

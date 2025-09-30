@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/equinor/radix-cli/pkg/client/consumer"
-	"github.com/go-openapi/runtime"
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,7 +22,7 @@ type Item interface {
 // GetReplicasFunc is a function type that returns a list of items (replicas) to stream logs from, a boolean indicating if we are finished, and an error if any occurred.
 type GetReplicasFunc[T Item] func() ([]T, bool, error)
 
-type GetLogFunc[T Item] func(ctx context.Context, item T, since time.Time, print func(text string)) error
+type GetLogFunc[T Item] func(ctx context.Context, item T, since time.Time, callback consumer.EventCallback) error
 
 type streamingReplicas[T Item] struct {
 	output      io.Writer
@@ -104,8 +103,18 @@ func (c *streamingReplicas[T]) streamLogs(ctx context.Context, item T) error {
 		since = item.Created()
 	}
 
-	err := c.getLogs(ctx, item, since, func(text string) {
-		PrintLine(c.output, item.Identifier(), text, color)
+	err := c.getLogs(ctx, item, since, func(event consumer.Event) {
+		switch event.Type {
+		case "event":
+			switch event.Message {
+			case "started":
+				PrintLine(c.output, item.Identifier(), "stream started...", color)
+			case "completed":
+				PrintLine(c.output, item.Identifier(), "stream closed.", color)
+			}
+		case "data":
+			PrintLine(c.output, item.Identifier(), event.Message, color)
+		}
 	})
 	if err != nil {
 		if errors.Is(err, io.EOF) || errors.Is(err, context.Canceled) {
@@ -116,20 +125,4 @@ func (c *streamingReplicas[T]) streamLogs(ctx context.Context, item T) error {
 		return err
 	}
 	return nil
-}
-
-func CreateLogStreamer(print func(text string)) func(co *runtime.ClientOperation) {
-	return consumer.NewEventSourceClientOptions(func(event consumer.Event) {
-		switch event.Type {
-		case "event":
-			switch event.Message {
-			case "started":
-				print("stream started...")
-			case "completed":
-				print("stream closed.")
-			}
-		case "data":
-			print(event.Message)
-		}
-	})
 }

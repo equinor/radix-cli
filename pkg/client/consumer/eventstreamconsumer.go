@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"io"
-	"iter"
 	"mime"
 	"strings"
 
@@ -16,7 +15,7 @@ type Event struct {
 	Message string
 }
 
-type EventIterator iter.Seq[Event]
+type EventCallback func(Event)
 
 const ContentTypeEventStream = "text/event-stream"
 
@@ -29,75 +28,54 @@ func NewEventSourceConsumer() runtime.Consumer {
 			return errors.New("nil destination for EventStreamConsumer")
 		}
 
-		eventIter, ok := data.(*EventIterator)
+		callback, ok := data.(EventCallback)
 		if !ok {
-			return errors.New("EventStreamConsumer requires a pointer to an EventIterator")
+			return errors.New("EventStreamConsumer requires a EventCallback function as destination")
 		}
 
-		*eventIter = func(yield func(Event) bool) {
-			scanner := bufio.NewScanner(reader)
-			for scanner.Scan() {
-				line := scanner.Text()
-				if len(line) == 0 {
-					continue
-				}
-
-				pos := strings.Index(line, ":")
-				if pos == -1 {
-					continue
-				}
-				if pos == 0 {
-					continue // ignore comments
-				}
-
-				category := line[0:pos]
-				data := line[pos+2:]
-
-				event := Event{
-					Type:    category,
-					Message: data,
-				}
-
-				if !yield(event) {
-					break
-				}
+		scanner := bufio.NewScanner(reader)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if len(line) == 0 {
+				continue
 			}
+
+			pos := strings.Index(line, ":")
+			if pos == -1 {
+				continue
+			}
+			if pos == 0 {
+				continue // ignore comments
+			}
+
+			category := line[0:pos]
+			data := line[pos+2:]
+
+			callback(Event{
+				Type:    category,
+				Message: data,
+			})
 		}
 
-		return nil
+		// We must return some kind of error, so the Generated API client doesnt try to convert the nil-data to a json structure
+		return io.EOF
 	})
 }
 
-func NewEventSourceClientOptions(f func(event Event)) func(co *runtime.ClientOperation) {
+func NewEventSourceClientOptions(callback EventCallback) func(co *runtime.ClientOperation) {
 	return func(co *runtime.ClientOperation) {
 		// We will fallback to the old reader if the content-type is not event-stream
 		oldReader := co.Reader
 
-		co.Reader = runtime.ClientResponseReaderFunc(func(cr runtime.ClientResponse, c runtime.Consumer) (interface{}, error) {
+		co.Reader = runtime.ClientResponseReaderFunc(func(cr runtime.ClientResponse, c runtime.Consumer) (any, error) {
 			ct := cr.GetHeader("Content-Type")
 			mt, _, _ := mime.ParseMediaType(ct)
 			if mt != ContentTypeEventStream {
 				return oldReader.ReadResponse(cr, c)
 			}
 
-			var eventIter EventIterator
-			err := c.Consume(cr.Body(), &eventIter)
-			if err != nil {
-				return nil, err
-			}
-
-			// Iterate over the events and call the callback function
-			for event := range eventIter {
-				select {
-				case <-co.Context.Done():
-					return nil, co.Context.Err()
-				default:
-					f(event)
-				}
-			}
-
-			// We must return some kind of error, so the Generated API client doesnt try to convert the nil-data to a json structure
-			return nil, io.EOF
+			err := c.Consume(cr.Body(), callback)
+			return nil, err
 		})
 	}
 }

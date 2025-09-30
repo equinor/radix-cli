@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"strconv"
-	"strings"
 	"time"
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/component"
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
+	"github.com/equinor/radix-cli/pkg/client/consumer"
 	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/go-openapi/strfmt"
 )
@@ -100,7 +100,7 @@ func GetComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, e
 func GetComponentLog(apiClient *radixapi.Radixapi, appName string, previous bool) GetLogFunc[ComponentItem] {
 	previousStr := strconv.FormatBool(previous)
 
-	return func(ctx context.Context, item ComponentItem, since time.Time, print func(text string)) error {
+	return func(ctx context.Context, item ComponentItem, since time.Time, callback consumer.EventCallback) error {
 		logParameters := component.NewLogParamsWithContext(ctx)
 		logParameters.WithAppName(appName)
 		logParameters.WithDeploymentName("irrelevant")
@@ -110,17 +110,7 @@ func GetComponentLog(apiClient *radixapi.Radixapi, appName string, previous bool
 		logParameters.SetSinceTime(pointers.Ptr(strfmt.DateTime(since)))
 		logParameters.WithPrevious(&previousStr)
 
-		resp, err := apiClient.Component.Log(logParameters, nil, CreateLogStreamer(print))
-		if err != nil {
-			return err
-		}
-
-		lines := strings.Split(resp.Payload, "\n")
-		for _, line := range lines {
-			print(line)
-		}
-		print("stream closed.")
-
-		return nil
+		_, err := apiClient.Component.Log(logParameters, nil, consumer.NewEventSourceClientOptions(callback))
+		return err
 	}
 }
