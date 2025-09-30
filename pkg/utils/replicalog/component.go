@@ -44,7 +44,7 @@ func GetReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentN
 
 		var replicas []ComponentItem
 		for _, comp := range environmentDetails.Payload.ActiveDeployment.Components {
-			if comp.Name != nil && *comp.Name != componentName {
+			if comp.Name == nil || *comp.Name != componentName {
 				continue
 			}
 
