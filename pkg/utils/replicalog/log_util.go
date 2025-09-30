@@ -9,28 +9,28 @@ import (
 	"github.com/fatih/color"
 )
 
-type ColorFunc func(a ...interface{}) string
+type colorFunc func(a ...interface{}) string
 
 var (
-	Yellow  = color.New(color.FgHiYellow, color.BgBlack).SprintFunc()
-	Green   = color.New(color.FgHiGreen, color.BgBlack).SprintFunc()
-	Blue    = color.New(color.FgHiBlue, color.BgBlack).SprintFunc()
-	Cyan    = color.New(color.FgCyan, color.BgBlack).SprintFunc()
-	Red     = color.New(color.FgHiRed, color.BgBlack).SprintFunc()
-	Magenta = color.New(color.FgHiMagenta, color.BgBlack).SprintFunc()
+	yellow  = color.New(color.FgHiYellow, color.BgBlack).SprintFunc()
+	green   = color.New(color.FgHiGreen, color.BgBlack).SprintFunc()
+	blue    = color.New(color.FgHiBlue, color.BgBlack).SprintFunc()
+	cyan    = color.New(color.FgCyan, color.BgBlack).SprintFunc()
+	red     = color.New(color.FgHiRed, color.BgBlack).SprintFunc()
+	magenta = color.New(color.FgHiMagenta, color.BgBlack).SprintFunc()
 
-	Colors = []func(a ...interface{}) string{Yellow, Green, Blue, Cyan, Red, Magenta}
+	colors = []func(a ...interface{}) string{yellow, green, blue, cyan, red, magenta}
 
 	writeMutex = sync.Mutex{}
 )
 
-// GetColor Rotates color
-func GetColor(num int) ColorFunc {
-	return Colors[num%len(Colors)]
+// getColor Rotates color
+func getColor(num int) colorFunc {
+	return colors[num%len(colors)]
 }
 
-// PrintLine logs lines with color, safe for concurrent use by multiple goroutines
-func PrintLine(w io.Writer, name string, logLine string, color ColorFunc) {
+// printLine logs lines with color, safe for concurrent use by multiple goroutines
+func printLine(w io.Writer, name string, logLine string, color colorFunc) {
 
 	writeMutex.Lock()
 	defer writeMutex.Unlock()

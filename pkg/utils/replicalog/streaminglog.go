@@ -96,7 +96,7 @@ func (c *streamingReplicas[T]) StreamLogs(ctx context.Context, exitOnFailure boo
 
 func (c *streamingReplicas[T]) streamLogs(ctx context.Context, item T) error {
 	c.colorIndex++
-	color := GetColor(c.colorIndex)
+	color := getColor(c.colorIndex)
 
 	since := c.since
 	if item.Created().After(since) {
@@ -108,12 +108,12 @@ func (c *streamingReplicas[T]) streamLogs(ctx context.Context, item T) error {
 		case "event":
 			switch event.Message {
 			case "started":
-				PrintLine(c.output, item.Identifier(), "stream started...", color)
+				printLine(c.output, item.Identifier(), "stream started...", color)
 			case "completed":
-				PrintLine(c.output, item.Identifier(), "stream closed.", color)
+				printLine(c.output, item.Identifier(), "stream closed.", color)
 			}
 		case "data":
-			PrintLine(c.output, item.Identifier(), event.Message, color)
+			printLine(c.output, item.Identifier(), event.Message, color)
 		}
 	})
 	if err != nil {
@@ -121,7 +121,7 @@ func (c *streamingReplicas[T]) streamLogs(ctx context.Context, item T) error {
 			return nil
 		}
 
-		PrintLine(c.output, item.Identifier(), Red(fmt.Sprintf("error: %s", err.Error())), color)
+		printLine(c.output, item.Identifier(), red(fmt.Sprintf("error: %s", err.Error())), color)
 		return err
 	}
 	return nil
