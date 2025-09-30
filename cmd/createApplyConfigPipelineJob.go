@@ -85,6 +85,7 @@ By default it applies changes to properties DNS alias, build secrets, and create
 		if err != nil {
 			return err
 		}
+		printPayload(newJob.GetPayload())
 
 		jobName := newJob.GetPayload().Name
 		log.Infof("Apply-config pipeline job triggered with the name %s\n", *jobName)

@@ -109,6 +109,7 @@ var createDeployPipelineJobCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		printPayload(newJob.GetPayload())
 
 		jobName := newJob.GetPayload().Name
 		log.Infof("Deploy pipeline job triggered with the name %s\n", *jobName)

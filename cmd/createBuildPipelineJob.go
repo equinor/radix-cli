@@ -83,6 +83,7 @@ var createBuildPipelineJobCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		printPayload(newJob.GetPayload())
 
 		jobName := newJob.GetPayload().Name
 		log.Infof("Build pipeline job triggered with the name %s\n", *jobName)

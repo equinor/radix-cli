@@ -105,6 +105,7 @@ var createPromotePipelineJobCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		printPayload(newJob.GetPayload())
 
 		jobName := newJob.GetPayload().Name
 		log.Infof("Promote pipeline job triggered with the name %s\n", *jobName)
