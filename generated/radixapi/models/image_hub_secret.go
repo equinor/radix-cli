@@ -37,7 +37,8 @@ type ImageHubSecret struct {
 	Status string `json:"status,omitempty"`
 
 	// Updated when the secret was last changed
-	Updated interface{} `json:"updated,omitempty"`
+	// Format: date-time
+	Updated strfmt.DateTime `json:"updated,omitempty"`
 
 	// Username for connecting to private image hub
 	// Example: my-user-name
@@ -54,6 +55,10 @@ func (m *ImageHubSecret) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUpdated(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -112,6 +117,18 @@ func (m *ImageHubSecret) validateStatus(formats strfmt.Registry) error {
 
 	// value enum
 	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ImageHubSecret) validateUpdated(formats strfmt.Registry) error {
+	if swag.IsZero(m.Updated) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
 		return err
 	}
 

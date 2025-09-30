@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"time"
 
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
@@ -24,6 +25,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/model"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
+	"github.com/equinor/radix-cli/pkg/utils/replicalog"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -88,13 +90,20 @@ var createBuildDeployApplicationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		printPayload(newJob.GetPayload())
 
 		jobName := newJob.GetPayload().Name
 		log.Infof("Build-deploy pipeline job triggered with the name %s\n", *jobName)
 		if !follow {
 			return nil
 		}
-		return getLogsJob(cmd, apiClient, appName, *jobName)
+
+		return replicalog.New(
+			cmd.ErrOrStderr(),
+			replicalog.GetReplicasForJob(apiClient, appName, *jobName),
+			replicalog.GetLogsForJob(apiClient, appName, *jobName),
+			time.Second, // not used
+		).StreamLogs(cmd.Context(), true)
 	},
 }
 

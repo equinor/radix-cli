@@ -99,6 +99,14 @@ type ReplicaLogParams struct {
 	*/
 	File *string
 
+	/* Follow.
+
+	   Get log as a server-sent event stream if true
+
+	   Format: boolean
+	*/
+	Follow *string
+
 	/* Lines.
 
 	   Get log lines (example 1000)
@@ -248,6 +256,17 @@ func (o *ReplicaLogParams) SetFile(file *string) {
 	o.File = file
 }
 
+// WithFollow adds the follow to the replica log params
+func (o *ReplicaLogParams) WithFollow(follow *string) *ReplicaLogParams {
+	o.SetFollow(follow)
+	return o
+}
+
+// SetFollow adds the follow to the replica log params
+func (o *ReplicaLogParams) SetFollow(follow *string) {
+	o.Follow = follow
+}
+
 // WithLines adds the lines to the replica log params
 func (o *ReplicaLogParams) WithLines(lines *string) *ReplicaLogParams {
 	o.SetLines(lines)
@@ -343,6 +362,23 @@ func (o *ReplicaLogParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if qFile != "" {
 
 			if err := r.SetQueryParam("file", qFile); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Follow != nil {
+
+		// query param follow
+		var qrFollow string
+
+		if o.Follow != nil {
+			qrFollow = *o.Follow
+		}
+		qFollow := qrFollow
+		if qFollow != "" {
+
+			if err := r.SetQueryParam("follow", qFollow); err != nil {
 				return err
 			}
 		}

@@ -87,6 +87,14 @@ type GetTektonPipelineRunTaskStepLogsParams struct {
 	*/
 	File *string
 
+	/* Follow.
+
+	   Get log as a server-sent event stream if true
+
+	   Format: boolean
+	*/
+	Follow *string
+
 	/* JobName.
 
 	   Name of pipeline job
@@ -224,6 +232,17 @@ func (o *GetTektonPipelineRunTaskStepLogsParams) SetFile(file *string) {
 	o.File = file
 }
 
+// WithFollow adds the follow to the get tekton pipeline run task step logs params
+func (o *GetTektonPipelineRunTaskStepLogsParams) WithFollow(follow *string) *GetTektonPipelineRunTaskStepLogsParams {
+	o.SetFollow(follow)
+	return o
+}
+
+// SetFollow adds the follow to the get tekton pipeline run task step logs params
+func (o *GetTektonPipelineRunTaskStepLogsParams) SetFollow(follow *string) {
+	o.Follow = follow
+}
+
 // WithJobName adds the jobName to the get tekton pipeline run task step logs params
 func (o *GetTektonPipelineRunTaskStepLogsParams) WithJobName(jobName string) *GetTektonPipelineRunTaskStepLogsParams {
 	o.SetJobName(jobName)
@@ -331,6 +350,23 @@ func (o *GetTektonPipelineRunTaskStepLogsParams) WriteToRequest(r runtime.Client
 		if qFile != "" {
 
 			if err := r.SetQueryParam("file", qFile); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Follow != nil {
+
+		// query param follow
+		var qrFollow string
+
+		if o.Follow != nil {
+			qrFollow = *o.Follow
+		}
+		qFollow := qrFollow
+		if qFollow != "" {
+
+			if err := r.SetQueryParam("follow", qFollow); err != nil {
 				return err
 			}
 		}

@@ -16,22 +16,13 @@ package cmd
 
 import (
 	"errors"
-	"strconv"
-	"strings"
-	"time"
 
-	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
-	"github.com/equinor/radix-cli/generated/radixapi/client/component"
-	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
-	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
-	"github.com/equinor/radix-cli/pkg/utils/log"
-	"github.com/equinor/radix-common/utils/slice"
-	"github.com/go-openapi/strfmt"
+	"github.com/equinor/radix-cli/pkg/utils/replicalog"
 	"github.com/spf13/cobra"
 )
 
@@ -79,100 +70,13 @@ Examples:
 			return err
 		}
 
-		_, replicas, err := getReplicasForComponent(apiClient, appName, environmentName, componentName)
-		if err != nil {
-			return err
-		}
-
-		componentReplicas := make(map[string][]string)
-		componentReplicas[componentName] = replicas
-
-		return logForComponentReplicas(cmd, apiClient, appName, environmentName, since, componentReplicas, previousLog)
+		return replicalog.New(
+			cmd.ErrOrStderr(),
+			replicalog.GetReplicasForComponent(apiClient, appName, environmentName, componentName, previousLog),
+			replicalog.GetComponentLog(apiClient, appName, previousLog),
+			since,
+		).StreamLogs(cmd.Context(), false)
 	},
-}
-
-func logForComponentReplicas(cmd *cobra.Command, apiClient *radixapi.Radixapi, appName, environmentName string, since time.Duration, componentReplicas map[string][]string, previousLog bool) error {
-	refreshLog := time.Tick(settings.DeltaRefreshApplication)
-
-	// Sometimes, even though we get delta, the log is the same as previous
-	previousLogForReplica := make(map[string]string)
-	previous := strconv.FormatBool(previousLog)
-
-	for range refreshLog {
-		i := 0
-		for componentName, replicas := range componentReplicas {
-			for _, replica := range replicas {
-				now := time.Now()
-				sinceTime := now.Add(-since)
-				sinceDt := strfmt.DateTime(sinceTime)
-
-				logParameters := component.NewLogParams()
-				logParameters.WithAppName(appName)
-				logParameters.WithDeploymentName("irrelevant")
-				logParameters.WithComponentName(componentName)
-				logParameters.WithPodName(replica)
-				if !previousLog {
-					logParameters.SetSinceTime(&sinceDt)
-				}
-				logParameters.WithPrevious(&previous)
-				logData, err := apiClient.Component.Log(logParameters, nil)
-				if err != nil {
-					// Replicas may have died
-					_, newReplicas, err := getReplicasForComponent(apiClient, appName, environmentName, componentName)
-					if err != nil {
-						return err
-					}
-
-					componentReplicas[componentName] = newReplicas
-					break
-
-				} else {
-					// Sometimes, even though we get delta, the log is the same as previous
-					if len(logData.Payload) > 0 && !strings.EqualFold(logData.Payload, previousLogForReplica[replica]) {
-						logLines := strings.Split(strings.Replace(strings.TrimRight(logData.Payload, "\r\n"), "\r\n", "\n", -1), "\n")
-						if len(logLines) > 0 {
-							log.PrintLines(cmd, replica, []string{}, logLines, log.GetColor(i))
-							previousLogForReplica[replica] = logData.Payload
-						}
-					}
-				}
-
-				i++
-			}
-		}
-	}
-	return nil
-}
-
-func getReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentName, componentName string) (*string, []string, error) {
-	// Get active deployment
-	environmentParams := environment.NewGetEnvironmentParams()
-	environmentParams.SetAppName(appName)
-	environmentParams.SetEnvName(environmentName)
-	environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var deploymentName string
-	if environmentDetails == nil || environmentDetails.Payload.ActiveDeployment == nil {
-		return nil, nil, errors.New("active deployment was not found in environment")
-	}
-
-	var replicas []string
-	deploymentName = *environmentDetails.Payload.ActiveDeployment.Name
-	for _, comp := range environmentDetails.Payload.ActiveDeployment.Components {
-		if comp.Name != nil &&
-			*comp.Name == componentName {
-			replicas = slice.Reduce(comp.ReplicaList, make([]string, 0), func(acc []string, replica *models.ReplicaSummary) []string {
-				return append(acc, *replica.Name)
-			})
-			break
-		}
-	}
-
-	return &deploymentName, replicas, nil
 }
 
 func init() {

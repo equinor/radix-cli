@@ -16,33 +16,15 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-	"slices"
-	"strings"
 	"time"
 
-	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
-	"github.com/equinor/radix-cli/generated/radixapi/client/pipeline_job"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
-	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
-	"github.com/equinor/radix-cli/pkg/utils/log"
-	"github.com/sirupsen/logrus"
+	"github.com/equinor/radix-cli/pkg/utils/replicalog"
 	"github.com/spf13/cobra"
 )
-
-const (
-	jobStatusRunning   = "Running"
-	jobStatusFailed    = "Failed"
-	jobStatusSucceeded = "Succeeded"
-	jobStatusStopped   = "Stopped"
-
-	stepStatusWaiting = "Waiting"
-)
-
-var completedJobStatuses = []string{jobStatusSucceeded, jobStatusStopped, jobStatusFailed}
 
 // logsJobCmd represents the logsJobCmd command
 var logsJobCmd = &cobra.Command{
@@ -78,104 +60,13 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 			return err
 		}
 
-		return getLogsJob(cmd, apiClient, appName, jobName)
+		return replicalog.New(
+			cmd.ErrOrStderr(),
+			replicalog.GetReplicasForJob(apiClient, appName, jobName),
+			replicalog.GetLogsForJob(apiClient, appName, jobName),
+			time.Second, // not used
+		).StreamLogs(cmd.Context(), true)
 	},
-}
-
-func getLogsJob(cmd *cobra.Command, apiClient *radixapi.Radixapi, appName, jobName string) error {
-	timeout := time.NewTimer(settings.DeltaTimeout)
-	refreshLog := time.Tick(settings.DeltaRefreshApplication)
-
-	// Sometimes, even though we get delta, the log is the same as previous
-	previousLogForStep := make(map[string][]string)
-	jobParameters := pipeline_job.NewGetApplicationJobParams()
-	jobParameters.SetAppName(appName)
-	jobParameters.SetJobName(jobName)
-	getLogAttempts := 5
-	getLogStartTime := time.Now()
-
-	for {
-		select {
-		case <-refreshLog:
-			respJob, _ := apiClient.PipelineJob.GetApplicationJob(jobParameters, nil)
-			if respJob == nil {
-				continue
-			}
-			if isCompletedJob(respJob.Payload.Status) {
-				return errorAndLogJobStatus(respJob.Payload.Status, cmd)
-			}
-			loggedForJob := false
-
-			for i, step := range respJob.Payload.Steps {
-				if step.Status == stepStatusWaiting {
-					continue
-				}
-
-				// Sometimes, even though we get delta, the log is the same as previous
-				previousLogLines := previousLogForStep[step.Name]
-				stepLogsParams := pipeline_job.NewGetPipelineJobStepLogsParams()
-				stepLogsParams.SetAppName(jobParameters.AppName)
-				stepLogsParams.SetJobName(jobParameters.JobName)
-				stepLogsParams.SetStepName(step.Name)
-
-				jobStepLog, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil)
-				if err != nil {
-					logrus.Infof("Failed to get pipeline job logs. %v", err)
-					break
-				}
-				logLines := strings.Split(strings.Replace(jobStepLog.Payload, "\r\n", "\n", -1), "\n")
-				if len(logLines) > 0 && !strings.EqualFold(logLines[0], "") {
-					log.PrintLines(cmd, step.Name, previousLogLines, logLines, log.GetColor(i))
-					loggedForJob = true
-					previousLogForStep[step.Name] = logLines
-				}
-			}
-
-			if loggedForJob {
-				// Reset timeout
-				timeout = time.NewTimer(settings.DeltaTimeout)
-			}
-		case <-timeout.C:
-			respJob, err := apiClient.PipelineJob.GetApplicationJob(jobParameters, nil)
-			if err != nil {
-				return err
-			}
-			if respJob == nil {
-				continue
-			}
-			jobSummary := respJob.Payload
-			if isCompletedJob(jobSummary.Status) {
-				return errorAndLogJobStatus(jobSummary.Status, cmd)
-			}
-			if jobSummary.Status == "Running" {
-				// Reset timeout
-				timeout = time.NewTimer(settings.DeltaTimeout)
-				break
-			}
-			getLogAttempts--
-			if getLogAttempts > 0 {
-				getLogAwaitingTime := int(time.Since(getLogStartTime))
-				logrus.Infof("Nothing logged the last %d seconds. Job summary: %v. Status: %s. Contihue waiting", getLogAwaitingTime, jobSummary, jobSummary.Status)
-				break
-			}
-			logrus.Infof("Nothing logged the last %s. Job summary: %v. Status: %s. Timeout", settings.DeltaTimeout, jobSummary, jobSummary.Status)
-			return nil
-		}
-	}
-}
-
-func isCompletedJob(status string) bool {
-	return slices.Contains(completedJobStatuses, status)
-}
-
-func errorAndLogJobStatus(status string, cmd *cobra.Command) error {
-	fmt.Fprintln(cmd.OutOrStdout())
-	msg := fmt.Sprintf("job is completed with status %s", status)
-	if status == jobStatusFailed {
-		return errors.New(msg)
-	}
-	logrus.Info(msg)
-	return nil
 }
 
 func init() {

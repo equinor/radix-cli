@@ -1,244 +1,305 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-  // Har fjernet repo fra linje 210
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Launch radix-cli login",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {},
-      "args": ["login"]
-    },
-    {
-      "name": "Launch radix-cli logout",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {},
-      "args": ["logout"]
-    },
-    {
-      "name": "Launch radix-cli list applications",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {},
-      "args": ["get", "application"]
-    },
-    {
-      "name": "Launch radix-cli build deploy application",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {
-        "APP_SERVICE_ACCOUNT_TOKEN": "token"
-      },
-      "args": [
-        "--token-environment",
-        "--context",
-        "playground",
-        "create",
-        "job",
-        "build-deploy",
-        "--application",
-        "echo",
-        "-b",
-        "master",
-        "-f"
-      ]
-    },
-    {
-      "name": "Launch radix-cli deploy application",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {
-        "APP_SERVICE_ACCOUNT_TOKEN": "token"
-      },
-      "args": [
-        "--token-environment",
-        "--context",
-        "development",
-        "create",
-        "job",
-        "deploy",
-        "--application",
-        "xample-deploy-only",
-        "-e",
-        "prod",
-        "-f"
-      ]
-    },
-    {
-      "name": "Launch radix-cli set environment secret",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {
-        "APP_SERVICE_ACCOUNT_TOKEN": "token"
-      },
-      "args": [
-        "--token-environment",
-        "--from-config",
-        "--await-reconcile",
-        "set",
-        "environment-secret",
-        "--context",
-        "playground",
-        "-e",
-        "qa",
-        "--component",
-        "api",
-        "-s",
-        "APPINSIGHTS_INSTRUMENTATIONKEY",
-        "-v",
-        "iknu-test"
-      ]
-    },
-    {
-      "name": "Launch radix-cli get logs component",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {
-        "APP_SERVICE_ACCOUNT_TOKEN": "token"
-      },
-      "args": [
-        "get",
-        "logs",
-        "component",
-        "--application",
-        "xample-2-chat",
-        "--context",
-        "playground",
-        "-e",
-        "dev",
-        "--component",
-        "socket-server"
-      ]
-    },
-    {
-      "name": "Launch radix-cli get logs environment",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {
-        "APP_SERVICE_ACCOUNT_TOKEN": "token"
-      },
-      "args": [
-        "get",
-        "logs",
-        "environment",
-        "--application",
-        "xample-2-chat",
-        "--context",
-        "playground",
-        "-e",
-        "dev"
-      ]
-    },
-    {
-      "name": "Launch radix-cli get logs job",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {
-        "APP_SERVICE_ACCOUNT_TOKEN": "token"
-      },
-      "args": [
-        "--token-environment",
-        "--context",
-        "playground",
-        "get",
-        "logs",
-        "job",
-        "--application",
-        "echo",
-        "-j",
-        "radix-pipeline-20191227190153-aysdr"
-      ]
-    },
-    {
-      "name": "Launch radix-cli get environment from branch",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {
-        "APP_SERVICE_ACCOUNT_TOKEN": "token"
-      },
-      "args": [
-        "--token-environment",
-        "--from-config",
-        "get",
-        "config",
-        "branch-environment",
-        "-b",
-        "master"
-      ]
-    },
-    {
-      "name": "Launch radix-cli get application",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {
-        "APP_SERVICE_ACCOUNT_TOKEN": "token"
-      },
-      "args": [
-        "--token-environment",
-        "get",
-        "application",
-        "--application",
-        "xample-2-chat",
-        "--cluster",
-        "iknu-test-machine-user"
-      ]
-    },
-    {
-      "name": "Launch radix-cli restart component",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "env": {
-        "APP_SERVICE_ACCOUNT_TOKEN": "token"
-      },
-      "args": [
-        "--token-environment",
-        "--context", "playground",
-        "restart",
-        "component",
-        "--application", "echo",
-        "--environment", "master",
-        "--component", "www"
-      ]
-    },
-    {
-      "name": "Launch radix-cli validate radix-config",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/cli/rx/main.go",
-      "args": [
-        "validate",
-        "radix-config",
-        "-f", "/home/nst/go/src/github.com/nilsgstrabo/radix-job-demo/radixconfig.yaml"
-      ]
-    }
-  ]
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	// Har fjernet repo fra linje 210
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch radix-cli login",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {},
+			"args": ["login"]
+		},
+		{
+			"name": "Launch radix-cli logout",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {},
+			"args": ["logout"]
+		},
+		{
+			"name": "Launch radix-cli list applications",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {},
+			"args": ["get", "application"]
+		},
+		{
+			"name": "Launch radix-cli build deploy application",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {
+				"APP_SERVICE_ACCOUNT_TOKEN": "token"
+			},
+			"args": [
+				"--token-environment",
+				"--context",
+				"playground",
+				"create",
+				"job",
+				"build-deploy",
+				"--application",
+				"echo",
+				"-b",
+				"master",
+				"-f"
+			]
+		},
+		{
+			"name": "Launch radix-cli deploy application",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {
+				"APP_SERVICE_ACCOUNT_TOKEN": "token"
+			},
+			"args": [
+				"--token-environment",
+				"--context",
+				"development",
+				"create",
+				"job",
+				"deploy",
+				"--application",
+				"xample-deploy-only",
+				"-e",
+				"prod",
+				"-f"
+			]
+		},
+		{
+			"name": "Launch radix-cli set environment secret",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {
+				"APP_SERVICE_ACCOUNT_TOKEN": "token"
+			},
+			"args": [
+				"--token-environment",
+				"--from-config",
+				"--await-reconcile",
+				"set",
+				"environment-secret",
+				"--context",
+				"playground",
+				"-e",
+				"qa",
+				"--component",
+				"api",
+				"-s",
+				"APPINSIGHTS_INSTRUMENTATIONKEY",
+				"-v",
+				"iknu-test"
+			]
+		},
+		{
+			"name": "Launch radix-cli get logs component",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {
+				"APP_SERVICE_ACCOUNT_TOKEN": "token"
+			},
+			"args": [
+				"get",
+				"logs",
+				"component",
+				"--application",
+				"xample-2-chat",
+				"--context",
+				"playground",
+				"-e",
+				"dev",
+				"--component",
+				"socket-server"
+			]
+		},
+		{
+			"name": "Launch radix-cli get logs environment",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {
+				"APP_SERVICE_ACCOUNT_TOKEN": "token"
+			},
+			"args": [
+				"get",
+				"logs",
+				"environment",
+				"--application",
+				"xample-2-chat",
+				"--context",
+				"playground",
+				"-e",
+				"dev"
+			]
+		},
+		{
+			"name": "Launch radix-cli get logs job",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {
+				"APP_SERVICE_ACCOUNT_TOKEN": "token"
+			},
+			"args": [
+				"--token-environment",
+				"--context",
+				"playground",
+				"get",
+				"logs",
+				"job",
+				"--application",
+				"echo",
+				"-j",
+				"radix-pipeline-20191227190153-aysdr"
+			]
+		},
+		{
+			"name": "Launch radix-cli get environment from branch",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {
+				"APP_SERVICE_ACCOUNT_TOKEN": "token"
+			},
+			"args": [
+				"--token-environment",
+				"--from-config",
+				"get",
+				"config",
+				"branch-environment",
+				"-b",
+				"master"
+			]
+		},
+		{
+			"name": "Launch radix-cli get application",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {
+				"APP_SERVICE_ACCOUNT_TOKEN": "token"
+			},
+			"args": [
+				"--token-environment",
+				"get",
+				"application",
+				"--application",
+				"xample-2-chat",
+				"--cluster",
+				"iknu-test-machine-user"
+			]
+		},
+		{
+			"name": "Launch radix-cli restart component",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"env": {
+				"APP_SERVICE_ACCOUNT_TOKEN": "token"
+			},
+			"args": [
+				"--token-environment",
+				"--context",
+				"playground",
+				"restart",
+				"component",
+				"--application",
+				"echo",
+				"--environment",
+				"master",
+				"--component",
+				"www"
+			]
+		},
+		{
+			"name": "Launch radix-cli validate radix-config",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"args": [
+				"validate",
+				"radix-config",
+				"-f",
+				"/home/nst/go/src/github.com/nilsgstrabo/radix-job-demo/radixconfig.yaml"
+			]
+		},
+		{
+			"name": "Launch radix-cli get logs environment --application rihag --environment dev",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"args": [
+				"get",
+				"logs",
+				"environment",
+				"--application",
+				"rihag",
+				"--environment",
+				"dev",
+				"--since",
+				"10m"
+			]
+		},
+		{
+			"name": "Launch radix-cli get logs component --application rihag --component web --environment dev --previous --since 2h",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"args": [
+				"get",
+				"logs",
+				"component",
+				"--application",
+				"rihag",
+				"--component",
+				"web",
+				"--environment",
+				"dev",
+				"--previous",
+				"--since",
+				"2h"
+			]
+		},
+		{
+			"name": "Launch radix-cli create pipeline-job build-deploy --application rihag --branch main --follow",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"args": [
+				"create",
+				"pipeline-job",
+				"build-deploy",
+				"--application",
+				"rihag",
+				"--branch",
+				"main",
+				"--follow"
+			]
+		}
+	]
 }

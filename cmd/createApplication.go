@@ -17,17 +17,23 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
+	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/client/platform"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
+
+type CreateApplicationOutput struct {
+	Application models.ApplicationRegistration `json:"application"`
+	DeployKey   string                         `json:"deployKey"`
+}
 
 // createApplicationCmd represents the create application command
 var createApplicationCmd = &cobra.Command{
@@ -98,28 +104,39 @@ var createApplicationCmd = &cobra.Command{
 			return errors.New("unspecified error")
 
 		}
-		deployKeyAndSecretParams := application.NewGetDeployKeyAndSecretParams()
-		deployKeyAndSecretParams.SetAppName(appName)
-		getRadixRegistrationNoAccessErrorCount := 3
-		getRadixRegistrationNoAccessErrorPause := 2 * time.Second
-		for {
-			deployKeyResp, err := apiClient.Application.GetDeployKeyAndSecret(deployKeyAndSecretParams, nil)
-			if err != nil {
-				getRadixRegistrationNoAccessErrorCount--
-				if getRadixRegistrationNoAccessErrorCount == 0 {
-					return fmt.Errorf("error getting public deploy key: %w", err)
-				}
-				time.Sleep(getRadixRegistrationNoAccessErrorPause) // Sleep before trying again
-				continue
-			}
-			if deployKeyResp.Payload == nil || deployKeyResp.Payload.PublicDeployKey == nil || len(*deployKeyResp.Payload.PublicDeployKey) == 0 {
-				time.Sleep(2 * time.Second) // Sleep before trying again
-				continue
-			}
-			print(strings.TrimRight(*deployKeyResp.Payload.PublicDeployKey, "\t \n"))
-			return nil
-		}
+
+		deployKey, err := getDeployKeyAndSecretWithRetry(apiClient, appName)
+		printPayload(CreateApplicationOutput{
+			Application: *registrationUpsertResponse.ApplicationRegistration,
+			DeployKey:   deployKey,
+		})
+		logrus.Infof("Application created %s", appName)
+		// print out payload with, or without the deploy key (if it returns err, thats okay)
+		return err
 	},
+}
+
+func getDeployKeyAndSecretWithRetry(apiClient *radixapi.Radixapi, appName string) (string, error) {
+	deployKeyAndSecretParams := application.NewGetDeployKeyAndSecretParams()
+	deployKeyAndSecretParams.SetAppName(appName)
+	getRadixRegistrationNoAccessErrorCount := 3
+	getRadixRegistrationNoAccessErrorPause := 2 * time.Second
+	for {
+		deployKeyResp, err := apiClient.Application.GetDeployKeyAndSecret(deployKeyAndSecretParams, nil)
+		if err != nil {
+			getRadixRegistrationNoAccessErrorCount--
+			if getRadixRegistrationNoAccessErrorCount == 0 {
+				return "", fmt.Errorf("error getting public deploy key: %w", err)
+			}
+			time.Sleep(getRadixRegistrationNoAccessErrorPause) // Sleep before trying again
+			continue
+		}
+		if deployKeyResp.Payload == nil || deployKeyResp.Payload.PublicDeployKey == nil || len(*deployKeyResp.Payload.PublicDeployKey) == 0 {
+			time.Sleep(2 * time.Second) // Sleep before trying again
+			continue
+		}
+		return *deployKeyResp.Payload.PublicDeployKey, nil
+	}
 }
 
 func init() {

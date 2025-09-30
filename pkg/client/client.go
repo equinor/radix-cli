@@ -11,6 +11,7 @@ import (
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	vulnscanapi "github.com/equinor/radix-cli/generated/vulnscanapi/client"
 	"github.com/equinor/radix-cli/pkg/client/auth"
+	"github.com/equinor/radix-cli/pkg/client/consumer"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/go-openapi/runtime"
@@ -38,6 +39,7 @@ func GetRadixApiForCommand(cmd *cobra.Command) (*radixapi.Radixapi, error) {
 	endpoint := getEndpoint("server-radix-api", apiEnvironment, context, cluster)
 	verboseOutput, _ := cmd.Flags().GetBool(flagnames.Verbose)
 	transport := getTransport(endpoint, authWriter, verboseOutput)
+	transport.Consumers[consumer.ContentTypeEventStream] = consumer.NewEventSourceConsumer()
 	silenceError, _ := cmd.Flags().GetBool(flagnames.SilenceError)
 	cmd.SilenceErrors = silenceError
 	return radixapi.New(transport, strfmt.Default), nil

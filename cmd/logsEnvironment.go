@@ -17,15 +17,12 @@ package cmd
 import (
 	"errors"
 
-	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
-	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
-	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
-	"github.com/equinor/radix-common/utils/slice"
+	"github.com/equinor/radix-cli/pkg/utils/replicalog"
 	"github.com/spf13/cobra"
 )
 
@@ -64,40 +61,13 @@ rx get logs environment --application radix-test --environment dev`,
 			return err
 		}
 
-		componentReplicas, err := getComponentReplicasForEnvironment(apiClient, appName, environmentName)
-		if err != nil {
-			return err
-		}
-
-		return logForComponentReplicas(cmd, apiClient, appName, environmentName, since, componentReplicas, previousLog)
+		return replicalog.New(
+			cmd.ErrOrStderr(),
+			replicalog.GetComponentReplicasForEnvironment(apiClient, appName, environmentName, previousLog),
+			replicalog.GetComponentLog(apiClient, appName, previousLog),
+			since,
+		).StreamLogs(cmd.Context(), false)
 	},
-}
-
-func getComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, environmentName string) (map[string][]string, error) {
-	// Get active deployment
-	environmentParams := environment.NewGetEnvironmentParams()
-	environmentParams.SetAppName(appName)
-	environmentParams.SetEnvName(environmentName)
-	environmentDetails, err := apiClient.Environment.GetEnvironment(environmentParams, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if environmentDetails == nil || environmentDetails.Payload.ActiveDeployment == nil {
-		return nil, errors.New("active deployment was not found in environment")
-	}
-
-	componentReplicas := make(map[string][]string)
-	for _, component := range environmentDetails.Payload.ActiveDeployment.Components {
-		if component.Name != nil {
-			componentReplicas[*component.Name] = slice.Reduce(component.ReplicaList, make([]string, 0), func(acc []string, replica *models.ReplicaSummary) []string {
-				return append(acc, *replica.Name)
-			})
-		}
-	}
-
-	return componentReplicas, nil
 }
 
 func init() {

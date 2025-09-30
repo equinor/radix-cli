@@ -87,6 +87,14 @@ type GetPipelineJobStepLogsParams struct {
 	*/
 	File *string
 
+	/* Follow.
+
+	   Get log as a server-sent event stream if true
+
+	   Format: boolean
+	*/
+	Follow *string
+
 	/* JobName.
 
 	   Name of the pipeline job
@@ -212,6 +220,17 @@ func (o *GetPipelineJobStepLogsParams) SetFile(file *string) {
 	o.File = file
 }
 
+// WithFollow adds the follow to the get pipeline job step logs params
+func (o *GetPipelineJobStepLogsParams) WithFollow(follow *string) *GetPipelineJobStepLogsParams {
+	o.SetFollow(follow)
+	return o
+}
+
+// SetFollow adds the follow to the get pipeline job step logs params
+func (o *GetPipelineJobStepLogsParams) SetFollow(follow *string) {
+	o.Follow = follow
+}
+
 // WithJobName adds the jobName to the get pipeline job step logs params
 func (o *GetPipelineJobStepLogsParams) WithJobName(jobName string) *GetPipelineJobStepLogsParams {
 	o.SetJobName(jobName)
@@ -297,6 +316,23 @@ func (o *GetPipelineJobStepLogsParams) WriteToRequest(r runtime.ClientRequest, r
 		if qFile != "" {
 
 			if err := r.SetQueryParam("file", qFile); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Follow != nil {
+
+		// query param follow
+		var qrFollow string
+
+		if o.Follow != nil {
+			qrFollow = *o.Follow
+		}
+		qFollow := qrFollow
+		if qFollow != "" {
+
+			if err := r.SetQueryParam("follow", qFollow); err != nil {
 				return err
 			}
 		}

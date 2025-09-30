@@ -93,6 +93,14 @@ type JobLogParams struct {
 	*/
 	File *string
 
+	/* Follow.
+
+	   Get log as a server-sent event stream if true
+
+	   Format: boolean
+	*/
+	Follow *string
+
 	/* JobComponentName.
 
 	   Name of job-component
@@ -235,6 +243,17 @@ func (o *JobLogParams) SetFile(file *string) {
 	o.File = file
 }
 
+// WithFollow adds the follow to the job log params
+func (o *JobLogParams) WithFollow(follow *string) *JobLogParams {
+	o.SetFollow(follow)
+	return o
+}
+
+// SetFollow adds the follow to the job log params
+func (o *JobLogParams) SetFollow(follow *string) {
+	o.Follow = follow
+}
+
 // WithJobComponentName adds the jobComponentName to the job log params
 func (o *JobLogParams) WithJobComponentName(jobComponentName string) *JobLogParams {
 	o.SetJobComponentName(jobComponentName)
@@ -336,6 +355,23 @@ func (o *JobLogParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regist
 		if qFile != "" {
 
 			if err := r.SetQueryParam("file", qFile); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Follow != nil {
+
+		// query param follow
+		var qrFollow string
+
+		if o.Follow != nil {
+			qrFollow = *o.Follow
+		}
+		qFollow := qrFollow
+		if qFollow != "" {
+
+			if err := r.SetQueryParam("follow", qFollow); err != nil {
 				return err
 			}
 		}
