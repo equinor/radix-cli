@@ -15,28 +15,35 @@
 package cmd
 
 import (
-	"errors"
-
-	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/generated/radixapi/client/configuration"
+	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/spf13/cobra"
 )
 
-var outputFormat = "text"
-
-// createCmd represents the list command
-var createCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create Radix resources",
-	Long:  `A longer description .`,
+// getClusterConfigCmd represents the get-cluster-config command
+var getClusterConfigCmd = &cobra.Command{
+	Use:   "cluster-config",
+	Short: "Gets setting from Radix cluster config",
+	Long:  `Helper functionality to get data from radix cluster config.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return errors.New("please specify the resource you want to create")
+
+		apiClient, err := client.GetRadixApiForCommand(cmd)
+		if err != nil {
+			return err
+		}
+
+		payload, err := apiClient.Configuration.GetConfiguration(configuration.NewGetConfigurationParams(), nil)
+		if err != nil {
+			return err
+		}
+
+		printPayload(payload.Payload)
+
+		return nil
 	},
 }
 
 func init() {
-	createCmd.PersistentFlags().StringVarP(&outputFormat, flagnames.Output, "o", "text", "(Deprecated) Output format. json")
-	_ = createCmd.PersistentFlags().MarkDeprecated(flagnames.Output, "Everything created is printed in JSON format by default.")
-	_ = createCmd.PersistentFlags().MarkHidden(flagnames.Output)
+	getCmd.AddCommand(getClusterConfigCmd)
 
-	rootCmd.AddCommand(createCmd)
 }
