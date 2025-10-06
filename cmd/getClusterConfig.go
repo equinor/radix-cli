@@ -38,12 +38,10 @@ var getClusterConfigCmd = &cobra.Command{
 		}
 
 		printPayload(payload.Payload)
-
 		return nil
 	},
 }
 
 func init() {
 	getCmd.AddCommand(getClusterConfigCmd)
-
 }
