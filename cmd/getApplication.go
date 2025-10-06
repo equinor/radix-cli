@@ -24,6 +24,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type GetApplicationResponse struct {
+	Applications []string `json:"applications,omitempty"`
+}
+
 // getApplicationCmd represents the getApplicationCmd command
 var getApplicationCmd = &cobra.Command{
 	Use:   "application",
@@ -55,7 +59,7 @@ var getApplicationCmd = &cobra.Command{
 				appNames = append(appNames, *application.Name)
 			}
 			completion.UpdateAppNamesCache(appNames)
-			printPayload(struct{ Applications []string }{Applications: appNames})
+			printPayload(GetApplicationResponse{Applications: appNames})
 
 			return nil
 		}
