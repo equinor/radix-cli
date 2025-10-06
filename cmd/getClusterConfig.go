@@ -44,4 +44,5 @@ var getClusterConfigCmd = &cobra.Command{
 
 func init() {
 	getCmd.AddCommand(getClusterConfigCmd)
+	setContextSpecificPersistentFlags(getClusterConfigCmd)
 }
