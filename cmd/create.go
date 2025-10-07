@@ -15,16 +15,10 @@
 package cmd
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
-	"log"
 
 	"github.com/equinor/radix-cli/pkg/flagnames"
-	"github.com/equinor/radix-cli/pkg/flagvalues"
-	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/spf13/cobra"
-	"sigs.k8s.io/yaml"
 )
 
 var outputFormat = "text"
@@ -40,25 +34,9 @@ var createCmd = &cobra.Command{
 }
 
 func init() {
-	createCmd.PersistentFlags().StringVarP(&outputFormat, flagnames.Output, "o", "text", "(Optional) Output format. json or not set (plain text)")
-	_ = createCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.Output)
+	createCmd.PersistentFlags().StringVarP(&outputFormat, flagnames.Output, "o", "text", "(Deprecated) Output format. json")
+	_ = createCmd.PersistentFlags().MarkDeprecated(flagnames.Output, "Everything created is printed in JSON format by default.")
+	_ = createCmd.PersistentFlags().MarkHidden(flagnames.Output)
 
 	rootCmd.AddCommand(createCmd)
-}
-
-func printPayload(payload any) {
-	if outputFormat == flagvalues.OutputFormatJson {
-		jsonData, err := json.MarshalIndent(payload, "", "  ")
-		if err != nil {
-			log.Fatalf("failed to print payload as json: %v", err)
-		}
-		fmt.Println(string(jsonData))
-		return
-	}
-
-	yamlData, err := yaml.Marshal(payload)
-	if err != nil {
-		log.Fatalf("failed to print payload as yaml: %v", err)
-	}
-	fmt.Println(string(yamlData))
 }

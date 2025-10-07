@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"runtime/debug"
@@ -12,8 +13,10 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
+	"github.com/mattn/go-isatty"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/pretty"
 )
 
 var Version = "dev"
@@ -87,4 +90,17 @@ func awaitReconciliation(checkFunc checkFn) bool {
 			return false
 		}
 	}
+}
+
+func printPayload(payload any) {
+	jsonData, err := json.MarshalIndent(payload, "", "  ")
+	if err != nil {
+		log.Fatalf("failed to print payload as json: %v", err)
+	}
+
+	if isatty.IsTerminal(os.Stdout.Fd()) || isatty.IsCygwinTerminal(os.Stdout.Fd()) {
+		jsonData = pretty.Color(jsonData, nil)
+	}
+
+	fmt.Println(string(jsonData))
 }

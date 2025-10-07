@@ -13,6 +13,7 @@ import (
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/client/buildstatus"
 	"github.com/equinor/radix-cli/generated/radixapi/client/component"
+	"github.com/equinor/radix-cli/generated/radixapi/client/configuration"
 	"github.com/equinor/radix-cli/generated/radixapi/client/deployment"
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
 	"github.com/equinor/radix-cli/generated/radixapi/client/job"
@@ -65,6 +66,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Radixapi {
 	cli.Application = application.New(transport, formats)
 	cli.Buildstatus = buildstatus.New(transport, formats)
 	cli.Component = component.New(transport, formats)
+	cli.Configuration = configuration.New(transport, formats)
 	cli.Deployment = deployment.New(transport, formats)
 	cli.Environment = environment.New(transport, formats)
 	cli.Job = job.New(transport, formats)
@@ -120,6 +122,8 @@ type Radixapi struct {
 
 	Component component.ClientService
 
+	Configuration configuration.ClientService
+
 	Deployment deployment.ClientService
 
 	Environment environment.ClientService
@@ -139,6 +143,7 @@ func (c *Radixapi) SetTransport(transport runtime.ClientTransport) {
 	c.Application.SetTransport(transport)
 	c.Buildstatus.SetTransport(transport)
 	c.Component.SetTransport(transport)
+	c.Configuration.SetTransport(transport)
 	c.Deployment.SetTransport(transport)
 	c.Environment.SetTransport(transport)
 	c.Job.SetTransport(transport)

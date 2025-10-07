@@ -15,17 +15,18 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/client/platform"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
-	"github.com/equinor/radix-cli/pkg/utils/json"
 	"github.com/spf13/cobra"
 )
+
+type GetApplicationResponse struct {
+	Applications []string `json:"applications,omitempty"`
+}
 
 // getApplicationCmd represents the getApplicationCmd command
 var getApplicationCmd = &cobra.Command{
@@ -49,32 +50,27 @@ var getApplicationCmd = &cobra.Command{
 			// List applications
 			showApplicationParams := platform.NewShowApplicationsParams()
 			resp, err := apiClient.Platform.ShowApplications(showApplicationParams, nil)
-
-			var appNames []string
-
-			if err == nil {
-				for _, application := range resp.Payload {
-					fmt.Println(*application.Name)
-					appNames = append(appNames, *application.Name)
-				}
-				completion.UpdateAppNamesCache(appNames)
-
-				return nil
+			if err != nil {
+				return err
 			}
 
-			return err
+			var appNames []string
+			for _, application := range resp.Payload {
+				appNames = append(appNames, *application.Name)
+			}
+			completion.UpdateAppNamesCache(appNames)
+			printPayload(GetApplicationResponse{Applications: appNames})
+
+			return nil
 		}
+
 		getApplicationParams := application.NewGetApplicationParams()
 		getApplicationParams.SetAppName(appName)
 		resp, err := apiClient.Application.GetApplication(getApplicationParams, nil)
 		if err != nil {
 			return err
 		}
-		prettyJSON, err := json.Pretty(resp.Payload)
-		if err != nil {
-			return err
-		}
-		fmt.Println(*prettyJSON)
+		printPayload(resp.Payload)
 		return nil
 	},
 }
