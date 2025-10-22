@@ -1,0 +1,35 @@
+name: Create releases and tags
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+  
+jobs:
+  unreleased-prs-metadata:
+    name: Get list of pending release pull requests
+    permissions:
+      pull-requests: read
+      contents: read
+    uses: equinor/radix-reusable-workflows/.github/workflows/template-unreleased-pr-metadata.yml@v1.0.2
+    
+  release-pull-request:
+    name: Release pull request
+    needs: 
+      - unreleased-prs-metadata
+    if: needs.unreleased-prs-metadata.outputs.unreleased-pull-request-count > 0
+    strategy:
+      matrix:
+        pull-request-number: ${{ fromJson(needs.unreleased-prs-metadata.outputs.unreleased-pull-requests) }}
+    permissions:
+      pull-requests: write
+      contents: read
+      issues: write
+    uses: equinor/radix-reusable-workflows/.github/workflows/template-create-release-from-pr.yml@v1.0.2
+    with:
+      pull-request-number: ${{ matrix.pull-request-number }}
+      use-github-app-token: true
+      github-app-id: ${{ vars.GH_APP_ID }}
+    secrets:
+      github-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+      

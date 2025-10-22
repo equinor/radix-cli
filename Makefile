@@ -33,8 +33,8 @@ ifndef HAS_SWAGGER
 	go install github.com/go-swagger/go-swagger/cmd/swagger@v0.31.0
 endif
 ifndef HAS_GOLANGCI_LINT
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.3
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.5.0
 endif
 ifndef HAS_GORELEASER
-	go install github.com/goreleaser/goreleaser@v1.26.2
+	go install github.com/goreleaser/goreleaser/v2@v2.12.6
 endif
