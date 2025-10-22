@@ -4,7 +4,7 @@ on:
     tags:
       - '**'
     branches: 
-      - main
+      - master
   workflow_dispatch:
 
 concurrency:
@@ -19,6 +19,6 @@ jobs:
       pull-requests: write
       issues: write
     with:
-      branch: main
+      branch: master
       cliff-config-path: cliff.toml
       generate-pre-release-pr: false
