@@ -19,6 +19,6 @@ jobs:
       pull-requests: write
       issues: write
     with:
-      branch: master
+      branch: main
       cliff-config-path: cliff.toml
       generate-pre-release-pr: false
