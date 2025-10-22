@@ -28,13 +28,13 @@ dockers_v2:
       - "{{ .Version }}"
     labels:
       "org.opencontainers.image.description": "Radix CLI"
-      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.created": "{{ .Date }}"
       "org.opencontainers.image.licenses": "MIT"
-      "org.opencontainers.image.name": "{{.ProjectName}}"
-      "org.opencontainers.image.revision": "{{.FullCommit}}"
-      "org.opencontainers.image.version": "{{.Version}}"
-      "org.opencontainers.image.source": "{{.GitURL}}"
-      "org.opencontainers.image.url": "{{.GitURL}}"
+      "org.opencontainers.image.name": "{{ .ProjectName }}"
+      "org.opencontainers.image.revision": "{{ .FullCommit }}"
+      "org.opencontainers.image.version": "{{ .Version }}"
+      "org.opencontainers.image.source": "{{ .GitURL }}"
+      "org.opencontainers.image.url": "{{ .GitURL }}"
     ids:
       - rx
     platforms:
