@@ -6,24 +6,17 @@ Radix CLI in the [Radix documentation](https://radix.equinor.com/docs/topic-radi
 
 ## Installation
 
-### If using Go:
-```sh
-go install github.com/equinor/radix-cli/cli/rx@latest
-```
-
 ### Linux or Mac
 
-#### Binaries
+Pick a [version](https://github.com/equinor/radix-cli/releases) of the cli you want to install, and download and extract the tar.gz file into the `bin` folder like the following example (replacing the platform and architecture with the one you picked).
 
-Pick the appropriate binaries for your machine
+|                   | AMD64                                       | ARM64                                      |
+| ----------------- | ------------------------------------------- | ------------------------------------------ |
+| Mac               | `radix-cli_<version>_Darwin_x86_64.tar.gz`  | `radix-cli_<version>_Darwin_arm64.tar.gz`  |
+| Linux             | `radix-cli_<version>_Linux_x86_64.tar.gz`   | `radix-cli_<version>_Linux_arm64.tar.gz`   |
 
-`radix-cli_<version>_Darwin_i386.tar.gz` `radix-cli_<version>_Darwin_x86_64.tar.gz`
+<br/>
 
-`radix-cli_<version>_Linux_i386.tar.gz` `radix-cli_<version>_Linux_x86_64.tar.gz`
-
-`radix-cli_<version>_Linux_armv6.tar.gz` `radix-cli_<version>_Linux_arm64.tar.gz`
-
-Pick a [version](https://github.com/equinor/radix-cli/releases) of the cli you want to install, or the latest version, then download and extract the tar file into the `bin` folder like the following example (replacing the version and architecture with the one you picked).
 
 ```bash
 LATEST_VERSION=$(
@@ -40,26 +33,23 @@ mv rx /usr/local/bin/rx
 rm ${rx_tar}
 ```
 
-#### Or run using Docker image
-
-Authenticate with github via docker using a token with _read:packages_ access. Make sure you also enable single sign-on for Equinor after [generating your token](https://github.com/settings/tokens). Replace `<github username>` and `<access token>`.
+### Run as Docker image
 
 ```bash
-docker login -u <github username> -p <access token> ghcr.io
-
-alias rx="docker run -it -v ${HOME}/.radix:/home/radix/.radix ghcr.io/equinor/radix/rx:latest"
+docker run -e APP_SERVICE_ACCOUNT_TOKEN=$(az account get-access-token --resource 6dae42f8-4368-4678-94ff-3960e28e3630 | jq .accessToken -r) ghcr.io/equinor/radix/rx:latest get application --token-environment
 ```
 
-(Typically your `HOME` variable will be `/Users/<username>` on a Mac and `/home/<username>` on Linux)
+### Install with Go
+```sh
+go install github.com/equinor/radix-cli/cli/rx@latest
+```
 
 ### Windows
 
-#### Binaries
-
 Visit https://github.com/equinor/radix-cli/releases/latest and download the appropriate binaries for your machine.
 
-`radix-cli_<version>_Windows_i386.tar.gz` (32 bit)
-`radix-cli_<version>_Windows_x86_64.tar.gz` (64 bit)
+- **AMD64**: `radix-cli_<version>_Windows_x86_64.tar.gz`
+- **ARM64**: `radix-cli_<version>_Windows_arm64.tar.gz`
 
 Either run the tar command to extract the contents (replacing the filename with the one you downloaded)
 
@@ -70,24 +60,6 @@ tar -xf radix-cli_1.26.0_Windows_x86_64.tar.gz
 or use a third-party tool like _WinZip_, _WinRar_ or _7zip_ to extract it.
 
 Make sure the directory path you put the executable into is in the global `PATH` environment variable to use the `rx` command anywhere.
-
-#### Or run using Docker image
-
-See docker for linux/mac above for authentication guide.
-
-If your terminal has a profile or auto-run script, you can add the following to it:
-
-```batch
-DOSKEY rx=docker run -it -v %HOME%:/home/radix ghcr.io/equinor/radix/rx:latest $*
-```
-
-If not, you must add a new script file called `rx.bat` in a directory, present in `PATH`, with the following content
-
-```batch
-docker run -it -v %HOME%:/home/radix ghcr.io/equinor/radix/rx:latest $*
-```
-
-(Typically your `HOME` variable will be `C:\Users\<username>`)
 
 ## Modes of running
 
