@@ -8,7 +8,7 @@ Radix CLI in the [Radix documentation](https://radix.equinor.com/docs/topic-radi
 
 ### Linux or Mac
 
-Pick a [version](https://github.com/equinor/radix-cli/releases) of the cli you want to install, and download and extract the tar.gz file into the `bin` folder like the following example (replacing the platform and architecture with the one you picked).
+Pick a [version](https://github.com/equinor/radix-cli/releases) of the CLI you want to install, and download and extract the tar.gz file into the `bin` folder as shown in the following example.
 
 |                   | AMD64                                       | ARM64                                      |
 | ----------------- | ------------------------------------------- | ------------------------------------------ |
@@ -33,33 +33,6 @@ mv rx /usr/local/bin/rx
 rm ${rx_tar}
 ```
 
-## Running `rx` in Docker
-
-You can run `rx` as a container using a specific version (e.g. `1.35.0`) or the `latest` tag.  
-By default, it runs as user `nonroot` (UID `65532`).
-
-```bash
-docker run ghcr.io/equinor/radix/rx:<latest|version>
-```
-
-To run rx with an Azure access token (for example, to fetch cluster configuration):
-
-```bash
-docker run \
-  -e APP_SERVICE_ACCOUNT_TOKEN=$(az account get-access-token \
-    --resource 6dae42f8-4368-4678-94ff-3960e28e3630 \
-    --query accessToken -o tsv) \
-  ghcr.io/equinor/radix/rx:latest \
-  get cluster-config --token-environment
-
-```
-
-### Install with Go
-
-```sh
-go install github.com/equinor/radix-cli/cli/rx@latest
-```
-
 ### Windows
 
 Visit https://github.com/equinor/radix-cli/releases/latest and download the appropriate binaries for your machine.
@@ -77,26 +50,90 @@ or use a third-party tool like _WinZip_, _WinRar_ or _7zip_ to extract it.
 
 Make sure the directory path you put the executable into is in the global `PATH` environment variable to use the `rx` command anywhere.
 
-## Modes of running
+### Install with Go
 
-There are generally two modes of running the CLI. Both cases may use configuration in your `<home>/.radix` folder:
-
-### Interactively
-
-CLI will use users privileges to access the Radix API server. Context information is stored in the `<home>/.radix` folder. First time you run it (i.e. `rx get logs environment -a <your application> -e <your environment>`) a prompt is provided for you to authenticated with Azure using a device code flow. A message like this appears in your terminal:
-
-`To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code ABCDEFGHI to authenticate.`
-
-### Using docker image
-
-* Login to the packages: `docker login ghcr.io/equinor`
-* Set the machine-user token to the environment variable: `export APP_SERVICE_ACCOUNT_TOKEN=<your service account token>`
-* Run the command within the container (example to watch pipeline job logs with a command `rx get logs job -a your-application-name -c playground -j your-job-name`): 
-```shell
-docker run -it -e APP_SERVICE_ACCOUNT_TOKEN=$APP_SERVICE_ACCOUNT_TOKEN  ghcr.io/equinor/radix/rx:latest --token-environment get logs job -a your-application-name -c playground -j your-job-name
+```sh
+go install github.com/equinor/radix-cli/cli/rx@latest
 ```
 
-## Problems encountered
+## Usage Guide
+
+### Logging In
+
+The `login` command authenticates your CLI session with Radix. There are several authentication options to suit different environments and use cases:
+
+#### Authentication Methods
+
+- **Azure Interactive Login** (default):  
+  Authenticate interactively via your browser. If no flags are specified, this method is used.
+  ```
+  rx login
+  ```
+
+- **Device Code Authentication**:  
+  Authenticate using Azure Device Code.
+  ```
+  rx login --device-code
+  ```
+
+- **GitHub Workload Identity**:  
+  Authenticate using GitHub credentials (Workload Identity). This authentication method is only valid when running `rx` in a GitHub workflow. See [GitHub Action for Radix CLI](https://github.com/equinor/radix-github-actions) for more information.
+  ```
+  rx login --github-credentials --azure-client-id <client-id>
+  ```
+
+- **Azure Client Secret**:  
+  Authenticate using Azure Client ID and Client Secret.
+  ```
+  rx login --azure-client-id <client-id> --azure-client-secret <client-secret>
+  ```
+
+- **Federated Credentials**:  
+  Authenticate using a federated token file and Azure Client ID.
+  ```
+  rx login --azure-client-id <client-id> --federated-token-file <path-to-token-file>
+  ```
+
+> **Note:** The flags above are mutually exclusive. You must provide the appropriate combinations for your authentication scenario.
+
+### Logging Out
+
+To end your session:
+```
+rx logout
+```
+
+### Example Commands
+
+- **List applications:**
+  ```
+  rx list applications
+  ```
+
+- **Get logs for a pipeline job:**
+  ```
+  rx get logs pipeline-job --application <app-name> --job <job-name>
+  ```
+
+- **Validate a Radix config file:**
+  ```
+  rx validate radix-config --config-file ./radixconfig.yaml
+  ```
+
+### Running via Docker
+
+You can run `radix-cli` in a container:
+
+```bash
+export APP_SERVICE_ACCOUNT_TOKEN=<service-account-token> # You can acquire a token with: az account get-access-token --resource 6dae42f8-4368-4678-94ff-3960e28e3630 --query accessToken -o tsv
+docker run -it -e APP_SERVICE_ACCOUNT_TOKEN=$APP_SERVICE_ACCOUNT_TOKEN ghcr.io/equinor/radix/rx:latest get cluster-config --token-environment
+```
+
+### Running in GitHub workflows
+
+To run `rx` in GitHub workflows, we recommend using the [GitHub Action for Radix CLI](https://github.com/equinor/radix-github-actions).
+
+### Problems encountered
 
 Problem: Failed to acquire a token from Azure AD
 Solution: Remove your `<home>/.radix` folder
@@ -107,11 +144,13 @@ rm -rf $HOME/.radix/
 
 ## Development
 
-We are using the [cobra framework](https://github.com/spf13/cobra) for handling commands. Add a command by:
+We use the [cobra framework](https://github.com/spf13/cobra) for handling commands.
 
-```
-cobra add <commandName>
-```
+### ✅ Merging Changes
+
+All changes must be merged into the `master` branch using **pull requests** with **squash commits**.
+
+The squash commit message must follow the [Conventional Commits](https://www.conventionalcommits.org/en/about/) specification.
 
 ### Generate client stubs
 
