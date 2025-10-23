@@ -33,13 +33,29 @@ mv rx /usr/local/bin/rx
 rm ${rx_tar}
 ```
 
-### Run as Docker image
+## Running `rx` in Docker
+
+You can run `rx` as a container using a specific version (e.g. `1.35.0`) or the `latest` tag.  
+By default, it runs as user `nonroot` (UID `65532`).
 
 ```bash
-docker run -e APP_SERVICE_ACCOUNT_TOKEN=$(az account get-access-token --resource 6dae42f8-4368-4678-94ff-3960e28e3630 | jq .accessToken -r) ghcr.io/equinor/radix/rx:latest get application --token-environment
+docker run ghcr.io/equinor/radix/rx:<latest|version>
+```
+
+To run rx with an Azure access token (for example, to fetch cluster configuration):
+
+```bash
+docker run \
+  -e APP_SERVICE_ACCOUNT_TOKEN=$(az account get-access-token \
+    --resource 6dae42f8-4368-4678-94ff-3960e28e3630 \
+    --query accessToken -o tsv) \
+  ghcr.io/equinor/radix/rx:latest \
+  get cluster-config --token-environment
+
 ```
 
 ### Install with Go
+
 ```sh
 go install github.com/equinor/radix-cli/cli/rx@latest
 ```
