@@ -1,0 +1,24 @@
+name: Prepare release pull request
+on:
+  push: 
+    tags:
+      - '**'
+    branches: 
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  prepare-release-pr:
+    name: Prepare release pull request
+    uses: equinor/radix-reusable-workflows/.github/workflows/template-prepare-release-pr.yml@v1.0.2
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    with:
+      branch: master
+      cliff-config-path: cliff.toml
+      generate-pre-release-pr: false

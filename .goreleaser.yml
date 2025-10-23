@@ -1,5 +1,7 @@
 # This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
+version: 2
+
 builds:
   - id: rx
     binary: rx
@@ -12,35 +14,46 @@ builds:
       - darwin
       - windows
     goarch:
-      - "386"
       - amd64
-      - arm
       - arm64
     ldflags:
       -  "-s -w -X 'github.com/equinor/radix-cli/cmd.Version={{ .Version }}'"
-dockers:
-  - image_templates:
-      - "ghcr.io/equinor/radix/rx:latest"
-      - "ghcr.io/equinor/radix/rx:{{ .Version}}"
-    dockerfile: Dockerfile.goreleaser
+
+dockers_v2:
+  - dockerfile: Dockerfile.goreleaser
+    images:
+      - ghcr.io/equinor/radix/rx
+    tags:
+      - latest
+      - "{{ .Version }}"
+    labels:
+      "org.opencontainers.image.description": "Radix CLI"
+      "org.opencontainers.image.created": "{{ .Date }}"
+      "org.opencontainers.image.licenses": "MIT"
+      "org.opencontainers.image.name": "{{ .ProjectName }}"
+      "org.opencontainers.image.revision": "{{ .FullCommit }}"
+      "org.opencontainers.image.version": "{{ .Version }}"
+      "org.opencontainers.image.source": "{{ .GitURL }}"
+      "org.opencontainers.image.url": "{{ .GitURL }}"
     ids:
       - rx
+    platforms:
+      - linux/amd64
+      - linux/arm64
+
 archives:
   - name_template: >-
       {{- .ProjectName }}_
       {{- .Version }}_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end -}}
+
 checksum:
   name_template: "checksums.txt"
+
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  version_template: "{{ .Tag }}-next"
+
 changelog:
-  sort: asc
-  filters:
-    exclude:
-      - "^docs:"
-      - "^test:"
+  disable: true
