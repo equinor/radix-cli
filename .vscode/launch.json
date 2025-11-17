@@ -319,7 +319,7 @@
 				"prod",
 				"--use-active-deployment",
 				"--context",
-				"development",
+				"development"
 			]
 		}
 	]
