@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ## New Contributors ❤️
 
+* @github-actions[bot] made their first contribution in [#146](https://github.com/equinor/radix-cli/pull/146)
 * @jacobsolbergholm made their first contribution in [#145](https://github.com/equinor/radix-cli/pull/145)
 ## [1.35.0](https://github.com/equinor/radix-cli/compare/v1.34.0..v1.35.0) - 2025-10-07
 
