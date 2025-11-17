@@ -159,7 +159,7 @@ func getPatternForContext(context string) (string, string, error) {
 	case radixconfig.ContextProduction, radixconfig.ContextPlatform:
 		return "", "prod", nil
 	default:
-		return "", "", fmt.Errorf("context '%s' is not a valid context. Use one of '%s', '%s', '%s' or '%s'.", context, radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment)
+		return "", "", fmt.Errorf("context '%s' is not a valid context. Use one of '%s', '%s', '%s' or '%s'", context, radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment)
 	}
 }
 
