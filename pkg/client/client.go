@@ -36,7 +36,10 @@ func GetRadixApiForCommand(cmd *cobra.Command) (*radixapi.Radixapi, error) {
 		return nil, err
 	}
 	context, cluster, apiEnvironment := getContextClusterApiEnvironment(cmd, radixConfig)
-	endpoint := getEndpoint("server-radix-api", apiEnvironment, context, cluster)
+	endpoint, err := getEndpoint("server-radix-api", apiEnvironment, context, cluster)
+	if err != nil {
+		return nil, err
+	}
 	verboseOutput, _ := cmd.Flags().GetBool(flagnames.Verbose)
 	transport := getTransport(endpoint, authWriter, verboseOutput)
 	transport.Consumers[consumer.ContentTypeEventStream] = consumer.NewEventSourceConsumer()
@@ -56,7 +59,10 @@ func GetVulnerabilityScanApiForCommand(cmd *cobra.Command) (*vulnscanapi.Vulnsca
 		return nil, err
 	}
 	context, cluster, apiEnvironment := getContextClusterApiEnvironment(cmd, radixConfig)
-	endpoint := getEndpoint("server-radix-vulnerability-scanner-api", apiEnvironment, context, cluster)
+	endpoint, err := getEndpoint("server-radix-vulnerability-scanner-api", apiEnvironment, context, cluster)
+	if err != nil {
+		return nil, err
+	}
 	verboseOutput, _ := cmd.Flags().GetBool(flagnames.Verbose)
 	transport := getTransport(endpoint, authWriter, verboseOutput)
 	return vulnscanapi.New(transport, strfmt.Default), nil
@@ -73,17 +79,20 @@ func getContextClusterApiEnvironment(cmd *cobra.Command, config *radixconfig.Rad
 	return context, cluster, apiEnvironment
 }
 
-func getEndpoint(service, env, context, cluster string) string {
-	zoneDomain, defaultEnv := getPatternForContext(context)
+func getEndpoint(service, env, context, cluster string) (string, error) {
+	zoneDomain, defaultEnv, err := getPatternForContext(context)
+	if err != nil {
+		return "", err
+	}
 	if strings.TrimSpace(env) == "" {
 		env = defaultEnv
 	}
 
 	if cluster != "" {
-		return fmt.Sprintf("%s-%s.%s.%sradix.equinor.com", service, env, cluster, zoneDomain)
+		return fmt.Sprintf("%s-%s.%s.%sradix.equinor.com", service, env, cluster, zoneDomain), nil
 	}
 
-	return fmt.Sprintf("%s-%s.%sradix.equinor.com", service, env, zoneDomain)
+	return fmt.Sprintf("%s-%s.%sradix.equinor.com", service, env, zoneDomain), nil
 }
 
 func getTransport(endpoint string, authWriter runtime.ClientAuthInfoWriter, verbose bool) *httptransport.Runtime {
@@ -139,18 +148,18 @@ func getAuthProvider() (auth.Provider, error) {
 	return provider, nil
 }
 
-func getPatternForContext(context string) (string, string) {
+func getPatternForContext(context string) (string, string, error) {
 	switch context {
 	case radixconfig.ContextDevelopment:
-		return "dev.", "qa"
+		return "dev.", "qa", nil
 	case radixconfig.ContextPlayground:
-		return "playground.", "prod"
+		return "playground.", "prod", nil
 	case radixconfig.ContextPlatform2:
-		return "c2.", "prod"
+		return "c2.", "prod", nil
 	case radixconfig.ContextProduction, radixconfig.ContextPlatform:
-		return "", "prod"
+		return "", "prod", nil
 	default:
-		return "", "prod"
+		return "", "", fmt.Errorf("context '%s' is not a valid context. Use one of '%s', '%s', '%s' or '%s'", context, radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment)
 	}
 }
 

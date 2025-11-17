@@ -300,6 +300,27 @@
 				"main",
 				"--follow"
 			]
+		},
+		{
+			"name": "Launch radix-cli create pipeline-job promote -a radix-public-site --from-environment qa --to-environment prod --use-active-deployment --context development",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"args": [
+				"create",
+				"pipeline-job",
+				"promote",
+				"-a",
+				"radix-public-site",
+				"--from-environment",
+				"qa",
+				"--to-environment",
+				"prod",
+				"--use-active-deployment",
+				"--context",
+				"development"
+			]
 		}
 	]
 }
