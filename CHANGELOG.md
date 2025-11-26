@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.35.2](https://github.com/equinor/radix-cli/compare/v1.35.1..v1.35.2) - 2025-11-26
+
+### 🐛 Bug Fixes
+
+- Support new fields in radixconfig.yaml with validate radix-config command - ([ddd71e9](https://github.com/equinor/radix-cli/commit/ddd71e9b2c454c793f3f8bf45d1064bde7daaf3f)) by @nilsgstrabo in [#149](https://github.com/equinor/radix-cli/pull/149)
+
+
 ## [1.35.1](https://github.com/equinor/radix-cli/compare/v1.35.0..v1.35.1) - 2025-11-17
 
 ### 🐛 Bug Fixes
@@ -16,6 +23,7 @@ All notable changes to this project will be documented in this file.
 
 ## New Contributors ❤️
 
+* @github-actions[bot] made their first contribution in [#146](https://github.com/equinor/radix-cli/pull/146)
 * @jacobsolbergholm made their first contribution in [#145](https://github.com/equinor/radix-cli/pull/145)
 ## [1.35.0](https://github.com/equinor/radix-cli/compare/v1.34.0..v1.35.0) - 2025-10-07
 
