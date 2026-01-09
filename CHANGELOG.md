@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.36.0](https://github.com/equinor/radix-cli/compare/v1.35.2..v1.36.0) - 2026-01-09
+
+### 🚀 Features
+
+- Show radixconfig validation warnings (#153) - ([b97ed49](https://github.com/equinor/radix-cli/commit/b97ed49f049eb9b1082a571777642ead35653c66)) by @nilsgstrabo in [#153](https://github.com/equinor/radix-cli/pull/153)
+
+
 ## [1.35.2](https://github.com/equinor/radix-cli/compare/v1.35.1..v1.35.2) - 2025-11-26
 
 ### 🐛 Bug Fixes
