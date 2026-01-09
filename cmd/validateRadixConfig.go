@@ -22,7 +22,8 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	radixv1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
-	"github.com/equinor/radix-operator/pkg/apis/radixvalidators"
+	"github.com/equinor/radix-operator/webhook/validation/radixapplication"
+	"github.com/fatih/color"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	_ "github.com/santhosh-tekuri/jsonschema/v5/httploader"
 	"github.com/spf13/cobra"
@@ -100,7 +101,8 @@ rx validate radix-config --strict-validation=false
 			os.Exit(1)
 		}
 
-		err = radixvalidators.IsRadixApplicationValid(ra)
+		validator := radixapplication.CreateOfflineValidator()
+		warnings, err := validator.Validate(cmd.Context(), ra)
 		if err != nil {
 			validationErrors = append(validationErrors, err)
 		}
@@ -112,15 +114,28 @@ rx validate radix-config --strict-validation=false
 			}
 		}
 
+		if len(warnings) > 0 {
+			fmt.Fprintln(os.Stderr, color.HiYellowString("Warnings:"))
+
+			for _, warning := range warnings {
+				fmt.Fprintf(os.Stderr, " - %s\n", warning)
+			}
+		}
+
+		if len(validationErrors) > 0 {
+			fmt.Fprintln(os.Stderr, color.RedString("Errors:"))
+
+			for _, err := range validationErrors {
+				fmt.Fprintf(os.Stderr, " - %s\n", err)
+			}
+		}
+
 		if len(validationErrors) == 0 {
-			fmt.Fprintln(os.Stderr, "RadixConfig is valid")
+			fmt.Fprintln(os.Stderr, color.GreenString("RadixConfig is valid"))
 			return
 		}
 
-		fmt.Fprintln(os.Stderr, "RadixConfig is invalid")
-		for _, err := range validationErrors {
-			fmt.Fprintf(os.Stderr, " - %s\n", err)
-		}
+		fmt.Fprintln(os.Stderr, color.RedString("RadixConfig is invalid"))
 		os.Exit(2)
 	},
 }
