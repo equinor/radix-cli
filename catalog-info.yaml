@@ -2,9 +2,17 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: radix-cli
+  title: Radix CLI
+  description: "Radix CLI is the Command-Line Interface for the Radix platform, enabling users to automate application management"
   annotations:
     github.com/project-slug: equinor/radix-cli
+  links:
+   - url: https://github.com/equinor/radix-cli/releases
+     title: Releases
+     icon: catalog
+     type: release
 spec:
-  type: other
-  lifecycle: unknown
+  type: tool
+  lifecycle: production
   owner: omnia-radix
+  system: Radix
