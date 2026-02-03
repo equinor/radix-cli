@@ -6,6 +6,7 @@ metadata:
   description: "Radix CLI is the Command-Line Interface for the Radix platform, enabling users to automate application management"
   annotations:
     github.com/project-slug: equinor/radix-cli
+    backstage.io/techdocs-entity: system:default/Radix
   links:
    - url: https://github.com/equinor/radix-cli/releases
      title: Releases
@@ -14,5 +15,5 @@ metadata:
 spec:
   type: tool
   lifecycle: production
-  owner: omnia-radix
-  system: Radix
+  owner: team-radix
+  ssystem: system:default/Radix
