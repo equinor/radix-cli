@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.36.1](https://github.com/equinor/radix-cli/compare/v1.36.0..v1.36.1) - 2026-02-16
+
+### 🐛 Bug Fixes
+
+- *(deps)* Update Go version to 1.25.7 (#160) - ([14e8e0b](https://github.com/equinor/radix-cli/commit/14e8e0badd6e3d71a5b3b15503b5d4a5870a4af4)) by @nilsgstrabo in [#160](https://github.com/equinor/radix-cli/pull/160)
+
+
+### 📚 Documentation
+
+- Rename LICENCE to LICENSE (#157) - ([f8b6522](https://github.com/equinor/radix-cli/commit/f8b6522da58b6b8c0fc0e5ca474e989652584dd1)) by @emirgens in [#157](https://github.com/equinor/radix-cli/pull/157)
+
+- Update catalog-info.yaml (#158) - ([235055e](https://github.com/equinor/radix-cli/commit/235055e96cfe2388a2d3678dcd1dd112cb3a790a)) by @emirgens in [#158](https://github.com/equinor/radix-cli/pull/158)
+
+- Update catalog-info.yaml (#159) - ([9d91f3c](https://github.com/equinor/radix-cli/commit/9d91f3c50ce859b25e45f4d00e2f2f5460da6c33)) by @emirgens in [#159](https://github.com/equinor/radix-cli/pull/159)
+
+
+### ⚙️ Miscellaneous Tasks
+
+- Add catalog-info.yaml config file radix-cli (#155) - ([f7344d5](https://github.com/equinor/radix-cli/commit/f7344d567c1ad37177765fac45e545d694091c71)) by @emirgens in [#155](https://github.com/equinor/radix-cli/pull/155)
+
+
 ## [1.36.0](https://github.com/equinor/radix-cli/compare/v1.35.2..v1.36.0) - 2026-01-09
 
 ### 🚀 Features
