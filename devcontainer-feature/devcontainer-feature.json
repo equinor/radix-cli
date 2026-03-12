@@ -1,0 +1,15 @@
+{
+  "id": "radix-cli",
+  "version": "1.0.0",
+  "name": "Radix CLI (rx)",
+  "documentationURL": "https://github.com/equinor/radix-cli",
+  "description": "Installs the Radix CLI (rx) for interacting with the Radix platform.",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "latest",
+      "description": "Version of the Radix CLI to install (e.g. '1.36.1' or 'latest')."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}
