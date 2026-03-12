@@ -87,6 +87,11 @@ install_rx() {
     tar -xzf "${tmpdir}/${filename}" -C "$tmpdir"
     install -m 755 "${tmpdir}/rx" /usr/local/bin/rx
 
+    # Install bash completion
+    local completion_dir="/etc/bash_completion.d"
+    mkdir -p "$completion_dir"
+    /usr/local/bin/rx completion bash > "${completion_dir}/rx"
+
     echo "Radix CLI v${VERSION} installed to /usr/local/bin/rx"
 }
 
