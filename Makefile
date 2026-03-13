@@ -24,6 +24,11 @@ install:
 	go build ./cli/rx/
 	mv rx $$(go env GOPATH)/bin/rx
 
+# requires: gh (authenticated), jq, curl
+.PHONY: publish-devcontainer-feature
+publish-devcontainer-feature:
+	bash ./devcontainer-feature/publish.sh richard87/features
+
 HAS_SWAGGER       := $(shell command -v swagger;)
 HAS_GOLANGCI_LINT := $(shell command -v golangci-lint;)
 HAS_GORELEASER    := $(shell command -v goreleaser;)

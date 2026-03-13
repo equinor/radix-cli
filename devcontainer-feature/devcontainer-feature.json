@@ -1,6 +1,6 @@
 {
 	"id": "radix-cli",
-	"version": "1.0.0",
+	"version": "1.0.3",
 	"name": "Radix CLI (rx)",
 	"documentationURL": "https://github.com/equinor/radix-cli",
 	"description": "Installs the Radix CLI (rx) for interacting with the Radix platform.",

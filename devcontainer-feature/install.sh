@@ -59,7 +59,6 @@ install_rx() {
     echo "Installing Radix CLI v${VERSION} (${os}/${arch})..."
 
     local checksum_url="https://github.com/${REPO}/releases/download/v${VERSION}/checksums.txt"
-    local tmpdir
     tmpdir="$(mktemp -d)"
     trap 'rm -rf "$tmpdir"' EXIT
 
