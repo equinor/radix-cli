@@ -9,8 +9,8 @@ import (
 )
 
 func ConfigContext(_ *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	contexts := slice.FindAll(config.ValidContexts, func(appName string) bool {
-		return strings.HasPrefix(appName, toComplete)
+	contexts := slice.FindAll(config.ValidContexts, func(context string) bool {
+		return strings.HasPrefix(context, toComplete)
 	})
 	return contexts, cobra.ShellCompDirectiveNoFileComp
 }

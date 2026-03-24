@@ -15,6 +15,7 @@ const (
 	ContextPlayground  = "playground"
 	ContextDevelopment = "development"
 	ContextPlatform2   = "platform2"
+	ContextPlatform3   = "platform3"
 
 	radixConfigDir      = ".radix"
 	radixConfigFileName = "config"
@@ -26,7 +27,7 @@ const (
 var (
 	RadixConfigDir          = path.Join(getUserHomeDir(), radixConfigDir)
 	RadixConfigFileFullName = path.Join(RadixConfigDir, radixConfigFileName)
-	ValidContexts           = []string{ContextProduction, ContextPlatform, ContextPlatform2, ContextPlayground, ContextDevelopment}
+	ValidContexts           = []string{ContextProduction, ContextPlatform, ContextPlatform2, ContextPlatform3, ContextPlayground, ContextDevelopment}
 	ValidOutputs            = []string{"json", "text"}
 )
 

@@ -24,11 +24,9 @@ import (
 
 // setContextCmd represents the setContext command
 var setContextCmd = &cobra.Command{
-	Use: "context",
-	Short: fmt.Sprintf("Sets the context to be either %s, %s, %s or %s",
-		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
-	Long: fmt.Sprintf("Sets the context to be either %s, %s, %s or %s",
-		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
+	Use:   "context",
+	Short: "Sets the context.",
+	Long:  "Sets the context.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		context, _ := cmd.Flags().GetString(flagnames.Context)
 

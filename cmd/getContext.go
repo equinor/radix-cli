@@ -15,17 +15,16 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
+
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/spf13/cobra"
-	"log"
 )
 
 var getContextCmd = &cobra.Command{
 	Use:   "context",
 	Short: "Gets current context",
-	Long: fmt.Sprintf("Gets the current context. It can be one of %s, %s, %s or %s",
-		radixconfig.ContextPlatform, radixconfig.ContextPlatform2, radixconfig.ContextPlayground, radixconfig.ContextDevelopment),
+	Long:  "Gets the current context.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		cmd.SilenceUsage = true
