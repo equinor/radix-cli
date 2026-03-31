@@ -5,6 +5,7 @@ on:
       - master
   workflow_dispatch:
   
+permissions: {}
 jobs:
   unreleased-prs-metadata:
     name: Get list of pending release pull requests
