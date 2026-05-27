@@ -21,6 +21,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/msi/armmsi"
@@ -51,7 +52,8 @@ type ServicePrincipalResource struct {
 }
 
 type GraphHelper struct {
-	credential      *azidentity.InteractiveBrowserCredential
+	credential azcore.TokenCredential
+	// azCreds         *azidentity.AzureCLICredential
 	userClient      *msgraphsdk.GraphServiceClient
 	graphUserScopes []string
 }
@@ -66,24 +68,31 @@ func (graphHelper *GraphHelper) Client() *msgraphsdk.GraphServiceClient {
 }
 
 func (g *GraphHelper) InitializeGraphForUserAuth() error {
-	clientId := "ed6cb804-8193-4e55-9d3d-8b88688482b3"
-	tenantId := "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
-	scopes := "Application.Read.All,ServicePrincipal.Read.All"
+
+	// clientId := "ed6cb804-8193-4e55-9d3d-8b88688482b3"
+	// tenantId := "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
+	scopes := "00000003-0000-0000-c000-000000000000"
 	g.graphUserScopes = strings.Split(scopes, ",")
 
 	// Create the device code credential
-	credential, err := azidentity.NewInteractiveBrowserCredential(&azidentity.InteractiveBrowserCredentialOptions{
-		ClientID: clientId,
-		TenantID: tenantId,
-	})
+	// credential, err := azidentity.NewInteractiveBrowserCredential(&azidentity.InteractiveBrowserCredentialOptions{
+	// 	ClientID: clientId,
+	// 	TenantID: tenantId,
+	// })
+	// if err != nil {
+	// 	return err
+	// }
+	// g.credential = credential
+
+	azCreds, err := azidentity.NewAzureCLICredential(&azidentity.AzureCLICredentialOptions{})
 	if err != nil {
 		return err
 	}
-
-	g.credential = credential
+	// g.azCreds = azCreds
+	g.credential = azCreds
 
 	// Create an auth provider using the credential
-	authProvider, err := auth.NewAzureIdentityAuthenticationProviderWithScopes(credential, g.graphUserScopes)
+	authProvider, err := auth.NewAzureIdentityAuthenticationProviderWithScopes(g.credential, g.graphUserScopes)
 	if err != nil {
 		return err
 	}
@@ -111,6 +120,7 @@ func (g *GraphHelper) ResolveServicePrincipalResource(ctx context.Context, appID
 
 	servicePrincipal, err := g.findServicePrincipalByAppID(ctx, appID)
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, err
 	}
 
@@ -331,24 +341,24 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 
 		initializeGraph(graphHelper)
 
+		// sp, err := graphHelper.ResolveServicePrincipalResource(context.Background(), "b96d264b-7053-4465-a4a7-32be5b0fec49")
+		sp, err := graphHelper.ResolveServicePrincipalResource(context.Background(), "5e48ca1f-a2bf-4dec-b96d-bbf8ce69f9f6")
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("Found %s with name %s\n", sp.Type, *sp.ServicePrincipal.GetDisplayName())
+		var countFedCred int
+		switch sp.Type {
+		case ServicePrincipalResourceManagedIdentity:
+			countFedCred = len(sp.ManagedIdentityFederatedCredentials)
+		case ServicePrincipalResourceAppRegistration:
+			countFedCred = len(sp.ApplicationFederatedCredentials)
+		}
+		fmt.Printf("Number of fed creds: %v\n", countFedCred)
+
 		return nil
 	},
-}
-
-func findServicePrincipal(graphHelper *GraphHelper) (models.ServicePrincipalCollectionResponseable, error) {
-
-	appIDFilter := "appId eq 'b96d264b-7053-4465-a4a7-32be5b0fec49'"
-
-	sp, err := graphHelper.Client().ServicePrincipals().Get(
-		context.Background(),
-		&serviceprincipals.ServicePrincipalsRequestBuilderGetRequestConfiguration{
-			QueryParameters: &serviceprincipals.ServicePrincipalsRequestBuilderGetQueryParameters{
-				Filter: &appIDFilter,
-			},
-		},
-	)
-
-	return sp, err
 }
 
 func initializeGraph(graphHelper *GraphHelper) {
@@ -356,32 +366,6 @@ func initializeGraph(graphHelper *GraphHelper) {
 	if err != nil {
 		log.Panicf("Error initializing Graph for user auth: %v\n", err)
 	}
-}
-
-func greetUser(graphHelper *GraphHelper) {
-	// TODO
-}
-
-func displayAccessToken(graphHelper *GraphHelper) {
-	token, err := graphHelper.GetUserToken()
-	if err != nil {
-		log.Panicf("Error getting user token: %v\n", err)
-	}
-
-	fmt.Printf("User token: %s", *token)
-	fmt.Println()
-}
-
-func listInbox(graphHelper *GraphHelper) {
-	// TODO
-}
-
-func sendMail(graphHelper *GraphHelper) {
-	// TODO
-}
-
-func makeGraphCall(graphHelper *GraphHelper) {
-	// TODO
 }
 
 func init() {
