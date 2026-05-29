@@ -69,27 +69,29 @@ func (graphHelper *GraphHelper) Client() *msgraphsdk.GraphServiceClient {
 
 func (g *GraphHelper) InitializeGraphForUserAuth() error {
 
-	// clientId := "ed6cb804-8193-4e55-9d3d-8b88688482b3"
-	// tenantId := "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
-	scopes := "00000003-0000-0000-c000-000000000000"
+	clientId := "ed6cb804-8193-4e55-9d3d-8b88688482b3"
+	tenantId := "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
+	scopes := "Application.Read.All"
 	g.graphUserScopes = strings.Split(scopes, ",")
 
 	// Create the device code credential
-	// credential, err := azidentity.NewInteractiveBrowserCredential(&azidentity.InteractiveBrowserCredentialOptions{
-	// 	ClientID: clientId,
-	// 	TenantID: tenantId,
-	// })
-	// if err != nil {
-	// 	return err
-	// }
-	// g.credential = credential
-
-	azCreds, err := azidentity.NewAzureCLICredential(&azidentity.AzureCLICredentialOptions{})
+	credential, err := azidentity.NewInteractiveBrowserCredential(&azidentity.InteractiveBrowserCredentialOptions{
+		ClientID: clientId,
+		TenantID: tenantId,
+	})
 	if err != nil {
 		return err
 	}
-	// g.azCreds = azCreds
-	g.credential = azCreds
+	g.credential = credential
+	credential.GetToken(context.Background(), policy.TokenRequestOptions{
+		Scopes: []string{"Application.Read.All"},
+	})
+	// azCreds, err := azidentity.NewAzureCLICredential(&azidentity.AzureCLICredentialOptions{})
+	// if err != nil {
+	// 	return err
+	// }
+	// // g.azCreds = azCreds
+	// g.credential = azCreds
 
 	// Create an auth provider using the credential
 	authProvider, err := auth.NewAzureIdentityAuthenticationProviderWithScopes(g.credential, g.graphUserScopes)
@@ -341,21 +343,31 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 
 		initializeGraph(graphHelper)
 
-		// sp, err := graphHelper.ResolveServicePrincipalResource(context.Background(), "b96d264b-7053-4465-a4a7-32be5b0fec49")
-		sp, err := graphHelper.ResolveServicePrincipalResource(context.Background(), "5e48ca1f-a2bf-4dec-b96d-bbf8ce69f9f6")
-		if err != nil {
+		resolveAndPrint := func(appId string) error {
+			sp, err := graphHelper.ResolveServicePrincipalResource(context.Background(), appId)
+			if err != nil {
+				return err
+			}
+
+			fmt.Printf("Found %s with name %s\n", sp.Type, *sp.ServicePrincipal.GetDisplayName())
+			var countFedCred int
+			switch sp.Type {
+			case ServicePrincipalResourceManagedIdentity:
+				countFedCred = len(sp.ManagedIdentityFederatedCredentials)
+			case ServicePrincipalResourceAppRegistration:
+				countFedCred = len(sp.ApplicationFederatedCredentials)
+			}
+			fmt.Printf("Number of fed creds: %v\n", countFedCred)
+			return nil
+		}
+
+		if err := resolveAndPrint("5e48ca1f-a2bf-4dec-b96d-bbf8ce69f9f6"); err != nil {
 			return err
 		}
 
-		fmt.Printf("Found %s with name %s\n", sp.Type, *sp.ServicePrincipal.GetDisplayName())
-		var countFedCred int
-		switch sp.Type {
-		case ServicePrincipalResourceManagedIdentity:
-			countFedCred = len(sp.ManagedIdentityFederatedCredentials)
-		case ServicePrincipalResourceAppRegistration:
-			countFedCred = len(sp.ApplicationFederatedCredentials)
+		if err := resolveAndPrint("b96d264b-7053-4465-a4a7-32be5b0fec49"); err != nil {
+			return err
 		}
-		fmt.Printf("Number of fed creds: %v\n", countFedCred)
 
 		return nil
 	},
