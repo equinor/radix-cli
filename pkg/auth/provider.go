@@ -9,22 +9,17 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/equinor/radix-cli/pkg/cache"
+	"github.com/equinor/radix-cli/pkg/auth/cache"
 	"github.com/equinor/radix-cli/pkg/config"
-	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 )
 
 const (
-	RadixCliClientID           = "ed6cb804-8193-4e55-9d3d-8b88688482b3"
-	AzureTenantID              = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
-	AccessTokenCacheKey        = "access_token"
-	azureClientIdCacheKey      = "azure_client_id"
-	federatedTokenFileCacheKey = "federated_token_file"
-	azureADAudience            = "api://AzureADTokenExchange"
-	actionsIDTokenRequestToken = "ACTIONS_ID_TOKEN_REQUEST_TOKEN"
-	actionsIDTokenRequestURL   = "ACTIONS_ID_TOKEN_REQUEST_URL"
-	authProviderTypeCacheKey   = "auth_provider_type"
+	radixCliClientID = "ed6cb804-8193-4e55-9d3d-8b88688482b3"
+	azureTenantID    = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
+
+	azureClientIdCacheKey = "azure_client_id"
+
+	authProviderTypeCacheKey = "auth_provider_type"
 
 	// provider constants
 	providerMsalInteractive           = "msal_interactive"
@@ -41,19 +36,25 @@ var (
 	errProviderUnknown = errors.New("auth provider is unknown, please login")
 )
 
+var (
+	defaultLoginScope = []string{"6dae42f8-4368-4678-94ff-3960e28e3630/.default"}
+)
+
+var _ Provider = &Auth{}
+
 type GetAccessTokener interface {
 	// GetAccessToken returns a valid token
-	GetAccessToken(context.Context) (string, error)
+	GetAccessToken(ctx context.Context, scopes []string) (string, error)
 }
 
 // Provider is an Provider that uses MSAL
 type Provider interface {
 	Login(ctx context.Context, useInteractiveLogin, useDeviceCode, useGithubCredentials bool, azureClientId, federatedTokenFile, azureClientSecret string) error
 	Logout() error
-	runtime.ClientAuthInfoWriter
+	GetAccessTokener
+	Type() string
 }
-
-type auth struct {
+type Auth struct {
 	authority string
 	provider  GetAccessTokener
 	cacheFn   func(namespace string) cache.Cache
@@ -65,8 +66,8 @@ type githubTokenResponse struct {
 }
 
 // New creates a new Provider
-func New() (Provider, error) {
-	authority := fmt.Sprintf("https://login.microsoftonline.com/%s", AzureTenantID)
+func New() (*Auth, error) {
+	authority := fmt.Sprintf("https://login.microsoftonline.com/%s", azureTenantID)
 	authCacheFilename := fmt.Sprintf(authFileFormat, config.RadixConfigDir)
 	globalCache := cache.New(authCacheFilename, "global")
 
@@ -75,7 +76,7 @@ func New() (Provider, error) {
 		return nil, err
 	}
 
-	return &auth{
+	return &Auth{
 		authority: authority,
 		provider:  provider,
 		cache:     globalCache,
@@ -85,7 +86,7 @@ func New() (Provider, error) {
 
 // Login allows the plugin to initialize its configuration. It must not
 // require direct user interaction.
-func (a *auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, useGithubCredentials bool, azureClientId, federatedTokenFile, azureClientSecret string) error {
+func (a *Auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, useGithubCredentials bool, azureClientId, federatedTokenFile, azureClientSecret string) error {
 	switch {
 	case useInteractiveLogin:
 		provider, err := NewMsalInteractive(NewMsalTokenCache(a.cacheFn(providerMsalInteractive), "msal"), a.authority)
@@ -95,7 +96,7 @@ func (a *auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerMsalInteractive, 365*24*time.Hour)
 
-		_, err = provider.Authenticate(ctx)
+		_, err = provider.Authenticate(ctx, defaultLoginScope)
 		return err
 
 	case useDeviceCode:
@@ -103,10 +104,11 @@ func (a *auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		if err != nil {
 			return err
 		}
+
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerMsalDevicecode, 365*24*time.Hour)
 
-		_, err = provider.Authenticate(ctx)
+		_, err = provider.Authenticate(ctx, defaultLoginScope)
 		return err
 
 	case useGithubCredentials:
@@ -114,7 +116,7 @@ func (a *auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerAzureGithub, 365*24*time.Hour)
 
-		_, err := provider.Authenticate(ctx, azureClientId)
+		_, err := provider.Authenticate(ctx, azureClientId, defaultLoginScope)
 		return err
 
 	case federatedTokenFile != "":
@@ -122,7 +124,7 @@ func (a *auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerAzureFederatedCredentials, 365*24*time.Hour)
 
-		_, err := provider.Authenticate(ctx, azureClientId, federatedTokenFile)
+		_, err := provider.Authenticate(ctx, azureClientId, federatedTokenFile, defaultLoginScope)
 		return err
 
 	case azureClientSecret != "":
@@ -130,12 +132,52 @@ func (a *auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerAzureClientSecret, 365*24*time.Hour)
 
-		_, err := provider.Authenticate(ctx, azureClientId, azureClientSecret)
+		_, err := provider.Authenticate(ctx, azureClientId, azureClientSecret, defaultLoginScope)
 		return err
 
 	}
 
 	return errors.New("invalid auth arguments")
+}
+
+// Logout removes all cached accounts with tokens
+func (a *Auth) Logout() error {
+	authFilesGlob := fmt.Sprintf(authFileFormat, config.RadixConfigDir)
+	files, err := filepath.Glob(authFilesGlob)
+	if err != nil {
+		log.Printf("Error fetching auth files (%s): %s", authFilesGlob, err)
+
+	}
+	for _, file := range files {
+		err := os.Remove(file)
+		if err != nil {
+			log.Printf("Error removing file %s: %s", file, err)
+		}
+	}
+
+	// Legacy: Logout of previus MSAL state
+	if rc, err := config.GetRadixConfig(); err == nil {
+		rc.MSAL = ""
+		err := config.Save(rc)
+		if err != nil {
+			log.Printf("Error deleting MSAL auth from file %s: %s", config.RadixConfigFileFullName, err)
+		}
+	}
+
+	return nil
+}
+
+func (a *Auth) GetAccessToken(ctx context.Context, scopes []string) (string, error) {
+	if a.provider == nil {
+		return "", errProviderNotSet
+	}
+
+	return a.provider.GetAccessToken(ctx, scopes)
+}
+
+func (a *Auth) Type() string {
+	providerType, _ := a.cache.GetItem(authProviderTypeCacheKey)
+	return providerType
 }
 
 func loadProviderFromCache(globalCache cache.Cache, authCacheFilename, authority string) (GetAccessTokener, error) {
@@ -168,48 +210,4 @@ func loadProviderFromCache(globalCache cache.Cache, authCacheFilename, authority
 	}
 
 	return nil, errProviderUnknown
-}
-
-// Logout removes all cached accounts with tokens
-func (a *auth) Logout() error {
-	authFilesGlob := fmt.Sprintf(authFileFormat, config.RadixConfigDir)
-	files, err := filepath.Glob(authFilesGlob)
-	if err != nil {
-		log.Printf("Error fetching auth files (%s): %s", authFilesGlob, err)
-
-	}
-	for _, file := range files {
-		err := os.Remove(file)
-		if err != nil {
-			log.Printf("Error removing file %s: %s", file, err)
-		}
-	}
-
-	// Legacy: Logout of previus MSAL state
-	if rc, err := config.GetRadixConfig(); err == nil {
-		rc.MSAL = ""
-		err := config.Save(rc)
-		if err != nil {
-			log.Printf("Error deleting MSAL auth from file %s: %s", config.RadixConfigFileFullName, err)
-		}
-	}
-
-	return nil
-}
-
-func (a *auth) AuthenticateRequest(r runtime.ClientRequest, _ strfmt.Registry) error {
-	if a.provider == nil {
-		return errProviderNotSet
-	}
-
-	token, err := a.provider.GetAccessToken(context.Background())
-	if err != nil {
-		return err
-	}
-
-	return r.SetHeaderParam(runtime.HeaderAuthorization, "Bearer "+token)
-}
-
-func getScopes() []string {
-	return []string{"6dae42f8-4368-4678-94ff-3960e28e3630/.default"}
 }

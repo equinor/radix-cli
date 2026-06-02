@@ -5,7 +5,7 @@ import (
 	"time"
 
 	azurecache "github.com/AzureAD/microsoft-authentication-library-for-go/apps/cache"
-	"github.com/equinor/radix-cli/pkg/cache"
+	"github.com/equinor/radix-cli/pkg/auth/cache"
 )
 
 // MsalTokenCache is a token azurecache

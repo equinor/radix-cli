@@ -1,0 +1,59 @@
+package auth
+
+import (
+	"context"
+	"errors"
+	"time"
+
+	"github.com/AzureAD/microsoft-authentication-library-for-go/apps/confidential"
+	"github.com/equinor/radix-cli/pkg/auth/cache"
+)
+
+type AzureClientSecret struct {
+	Authority string
+	cache     cache.Cache
+}
+
+var _ GetAccessTokener = &AzureClientSecret{}
+
+func NewAzureClientSecret(cache cache.Cache, authority string) *AzureClientSecret {
+	return &AzureClientSecret{
+		Authority: authority,
+		cache:     cache,
+	}
+}
+
+func (p *AzureClientSecret) Authenticate(ctx context.Context, azureClientId, azureClientSecret string, scopes []string) (string, error) {
+	if azureClientSecret == "" || azureClientId == "" {
+		return "", errors.New("please login again")
+	}
+
+	cred, err := confidential.NewCredFromSecret(azureClientSecret)
+	if err != nil {
+		return "", err
+	}
+
+	confidentialClient, err := confidential.New(p.Authority, azureClientId, cred)
+	if err != nil {
+		return "", err
+	}
+
+	authResult, err := confidentialClient.AcquireTokenByCredential(ctx, scopes, confidential.WithTenantID(azureTenantID))
+	if err != nil {
+		return "", err
+	}
+
+	p.cache.SetItem(azureClientIdCacheKey, azureClientId, 365*24*time.Hour)
+	p.cache.SetItem(accessTokenCacheKey(scopes), authResult.AccessToken, time.Until(authResult.ExpiresOn))
+	return authResult.AccessToken, nil
+}
+
+func (p *AzureClientSecret) GetAccessToken(ctx context.Context, scopes []string) (string, error) {
+	if token, ok := p.cache.GetItem(accessTokenCacheKey(scopes)); ok {
+		return token, nil
+	}
+
+	azureClientId, _ := p.cache.GetItem(azureClientIdCacheKey)
+
+	return p.Authenticate(ctx, azureClientId, "azureClientSecret", scopes)
+}

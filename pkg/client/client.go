@@ -10,7 +10,7 @@ import (
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	vulnscanapi "github.com/equinor/radix-cli/generated/vulnscanapi/client"
-	"github.com/equinor/radix-cli/pkg/client/auth"
+	"github.com/equinor/radix-cli/pkg/auth"
 	"github.com/equinor/radix-cli/pkg/client/consumer"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -23,6 +23,10 @@ import (
 const (
 	// TokenEnvironmentName Name of environment variable to load token from
 	TokenEnvironmentName = "APP_SERVICE_ACCOUNT_TOKEN"
+)
+
+var (
+	radixApiScopes = []string{"6dae42f8-4368-4678-94ff-3960e28e3630/.default"}
 )
 
 // GetRadixApiForCommand Gets radixapi for command
@@ -112,7 +116,26 @@ func getAuthWriter(cmd *cobra.Command) (runtime.ClientAuthInfoWriter, error) {
 		return httptransport.BearerToken(*token), nil
 	}
 
-	return getAuthProvider()
+	provider, err := getAuthProvider()
+	if err != nil {
+		return nil, err
+	}
+
+	return &clientAuthWritedAdapter{provider: provider}, nil
+}
+
+type clientAuthWritedAdapter struct {
+	provider auth.Provider
+}
+
+func (a *clientAuthWritedAdapter) AuthenticateRequest(r runtime.ClientRequest, _ strfmt.Registry) error {
+
+	token, err := a.provider.GetAccessToken(context.Background(), radixApiScopes)
+	if err != nil {
+		return err
+	}
+
+	return r.SetHeaderParam(runtime.HeaderAuthorization, "Bearer "+token)
 }
 
 // LoginCommand Login radixapi for command

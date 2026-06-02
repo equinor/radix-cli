@@ -16,8 +16,7 @@ type MsalDeviceCode struct {
 var _ GetAccessTokener = &MsalDeviceCode{}
 
 func NewMsalDeviceCode(cache cache.ExportReplace, authority string) (*MsalDeviceCode, error) {
-
-	client, err := public.New(RadixCliClientID, public.WithCache(cache), public.WithAuthority(authority))
+	client, err := public.New(radixCliClientID, public.WithCache(cache), public.WithAuthority(authority))
 	if err != nil {
 		return nil, err
 	}
@@ -27,10 +26,10 @@ func NewMsalDeviceCode(cache cache.ExportReplace, authority string) (*MsalDevice
 	}, nil
 }
 
-func (p *MsalDeviceCode) Authenticate(ctx context.Context) (string, error) {
+func (p *MsalDeviceCode) Authenticate(ctx context.Context, scopes []string) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 100*time.Second)
 	defer cancel()
-	devCode, err := p.client.AcquireTokenByDeviceCode(ctx, getScopes())
+	devCode, err := p.client.AcquireTokenByDeviceCode(ctx, scopes)
 	if err != nil {
 		return "", fmt.Errorf("got error while waiting for user to input the device code: %s", err)
 	}
@@ -44,7 +43,7 @@ func (p *MsalDeviceCode) Authenticate(ctx context.Context) (string, error) {
 	return result.AccessToken, nil
 }
 
-func (p *MsalDeviceCode) GetAccessToken(ctx context.Context) (string, error) {
+func (p *MsalDeviceCode) GetAccessToken(ctx context.Context, scopes []string) (string, error) {
 	accounts, err := p.client.Accounts(ctx)
 
 	if err != nil {
@@ -54,7 +53,7 @@ func (p *MsalDeviceCode) GetAccessToken(ctx context.Context) (string, error) {
 		// found a cached account, now see if an applicable token has been cached
 		// NOTE: this API conflates error states, i.e. err is non-nil if an applicable token isn't
 		//       cached or if something goes wrong (making the HTTP request, unmarshalling, etc).
-		authResult, err := p.client.AcquireTokenSilent(ctx, getScopes(), public.WithSilentAccount(accounts[0]))
+		authResult, err := p.client.AcquireTokenSilent(ctx, scopes, public.WithSilentAccount(accounts[0]))
 		if err == nil {
 			return authResult.AccessToken, nil
 		}
@@ -62,5 +61,5 @@ func (p *MsalDeviceCode) GetAccessToken(ctx context.Context) (string, error) {
 
 	// either there was no cached account/token or the call to AcquireTokenSilent() failed
 	// make a new request to AAD
-	return p.Authenticate(ctx)
+	return p.Authenticate(ctx, scopes)
 }

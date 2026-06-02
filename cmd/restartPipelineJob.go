@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+
 	"github.com/equinor/radix-cli/generated/radixapi/client/pipeline_job"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
