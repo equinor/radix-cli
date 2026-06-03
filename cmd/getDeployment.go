@@ -38,10 +38,10 @@ var getDeploymentCmd = &cobra.Command{
 	Long: `Gets deployments for a given application and deployment name or environment
 
 Examples:
-  # Get a deployments an application radix-test 
+  # Get all deployments for an application radix-test
   rx get deployment --application radix-test
 
-  # Get a deployment deployment-abc for an application radix-test 
+  # Get a deployment deployment-abc for an application radix-test
   rx get deployment --application radix-test --deployment deployment-abc
 
   # Get a deployments for an application radix-test and its environment test
@@ -139,7 +139,6 @@ func init() {
 	getDeploymentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	getDeploymentCmd.Flags().StringP(flagnames.Deployment, "d", "", "Optional, name of a deployment. It cannot be used together with an option 'environment'.")
 	getDeploymentCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional, name of the environment. It cannot be used together with an option 'deployment'.")
-	getDeploymentCmd.MarkFlagsOneRequired(flagnames.Environment, flagnames.Deployment)
 	getDeploymentCmd.MarkFlagsMutuallyExclusive(flagnames.Environment, flagnames.Deployment)
 
 	_ = getDeploymentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
