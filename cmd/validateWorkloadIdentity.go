@@ -17,8 +17,10 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"log"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
+	"github.com/equinor/radix-cli/pkg/auth"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/workloadidentity"
 	_ "github.com/santhosh-tekuri/jsonschema/v5/httploader"
@@ -44,10 +46,14 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 		// }
 
 		// fmt.Println(apps.Payload)
-
-		graphHelper := workloadidentity.NewGraphHelper()
-
-		initializeGraph(graphHelper)
+		radixAuth, err := auth.New()
+		if err != nil {
+			return err
+		}
+		graphHelper, err := workloadidentity.NewAzureServicePrincipalService(&tokenCredentialAdapter{auth: radixAuth})
+		if err != nil {
+			return fmt.Errorf("Error initializing client: %w", err)
+		}
 
 		// id, err := graphHelper.GetManagedIdentity(cmd.Context(), "16ede44b-1f74-40a5-b428-46cca9a5741b", "test-resources", "id-radix-fed-test")
 		// if err != nil {
@@ -57,20 +63,13 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 		// return nil
 
 		resolveAndPrint := func(appId string) error {
-			sp, err := graphHelper.ResolveServicePrincipalResource(context.Background(), appId)
+			sp, err := graphHelper.GetServicePrincipal(context.Background(), appId)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("Found %s with name %s\n", sp.Type, *sp.ServicePrincipal.GetDisplayName())
-			var countFedCred int
-			switch sp.Type {
-			case workloadidentity.ServicePrincipalResourceManagedIdentity:
-				countFedCred = len(sp.ManagedIdentityFederatedCredentials)
-			case workloadidentity.ServicePrincipalResourceAppRegistration:
-				countFedCred = len(sp.ApplicationFederatedCredentials)
-			}
-			fmt.Printf("Number of fed creds: %v\n", countFedCred)
+			fmt.Printf("Found %s with name %s\n", sp.Type, sp.DisplayName)
+			fmt.Printf("Number of fed creds: %v\n", len(sp.FederatedCredentials))
 			return nil
 		}
 
@@ -86,11 +85,21 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 	},
 }
 
-func initializeGraph(graphHelper *workloadidentity.GraphHelper) {
-	err := graphHelper.InitializeGraphForUserAuth()
-	if err != nil {
-		log.Panicf("Error initializing Graph for user auth: %v\n", err)
+type tokenCredentialAdapter struct {
+	auth *auth.Auth
+}
+
+func (a *tokenCredentialAdapter) GetToken(ctx context.Context, options policy.TokenRequestOptions) (azcore.AccessToken, error) {
+	if a.auth == nil {
+		return azcore.AccessToken{}, fmt.Errorf("auth not set")
 	}
+
+	t, err := a.auth.GetAccessToken(ctx, options.Scopes)
+	if err != nil {
+		return azcore.AccessToken{}, err
+	}
+
+	return azcore.AccessToken{Token: t.Token, ExpiresOn: t.ExpiresOn}, nil
 }
 
 func init() {
