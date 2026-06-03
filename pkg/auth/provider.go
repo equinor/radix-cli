@@ -49,10 +49,9 @@ type GetAccessTokener interface {
 
 // Provider is an Provider that uses MSAL
 type Provider interface {
+	GetAccessTokener
 	Login(ctx context.Context, useInteractiveLogin, useDeviceCode, useGithubCredentials bool, azureClientId, federatedTokenFile, azureClientSecret string) error
 	Logout() error
-	GetAccessTokener
-	Type() string
 }
 type Auth struct {
 	authority string
@@ -173,11 +172,6 @@ func (a *Auth) GetAccessToken(ctx context.Context, scopes []string) (string, err
 	}
 
 	return a.provider.GetAccessToken(ctx, scopes)
-}
-
-func (a *Auth) Type() string {
-	providerType, _ := a.cache.GetItem(authProviderTypeCacheKey)
-	return providerType
 }
 
 func loadProviderFromCache(globalCache cache.Cache, authCacheFilename, authority string) (GetAccessTokener, error) {

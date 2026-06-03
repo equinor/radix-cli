@@ -9,6 +9,10 @@ import (
 	"github.com/equinor/radix-cli/pkg/auth/cache"
 )
 
+const (
+	azureClientSecretCacheKey = "azure_client_secret"
+)
+
 type AzureClientSecret struct {
 	Authority string
 	cache     cache.Cache
@@ -44,6 +48,7 @@ func (p *AzureClientSecret) Authenticate(ctx context.Context, azureClientId, azu
 	}
 
 	p.cache.SetItem(azureClientIdCacheKey, azureClientId, 365*24*time.Hour)
+	p.cache.SetItem(azureClientSecretCacheKey, azureClientSecret, 365*24*time.Hour)
 	p.cache.SetItem(accessTokenCacheKey(scopes), authResult.AccessToken, time.Until(authResult.ExpiresOn))
 	return authResult.AccessToken, nil
 }
@@ -54,6 +59,6 @@ func (p *AzureClientSecret) GetAccessToken(ctx context.Context, scopes []string)
 	}
 
 	azureClientId, _ := p.cache.GetItem(azureClientIdCacheKey)
-
-	return p.Authenticate(ctx, azureClientId, "azureClientSecret", scopes)
+	azureClientSecret, _ := p.cache.GetItem(azureClientSecretCacheKey)
+	return p.Authenticate(ctx, azureClientId, azureClientSecret, scopes)
 }
