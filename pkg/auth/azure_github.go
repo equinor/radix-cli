@@ -22,28 +22,18 @@ const (
 )
 
 type AzureGithub struct {
-	authority     string
-	azureClientId string
-	cache         cache.Cache
+	authority string
+	cache     cache.Cache
 }
 
 func NewAzureGithub(cache cache.Cache, authority string) *AzureGithub {
-
-	azureClientId, _ := cache.GetItem(azureClientIdCacheKey)
-
 	return &AzureGithub{
-		authority:     authority,
-		cache:         cache,
-		azureClientId: azureClientId,
+		authority: authority,
+		cache:     cache,
 	}
 }
 
-func (p *AzureGithub) Authenticate(ctx context.Context, azureClientId string, scopes []string) (string, error) {
-	// Mostly copied from kubelogin\pkg\internal\token\githubactionscredential.go:newGithubActionsCredential()
-	if token, ok := p.cache.GetItem(accessTokenCacheKey(scopes)); ok {
-		return token, nil
-	}
-
+func (p *AzureGithub) Authenticate(ctx context.Context, azureClientId string, scopes []string) (AccessToken, error) {
 	ctx, cancel := context.WithTimeout(ctx, 100*time.Second)
 	defer cancel()
 
@@ -53,26 +43,26 @@ func (p *AzureGithub) Authenticate(ctx context.Context, azureClientId string, sc
 
 	client, err := confidential.New(p.authority, azureClientId, cred)
 	if err != nil {
-		return "", fmt.Errorf("failed to create github actions credential: %w", err)
+		return AccessToken{}, fmt.Errorf("failed to create github actions credential: %w", err)
 	}
 
 	authResult, err := client.AcquireTokenByCredential(ctx, scopes)
 	if err != nil {
-		return "", err
+		return AccessToken{}, err
 	}
 
 	p.cache.SetItem(azureClientIdCacheKey, azureClientId, 365*24*time.Hour)
 	p.cache.SetItem(accessTokenCacheKey(scopes), authResult.AccessToken, time.Until(authResult.ExpiresOn))
-	return authResult.AccessToken, nil
+	return AccessToken{Token: authResult.AccessToken, ExpiresOn: authResult.ExpiresOn}, nil
 }
 
-func (p *AzureGithub) GetAccessToken(ctx context.Context, scopes []string) (string, error) {
+func (p *AzureGithub) GetAccessToken(ctx context.Context, scopes []string) (AccessToken, error) {
 	if token, ok := p.cache.GetItem(accessTokenCacheKey(scopes)); ok {
-		return token, nil
+		return AccessToken{Token: token.Content, ExpiresOn: token.ExpiresAt}, nil
 	}
 
 	azureClientId, _ := p.cache.GetItem(azureClientIdCacheKey)
-	return p.Authenticate(ctx, azureClientId, scopes)
+	return p.Authenticate(ctx, azureClientId.Content, scopes)
 }
 
 func getGithubFedCred(ctx context.Context) (string, error) {

@@ -135,7 +135,7 @@ func (a *clientAuthWritedAdapter) AuthenticateRequest(r runtime.ClientRequest, _
 		return err
 	}
 
-	return r.SetHeaderParam(runtime.HeaderAuthorization, "Bearer "+token)
+	return r.SetHeaderParam(runtime.HeaderAuthorization, "Bearer "+token.Token)
 }
 
 // LoginCommand Login radixapi for command

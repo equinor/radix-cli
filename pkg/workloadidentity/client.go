@@ -92,7 +92,7 @@ func (a *tokenCredentialAdapter) GetToken(ctx context.Context, options policy.To
 		return azcore.AccessToken{}, err
 	}
 
-	return azcore.AccessToken{Token: t}, nil
+	return azcore.AccessToken{Token: t.Token, ExpiresOn: t.ExpiresOn}, nil
 }
 
 // ResolveServicePrincipalResource resolves a service principal appId and fetches

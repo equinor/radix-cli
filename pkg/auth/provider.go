@@ -32,19 +32,24 @@ const (
 )
 
 var (
-	errProviderNotSet  = errors.New("auth provider not set, please login")
-	errProviderUnknown = errors.New("auth provider is unknown, please login")
-)
+	ErrProviderNotSet  = errors.New("auth provider not set, please login")
+	ErrProviderUnknown = errors.New("auth provider is unknown, please login")
 
-var (
 	defaultLoginScope = []string{"6dae42f8-4368-4678-94ff-3960e28e3630/.default"}
 )
 
 var _ Provider = &Auth{}
 
+type AccessToken struct {
+	// Token is the access token
+	Token string
+	// ExpiresOn indicates when the token expires
+	ExpiresOn time.Time
+}
+
 type GetAccessTokener interface {
 	// GetAccessToken returns a valid token
-	GetAccessToken(ctx context.Context, scopes []string) (string, error)
+	GetAccessToken(ctx context.Context, scopes []string) (AccessToken, error)
 }
 
 // Provider is an Provider that uses MSAL
@@ -71,7 +76,7 @@ func New() (*Auth, error) {
 	globalCache := cache.New(authCacheFilename, "global")
 
 	provider, err := loadProviderFromCache(globalCache, authCacheFilename, authority)
-	if err != nil && !errors.Is(err, errProviderNotSet) {
+	if err != nil && !errors.Is(err, ErrProviderNotSet) {
 		return nil, err
 	}
 
@@ -88,26 +93,19 @@ func New() (*Auth, error) {
 func (a *Auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, useGithubCredentials bool, azureClientId, federatedTokenFile, azureClientSecret string) error {
 	switch {
 	case useInteractiveLogin:
-		provider, err := NewMsalInteractive(NewMsalTokenCache(a.cacheFn(providerMsalInteractive), "msal"), a.authority)
-		if err != nil {
-			return err
-		}
+		provider := NewMsalInteractive(NewMsalTokenCache(a.cacheFn(providerMsalInteractive), "msal"), a.authority)
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerMsalInteractive, 365*24*time.Hour)
 
-		_, err = provider.Authenticate(ctx, defaultLoginScope)
+		_, err := provider.Authenticate(ctx, defaultLoginScope)
 		return err
 
 	case useDeviceCode:
-		provider, err := NewMsalDeviceCode(NewMsalTokenCache(a.cacheFn(providerMsalDevicecode), "msal"), a.authority)
-		if err != nil {
-			return err
-		}
-
+		provider := NewMsalDeviceCode(NewMsalTokenCache(a.cacheFn(providerMsalDevicecode), "msal"), a.authority)
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerMsalDevicecode, 365*24*time.Hour)
 
-		_, err = provider.Authenticate(ctx, defaultLoginScope)
+		_, err := provider.Authenticate(ctx, defaultLoginScope)
 		return err
 
 	case useGithubCredentials:
@@ -166,9 +164,9 @@ func (a *Auth) Logout() error {
 	return nil
 }
 
-func (a *Auth) GetAccessToken(ctx context.Context, scopes []string) (string, error) {
+func (a *Auth) GetAccessToken(ctx context.Context, scopes []string) (AccessToken, error) {
 	if a.provider == nil {
-		return "", errProviderNotSet
+		return AccessToken{}, ErrProviderNotSet
 	}
 
 	return a.provider.GetAccessToken(ctx, scopes)
@@ -177,18 +175,18 @@ func (a *Auth) GetAccessToken(ctx context.Context, scopes []string) (string, err
 func loadProviderFromCache(globalCache cache.Cache, authCacheFilename, authority string) (GetAccessTokener, error) {
 
 	providerType, ok := globalCache.GetItem(authProviderTypeCacheKey)
-	if !ok || providerType == "" {
-		return nil, errProviderNotSet
+	if !ok || providerType.Content == "" {
+		return nil, ErrProviderNotSet
 	}
 
-	switch providerType {
+	switch providerType.Content {
 	case providerMsalInteractive:
 		msalCache := cache.New(authCacheFilename, providerMsalInteractive)
-		return NewMsalInteractive(NewMsalTokenCache(msalCache, "msal"), authority)
+		return NewMsalInteractive(NewMsalTokenCache(msalCache, "msal"), authority), nil
 
 	case providerMsalDevicecode:
 		msalCache := cache.New(authCacheFilename, providerMsalDevicecode)
-		return NewMsalDeviceCode(NewMsalTokenCache(msalCache, "msal"), authority)
+		return NewMsalDeviceCode(NewMsalTokenCache(msalCache, "msal"), authority), nil
 
 	case providerAzureGithub:
 		localCache := cache.New(authCacheFilename, providerAzureGithub)
@@ -203,5 +201,5 @@ func loadProviderFromCache(globalCache cache.Cache, authCacheFilename, authority
 		return NewAzureFederatedCredentials(localCache), nil
 	}
 
-	return nil, errProviderUnknown
+	return nil, ErrProviderUnknown
 }
