@@ -25,6 +25,14 @@ type HorizontalScalingSummary struct {
 	// Example: 300
 	CooldownPeriod int32 `json:"cooldownPeriod,omitempty"`
 
+	// Deprecated: Component current average CPU utilization over all pods, represented as a percentage of requested CPU. Use Triggers instead. Will be removed from Radix API 2025-01-01.
+	// Example: 70
+	CurrentCPUUtilizationPercentage int32 `json:"currentCPUUtilizationPercentage,omitempty"`
+
+	// Deprecated: Component current average memory utilization over all pods, represented as a percentage of requested memory. Use Triggers instead. Will be removed from Radix API 2025-01-01.
+	// Example: 80
+	CurrentMemoryUtilizationPercentage int32 `json:"currentMemoryUtilizationPercentage,omitempty"`
+
 	// CurrentReplicas returns the current number of replicas
 	// Example: 1
 	// Required: true
@@ -47,9 +55,17 @@ type HorizontalScalingSummary struct {
 	// Example: 30
 	PollingInterval int32 `json:"pollingInterval,omitempty"`
 
+	// Deprecated: Component target average CPU utilization over all pods. Use Triggers instead. Will be removed from Radix API 2025-01-01.
+	// Example: 80
+	TargetCPUUtilizationPercentage int32 `json:"targetCPUUtilizationPercentage,omitempty"`
+
+	// Deprecated: Component target average memory utilization over all pods. use Triggers instead. Will be removed from Radix API 2025-01-01.
+	// Example: 80
+	TargetMemoryUtilizationPercentage int32 `json:"targetMemoryUtilizationPercentage,omitempty"`
+
 	// Triggers lists status of all triggers found in radixconfig.yaml
 	// Required: true
-	Triggers []*HorizontalScalingSummaryTrigger `json:"triggers"`
+	Triggers []*HorizontalScalingSummaryTriggerStatus `json:"triggers"`
 }
 
 // Validate validates this horizontal scaling summary

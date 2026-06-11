@@ -21,17 +21,21 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"slices"
 	"strings"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
+	radixapiclient "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/client/configuration"
 	"github.com/equinor/radix-cli/generated/radixapi/client/deployment"
+	"github.com/equinor/radix-cli/generated/radixapi/client/platform"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/auth"
 	"github.com/equinor/radix-cli/pkg/client"
+	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/workloadidentity"
@@ -47,6 +51,11 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 	Long:    `Valida workload identity configuration`,
 	Example: ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
+		if err != nil {
+			return err
+		}
+
 		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetRadixApiForCommand(cmd)
@@ -54,71 +63,37 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 			return err
 		}
 
-		cfg, err := apiClient.Configuration.GetConfiguration(&configuration.GetConfigurationParams{Context: cmd.Context()}, nil)
-		if err != nil {
-			return err
-		}
-		issuers := cfg.Payload.ClusterOidcIssuers
-
-		app, err := apiClient.Application.GetApplication(&application.GetApplicationParams{AppName: "oauth-demo", Context: cmd.Context()}, nil)
-		if err != nil {
-			return err
-		}
-
-		type appEnv struct {
-			app, env string
-		}
-
-		deployments := map[appEnv]string{}
-		for _, env := range app.Payload.Environments {
-			if deployment := env.ActiveDeployment; deployment != nil {
-				deployments[appEnv{app: *app.Payload.Name, env: *env.Name}] = *deployment.Name
-			}
-
-		}
-		clientFedCreds := map[string][]workloadidentity.FederatedCredential{}
-
-		addClientFedCred := func(identity *models.Identity, namespace string, issuers []string) {
-			if identity == nil || identity.Azure == nil || identity.Azure.ClientID == nil {
-				return
-			}
-
-			clientId := *identity.Azure.ClientID
-
-			if _, ok := clientFedCreds[clientId]; !ok {
-				clientFedCreds[clientId] = []workloadidentity.FederatedCredential{}
-			}
-
-			for _, issuer := range issuers {
-				clientFedCreds[clientId] = append(clientFedCreds[clientId], workloadidentity.FederatedCredential{
-					Issuer:    issuer,
-					Subject:   fmt.Sprintf("system:serviceaccount:%s:%s", namespace, *identity.Azure.ServiceAccountName),
-					Audiences: []string{"api://AzureADTokenExchange"},
-				})
-			}
-
-		}
-
-		for appEnvInfo, deploymentName := range deployments {
-			deployment, err := apiClient.Deployment.GetDeployment(&deployment.GetDeploymentParams{AppName: appEnvInfo.app, DeploymentName: deploymentName, Context: cmd.Context()}, nil)
+		var appNames []string
+		if len(appName) > 0 {
+			appNames = []string{appName}
+		} else {
+			apps, err := apiClient.Platform.ShowApplications(&platform.ShowApplicationsParams{Context: cmd.Context()}, nil)
 			if err != nil {
 				return err
 			}
 
-			for _, component := range deployment.Payload.Components {
-				addClientFedCred(component.Identity, *deployment.Payload.Namespace, issuers)
-
-				if component.Oauth2 != nil {
-					addClientFedCred(component.Oauth2.Identity, *deployment.Payload.Namespace, issuers)
-				}
-			}
-
+			appNames = slice.Map(apps.Payload, func(app *models.ApplicationSummary) string { return *app.Name })
+			completion.UpdateAppNamesCache(appNames)
 		}
+
+		cfg, err := apiClient.Configuration.GetConfiguration(&configuration.GetConfigurationParams{Context: cmd.Context()}, nil)
+		if err != nil {
+			return err
+		}
+
+		fedCredValidator := federatedCredentialsValidator{
+			apiClient: apiClient,
+			issuers:   cfg.Payload.ClusterOidcIssuers,
+			logger: func(msg string) {
+				fmt.Fprintln(os.Stderr, msg)
+			}}
+		clientFedCreds, err := fedCredValidator.ValidateFederatedCredentialsDetails(cmd.Context(), appNames)
 
 		radixAuth, err := auth.New()
 		if err != nil {
 			return err
 		}
+
 		graphHelper, err := workloadidentity.NewAzureServicePrincipalService(&tokenCredentialAdapter{auth: radixAuth})
 		if err != nil {
 			return fmt.Errorf("Error initializing client: %w", err)
@@ -127,11 +102,12 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 		var createCommands, deleteCommands []string
 
 		for clientId, expectedFedCreds := range clientFedCreds {
-			fmt.Printf("Analysing service principal with client id %v: ", clientId)
+			fmt.Printf("Analyzing service principal with client id %v: ", clientId)
 			sp, err := graphHelper.GetServicePrincipal(cmd.Context(), clientId)
 			if err != nil {
 				return err
 			}
+
 			existingWorkloadIdentityFedCreds := slice.FindAll(sp.FederatedCredentials, func(fedCred workloadidentity.FederatedCredential) bool {
 				subjectParts := strings.Split(fedCred.Subject, ":")
 				if len(subjectParts) != 4 {
@@ -169,6 +145,131 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 
 		return nil
 	},
+}
+
+type validateResponse struct {
+	Missing []workloadidentity.FederatedCredential
+	Extra   []workloadidentity.FederatedCredential
+}
+
+type clientFedCredMap map[string][]workloadidentity.FederatedCredential
+
+func (target clientFedCredMap) MergeFrom(source clientFedCredMap) {
+	for clientId, fedCred := range source {
+		if _, ok := target[clientId]; !ok {
+			target[clientId] = make([]workloadidentity.FederatedCredential, 0, len(fedCred))
+		}
+
+		target[clientId] = append(target[clientId], fedCred...)
+	}
+}
+
+type federatedCredentialsValidator struct {
+	apiClient *radixapiclient.Radixapi
+	issuers   []string
+	logger    func(msg string)
+}
+
+func (v *federatedCredentialsValidator) ValidateFederatedCredentialsDetails(ctx context.Context, appNames []string) (clientFedCredMap, error) {
+	activeDeployments, err := v.getActiveDeploymentsForApplications(ctx, appNames)
+	if err != nil {
+		return nil, err
+	}
+
+	fedCreds := clientFedCredMap{}
+	for _, deployment := range activeDeployments {
+		fedCreds.MergeFrom(v.buildFederatedCredentialsMapForDeployment(deployment))
+	}
+
+	return fedCreds, nil
+}
+
+func (v *federatedCredentialsValidator) buildFederatedCredentialsMapForDeployment(deployment models.Deployment) clientFedCredMap {
+	fedCreds := clientFedCredMap{}
+
+	for _, component := range deployment.Components {
+		if fedCred := v.buildFederatedCredentialsMapForIdentity(component.Identity, *deployment.Namespace); fedCred != nil {
+			fedCreds.MergeFrom(fedCred)
+		}
+
+		if component.Oauth2 != nil {
+			if fedCred := v.buildFederatedCredentialsMapForIdentity(component.Oauth2.Identity, *deployment.Namespace); fedCred != nil {
+				fedCreds.MergeFrom(fedCred)
+			}
+		}
+
+		// if horizontalScaling := component.HorizontalScalingSummary; horizontalScaling != nil {
+		// 	for _, trigger := range horizontalScaling.Triggers {
+		// 		if fedCred := v.buildFederatedCredentialsMapForIdentity(trigger.Identity, *deployment.Namespace); fedCred != nil {
+		// 			fedCreds.MergeFrom(fedCred)
+		// 		}
+		// 	}
+		// }
+	}
+
+	return fedCreds
+}
+
+func (v *federatedCredentialsValidator) buildFederatedCredentialsMapForIdentity(identity *models.Identity, namespace string) clientFedCredMap {
+	if identity == nil || identity.Azure == nil || identity.Azure.ClientID == nil {
+		return nil
+	}
+
+	clientId := *identity.Azure.ClientID
+	fedCreds := clientFedCredMap{clientId: []workloadidentity.FederatedCredential{}}
+
+	for _, issuer := range v.issuers {
+		fedCreds[clientId] = append(fedCreds[clientId], workloadidentity.FederatedCredential{
+			Issuer:    issuer,
+			Subject:   fmt.Sprintf("system:serviceaccount:%s:%s", namespace, *identity.Azure.ServiceAccountName),
+			Audiences: []string{"api://AzureADTokenExchange"},
+		})
+	}
+
+	return fedCreds
+}
+
+func (v *federatedCredentialsValidator) getActiveDeploymentsForApplications(ctx context.Context, appNames []string) ([]models.Deployment, error) {
+	var deployments []models.Deployment
+
+	for _, appName := range appNames {
+		v.log(fmt.Sprintf("Reading deployments for application %s", appName))
+		appDeployments, err := v.getActiveDeploymentsForApplication(ctx, appName)
+		if err != nil {
+			return nil, err
+		}
+
+		deployments = append(deployments, appDeployments...)
+	}
+
+	return deployments, nil
+}
+
+func (v *federatedCredentialsValidator) getActiveDeploymentsForApplication(ctx context.Context, appName string) ([]models.Deployment, error) {
+	app, err := v.apiClient.Application.GetApplication(&application.GetApplicationParams{Context: ctx, AppName: appName}, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var deployments []models.Deployment
+
+	for _, env := range app.Payload.Environments {
+		if env.ActiveDeployment != nil {
+			activeDeployment, err := v.apiClient.Deployment.GetDeployment(&deployment.GetDeploymentParams{Context: ctx, AppName: appName, DeploymentName: *env.ActiveDeployment.Name}, nil)
+			if err != nil {
+				return nil, err
+			}
+			deployments = append(deployments, *activeDeployment.Payload)
+		}
+	}
+
+	return deployments, nil
+}
+
+func (v *federatedCredentialsValidator) log(msg string) {
+	if v.logger != nil {
+		v.logger(msg)
+	}
 }
 
 func generateDeleteFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, deleteFedCred workloadidentity.FederatedCredential) (string, error) {
