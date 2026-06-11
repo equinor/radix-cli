@@ -79,39 +79,6 @@ func (g *AzureServicePrincipalService) GetServicePrincipal(ctx context.Context, 
 	return nil, fmt.Errorf("unhandled service principal type %q", servicePrincipalType)
 }
 
-// GenerateAzureCLIFederatedCredentialCommand adds a federated credential for the service principal
-// identified by clientId.
-//
-// The service principal can be either an app registration or a managed identity.
-// The method does not pre-check for existing credentials and returns an error if
-// the add operation fails.
-// func (g *AzureServicePrincipalService) GenerateAzureCLIFederatedCredentialCommand(ctx context.Context, clientId string, federatedCredential FederatedCredential) (string, error) {
-// 	sp, err := g.GetServicePrincipal(ctx, clientId)
-// 	if err != nil {
-
-// 	}
-
-// 	newFedCred, err := generateFederatedCredential(federatedCredential, sp.FederatedCredentials)
-// 	if err != nil {
-// 		return "", err
-// 	}
-
-// 	var command string
-// 	switch sp.Type {
-// 	case ManagedIdentity:
-// 		return fmt.Sprintf("az identity federated-credential create --name %s --identity-name %s --resource-group %s --subscription %s --issuer %s --subject %s --audiences %s", sp.DisplayName, newFedCred.Name, sp.ResourceGroup, sp.SubscriptionId, newFedCred.Issuer, newFedCred.Subject, newFedCred.Audiences[0]), nil
-// 	case AppRegistration:
-// 		return "dsfs", nil
-// 	}
-
-// 	if command == "" {
-// 		return "", fmt.Errorf("unable to generate command for principal type %q", sp.Type)
-// 	}
-
-// 	return command, nil
-
-// }
-
 func (g *AzureServicePrincipalService) getGraphServicePrincipalAndType(ctx context.Context, clientId string) (models.ServicePrincipalable, ServicePrincipalType, error) {
 	clientId = strings.TrimSpace(clientId)
 	if clientId == "" {
@@ -292,116 +259,17 @@ func mapManagedIdentityFederatedCredential(miFedCred *armmsi.FederatedIdentityCr
 	}
 }
 
-// func generateFederatedCredential(federatedCredential FederatedCredential, existingFedCreds []FederatedCredential) (*FederatedCredential, error) {
-// 	credentialName, err := validateOrGenerateUniqueFederatedCredentialName(federatedCredential, existingFedCreds)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return &FederatedCredential{
-// 		Name:      credentialName,
-// 		Issuer:    federatedCredential.Issuer,
-// 		Subject:   federatedCredential.Subject,
-// 		Audiences: federatedCredential.Audiences,
-// 	}, nil
-// }
-
-// func validateOrGenerateUniqueFederatedCredentialName(fedCred FederatedCredential, existingFedCreds []FederatedCredential) (string, error) {
-// 	nameUnused := func(name string) bool {
-// 		return !slice.Any(existingFedCreds, federatedCredentialsNameEqualsPredicate(name))
-// 	}
-
-// 	if existingName := strings.TrimSpace(fedCred.Name); len(existingName) > 0 {
-// 		if !nameUnused(existingName) {
-// 			return "", errors.New("federated credential name already in use")
-// 		}
-// 		return existingName, nil
-// 	}
-
-// 	for counter := 0; ; counter++ {
-// 		if candidate := generateFederatedCredentialName(fedCred.Subject, fedCred.Issuer, counter); nameUnused(candidate) {
-// 			return candidate, nil
-// 		}
-// 	}
-// }
-
-// func federatedCredentialsNameEqualsPredicate(name string) func(fedCred FederatedCredential) bool {
-// 	nameLower := strings.ToLower(name)
-// 	return func(fedCred FederatedCredential) bool {
-// 		return strings.ToLower(fedCred.Name) == nameLower
-// 	}
-// }
-
-// func generateFederatedCredentialName(subject, issuer string, counter int) string {
-// 	const (
-// 		issuerHashLength                 = 10
-// 		federatedCredentialNameMaxLength = 120
-// 	)
-
-// 	issuerHashFull := sha1.Sum([]byte(strings.TrimSpace(strings.ToLower(issuer))))
-// 	issuerHash := hex.EncodeToString(issuerHashFull[:])[:issuerHashLength]
-
-// 	subjectPart := sanitizeNamePart(subject)
-// 	if subjectPart == "" {
-// 		subjectPart = "fedcred"
-// 	}
-
-// 	counterSuffix := ""
-// 	if counter > 0 {
-// 		counterSuffix = fmt.Sprintf("-%d", counter)
-// 	}
-
-// 	reserved := 1 + len(issuerHash) + len(counterSuffix)
-// 	maxSubjectLength := max(federatedCredentialNameMaxLength-reserved, 1)
-// 	if len(subjectPart) > maxSubjectLength {
-// 		subjectPart = strings.Trim(subjectPart[:maxSubjectLength], "-")
-// 	}
-
-// 	return subjectPart + "-" + issuerHash + counterSuffix
-// }
-
-// func sanitizeNamePart(value string) string {
-// 	value = strings.TrimSpace(strings.ToLower(value))
-// 	if value == "" {
-// 		return ""
-// 	}
-
-// 	var builder strings.Builder
-// 	builder.Grow(len(value))
-// 	lastWasDash := false
-
-// 	for _, r := range value {
-// 		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
-// 			builder.WriteRune(r)
-// 			lastWasDash = false
-// 			continue
-// 		}
-
-// 		if !lastWasDash {
-// 			builder.WriteByte('-')
-// 			lastWasDash = true
-// 		}
-// 	}
-
-// 	return strings.Trim(builder.String(), "-")
-// }
-
 func classifyServicePrincipalResourceType(servicePrincipal models.ServicePrincipalable) ServicePrincipalType {
 	servicePrincipalType := strings.TrimSpace(strings.ToLower(stringOrEmpty(servicePrincipal.GetServicePrincipalType())))
-	if servicePrincipalType == "managedidentity" {
-		return ManagedIdentity
-	}
 
-	if servicePrincipalType == "application" {
+	switch servicePrincipalType {
+	case "managedidentity":
+		return ManagedIdentity
+	case "application":
 		return AppRegistration
 	}
 
-	_, _, _, err := parseManagedIdentityResourceID(servicePrincipal.GetAlternativeNames())
-	if err == nil {
-		return ManagedIdentity
-	}
-
-	return AppRegistration
+	return ""
 }
 
 func parseManagedIdentityResourceID(alternativeNames []string) (subscriptionID, resourceGroupName, resourceName string, err error) {
