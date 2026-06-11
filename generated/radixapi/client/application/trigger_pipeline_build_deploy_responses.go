@@ -7,6 +7,7 @@ package application
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -22,7 +23,7 @@ type TriggerPipelineBuildDeployReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *TriggerPipelineBuildDeployReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *TriggerPipelineBuildDeployReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewTriggerPipelineBuildDeployOK()
@@ -110,7 +111,7 @@ func (o *TriggerPipelineBuildDeployOK) readResponse(response runtime.ClientRespo
 	o.Payload = new(models.JobSummary)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 

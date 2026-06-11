@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -49,11 +50,15 @@ func (m *ApplicationRegistrationPatchRequest) validateApplicationRegistrationPat
 
 	if m.ApplicationRegistrationPatch != nil {
 		if err := m.ApplicationRegistrationPatch.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("applicationRegistrationPatch")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("applicationRegistrationPatch")
 			}
+
 			return err
 		}
 	}
@@ -80,11 +85,15 @@ func (m *ApplicationRegistrationPatchRequest) contextValidateApplicationRegistra
 	if m.ApplicationRegistrationPatch != nil {
 
 		if err := m.ApplicationRegistrationPatch.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("applicationRegistrationPatch")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("applicationRegistrationPatch")
 			}
+
 			return err
 		}
 	}

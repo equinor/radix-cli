@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -94,11 +95,15 @@ func (m *ImageScan) validateVulnerabilities(formats strfmt.Registry) error {
 
 		if m.Vulnerabilities[i] != nil {
 			if err := m.Vulnerabilities[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("vulnerabilities" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("vulnerabilities" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -133,11 +138,15 @@ func (m *ImageScan) contextValidateVulnerabilities(ctx context.Context, formats 
 			}
 
 			if err := m.Vulnerabilities[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("vulnerabilities" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("vulnerabilities" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

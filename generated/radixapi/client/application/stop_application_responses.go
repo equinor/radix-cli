@@ -18,7 +18,7 @@ type StopApplicationReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *StopApplicationReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *StopApplicationReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewStopApplicationOK()

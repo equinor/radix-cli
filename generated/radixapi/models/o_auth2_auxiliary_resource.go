@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -74,11 +75,15 @@ func (m *OAuth2AuxiliaryResource) validateDeployments(formats strfmt.Registry) e
 
 		if m.Deployments[i] != nil {
 			if err := m.Deployments[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("deployments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("deployments" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -88,7 +93,7 @@ func (m *OAuth2AuxiliaryResource) validateDeployments(formats strfmt.Registry) e
 	return nil
 }
 
-var oAuth2AuxiliaryResourceTypeSessionStoreTypePropEnum []interface{}
+var oAuth2AuxiliaryResourceTypeSessionStoreTypePropEnum []any
 
 func init() {
 	var res []string
@@ -144,11 +149,15 @@ func (m *OAuth2AuxiliaryResource) validateDeployment(formats strfmt.Registry) er
 
 	if m.Deployment != nil {
 		if err := m.Deployment.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("deployment")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("deployment")
 			}
+
 			return err
 		}
 	}
@@ -163,11 +172,15 @@ func (m *OAuth2AuxiliaryResource) validateIdentity(formats strfmt.Registry) erro
 
 	if m.Identity != nil {
 		if err := m.Identity.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("identity")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("identity")
 			}
+
 			return err
 		}
 	}
@@ -208,11 +221,15 @@ func (m *OAuth2AuxiliaryResource) contextValidateDeployments(ctx context.Context
 			}
 
 			if err := m.Deployments[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("deployments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("deployments" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -227,11 +244,15 @@ func (m *OAuth2AuxiliaryResource) contextValidateDeployment(ctx context.Context,
 	if m.Deployment != nil {
 
 		if err := m.Deployment.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("deployment")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("deployment")
 			}
+
 			return err
 		}
 	}
@@ -248,11 +269,15 @@ func (m *OAuth2AuxiliaryResource) contextValidateIdentity(ctx context.Context, f
 		}
 
 		if err := m.Identity.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("identity")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("identity")
 			}
+
 			return err
 		}
 	}

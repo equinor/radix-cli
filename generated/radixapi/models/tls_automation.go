@@ -47,7 +47,7 @@ func (m *TLSAutomation) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-var tlsAutomationTypeStatusPropEnum []interface{}
+var tlsAutomationTypeStatusPropEnum []any
 
 func init() {
 	var res []string

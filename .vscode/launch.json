@@ -330,7 +330,9 @@
 			"program": "${workspaceFolder}/cli/rx/main.go",
 			"args": [
 				"validate",
-				"workload-identity"
+				"workload-identity",
+				"-a",
+				"oauth-demo"
 			]
 		}
 	]

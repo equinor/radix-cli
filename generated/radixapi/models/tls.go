@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -83,11 +84,15 @@ func (m *TLS) validateCertificates(formats strfmt.Registry) error {
 
 		if m.Certificates[i] != nil {
 			if err := m.Certificates[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("certificates" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("certificates" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -97,7 +102,7 @@ func (m *TLS) validateCertificates(formats strfmt.Registry) error {
 	return nil
 }
 
-var tlsTypeStatusPropEnum []interface{}
+var tlsTypeStatusPropEnum []any
 
 func init() {
 	var res []string
@@ -159,11 +164,15 @@ func (m *TLS) validateAutomation(formats strfmt.Registry) error {
 
 	if m.Automation != nil {
 		if err := m.Automation.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("automation")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("automation")
 			}
+
 			return err
 		}
 	}
@@ -200,11 +209,15 @@ func (m *TLS) contextValidateCertificates(ctx context.Context, formats strfmt.Re
 			}
 
 			if err := m.Certificates[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("certificates" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("certificates" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -223,11 +236,15 @@ func (m *TLS) contextValidateAutomation(ctx context.Context, formats strfmt.Regi
 		}
 
 		if err := m.Automation.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("automation")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("automation")
 			}
+
 			return err
 		}
 	}

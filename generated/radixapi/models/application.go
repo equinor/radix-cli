@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -119,11 +120,15 @@ func (m *Application) validateDNSAliases(formats strfmt.Registry) error {
 
 		if m.DNSAliases[i] != nil {
 			if err := m.DNSAliases[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("dnsAliases" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("dnsAliases" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -145,11 +150,15 @@ func (m *Application) validateDNSExternalAliases(formats strfmt.Registry) error 
 
 		if m.DNSExternalAliases[i] != nil {
 			if err := m.DNSExternalAliases[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("dnsExternalAliases" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("dnsExternalAliases" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -171,11 +180,15 @@ func (m *Application) validateEnvironments(formats strfmt.Registry) error {
 
 		if m.Environments[i] != nil {
 			if err := m.Environments[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("environments" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -197,11 +210,15 @@ func (m *Application) validateJobs(formats strfmt.Registry) error {
 
 		if m.Jobs[i] != nil {
 			if err := m.Jobs[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("jobs" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -254,11 +271,15 @@ func (m *Application) validateAppAlias(formats strfmt.Registry) error {
 
 	if m.AppAlias != nil {
 		if err := m.AppAlias.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("appAlias")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("appAlias")
 			}
+
 			return err
 		}
 	}
@@ -274,11 +295,15 @@ func (m *Application) validateRegistration(formats strfmt.Registry) error {
 
 	if m.Registration != nil {
 		if err := m.Registration.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("registration")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("registration")
 			}
+
 			return err
 		}
 	}
@@ -331,11 +356,15 @@ func (m *Application) contextValidateDNSAliases(ctx context.Context, formats str
 			}
 
 			if err := m.DNSAliases[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("dnsAliases" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("dnsAliases" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -356,11 +385,15 @@ func (m *Application) contextValidateDNSExternalAliases(ctx context.Context, for
 			}
 
 			if err := m.DNSExternalAliases[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("dnsExternalAliases" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("dnsExternalAliases" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -381,11 +414,15 @@ func (m *Application) contextValidateEnvironments(ctx context.Context, formats s
 			}
 
 			if err := m.Environments[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("environments" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -406,11 +443,15 @@ func (m *Application) contextValidateJobs(ctx context.Context, formats strfmt.Re
 			}
 
 			if err := m.Jobs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("jobs" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -429,11 +470,15 @@ func (m *Application) contextValidateAppAlias(ctx context.Context, formats strfm
 		}
 
 		if err := m.AppAlias.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("appAlias")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("appAlias")
 			}
+
 			return err
 		}
 	}
@@ -446,11 +491,15 @@ func (m *Application) contextValidateRegistration(ctx context.Context, formats s
 	if m.Registration != nil {
 
 		if err := m.Registration.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("registration")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("registration")
 			}
+
 			return err
 		}
 	}

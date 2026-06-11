@@ -87,7 +87,7 @@ type ClientService interface {
 GetApplicationJob gets the detail of a given pipeline job for a given application
 */
 func (a *Client) GetApplicationJob(params *GetApplicationJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetApplicationJobOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetApplicationJobParams()
 	}
@@ -107,17 +107,22 @@ func (a *Client) GetApplicationJob(params *GetApplicationJobParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetApplicationJobOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getApplicationJob: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -126,7 +131,7 @@ func (a *Client) GetApplicationJob(params *GetApplicationJobParams, authInfo run
 GetApplicationJobs gets the summary of jobs for a given application
 */
 func (a *Client) GetApplicationJobs(params *GetApplicationJobsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetApplicationJobsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetApplicationJobsParams()
 	}
@@ -146,17 +151,22 @@ func (a *Client) GetApplicationJobs(params *GetApplicationJobsParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetApplicationJobsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getApplicationJobs: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -165,7 +175,7 @@ func (a *Client) GetApplicationJobs(params *GetApplicationJobsParams, authInfo r
 GetPipelineJobStepLogs gets logs of a pipeline job step
 */
 func (a *Client) GetPipelineJobStepLogs(params *GetPipelineJobStepLogsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineJobStepLogsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetPipelineJobStepLogsParams()
 	}
@@ -185,17 +195,22 @@ func (a *Client) GetPipelineJobStepLogs(params *GetPipelineJobStepLogsParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetPipelineJobStepLogsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getPipelineJobStepLogs: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -204,7 +219,7 @@ func (a *Client) GetPipelineJobStepLogs(params *GetPipelineJobStepLogsParams, au
 GetTektonPipelineRun gets a pipeline run for a pipeline job
 */
 func (a *Client) GetTektonPipelineRun(params *GetTektonPipelineRunParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTektonPipelineRunParams()
 	}
@@ -224,17 +239,22 @@ func (a *Client) GetTektonPipelineRun(params *GetTektonPipelineRunParams, authIn
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTektonPipelineRunOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getTektonPipelineRun: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -243,7 +263,7 @@ func (a *Client) GetTektonPipelineRun(params *GetTektonPipelineRunParams, authIn
 GetTektonPipelineRunTask gets list of pipeline run task of a pipeline job
 */
 func (a *Client) GetTektonPipelineRunTask(params *GetTektonPipelineRunTaskParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunTaskOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTektonPipelineRunTaskParams()
 	}
@@ -263,17 +283,22 @@ func (a *Client) GetTektonPipelineRunTask(params *GetTektonPipelineRunTaskParams
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTektonPipelineRunTaskOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getTektonPipelineRunTask: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -282,7 +307,7 @@ func (a *Client) GetTektonPipelineRunTask(params *GetTektonPipelineRunTaskParams
 GetTektonPipelineRunTaskStep gets a step for a pipeline run task of a pipeline job
 */
 func (a *Client) GetTektonPipelineRunTaskStep(params *GetTektonPipelineRunTaskStepParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunTaskStepOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTektonPipelineRunTaskStepParams()
 	}
@@ -302,17 +327,22 @@ func (a *Client) GetTektonPipelineRunTaskStep(params *GetTektonPipelineRunTaskSt
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTektonPipelineRunTaskStepOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getTektonPipelineRunTaskStep: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -321,7 +351,7 @@ func (a *Client) GetTektonPipelineRunTaskStep(params *GetTektonPipelineRunTaskSt
 GetTektonPipelineRunTaskStepLogs gets logs of pipeline runs for a pipeline job
 */
 func (a *Client) GetTektonPipelineRunTaskStepLogs(params *GetTektonPipelineRunTaskStepLogsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunTaskStepLogsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTektonPipelineRunTaskStepLogsParams()
 	}
@@ -341,17 +371,22 @@ func (a *Client) GetTektonPipelineRunTaskStepLogs(params *GetTektonPipelineRunTa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTektonPipelineRunTaskStepLogsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getTektonPipelineRunTaskStepLogs: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -360,7 +395,7 @@ func (a *Client) GetTektonPipelineRunTaskStepLogs(params *GetTektonPipelineRunTa
 GetTektonPipelineRunTaskSteps gets list of steps for a pipeline run task of a pipeline job
 */
 func (a *Client) GetTektonPipelineRunTaskSteps(params *GetTektonPipelineRunTaskStepsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunTaskStepsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTektonPipelineRunTaskStepsParams()
 	}
@@ -380,17 +415,22 @@ func (a *Client) GetTektonPipelineRunTaskSteps(params *GetTektonPipelineRunTaskS
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTektonPipelineRunTaskStepsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getTektonPipelineRunTaskSteps: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -399,7 +439,7 @@ func (a *Client) GetTektonPipelineRunTaskSteps(params *GetTektonPipelineRunTaskS
 GetTektonPipelineRunTasks gets list of pipeline run tasks of a pipeline job
 */
 func (a *Client) GetTektonPipelineRunTasks(params *GetTektonPipelineRunTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunTasksOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTektonPipelineRunTasksParams()
 	}
@@ -419,17 +459,22 @@ func (a *Client) GetTektonPipelineRunTasks(params *GetTektonPipelineRunTasksPara
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTektonPipelineRunTasksOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getTektonPipelineRunTasks: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -438,7 +483,7 @@ func (a *Client) GetTektonPipelineRunTasks(params *GetTektonPipelineRunTasksPara
 GetTektonPipelineRuns gets list of pipeline runs for a pipeline job
 */
 func (a *Client) GetTektonPipelineRuns(params *GetTektonPipelineRunsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTektonPipelineRunsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTektonPipelineRunsParams()
 	}
@@ -458,17 +503,22 @@ func (a *Client) GetTektonPipelineRuns(params *GetTektonPipelineRunsParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTektonPipelineRunsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getTektonPipelineRuns: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -477,7 +527,7 @@ func (a *Client) GetTektonPipelineRuns(params *GetTektonPipelineRunsParams, auth
 RerunApplicationJob reruns the pipeline job
 */
 func (a *Client) RerunApplicationJob(params *RerunApplicationJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RerunApplicationJobNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewRerunApplicationJobParams()
 	}
@@ -497,17 +547,22 @@ func (a *Client) RerunApplicationJob(params *RerunApplicationJobParams, authInfo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*RerunApplicationJobNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for rerunApplicationJob: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -516,7 +571,7 @@ func (a *Client) RerunApplicationJob(params *RerunApplicationJobParams, authInfo
 StopApplicationJob stops job
 */
 func (a *Client) StopApplicationJob(params *StopApplicationJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopApplicationJobNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewStopApplicationJobParams()
 	}
@@ -536,17 +591,22 @@ func (a *Client) StopApplicationJob(params *StopApplicationJobParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*StopApplicationJobNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for stopApplicationJob: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }

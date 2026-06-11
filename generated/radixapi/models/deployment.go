@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -57,9 +58,7 @@ type Deployment struct {
 	// branch
 	// tag
 	// <empty> - either branch or tag
-	//
-	// required false
-	// Example: \"branch\
+	// Example: branch
 	// Enum: ["branch","tag","\"\""]
 	GitRefType string `json:"gitRefType,omitempty"`
 
@@ -84,6 +83,18 @@ type Deployment struct {
 	// Example: https://github.com/equinor/radix-canary-golang
 	// Required: true
 	Repository *string `json:"repository"`
+
+	// Status of deployment reconciliation
+	// Reconciling DeploymentStatusReconciling  DeploymentStatusReconciling deployment is not fully reconciled
+	// Ready DeploymentStatusReady  DeploymentStatusReady deployment is reconciled successfully
+	// Failed DeploymentStatusFailed  DeploymentStatusFailed deployment reconciliation failed
+	// Inactive DeploymentStatusInactive  DeploymentStatusInactive deployment is inactive
+	// Required: true
+	// Enum: ["Reconciling","Ready","Failed","Inactive"]
+	Status *string `json:"status"`
+
+	// StatusReason contains details when deployment status is Failed
+	StatusReason string `json:"statusReason,omitempty"`
 
 	// Defaults to true and requires useBuildKit to have an effect.
 	UseBuildCache *bool `json:"useBuildCache,omitempty"`
@@ -125,6 +136,10 @@ func (m *Deployment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRepository(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -171,11 +186,15 @@ func (m *Deployment) validateComponents(formats strfmt.Registry) error {
 
 		if m.Components[i] != nil {
 			if err := m.Components[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("components" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("components" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -194,7 +213,7 @@ func (m *Deployment) validateEnvironment(formats strfmt.Registry) error {
 	return nil
 }
 
-var deploymentTypeGitRefTypePropEnum []interface{}
+var deploymentTypeGitRefTypePropEnum []any
 
 func init() {
 	var res []string
@@ -266,6 +285,55 @@ func (m *Deployment) validateRepository(formats strfmt.Registry) error {
 	return nil
 }
 
+var deploymentTypeStatusPropEnum []any
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Reconciling","Ready","Failed","Inactive"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		deploymentTypeStatusPropEnum = append(deploymentTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// DeploymentStatusReconciling captures enum value "Reconciling"
+	DeploymentStatusReconciling string = "Reconciling"
+
+	// DeploymentStatusReady captures enum value "Ready"
+	DeploymentStatusReady string = "Ready"
+
+	// DeploymentStatusFailed captures enum value "Failed"
+	DeploymentStatusFailed string = "Failed"
+
+	// DeploymentStatusInactive captures enum value "Inactive"
+	DeploymentStatusInactive string = "Inactive"
+)
+
+// prop value enum
+func (m *Deployment) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, deploymentTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Deployment) validateStatus(formats strfmt.Registry) error {
+
+	if err := validate.Required("status", "body", m.Status); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateStatusEnum("status", "body", *m.Status); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ContextValidate validate this deployment based on the context it is used
 func (m *Deployment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -291,11 +359,15 @@ func (m *Deployment) contextValidateComponents(ctx context.Context, formats strf
 			}
 
 			if err := m.Components[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("components" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("components" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

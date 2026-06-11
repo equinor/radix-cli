@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -69,11 +70,15 @@ func (m *AuxiliaryResourceDeployment) validateReplicaList(formats strfmt.Registr
 
 		if m.ReplicaList[i] != nil {
 			if err := m.ReplicaList[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("replicaList" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("replicaList" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -83,7 +88,7 @@ func (m *AuxiliaryResourceDeployment) validateReplicaList(formats strfmt.Registr
 	return nil
 }
 
-var auxiliaryResourceDeploymentTypeStatusPropEnum []interface{}
+var auxiliaryResourceDeploymentTypeStatusPropEnum []any
 
 func init() {
 	var res []string
@@ -129,7 +134,7 @@ func (m *AuxiliaryResourceDeployment) validateStatus(formats strfmt.Registry) er
 	return nil
 }
 
-var auxiliaryResourceDeploymentTypeTypePropEnum []interface{}
+var auxiliaryResourceDeploymentTypeTypePropEnum []any
 
 func init() {
 	var res []string
@@ -199,11 +204,15 @@ func (m *AuxiliaryResourceDeployment) contextValidateReplicaList(ctx context.Con
 			}
 
 			if err := m.ReplicaList[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("replicaList" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("replicaList" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

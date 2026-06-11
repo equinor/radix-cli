@@ -120,7 +120,7 @@ func (m *PipelineRun) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-var pipelineRunTypeStatusPropEnum []interface{}
+var pipelineRunTypeStatusPropEnum []any
 
 func init() {
 	var res []string

@@ -81,7 +81,7 @@ func (m *ImageHubSecret) validateServer(formats strfmt.Registry) error {
 	return nil
 }
 
-var imageHubSecretTypeStatusPropEnum []interface{}
+var imageHubSecretTypeStatusPropEnum []any
 
 func init() {
 	var res []string

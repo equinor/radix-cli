@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewGetSearchApplicationsParams creates a new GetSearchApplicationsParams object,
@@ -63,7 +64,7 @@ type GetSearchApplicationsParams struct {
 
 	/* ImpersonateGroup.
 
-	   Works only with custom setup of cluster. Allow impersonation of a comma-seperated list of test groups (Required if Impersonate-User is set)
+	   Works only with custom setup of cluster. Allow impersonation of a comma-separated list of test groups (Required if Impersonate-User is set)
 	*/
 	ImpersonateGroup *string
 
@@ -79,17 +80,17 @@ type GetSearchApplicationsParams struct {
 	*/
 	Apps string
 
-	/* IncludeEnvironmentActiveComponents.
+	/* IncludeEnvironments.
 
-	   true to include ActiveComponents in Environments
+	   true to include environments
 	*/
-	IncludeEnvironmentActiveComponents *string
+	IncludeEnvironments *bool
 
 	/* IncludeLatestJobSummary.
 
-	   true to include LatestJobSummary
+	   true to include latest job summary
 	*/
-	IncludeLatestJobSummary *string
+	IncludeLatestJobSummary *bool
 
 	timeout    time.Duration
 	Context    context.Context
@@ -177,25 +178,25 @@ func (o *GetSearchApplicationsParams) SetApps(apps string) {
 	o.Apps = apps
 }
 
-// WithIncludeEnvironmentActiveComponents adds the includeEnvironmentActiveComponents to the get search applications params
-func (o *GetSearchApplicationsParams) WithIncludeEnvironmentActiveComponents(includeEnvironmentActiveComponents *string) *GetSearchApplicationsParams {
-	o.SetIncludeEnvironmentActiveComponents(includeEnvironmentActiveComponents)
+// WithIncludeEnvironments adds the includeEnvironments to the get search applications params
+func (o *GetSearchApplicationsParams) WithIncludeEnvironments(includeEnvironments *bool) *GetSearchApplicationsParams {
+	o.SetIncludeEnvironments(includeEnvironments)
 	return o
 }
 
-// SetIncludeEnvironmentActiveComponents adds the includeEnvironmentActiveComponents to the get search applications params
-func (o *GetSearchApplicationsParams) SetIncludeEnvironmentActiveComponents(includeEnvironmentActiveComponents *string) {
-	o.IncludeEnvironmentActiveComponents = includeEnvironmentActiveComponents
+// SetIncludeEnvironments adds the includeEnvironments to the get search applications params
+func (o *GetSearchApplicationsParams) SetIncludeEnvironments(includeEnvironments *bool) {
+	o.IncludeEnvironments = includeEnvironments
 }
 
 // WithIncludeLatestJobSummary adds the includeLatestJobSummary to the get search applications params
-func (o *GetSearchApplicationsParams) WithIncludeLatestJobSummary(includeLatestJobSummary *string) *GetSearchApplicationsParams {
+func (o *GetSearchApplicationsParams) WithIncludeLatestJobSummary(includeLatestJobSummary *bool) *GetSearchApplicationsParams {
 	o.SetIncludeLatestJobSummary(includeLatestJobSummary)
 	return o
 }
 
 // SetIncludeLatestJobSummary adds the includeLatestJobSummary to the get search applications params
-func (o *GetSearchApplicationsParams) SetIncludeLatestJobSummary(includeLatestJobSummary *string) {
+func (o *GetSearchApplicationsParams) SetIncludeLatestJobSummary(includeLatestJobSummary *bool) {
 	o.IncludeLatestJobSummary = includeLatestJobSummary
 }
 
@@ -233,18 +234,18 @@ func (o *GetSearchApplicationsParams) WriteToRequest(r runtime.ClientRequest, re
 		}
 	}
 
-	if o.IncludeEnvironmentActiveComponents != nil {
+	if o.IncludeEnvironments != nil {
 
-		// query param includeEnvironmentActiveComponents
-		var qrIncludeEnvironmentActiveComponents string
+		// query param includeEnvironments
+		var qrIncludeEnvironments bool
 
-		if o.IncludeEnvironmentActiveComponents != nil {
-			qrIncludeEnvironmentActiveComponents = *o.IncludeEnvironmentActiveComponents
+		if o.IncludeEnvironments != nil {
+			qrIncludeEnvironments = *o.IncludeEnvironments
 		}
-		qIncludeEnvironmentActiveComponents := qrIncludeEnvironmentActiveComponents
-		if qIncludeEnvironmentActiveComponents != "" {
+		qIncludeEnvironments := swag.FormatBool(qrIncludeEnvironments)
+		if qIncludeEnvironments != "" {
 
-			if err := r.SetQueryParam("includeEnvironmentActiveComponents", qIncludeEnvironmentActiveComponents); err != nil {
+			if err := r.SetQueryParam("includeEnvironments", qIncludeEnvironments); err != nil {
 				return err
 			}
 		}
@@ -253,12 +254,12 @@ func (o *GetSearchApplicationsParams) WriteToRequest(r runtime.ClientRequest, re
 	if o.IncludeLatestJobSummary != nil {
 
 		// query param includeLatestJobSummary
-		var qrIncludeLatestJobSummary string
+		var qrIncludeLatestJobSummary bool
 
 		if o.IncludeLatestJobSummary != nil {
 			qrIncludeLatestJobSummary = *o.IncludeLatestJobSummary
 		}
-		qIncludeLatestJobSummary := qrIncludeLatestJobSummary
+		qIncludeLatestJobSummary := swag.FormatBool(qrIncludeLatestJobSummary)
 		if qIncludeLatestJobSummary != "" {
 
 			if err := r.SetQueryParam("includeLatestJobSummary", qIncludeLatestJobSummary); err != nil {

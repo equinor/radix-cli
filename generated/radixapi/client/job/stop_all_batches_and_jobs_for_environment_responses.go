@@ -18,7 +18,7 @@ type StopAllBatchesAndJobsForEnvironmentReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *StopAllBatchesAndJobsForEnvironmentReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *StopAllBatchesAndJobsForEnvironmentReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 204:
 		result := NewStopAllBatchesAndJobsForEnvironmentNoContent()

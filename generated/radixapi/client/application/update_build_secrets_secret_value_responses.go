@@ -18,7 +18,7 @@ type UpdateBuildSecretsSecretValueReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *UpdateBuildSecretsSecretValueReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *UpdateBuildSecretsSecretValueReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewUpdateBuildSecretsSecretValueOK()

@@ -84,7 +84,7 @@ func (m *PipelineRunTaskStep) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-var pipelineRunTaskStepTypeStatusPropEnum []interface{}
+var pipelineRunTaskStepTypeStatusPropEnum []any
 
 func init() {
 	var res []string
