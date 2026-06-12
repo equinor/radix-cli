@@ -25,8 +25,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
-	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
 	radixapiclient "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/client/configuration"
@@ -34,9 +32,11 @@ import (
 	"github.com/equinor/radix-cli/generated/radixapi/client/platform"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/auth"
+	"github.com/equinor/radix-cli/pkg/auth/adapter"
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
+	"github.com/equinor/radix-cli/pkg/flagvalues"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/workloadidentity"
 	"github.com/equinor/radix-common/utils/slice"
@@ -52,6 +52,13 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 	Long:    `Valida workload identity configuration`,
 	Example: ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		outputFormat, _ := cmd.Flags().GetString(flagnames.Output)
+
+		validationsPrinter := validationTextPrinter
+		if outputFormat == flagvalues.OutputFormatJson {
+			validationsPrinter = validationJsonPrinter
+		}
+
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
 			return err
@@ -77,74 +84,130 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 			completion.UpdateAppNamesCache(appNames)
 		}
 
-		fedCredValidator := federatedCredentialsValidationHelper{
-			apiClient: apiClient,
-			logger: func(msg string) {
-				fmt.Fprintln(os.Stderr, msg)
-			}}
-		clientFedCreds, err := fedCredValidator.ValidateFederatedCredentialsDetails(cmd.Context(), appNames)
-
 		radixAuth, err := auth.New()
 		if err != nil {
 			return err
 		}
 
-		graphHelper, err := workloadidentity.NewAzureServicePrincipalService(&tokenCredentialAdapter{auth: radixAuth})
+		servicePrincipalHelper, err := workloadidentity.NewAzureServicePrincipalHelper(adapter.NewAzureTokenCredentialAdapter(radixAuth))
 		if err != nil {
-			return fmt.Errorf("error initializing client: %w", err)
+			return fmt.Errorf("error initializing service principal client: %w", err)
 		}
 
-		for clientId, expectedFedCreds := range clientFedCreds {
+		fedCredValidator := FederatedCredentialsValidationHelper{
+			radixApiClient:         apiClient,
+			servicePrincipalHelper: servicePrincipalHelper,
+			logger:                 func(msg string) { fmt.Fprintln(os.Stderr, msg) },
+		}
 
-			fmt.Fprintf(os.Stderr, "Analyzing service principal with client id %v: ", clientId)
-			sp, err := graphHelper.GetServicePrincipal(cmd.Context(), clientId)
-			if err != nil {
-				return err
-			}
+		validations, err := fedCredValidator.ValidateFederatedCredentialsDetails(cmd.Context(), appNames)
+		if err != nil {
+			return err
+		}
 
-			fmt.Fprintf(os.Stderr, "%s (%s). ", sp.DisplayName, sp.Type)
-
-			existingWorkloadIdentityFedCreds := slice.FindAll(sp.FederatedCredentials, func(fedCred workloadidentity.FederatedCredential) bool {
-				subjectParts := strings.Split(fedCred.Subject, ":")
-				if len(subjectParts) != 4 {
-					return false
-				}
-
-				return subjectParts[0] == "system" && subjectParts[1] == "serviceaccount"
-			})
-			mappedExistingWorkloadIdentityFedCreds := slice.Map(existingWorkloadIdentityFedCreds, func(c workloadidentity.FederatedCredential) FederatedCredential {
-				return FederatedCredential{FederatedCredential: c}
-			})
-			missingFedCreds := findMissingFedCreds(expectedFedCreds, mappedExistingWorkloadIdentityFedCreds)
-			extraFedCreds := findMissingFedCreds(mappedExistingWorkloadIdentityFedCreds, expectedFedCreds)
-			fmt.Fprintf(os.Stderr, "(total: %v, missing: %v, extra: %v)\n", len(expectedFedCreds), len(missingFedCreds), len(extraFedCreds))
-
-			for _, missingFedCred := range missingFedCreds {
-				command, err := generateCreateFederatedCredentialAzureCLICommand(*sp, missingFedCred)
-				if err != nil {
-					return err
-				}
-				color.RGB(128, 128, 128).Fprintf(os.Stderr, "# %s\n", missingFedCred.Reason)
-				color.Green(command)
-			}
-
-			for _, extraFedCred := range extraFedCreds {
-				command, err := generateDeleteFederatedCredentialAzureCLICommand(*sp, extraFedCred)
-				if err != nil {
-					return err
-				}
-				color.Red(command)
-			}
+		fmt.Fprintln(os.Stderr)
+		if err := validationsPrinter(validations); err != nil {
+			return err
 		}
 
 		return nil
 	},
 }
 
+func validationTextPrinter(validations []FederatedCredentialsValidation) error {
+	commentPrinter := color.RGB(128, 128, 128)
+
+	for _, validation := range validations {
+		for _, missing := range validation.MissingFederatedCredentials {
+			command, err := generateCreateFederatedCredentialAzureCLICommand(validation.ServicePrincipal, missing)
+			if err != nil {
+				return err
+			}
+
+			if len(missing.Reason) > 0 {
+				commentPrinter.Fprintf(os.Stdout, "# %s\n", missing.Reason)
+			}
+			color.Green(command)
+		}
+	}
+
+	for _, validation := range validations {
+		for _, extra := range validation.ExtraFederatedCredentials {
+			command, err := generateDeleteFederatedCredentialAzureCLICommand(validation.ServicePrincipal, extra)
+			if err != nil {
+				return err
+			}
+
+			if len(extra.Reason) > 0 {
+				commentPrinter.Fprintf(os.Stdout, "# %s\n", extra.Reason)
+			}
+			color.Red(command)
+		}
+	}
+
+	return nil
+}
+
+func validationJsonPrinter(validations []FederatedCredentialsValidation) error {
+	printPayload(validations)
+	return nil
+}
+
+func generateDeleteFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, deleteFedCred FederatedCredential) (string, error) {
+	switch sp.Type {
+	case workloadidentity.ManagedIdentity:
+		return fmt.Sprintf("az identity federated-credential delete --name %s --identity-name %s --resource-group %s --subscription %s", deleteFedCred.Name, sp.DisplayName, sp.ResourceGroup, sp.SubscriptionID), nil
+	case workloadidentity.AppRegistration:
+		return fmt.Sprintf("az ad app federated-credential delete --id %s --federated-credential-id %s", sp.ClientID, deleteFedCred.Name), nil
+	}
+
+	return "", fmt.Errorf("unable to generate delete federated credential command for principal %s with unknow type %s", sp.DisplayName, sp.Type)
+}
+
+func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, createFedCred FederatedCredential) (string, error) {
+	switch sp.Type {
+	case workloadidentity.ManagedIdentity:
+		return fmt.Sprintf("az identity federated-credential create --name %s --identity-name %s --resource-group %s --subscription %s --issuer %s --subject %s --audiences %s", createFedCred.Name, sp.DisplayName, sp.ResourceGroup, sp.SubscriptionID, createFedCred.Issuer, createFedCred.Subject, createFedCred.Audiences[0]), nil
+	case workloadidentity.AppRegistration:
+		type addParam struct {
+			Name      string   `json:"name"`
+			Issuer    string   `json:"issuer"`
+			Subject   string   `json:"subject"`
+			Audiences []string `json:"audiences"`
+		}
+		param := addParam{
+			Name:      createFedCred.Name,
+			Issuer:    createFedCred.Issuer,
+			Subject:   createFedCred.Subject,
+			Audiences: createFedCred.Audiences,
+		}
+		paramBytes, err := json.Marshal(param)
+		if err != nil {
+			return "", err
+		}
+
+		return fmt.Sprintf("az ad app federated-credential create --id %s --parameters %s", sp.ClientID, fmt.Sprintf("%q", string(paramBytes))), nil
+	}
+
+	return "", fmt.Errorf("unable to generate create federated credential command for principal %s with unknow type %s", sp.DisplayName, sp.Type)
+}
+
 type FederatedCredential struct {
 	workloadidentity.FederatedCredential
 	Reason string
 }
+type FederatedCredentialsValidation struct {
+	ServicePrincipal            workloadidentity.ServicePrincipal `json:"servicePrincipal"`
+	MissingFederatedCredentials []FederatedCredential             `json:"missingFederatedCredentials"`
+	ExtraFederatedCredentials   []FederatedCredential             `json:"extraFederatedCredentials"`
+}
+
+type FederatedCredentialsValidationHelper struct {
+	radixApiClient         *radixapiclient.Radixapi
+	servicePrincipalHelper *workloadidentity.AzureServicePrincipalHelper
+	logger                 func(msg string)
+}
+
 type clientFedCredMap map[string][]FederatedCredential
 
 func (target clientFedCredMap) MergeFrom(source clientFedCredMap) {
@@ -157,13 +220,7 @@ func (target clientFedCredMap) MergeFrom(source clientFedCredMap) {
 	}
 }
 
-type federatedCredentialsValidationHelper struct {
-	apiClient               *radixapiclient.Radixapi
-	servicePrincipalService *workloadidentity.AzureServicePrincipalService
-	logger                  func(msg string)
-}
-
-func (v *federatedCredentialsValidationHelper) ValidateFederatedCredentialsDetails(ctx context.Context, appNames []string) (clientFedCredMap, error) {
+func (v *FederatedCredentialsValidationHelper) ValidateFederatedCredentialsDetails(ctx context.Context, appNames []string) ([]FederatedCredentialsValidation, error) {
 	appDeploymentsMap := map[string][]models.Deployment{}
 
 	for _, appName := range appNames {
@@ -176,7 +233,7 @@ func (v *federatedCredentialsValidationHelper) ValidateFederatedCredentialsDetai
 		appDeploymentsMap[appName] = appDeployments
 	}
 
-	cfg, err := v.apiClient.Configuration.GetConfiguration(&configuration.GetConfigurationParams{Context: ctx}, nil)
+	cfg, err := v.radixApiClient.Configuration.GetConfiguration(&configuration.GetConfigurationParams{Context: ctx}, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -189,55 +246,51 @@ func (v *federatedCredentialsValidationHelper) ValidateFederatedCredentialsDetai
 		}
 	}
 
-	return fedCreds, nil
+	return v.buildFederatedCredentialValidation(ctx, fedCreds)
 }
 
-// func (v *federatedCredentialsValidationHelper) buildMissingAndExtraFederatedCredentials(ctx context.Context, fedCredMap clientFedCredMap) (missing, extra []FederatedCredential, err error) {
-// 	for clientId, expectedFedCreds := range clientFedCreds {
+func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidation(ctx context.Context, fedCredMap clientFedCredMap) ([]FederatedCredentialsValidation, error) {
+	var validations []FederatedCredentialsValidation
 
-// 		fmt.Fprintf(os.Stderr, "Analyzing service principal with client id %v: ", clientId)
-// 		sp, err := graphHelper.GetServicePrincipal(cmd.Context(), clientId)
-// 		if err != nil {
-// 			return err
-// 		}
+	for clientId, expectedFedCreds := range fedCredMap {
+		v.log(fmt.Sprintf("Analyzing service principal with client id %s", clientId))
 
-// 		fmt.Fprintf(os.Stderr, "%s (%s). ", sp.DisplayName, sp.Type)
+		sp, err := v.servicePrincipalHelper.GetServicePrincipal(ctx, clientId)
+		if err != nil {
+			return nil, err
+		}
 
-// 		existingWorkloadIdentityFedCreds := slice.FindAll(sp.FederatedCredentials, func(fedCred workloadidentity.FederatedCredential) bool {
-// 			subjectParts := strings.Split(fedCred.Subject, ":")
-// 			if len(subjectParts) != 4 {
-// 				return false
-// 			}
+		v.log(fmt.Sprintf("Found %s with name %s ", sp.Type, sp.DisplayName))
 
-// 			return subjectParts[0] == "system" && subjectParts[1] == "serviceaccount"
-// 		})
-// 		mappedExistingWorkloadIdentityFedCreds := slice.Map(existingWorkloadIdentityFedCreds, func(c workloadidentity.FederatedCredential) FederatedCredential {
-// 			return FederatedCredential{FederatedCredential: c}
-// 		})
-// 		missingFedCreds := findMissingFedCreds(expectedFedCreds, mappedExistingWorkloadIdentityFedCreds)
-// 		extraFedCreds := findMissingFedCreds(mappedExistingWorkloadIdentityFedCreds, expectedFedCreds)
-// 		fmt.Fprintf(os.Stderr, "(total: %v, missing: %v, extra: %v)\n", len(expectedFedCreds), len(missingFedCreds), len(extraFedCreds))
+		existingFedCreds := slice.Map(
+			slice.FindAll(sp.FederatedCredentials, isKubernetesFederatedCredential),
+			func(c workloadidentity.FederatedCredential) FederatedCredential {
+				return FederatedCredential{FederatedCredential: c}
+			})
+		missingFedCreds := findMissingFedCreds(expectedFedCreds, existingFedCreds)
+		extraFedCreds := findMissingFedCreds(existingFedCreds, expectedFedCreds)
 
-// 		for _, missingFedCred := range missingFedCreds {
-// 			command, err := generateCreateFederatedCredentialAzureCLICommand(*sp, missingFedCred)
-// 			if err != nil {
-// 				return err
-// 			}
-// 			color.RGB(128, 128, 128).Fprintf(os.Stderr, "# %s\n", missingFedCred.Reason)
-// 			color.Green(command)
-// 		}
+		v.log(fmt.Sprintf("Federated credentials total: %v, missing: %v, extra: %v)", len(expectedFedCreds), len(missingFedCreds), len(extraFedCreds)))
 
-// 		for _, extraFedCred := range extraFedCreds {
-// 			command, err := generateDeleteFederatedCredentialAzureCLICommand(*sp, extraFedCred)
-// 			if err != nil {
-// 				return err
-// 			}
-// 			color.Red(command)
-// 		}
-// 	}
-// }
+		for fedCredIndex := range missingFedCreds {
+			fedCredName, err := validateOrGenerateUniqueFederatedCredentialName(missingFedCreds[fedCredIndex], sp.FederatedCredentials)
+			if err != nil {
+				return nil, err
+			}
+			missingFedCreds[fedCredIndex].Name = fedCredName
+		}
 
-func (v *federatedCredentialsValidationHelper) buildFederatedCredentialsMapForDeployment(appName string, deployment models.Deployment, issuers []string) clientFedCredMap {
+		validations = append(validations, FederatedCredentialsValidation{
+			ServicePrincipal:            *sp,
+			MissingFederatedCredentials: missingFedCreds,
+			ExtraFederatedCredentials:   extraFedCreds,
+		})
+	}
+
+	return validations, nil
+}
+
+func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForDeployment(appName string, deployment models.Deployment, issuers []string) clientFedCredMap {
 	fedCreds := clientFedCredMap{}
 
 	for _, component := range deployment.Components {
@@ -265,7 +318,7 @@ func (v *federatedCredentialsValidationHelper) buildFederatedCredentialsMapForDe
 	return fedCreds
 }
 
-func (v *federatedCredentialsValidationHelper) buildFederatedCredentialsMapForIdentity(identity *models.Identity, namespace string, issuers []string, reason string) clientFedCredMap {
+func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForIdentity(identity *models.Identity, namespace string, issuers []string, reason string) clientFedCredMap {
 	if identity == nil || identity.Azure == nil || identity.Azure.ClientID == nil {
 		return nil
 	}
@@ -287,8 +340,8 @@ func (v *federatedCredentialsValidationHelper) buildFederatedCredentialsMapForId
 	return fedCreds
 }
 
-func (v *federatedCredentialsValidationHelper) getActiveDeploymentsForApplication(ctx context.Context, appName string) ([]models.Deployment, error) {
-	app, err := v.apiClient.Application.GetApplication(&application.GetApplicationParams{Context: ctx, AppName: appName}, nil)
+func (v *FederatedCredentialsValidationHelper) getActiveDeploymentsForApplication(ctx context.Context, appName string) ([]models.Deployment, error) {
+	app, err := v.radixApiClient.Application.GetApplication(&application.GetApplicationParams{Context: ctx, AppName: appName}, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -297,7 +350,7 @@ func (v *federatedCredentialsValidationHelper) getActiveDeploymentsForApplicatio
 
 	for _, env := range app.Payload.Environments {
 		if env.ActiveDeployment != nil {
-			activeDeployment, err := v.apiClient.Deployment.GetDeployment(&deployment.GetDeploymentParams{Context: ctx, AppName: appName, DeploymentName: *env.ActiveDeployment.Name}, nil)
+			activeDeployment, err := v.radixApiClient.Deployment.GetDeployment(&deployment.GetDeploymentParams{Context: ctx, AppName: appName, DeploymentName: *env.ActiveDeployment.Name}, nil)
 			if err != nil {
 				return nil, err
 			}
@@ -308,73 +361,19 @@ func (v *federatedCredentialsValidationHelper) getActiveDeploymentsForApplicatio
 	return deployments, nil
 }
 
-func (v *federatedCredentialsValidationHelper) log(msg string) {
+func (v *FederatedCredentialsValidationHelper) log(msg string) {
 	if v.logger != nil {
 		v.logger(msg)
 	}
 }
 
-func generateDeleteFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, deleteFedCred FederatedCredential) (string, error) {
-	var command string
-	switch sp.Type {
-	case workloadidentity.ManagedIdentity:
-		command = fmt.Sprintf("az identity federated-credential delete --name %s --identity-name %s --resource-group %s --subscription %s", deleteFedCred.Name, sp.DisplayName, sp.ResourceGroup, sp.SubscriptionId)
-	case workloadidentity.AppRegistration:
-		command = fmt.Sprintf("az ad app federated-credential delete --id %s --federated-credential-id %s", sp.ClientID, deleteFedCred.Name)
+func isKubernetesFederatedCredential(fedCred workloadidentity.FederatedCredential) bool {
+	subjectParts := strings.Split(fedCred.Subject, ":")
+	if len(subjectParts) != 4 {
+		return false
 	}
 
-	if command == "" {
-		return "", fmt.Errorf("unable to generate delete federated credential command for principal %s (%s)", sp.DisplayName, sp.Type)
-	}
-
-	return command, nil
-}
-
-func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, newFedCred FederatedCredential) (string, error) {
-	parsedFedCred, err := generateFederatedCredential(newFedCred, sp.FederatedCredentials)
-	if err != nil {
-		return "", err
-	}
-
-	type adAppParam struct {
-		Name      string   `json:"name"`
-		Issuer    string   `json:"issuer"`
-		Subject   string   `json:"subject"`
-		Audiences []string `json:"audiences"`
-	}
-
-	var command string
-	switch sp.Type {
-	case workloadidentity.ManagedIdentity:
-		command = fmt.Sprintf("az identity federated-credential create --name %s --identity-name %s --resource-group %s --subscription %s --issuer %s --subject %s --audiences %s", parsedFedCred.Name, sp.DisplayName, sp.ResourceGroup, sp.SubscriptionId, parsedFedCred.Issuer, parsedFedCred.Subject, parsedFedCred.Audiences[0])
-	case workloadidentity.AppRegistration:
-
-		paramsBytes, err := json.Marshal(adAppParam(*parsedFedCred))
-		if err != nil {
-			return "", err
-		}
-		command = fmt.Sprintf("az ad app federated-credential create --id %s --parameters %s", sp.ClientID, fmt.Sprintf("%q", string(paramsBytes)))
-	}
-
-	if command == "" {
-		return "", fmt.Errorf("unable to generate create federated credential command for principal %s (%s)", sp.DisplayName, sp.Type)
-	}
-
-	return command, nil
-}
-
-func generateFederatedCredential(federatedCredential FederatedCredential, existingFedCreds []workloadidentity.FederatedCredential) (*workloadidentity.FederatedCredential, error) {
-	credentialName, err := validateOrGenerateUniqueFederatedCredentialName(federatedCredential, existingFedCreds)
-	if err != nil {
-		return nil, err
-	}
-
-	return &workloadidentity.FederatedCredential{
-		Name:      credentialName,
-		Issuer:    federatedCredential.Issuer,
-		Subject:   federatedCredential.Subject,
-		Audiences: federatedCredential.Audiences,
-	}, nil
+	return subjectParts[0] == "system" && subjectParts[1] == "serviceaccount"
 }
 
 func validateOrGenerateUniqueFederatedCredentialName(fedCred FederatedCredential, existingFedCreds []workloadidentity.FederatedCredential) (string, error) {
@@ -475,26 +474,12 @@ func findMissingFedCreds(expected, actual []FederatedCredential) (missing []Fede
 	return
 }
 
-type tokenCredentialAdapter struct {
-	auth *auth.Auth
-}
-
-func (a *tokenCredentialAdapter) GetToken(ctx context.Context, options policy.TokenRequestOptions) (azcore.AccessToken, error) {
-	if a.auth == nil {
-		return azcore.AccessToken{}, fmt.Errorf("auth not set")
-	}
-
-	t, err := a.auth.GetAccessToken(ctx, options.Scopes)
-	if err != nil {
-		return azcore.AccessToken{}, err
-	}
-
-	return azcore.AccessToken{Token: t.Token, ExpiresOn: t.ExpiresOn}, nil
-}
-
 func init() {
 	validateCmd.AddCommand(validateWorkloadIdentityCmd)
 	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
+	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Output, "o", "text", "(Optional) Output format. json or text (default).")
+
 	_ = validateWorkloadIdentityCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
+	_ = validateWorkloadIdentityCmd.RegisterFlagCompletionFunc(flagnames.Output, completion.Output)
 	setContextSpecificPersistentFlags(validateWorkloadIdentityCmd)
 }

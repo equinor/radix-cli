@@ -28,29 +28,29 @@ var (
 )
 
 type ServicePrincipal struct {
-	ClientID             string
-	Type                 ServicePrincipalType
-	DisplayName          string
-	SubscriptionId       string
-	ResourceGroup        string
-	FederatedCredentials []FederatedCredential
+	ClientID             string                `json:"clientID"`
+	Type                 ServicePrincipalType  `json:"type"`
+	DisplayName          string                `json:"displayName"`
+	SubscriptionID       string                `json:"subscriptionID,omitempty"`
+	ResourceGroup        string                `json:"resourceGroup,omitempty"`
+	FederatedCredentials []FederatedCredential `json:"federatedCredentials"`
 }
 
 type FederatedCredential struct {
-	Name      string
-	Issuer    string
-	Subject   string
-	Audiences []string
+	Name      string   `json:"name"`
+	Issuer    string   `json:"issuer"`
+	Subject   string   `json:"subject"`
+	Audiences []string `json:"audiences"`
 }
 
-type AzureServicePrincipalService struct {
+type AzureServicePrincipalHelper struct {
 	credential azcore.TokenCredential
 	// azCreds         *azidentity.AzureCLICredential
 	graphClient *msgraphsdk.GraphServiceClient
 }
 
-func NewAzureServicePrincipalService(credential azcore.TokenCredential) (*AzureServicePrincipalService, error) {
-	g := &AzureServicePrincipalService{
+func NewAzureServicePrincipalHelper(credential azcore.TokenCredential) (*AzureServicePrincipalHelper, error) {
+	g := &AzureServicePrincipalHelper{
 		credential: credential,
 	}
 
@@ -63,7 +63,7 @@ func NewAzureServicePrincipalService(credential azcore.TokenCredential) (*AzureS
 
 // GetServicePrincipalDetails resolves a service principal appId and fetches
 // the backing resource details as either a managed identity or app registration.
-func (g *AzureServicePrincipalService) GetServicePrincipal(ctx context.Context, clientId string) (*ServicePrincipal, error) {
+func (g *AzureServicePrincipalHelper) GetServicePrincipal(ctx context.Context, clientId string) (*ServicePrincipal, error) {
 	servicePrincipal, servicePrincipalType, err := g.getGraphServicePrincipalAndType(ctx, clientId)
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func (g *AzureServicePrincipalService) GetServicePrincipal(ctx context.Context, 
 	return nil, fmt.Errorf("unhandled service principal type %q", servicePrincipalType)
 }
 
-func (g *AzureServicePrincipalService) getGraphServicePrincipalAndType(ctx context.Context, clientId string) (models.ServicePrincipalable, ServicePrincipalType, error) {
+func (g *AzureServicePrincipalHelper) getGraphServicePrincipalAndType(ctx context.Context, clientId string) (models.ServicePrincipalable, ServicePrincipalType, error) {
 	clientId = strings.TrimSpace(clientId)
 	if clientId == "" {
 		return nil, "", errors.New("clientId is required")
@@ -94,7 +94,7 @@ func (g *AzureServicePrincipalService) getGraphServicePrincipalAndType(ctx conte
 	return servicePrincipal, servicePrincipalType, nil
 }
 
-func (g *AzureServicePrincipalService) getAppRegistrationServicePrincipal(ctx context.Context, sp models.ServicePrincipalable) (*ServicePrincipal, error) {
+func (g *AzureServicePrincipalHelper) getAppRegistrationServicePrincipal(ctx context.Context, sp models.ServicePrincipalable) (*ServicePrincipal, error) {
 	application, err := g.getApplicationByAppID(ctx, stringOrEmpty(sp.GetAppId()))
 	if err != nil {
 		return nil, err
@@ -113,7 +113,7 @@ func (g *AzureServicePrincipalService) getAppRegistrationServicePrincipal(ctx co
 	}, nil
 }
 
-func (g *AzureServicePrincipalService) getManagedIdentityServicePrincipal(ctx context.Context, sp models.ServicePrincipalable) (*ServicePrincipal, error) {
+func (g *AzureServicePrincipalHelper) getManagedIdentityServicePrincipal(ctx context.Context, sp models.ServicePrincipalable) (*ServicePrincipal, error) {
 	subscriptionID, resourceGroupName, resourceName, err := parseManagedIdentityResourceID(sp.GetAlternativeNames())
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func (g *AzureServicePrincipalService) getManagedIdentityServicePrincipal(ctx co
 
 	return &ServicePrincipal{
 		ClientID:             stringOrEmpty(sp.GetAppId()),
-		SubscriptionId:       subscriptionID,
+		SubscriptionID:       subscriptionID,
 		ResourceGroup:        resourceGroupName,
 		Type:                 ManagedIdentity,
 		DisplayName:          stringOrEmpty(sp.GetDisplayName()),
@@ -134,7 +134,7 @@ func (g *AzureServicePrincipalService) getManagedIdentityServicePrincipal(ctx co
 	}, nil
 }
 
-func (g *AzureServicePrincipalService) initGraphClient() error {
+func (g *AzureServicePrincipalHelper) initGraphClient() error {
 	// Create an auth provider using the credential
 	authProvider, err := kiotaauth.NewAzureIdentityAuthenticationProviderWithScopes(g.credential, graphScopes)
 	if err != nil {
@@ -154,7 +154,7 @@ func (g *AzureServicePrincipalService) initGraphClient() error {
 	return nil
 }
 
-func (g *AzureServicePrincipalService) queryServicePrincipalByAppId(ctx context.Context, appId string) (models.ServicePrincipalable, error) {
+func (g *AzureServicePrincipalHelper) queryServicePrincipalByAppId(ctx context.Context, appId string) (models.ServicePrincipalable, error) {
 	appIDFilter := fmt.Sprintf("appId eq '%s'", appId)
 
 	spResponse, err := g.graphClient.ServicePrincipals().Get(
@@ -176,7 +176,7 @@ func (g *AzureServicePrincipalService) queryServicePrincipalByAppId(ctx context.
 	return spResponse.GetValue()[0], nil
 }
 
-func (g *AzureServicePrincipalService) getApplicationByAppID(ctx context.Context, appID string) (models.Applicationable, error) {
+func (g *AzureServicePrincipalHelper) getApplicationByAppID(ctx context.Context, appID string) (models.Applicationable, error) {
 	appIDFilter := fmt.Sprintf("appId eq '%s'", appID)
 
 	appResponse, err := g.graphClient.Applications().Get(
@@ -198,7 +198,7 @@ func (g *AzureServicePrincipalService) getApplicationByAppID(ctx context.Context
 	return appResponse.GetValue()[0], nil
 }
 
-func (g *AzureServicePrincipalService) getManagedIdentityFederatedCredentials(ctx context.Context, subscriptionID, resourceGroupName, resourceName string) ([]*armmsi.FederatedIdentityCredential, error) {
+func (g *AzureServicePrincipalHelper) getManagedIdentityFederatedCredentials(ctx context.Context, subscriptionID, resourceGroupName, resourceName string) ([]*armmsi.FederatedIdentityCredential, error) {
 	federatedIdentityCredentialsClient, err := armmsi.NewFederatedIdentityCredentialsClient(subscriptionID, g.credential, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed creating federated identity credentials client: %w", err)
@@ -219,7 +219,7 @@ func (g *AzureServicePrincipalService) getManagedIdentityFederatedCredentials(ct
 	return federatedCredentials, nil
 }
 
-func (g *AzureServicePrincipalService) getApplicationFederatedCredentials(ctx context.Context, application models.Applicationable) ([]models.FederatedIdentityCredentialable, error) {
+func (g *AzureServicePrincipalHelper) getApplicationFederatedCredentials(ctx context.Context, application models.Applicationable) ([]models.FederatedIdentityCredentialable, error) {
 	applicationObjectID := strings.TrimSpace(stringOrEmpty(application.GetId()))
 	if applicationObjectID == "" {
 		return nil, errors.New("application object id is missing")
