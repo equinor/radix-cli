@@ -52,9 +52,9 @@ const (
 var validateWorkloadIdentityCmd = &cobra.Command{
 	Use:   "workload-identity",
 	Short: "Validate radixconfig.yaml",
-	Long: `Validate workload identity configuration for one application or all applications in the current context.
+	Long: `Validate workload identity configuration for one application or all applications.
 
-The command compares expected federated credentials from active deployments with existing credentials in Azure and prints Azure CLI commands to create missing credentials and delete potentially obsolete credentials.
+The command compares expected federated credentials with existing credentials in Azure and prints Azure CLI commands to create missing credentials and delete potentially obsolete credentials.
 
 Take care when reviewing obsolete federated credentials: the obsolete list is best-effort and must not be trusted 100%. Existing federated credentials can belong to another Radix cluster, even if they look obsolete for the currently selected context.`,
 	Example: `  # Validate workload identity for all applications in current context
