@@ -50,10 +50,24 @@ const (
 )
 
 var validateWorkloadIdentityCmd = &cobra.Command{
-	Use:     "workload-identity",
-	Short:   "Validate radixconfig.yaml",
-	Long:    `Valida workload identity configuration`,
-	Example: ``,
+	Use:   "workload-identity",
+	Short: "Validate radixconfig.yaml",
+	Long: `Validate workload identity configuration for one application or all applications in the current context.
+
+The command compares expected federated credentials from active deployments with existing credentials in Azure and prints Azure CLI commands to create missing credentials and delete potentially obsolete credentials.
+
+Take care when reviewing obsolete federated credentials: the obsolete list is best-effort and must not be trusted 100%. Existing federated credentials can belong to another Radix cluster, even if they look obsolete for the currently selected context.`,
+	Example: `  # Validate workload identity for all applications in current context
+  rx validate workload-identity
+
+  # Validate workload identity for one application
+  rx validate workload-identity --application my-app
+
+  # Print result as JSON
+  rx validate workload-identity --application my-app --output json
+
+  # Exclude potentially obsolete federated credentials from output
+  rx validate workload-identity --application my-app --exclude-obsolete`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		outputFormat, _ := cmd.Flags().GetString(flagnames.Output)
 
