@@ -127,6 +127,11 @@ func validationTextPrinter(validations []FederatedCredentialsValidation) error {
 	commentPrinter := color.RGB(128, 128, 128)
 
 	for _, validation := range validations {
+		if len(validation.MissingFederatedCredentials) > 0 {
+			commentPrinter.Fprintln(os.Stdout)
+			commentPrinter.Fprintf(os.Stdout, "# Azure CLI commands to create missing federated credentials for %s %s (client ID: %s)\n", validation.ServicePrincipal.Type, validation.ServicePrincipal.DisplayName, validation.ServicePrincipal.ClientID)
+		}
+
 		for _, missing := range validation.MissingFederatedCredentials {
 			command, err := generateCreateFederatedCredentialAzureCLICommand(validation.ServicePrincipal, missing)
 			if err != nil {
@@ -141,6 +146,11 @@ func validationTextPrinter(validations []FederatedCredentialsValidation) error {
 	}
 
 	for _, validation := range validations {
+		if len(validation.ObsoleteFederatedCredentials) > 0 {
+			commentPrinter.Fprintln(os.Stdout)
+			commentPrinter.Fprintf(os.Stdout, "# Azure CLI commands to delete obsolete federated credentials for %s %s (client ID: %s)\n", validation.ServicePrincipal.Type, validation.ServicePrincipal.DisplayName, validation.ServicePrincipal.ClientID)
+		}
+
 		for _, obsolete := range validation.ObsoleteFederatedCredentials {
 			command, err := generateDeleteFederatedCredentialAzureCLICommand(validation.ServicePrincipal, obsolete)
 			if err != nil {
