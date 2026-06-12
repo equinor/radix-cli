@@ -121,14 +121,14 @@ func getAuthWriter(cmd *cobra.Command) (runtime.ClientAuthInfoWriter, error) {
 		return nil, err
 	}
 
-	return &clientAuthWritedAdapter{provider: provider}, nil
+	return &clientAuthWriterAdapter{provider: provider}, nil
 }
 
-type clientAuthWritedAdapter struct {
+type clientAuthWriterAdapter struct {
 	provider auth.Provider
 }
 
-func (a *clientAuthWritedAdapter) AuthenticateRequest(r runtime.ClientRequest, _ strfmt.Registry) error {
+func (a *clientAuthWriterAdapter) AuthenticateRequest(r runtime.ClientRequest, _ strfmt.Registry) error {
 
 	token, err := a.provider.GetAccessToken(context.Background(), radixApiScopes)
 	if err != nil {
