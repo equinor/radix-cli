@@ -25,10 +25,6 @@ const (
 	TokenEnvironmentName = "APP_SERVICE_ACCOUNT_TOKEN"
 )
 
-var (
-	radixApiScopes = []string{"6dae42f8-4368-4678-94ff-3960e28e3630/.default"}
-)
-
 // GetRadixApiForCommand Gets radixapi for command
 func GetRadixApiForCommand(cmd *cobra.Command) (*radixapi.Radixapi, error) {
 	radixConfig, err := radixconfig.GetRadixConfig()
@@ -129,8 +125,7 @@ type clientAuthWriterAdapter struct {
 }
 
 func (a *clientAuthWriterAdapter) AuthenticateRequest(r runtime.ClientRequest, _ strfmt.Registry) error {
-
-	token, err := a.provider.GetAccessToken(context.Background(), radixApiScopes)
+	token, err := a.provider.GetAccessToken(context.Background(), auth.RadixAPIScopes)
 	if err != nil {
 		return err
 	}

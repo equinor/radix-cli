@@ -35,7 +35,7 @@ var (
 	ErrProviderNotSet  = errors.New("auth provider not set, please login")
 	ErrProviderUnknown = errors.New("auth provider is unknown, please login")
 
-	defaultLoginScope = []string{"6dae42f8-4368-4678-94ff-3960e28e3630/.default"}
+	RadixAPIScopes = []string{"6dae42f8-4368-4678-94ff-3960e28e3630/.default"}
 )
 
 var _ Provider = &Auth{}
@@ -97,7 +97,7 @@ func (a *Auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerMsalInteractive, 365*24*time.Hour)
 
-		_, err := provider.Authenticate(ctx, defaultLoginScope)
+		_, err := provider.Authenticate(ctx, RadixAPIScopes)
 		return err
 
 	case useDeviceCode:
@@ -105,7 +105,7 @@ func (a *Auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerMsalDevicecode, 365*24*time.Hour)
 
-		_, err := provider.Authenticate(ctx, defaultLoginScope)
+		_, err := provider.Authenticate(ctx, RadixAPIScopes)
 		return err
 
 	case useGithubCredentials:
@@ -113,7 +113,7 @@ func (a *Auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerAzureGithub, 365*24*time.Hour)
 
-		_, err := provider.Authenticate(ctx, azureClientId, defaultLoginScope)
+		_, err := provider.Authenticate(ctx, azureClientId, RadixAPIScopes)
 		return err
 
 	case federatedTokenFile != "":
@@ -121,7 +121,7 @@ func (a *Auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerAzureFederatedCredentials, 365*24*time.Hour)
 
-		_, err := provider.Authenticate(ctx, azureClientId, federatedTokenFile, defaultLoginScope)
+		_, err := provider.Authenticate(ctx, azureClientId, federatedTokenFile, RadixAPIScopes)
 		return err
 
 	case azureClientSecret != "":
@@ -129,7 +129,7 @@ func (a *Auth) Login(ctx context.Context, useInteractiveLogin, useDeviceCode, us
 		a.provider = provider
 		a.cache.SetItem(authProviderTypeCacheKey, providerAzureClientSecret, 365*24*time.Hour)
 
-		_, err := provider.Authenticate(ctx, azureClientId, azureClientSecret, defaultLoginScope)
+		_, err := provider.Authenticate(ctx, azureClientId, azureClientSecret, RadixAPIScopes)
 		return err
 
 	}
