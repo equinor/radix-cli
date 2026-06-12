@@ -9,9 +9,9 @@ import (
 	"github.com/equinor/radix-cli/pkg/auth"
 )
 
-func NewAzureTokenCredentialAdapter(auth *auth.Auth) *AzureTokenCredentialAdapter {
+func NewAzureTokenCredentialAdapter(authClient *auth.Auth) *AzureTokenCredentialAdapter {
 	return &AzureTokenCredentialAdapter{
-		auth: auth,
+		auth: authClient,
 	}
 }
 
