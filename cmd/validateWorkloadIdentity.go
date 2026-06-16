@@ -73,6 +73,8 @@ Note: after running generated Azure CLI commands, Azure can take up to one minut
   # Exclude potentially obsolete federated credentials from output
   rx validate workload-identity --application my-app --exclude-obsolete`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		cmd.SilenceUsage = true
+
 		outputFormat, _ := cmd.Flags().GetString(flagnames.Output)
 
 		validationPrinter := validationTextPrinter
@@ -84,8 +86,6 @@ Note: after running generated Azure CLI commands, Azure can take up to one minut
 		if err != nil {
 			return err
 		}
-
-		cmd.SilenceUsage = true
 
 		apiClient, err := client.GetRadixApiForCommand(cmd)
 		if err != nil {
@@ -141,6 +141,11 @@ Note: after running generated Azure CLI commands, Azure can take up to one minut
 }
 
 func validationTextPrinter(validations []FederatedCredentialsValidation) error {
+	if len(validations) == 0 {
+		fmt.Fprintln(os.Stdout, "No workload identity configurations found for selected application(s).")
+		return nil
+	}
+
 	var lineBreak bool
 	commentPrinter := color.RGB(128, 128, 128)
 
@@ -197,6 +202,11 @@ func validationTextPrinter(validations []FederatedCredentialsValidation) error {
 }
 
 func validationJsonPrinter(validations []FederatedCredentialsValidation) error {
+	if len(validations) == 0 {
+		fmt.Fprintln(os.Stdout, "No workload identity configurations found for selected application(s).")
+		return nil
+	}
+
 	printPayload(validations)
 	return nil
 }
@@ -300,7 +310,7 @@ func (v *FederatedCredentialsValidationHelper) ValidateFederatedCredentialsDetai
 }
 
 func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidation(ctx context.Context, fedCredMap clientFedCredMap, affectedNamespaces []string) ([]FederatedCredentialsValidation, error) {
-	var validations []FederatedCredentialsValidation
+	validations := []FederatedCredentialsValidation{}
 
 	v.log("")
 
