@@ -334,7 +334,6 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidatio
 		obsoleteFedCreds := slice.FindAll(allObsoleteFedCreds, func(fc FederatedCredential) bool {
 			namespace, _, ok := classifyKubernetesFederatedCredential(fc.FederatedCredential)
 			return ok && slices.Contains(affectedNamespaces, namespace)
-
 		})
 
 		printColor := color.FgGreen
@@ -361,7 +360,9 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidatio
 	return validations, nil
 }
 
-func compactFederatedCredentials(fedCreds []FederatedCredential) (compactFedCred []FederatedCredential) {
+func compactFederatedCredentials(fedCreds []FederatedCredential) []FederatedCredential {
+	var compactFedCred []FederatedCredential
+
 	for _, fedCred := range fedCreds {
 		predicate := createFederatedCredentialEqualsPredicate(fedCred)
 		if i := slices.IndexFunc(compactFedCred, predicate); i == -1 {
@@ -371,7 +372,7 @@ func compactFederatedCredentials(fedCreds []FederatedCredential) (compactFedCred
 		}
 	}
 
-	return
+	return compactFedCred
 }
 
 func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForDeployment(appName string, deployment models.Deployment, issuers []string) clientFedCredMap {
@@ -542,7 +543,9 @@ func sanitizeFederatedCredential(value string) string {
 	return strings.Trim(builder.String(), "-")
 }
 
-func findMissingFedCreds(expected, actual []FederatedCredential) (missing []FederatedCredential) {
+func findMissingFedCreds(expected, actual []FederatedCredential) []FederatedCredential {
+	var missing []FederatedCredential
+
 	for _, expectedFedCred := range expected {
 		predicate := createFederatedCredentialEqualsPredicate(expectedFedCred)
 
@@ -551,7 +554,7 @@ func findMissingFedCreds(expected, actual []FederatedCredential) (missing []Fede
 		}
 	}
 
-	return
+	return missing
 }
 
 func createFederatedCredentialsNameEqualsPredicate(name string) func(fedCred workloadidentity.FederatedCredential) bool {
