@@ -56,7 +56,9 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 
 The command compares expected federated credentials with existing credentials in Azure and prints Azure CLI commands to create missing credentials and delete potentially obsolete credentials.
 
-Take care when reviewing obsolete federated credentials: the obsolete list is best-effort and must not be trusted 100%. Existing federated credentials can belong to another Radix cluster, even if they look obsolete for the currently selected context.`,
+Take care when reviewing obsolete federated credentials: the obsolete list is best-effort and must not be trusted 100%. Existing federated credentials can belong to another Radix cluster, even if they look obsolete for the currently selected context.
+
+Special warning: federated credential subjects used for horizontal scaling triggers (subject system:serviceaccount:keda:keda-operator) can be shared across applications for the same service principal. A credential that appears obsolete for one application can still be required by another application in the same Radix cluster.`,
 	Example: `  # Validate workload identity for all applications in current context
   rx validate workload-identity
 
@@ -137,10 +139,15 @@ Take care when reviewing obsolete federated credentials: the obsolete list is be
 }
 
 func validationTextPrinter(validations []FederatedCredentialsValidation) error {
+	var lineBreak bool
 	commentPrinter := color.RGB(128, 128, 128)
 
 	for _, validation := range validations {
 		if len(validation.MissingFederatedCredentials) > 0 {
+			if lineBreak {
+				fmt.Fprintln(os.Stdout)
+			}
+
 			commentPrinter.Fprintf(os.Stdout, "# Azure CLI commands to create missing federated credentials for %s %s (client ID: %s)\n", validation.ServicePrincipal.Type, validation.ServicePrincipal.DisplayName, validation.ServicePrincipal.ClientID)
 		}
 
@@ -155,14 +162,17 @@ func validationTextPrinter(validations []FederatedCredentialsValidation) error {
 			}
 
 			color.Green(command)
+			lineBreak = true
 		}
 
-		commentPrinter.Fprintln(os.Stdout)
 	}
 
 	for _, validation := range validations {
 		if len(validation.ObsoleteFederatedCredentials) > 0 {
-			commentPrinter.Fprintln(os.Stdout)
+			if lineBreak {
+				fmt.Fprintln(os.Stdout)
+			}
+
 			commentPrinter.Fprintf(os.Stdout, "# Azure CLI commands to delete obsolete federated credentials for %s %s (client ID: %s)\n", validation.ServicePrincipal.Type, validation.ServicePrincipal.DisplayName, validation.ServicePrincipal.ClientID)
 		}
 
@@ -177,6 +187,7 @@ func validationTextPrinter(validations []FederatedCredentialsValidation) error {
 			}
 
 			color.Red(command)
+			lineBreak = true
 		}
 	}
 
