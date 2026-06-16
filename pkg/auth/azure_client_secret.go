@@ -9,10 +9,6 @@ import (
 	"github.com/equinor/radix-cli/pkg/auth/cache"
 )
 
-const (
-	azureClientSecretCacheKey = "azure_client_secret"
-)
-
 type AzureClientSecret struct {
 	Authority string
 	cache     cache.Cache
