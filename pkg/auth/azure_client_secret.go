@@ -47,8 +47,6 @@ func (p *AzureClientSecret) Authenticate(ctx context.Context, azureClientId, azu
 		return AccessToken{}, err
 	}
 
-	p.cache.SetItem(azureClientIdCacheKey, azureClientId, 365*24*time.Hour)
-	p.cache.SetItem(azureClientSecretCacheKey, azureClientSecret, 365*24*time.Hour)
 	p.cache.SetItem(accessTokenCacheKey(scopes), authResult.AccessToken, time.Until(authResult.ExpiresOn))
 	return AccessToken{Token: authResult.AccessToken, ExpiresOn: authResult.ExpiresOn}, nil
 }
@@ -58,7 +56,5 @@ func (p *AzureClientSecret) GetAccessToken(ctx context.Context, scopes []string)
 		return AccessToken{Token: token.Content, ExpiresOn: token.ExpiresAt}, nil
 	}
 
-	azureClientId, _ := p.cache.GetItem(azureClientIdCacheKey)
-	azureClientSecret, _ := p.cache.GetItem(azureClientSecretCacheKey)
-	return p.Authenticate(ctx, azureClientId.Content, azureClientSecret.Content, scopes)
+	return AccessToken{}, errors.New("please login again")
 }

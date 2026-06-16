@@ -71,9 +71,9 @@ Take care when reviewing obsolete federated credentials: the obsolete list is be
 	RunE: func(cmd *cobra.Command, args []string) error {
 		outputFormat, _ := cmd.Flags().GetString(flagnames.Output)
 
-		validationsPrinter := validationTextPrinter
+		validationPrinter := validationTextPrinter
 		if outputFormat == flagvalues.OutputFormatJson {
-			validationsPrinter = validationJsonPrinter
+			validationPrinter = validationJsonPrinter
 		}
 
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
@@ -129,7 +129,7 @@ Take care when reviewing obsolete federated credentials: the obsolete list is be
 		}
 
 		fmt.Fprintln(os.Stderr)
-		if err := validationsPrinter(validations); err != nil {
+		if err := validationPrinter(validations); err != nil {
 			return err
 		}
 
@@ -227,7 +227,7 @@ func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.Servic
 
 type FederatedCredential struct {
 	workloadidentity.FederatedCredential
-	Reason string
+	Reason string `json:"reason"`
 }
 
 type FederatedCredentialsValidation struct {
@@ -335,30 +335,31 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForDe
 
 	for _, component := range deployment.Components {
 		reason := fmt.Sprintf("Federated credential for %s %s in application %s, environment %s", strings.ToLower(*component.Type), *component.Name, appName, *deployment.Environment)
-		if fedCred := v.buildFederatedCredentialsMapForIdentity(component.Identity, *deployment.Namespace, issuers, reason); fedCred != nil {
+		if fedCred := v.buildFederatedCredentialsMapForIdentity(component.Identity, issuers, reason); fedCred != nil {
 			fedCreds.MergeFrom(fedCred)
 		}
 
 		if component.Oauth2 != nil {
 			reason := fmt.Sprintf("Federated credential for %s %s OAuth2 service in application %s, environment %s", strings.ToLower(*component.Type), *component.Name, appName, *deployment.Environment)
-			if fedCred := v.buildFederatedCredentialsMapForIdentity(component.Oauth2.Identity, *deployment.Namespace, issuers, reason); fedCred != nil {
+			if fedCred := v.buildFederatedCredentialsMapForIdentity(component.Oauth2.Identity, issuers, reason); fedCred != nil {
 				fedCreds.MergeFrom(fedCred)
 			}
 		}
 
-		// if horizontalScaling := component.HorizontalScalingSummary; horizontalScaling != nil {
-		// 	for _, trigger := range horizontalScaling.Triggers {
-		// 		if fedCred := v.buildFederatedCredentialsMapForIdentity(trigger.Identity, *deployment.Namespace); fedCred != nil {
-		// 			fedCreds.MergeFrom(fedCred)
-		// 		}
-		// 	}
-		// }
+		if horizontalScaling := component.HorizontalScalingSummary; horizontalScaling != nil {
+			for _, trigger := range horizontalScaling.Triggers {
+				reason := fmt.Sprintf("Federated credential for %s %s horizontal scaling %s in application %s, environment %s", strings.ToLower(*component.Type), *component.Name, trigger.Name, appName, *deployment.Environment)
+				if fedCred := v.buildFederatedCredentialsMapForIdentity(trigger.Identity, issuers, reason); fedCred != nil {
+					fedCreds.MergeFrom(fedCred)
+				}
+			}
+		}
 	}
 
 	return fedCreds
 }
 
-func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForIdentity(identity *models.Identity, namespace string, issuers []string, reason string) clientFedCredMap {
+func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForIdentity(identity *models.Identity, issuers []string, reason string) clientFedCredMap {
 	if identity == nil || identity.Azure == nil || identity.Azure.ClientID == nil {
 		return nil
 	}
@@ -370,7 +371,7 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForId
 		fedCreds[clientId] = append(fedCreds[clientId], FederatedCredential{
 			FederatedCredential: workloadidentity.FederatedCredential{
 				Issuer:    issuer,
-				Subject:   fmt.Sprintf("system:serviceaccount:%s:%s", namespace, *identity.Azure.ServiceAccountName),
+				Subject:   fmt.Sprintf("system:serviceaccount:%s:%s", *identity.Azure.Namespace, *identity.Azure.ServiceAccountName),
 				Audiences: []string{"api://AzureADTokenExchange"},
 			},
 			Reason: reason,
