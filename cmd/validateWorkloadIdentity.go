@@ -58,7 +58,9 @@ The command compares expected federated credentials with existing credentials in
 
 Take care when reviewing obsolete federated credentials: the obsolete list is best-effort and must not be trusted 100%. Existing federated credentials can belong to another Radix cluster, even if they look obsolete for the currently selected context.
 
-Special warning: federated credential subjects used for horizontal scaling triggers (subject system:serviceaccount:keda:keda-operator) can be shared across applications for the same service principal. A credential that appears obsolete for one application can still be required by another application in the same Radix cluster.`,
+Special warning: federated credential subjects used for horizontal scaling triggers (subject system:serviceaccount:keda:keda-operator) can be shared across applications for the same service principal. A credential that appears obsolete for one application can still be required by another application in the same Radix cluster.
+
+Note: after running generated Azure CLI commands, Azure can take up to one minute to process federated credential changes. If you run validation immediately after, the result can be stale.`,
 	Example: `  # Validate workload identity for all applications in current context
   rx validate workload-identity
 
