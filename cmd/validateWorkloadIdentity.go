@@ -258,7 +258,7 @@ func (target clientFedCredMap) MergeFrom(source clientFedCredMap) {
 
 func (v *FederatedCredentialsValidationHelper) ValidateFederatedCredentialsDetails(ctx context.Context, appNames []string) ([]FederatedCredentialsValidation, error) {
 	appDeploymentsMap := map[string][]models.Deployment{}
-	var affectedNamespaces []string
+	affectedNamespaces := []string{"keda"}
 
 	for _, appName := range appNames {
 		v.log(fmt.Sprintf("Reading deployments for application %s", appName))
@@ -340,7 +340,7 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidatio
 
 func compactFederatedCredentials(fedCreds []FederatedCredential) (compactFedCred []FederatedCredential) {
 	for _, fedCred := range fedCreds {
-		predicate := createFederatedCredentialEqualPredicate(fedCred)
+		predicate := createFederatedCredentialEqualsPredicate(fedCred)
 		if i := slices.IndexFunc(compactFedCred, predicate); i == -1 {
 			compactFedCred = append(compactFedCred, fedCred)
 		} else {
@@ -448,7 +448,7 @@ func classifyKubernetesFederatedCredential(fedCred workloadidentity.FederatedCre
 
 func validateOrGenerateUniqueFederatedCredentialName(fedCred FederatedCredential, existingFedCreds []workloadidentity.FederatedCredential) (string, error) {
 	nameUnused := func(name string) bool {
-		return !slice.Any(existingFedCreds, federatedCredentialsNameEqualsPredicate(name))
+		return !slice.Any(existingFedCreds, createFederatedCredentialsNameEqualsPredicate(name))
 	}
 
 	if existingName := strings.TrimSpace(fedCred.Name); len(existingName) > 0 {
@@ -462,13 +462,6 @@ func validateOrGenerateUniqueFederatedCredentialName(fedCred FederatedCredential
 		if candidate := generateFederatedCredentialName(fedCred.Subject, fedCred.Issuer, counter); nameUnused(candidate) {
 			return candidate, nil
 		}
-	}
-}
-
-func federatedCredentialsNameEqualsPredicate(name string) func(fedCred workloadidentity.FederatedCredential) bool {
-	nameLower := strings.ToLower(name)
-	return func(fedCred workloadidentity.FederatedCredential) bool {
-		return strings.ToLower(fedCred.Name) == nameLower
 	}
 }
 
@@ -528,7 +521,7 @@ func sanitizeFederatedCredential(value string) string {
 
 func findMissingFedCreds(expected, actual []FederatedCredential) (missing []FederatedCredential) {
 	for _, expectedFedCred := range expected {
-		predicate := createFederatedCredentialEqualPredicate(expectedFedCred)
+		predicate := createFederatedCredentialEqualsPredicate(expectedFedCred)
 
 		if exists := slices.ContainsFunc(actual, predicate); !exists {
 			missing = append(missing, expectedFedCred)
@@ -538,7 +531,14 @@ func findMissingFedCreds(expected, actual []FederatedCredential) (missing []Fede
 	return
 }
 
-func createFederatedCredentialEqualPredicate(fedCred FederatedCredential) func(FederatedCredential) bool {
+func createFederatedCredentialsNameEqualsPredicate(name string) func(fedCred workloadidentity.FederatedCredential) bool {
+	nameLower := strings.ToLower(name)
+	return func(fedCred workloadidentity.FederatedCredential) bool {
+		return strings.ToLower(fedCred.Name) == nameLower
+	}
+}
+
+func createFederatedCredentialEqualsPredicate(fedCred FederatedCredential) func(FederatedCredential) bool {
 	return func(compareWith FederatedCredential) bool {
 		fedCredAudSorted := slices.Clone(fedCred.Audiences)
 		compareWithAudSorted := slices.Clone(compareWith.Audiences)

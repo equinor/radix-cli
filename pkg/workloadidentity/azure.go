@@ -33,7 +33,7 @@ type ServicePrincipal struct {
 	DisplayName          string                `json:"displayName"`
 	SubscriptionID       string                `json:"subscriptionID,omitempty"`
 	ResourceGroup        string                `json:"resourceGroup,omitempty"`
-	FederatedCredentials []FederatedCredential `json:"federatedCredentials"`
+	FederatedCredentials []FederatedCredential `json:"existingFederatedCredentials"`
 }
 
 type FederatedCredential struct {
