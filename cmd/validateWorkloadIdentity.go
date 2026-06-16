@@ -128,7 +128,6 @@ Take care when reviewing obsolete federated credentials: the obsolete list is be
 			}
 		}
 
-		fmt.Fprintln(os.Stderr)
 		if err := validationPrinter(validations); err != nil {
 			return err
 		}
@@ -142,7 +141,6 @@ func validationTextPrinter(validations []FederatedCredentialsValidation) error {
 
 	for _, validation := range validations {
 		if len(validation.MissingFederatedCredentials) > 0 {
-			commentPrinter.Fprintln(os.Stdout)
 			commentPrinter.Fprintf(os.Stdout, "# Azure CLI commands to create missing federated credentials for %s %s (client ID: %s)\n", validation.ServicePrincipal.Type, validation.ServicePrincipal.DisplayName, validation.ServicePrincipal.ClientID)
 		}
 
@@ -152,11 +150,14 @@ func validationTextPrinter(validations []FederatedCredentialsValidation) error {
 				return err
 			}
 
-			if len(missing.Reason) > 0 {
-				commentPrinter.Fprintf(os.Stdout, "# %s\n", missing.Reason)
+			for _, reason := range missing.Reason {
+				commentPrinter.Fprintf(os.Stdout, "# %s\n", reason)
 			}
+
 			color.Green(command)
 		}
+
+		commentPrinter.Fprintln(os.Stdout)
 	}
 
 	for _, validation := range validations {
@@ -171,9 +172,10 @@ func validationTextPrinter(validations []FederatedCredentialsValidation) error {
 				return err
 			}
 
-			if len(obsolete.Reason) > 0 {
-				commentPrinter.Fprintf(os.Stdout, "# %s\n", obsolete.Reason)
+			for _, reason := range obsolete.Reason {
+				commentPrinter.Fprintf(os.Stdout, "# %s\n", reason)
 			}
+
 			color.Red(command)
 		}
 	}
@@ -227,7 +229,7 @@ func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.Servic
 
 type FederatedCredential struct {
 	workloadidentity.FederatedCredential
-	Reason string `json:"reason"`
+	Reason []string `json:"reason"`
 }
 
 type FederatedCredentialsValidation struct {
@@ -287,6 +289,8 @@ func (v *FederatedCredentialsValidationHelper) ValidateFederatedCredentialsDetai
 func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidation(ctx context.Context, fedCredMap clientFedCredMap, affectedNamespaces []string) ([]FederatedCredentialsValidation, error) {
 	var validations []FederatedCredentialsValidation
 
+	v.log("")
+
 	for clientId, expectedFedCreds := range fedCredMap {
 		v.log(fmt.Sprintf("Analyzing service principal with client id %s", clientId))
 
@@ -302,7 +306,7 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidatio
 			func(c workloadidentity.FederatedCredential) FederatedCredential {
 				return FederatedCredential{FederatedCredential: c}
 			})
-		missingFedCreds := findMissingFedCreds(expectedFedCreds, existingFedCreds)
+		missingFedCreds := compactFederatedCredentials(findMissingFedCreds(expectedFedCreds, existingFedCreds))
 		allObsoleteFedCreds := findMissingFedCreds(existingFedCreds, expectedFedCreds)
 		obsoleteFedCreds := slice.FindAll(allObsoleteFedCreds, func(fc FederatedCredential) bool {
 			namespace, _, ok := classifyKubernetesFederatedCredential(fc.FederatedCredential)
@@ -310,7 +314,11 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidatio
 
 		})
 
-		v.log(fmt.Sprintf("Federated credentials total: %v, missing: %v, obsolete: %v)", len(expectedFedCreds), len(missingFedCreds), len(obsoleteFedCreds)))
+		printColor := color.FgGreen
+		if len(missingFedCreds)+len(obsoleteFedCreds) > 0 {
+			printColor = color.FgYellow
+		}
+		v.log(color.Set(printColor).Sprintf("Federated credentials total: %v, missing: %v, obsolete: %v)\n", len(expectedFedCreds), len(missingFedCreds), len(obsoleteFedCreds)))
 
 		for fedCredIndex := range missingFedCreds {
 			fedCredName, err := validateOrGenerateUniqueFederatedCredentialName(missingFedCreds[fedCredIndex], sp.FederatedCredentials)
@@ -328,6 +336,19 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidatio
 	}
 
 	return validations, nil
+}
+
+func compactFederatedCredentials(fedCreds []FederatedCredential) (compactFedCred []FederatedCredential) {
+	for _, fedCred := range fedCreds {
+		predicate := createFederatedCredentialEqualPredicate(fedCred)
+		if i := slices.IndexFunc(compactFedCred, predicate); i == -1 {
+			compactFedCred = append(compactFedCred, fedCred)
+		} else {
+			compactFedCred[i].Reason = append(compactFedCred[i].Reason, fedCred.Reason...)
+		}
+	}
+
+	return
 }
 
 func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForDeployment(appName string, deployment models.Deployment, issuers []string) clientFedCredMap {
@@ -368,14 +389,17 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForId
 	fedCreds := clientFedCredMap{clientId: []FederatedCredential{}}
 
 	for _, issuer := range issuers {
-		fedCreds[clientId] = append(fedCreds[clientId], FederatedCredential{
+		fedCred := FederatedCredential{
 			FederatedCredential: workloadidentity.FederatedCredential{
 				Issuer:    issuer,
 				Subject:   fmt.Sprintf("system:serviceaccount:%s:%s", *identity.Azure.Namespace, *identity.Azure.ServiceAccountName),
 				Audiences: []string{"api://AzureADTokenExchange"},
 			},
-			Reason: reason,
-		})
+		}
+		if len(reason) > 0 {
+			fedCred.Reason = append(fedCred.Reason, reason)
+		}
+		fedCreds[clientId] = append(fedCreds[clientId], fedCred)
 	}
 
 	return fedCreds
@@ -504,20 +528,25 @@ func sanitizeFederatedCredential(value string) string {
 
 func findMissingFedCreds(expected, actual []FederatedCredential) (missing []FederatedCredential) {
 	for _, expectedFedCred := range expected {
-		exists := slices.ContainsFunc(actual, func(actualFedCred FederatedCredential) bool {
-			s1 := slices.Clone(expectedFedCred.Audiences)
-			s2 := slices.Clone(actualFedCred.Audiences)
-			slices.Sort(s1)
-			slices.Sort(s2)
+		predicate := createFederatedCredentialEqualPredicate(expectedFedCred)
 
-			return expectedFedCred.Issuer == actualFedCred.Issuer && expectedFedCred.Subject == actualFedCred.Subject && slices.Equal(s1, s2)
-		})
-		if !exists {
+		if exists := slices.ContainsFunc(actual, predicate); !exists {
 			missing = append(missing, expectedFedCred)
 		}
 	}
 
 	return
+}
+
+func createFederatedCredentialEqualPredicate(fedCred FederatedCredential) func(FederatedCredential) bool {
+	return func(compareWith FederatedCredential) bool {
+		fedCredAudSorted := slices.Clone(fedCred.Audiences)
+		compareWithAudSorted := slices.Clone(compareWith.Audiences)
+		slices.Sort(fedCredAudSorted)
+		slices.Sort(compareWithAudSorted)
+
+		return fedCred.Issuer == compareWith.Issuer && fedCred.Subject == compareWith.Subject && slices.Equal(fedCredAudSorted, compareWithAudSorted)
+	}
 }
 
 func init() {
