@@ -115,24 +115,24 @@ Note: After running generated Azure CLI commands, Azure can take up to one minut
 			return fmt.Errorf("error initializing service principal client: %w", err)
 		}
 
-		fedCredValidator := workloadIdentityValidationHelper{
+		validator := workloadIdentityValidationHelper{
 			radixApiClient:         apiClient,
 			servicePrincipalHelper: servicePrincipalHelper,
 			logger:                 func(msg string) { fmt.Fprintln(os.Stderr, msg) },
 		}
 
-		validations, err := fedCredValidator.ValidateWorkloadIdentities(cmd.Context(), appNames)
+		validationResult, err := validator.ValidateWorkloadIdentities(cmd.Context(), appNames)
 		if err != nil {
 			return err
 		}
 
 		if excludeObsolete, _ := cmd.Flags().GetBool(flagExcludeObsoleteFederatedCredentials); excludeObsolete {
-			for validationIndex := range validations {
-				validations[validationIndex].ObsoleteFederatedCredentials = nil
+			for i := range validationResult {
+				validationResult[i].ObsoleteFederatedCredentials = nil
 			}
 		}
 
-		if err := validationPrinter(validations); err != nil {
+		if err := validationPrinter(validationResult); err != nil {
 			return err
 		}
 
