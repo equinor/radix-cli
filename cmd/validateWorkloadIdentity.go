@@ -115,13 +115,13 @@ Note: After running generated Azure CLI commands, Azure can take up to one minut
 			return fmt.Errorf("error initializing service principal client: %w", err)
 		}
 
-		fedCredValidator := FederatedCredentialsValidationHelper{
+		fedCredValidator := workloadIdentityValidationHelper{
 			radixApiClient:         apiClient,
 			servicePrincipalHelper: servicePrincipalHelper,
 			logger:                 func(msg string) { fmt.Fprintln(os.Stderr, msg) },
 		}
 
-		validations, err := fedCredValidator.ValidateFederatedCredentialsDetails(cmd.Context(), appNames)
+		validations, err := fedCredValidator.ValidateWorkloadIdentities(cmd.Context(), appNames)
 		if err != nil {
 			return err
 		}
@@ -140,7 +140,7 @@ Note: After running generated Azure CLI commands, Azure can take up to one minut
 	},
 }
 
-func validationTextPrinter(validations []FederatedCredentialsValidation) error {
+func validationTextPrinter(validations []workloadIdentityValidation) error {
 	if len(validations) == 0 {
 		fmt.Fprintln(os.Stdout, "No workload identity configurations found for selected application(s).")
 		return nil
@@ -201,7 +201,7 @@ func validationTextPrinter(validations []FederatedCredentialsValidation) error {
 	return nil
 }
 
-func validationJsonPrinter(validations []FederatedCredentialsValidation) error {
+func validationJsonPrinter(validations []workloadIdentityValidation) error {
 	if len(validations) == 0 {
 		fmt.Fprintln(os.Stdout, "No workload identity configurations found for selected application(s).")
 		return nil
@@ -211,7 +211,7 @@ func validationJsonPrinter(validations []FederatedCredentialsValidation) error {
 	return nil
 }
 
-func generateDeleteFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, deleteFedCred FederatedCredential) (string, error) {
+func generateDeleteFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, deleteFedCred federatedCredential) (string, error) {
 	switch sp.Type {
 	case workloadidentity.ManagedIdentity:
 		return fmt.Sprintf("az identity federated-credential delete --name %s --identity-name %s --resource-group %s --subscription %s", deleteFedCred.Name, sp.DisplayName, sp.ResourceGroup, sp.SubscriptionID), nil
@@ -222,7 +222,7 @@ func generateDeleteFederatedCredentialAzureCLICommand(sp workloadidentity.Servic
 	return "", fmt.Errorf("unable to generate delete federated credential command for principal %s with unknow type %s", sp.DisplayName, sp.Type)
 }
 
-func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, createFedCred FederatedCredential) (string, error) {
+func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, createFedCred federatedCredential) (string, error) {
 	switch sp.Type {
 	case workloadidentity.ManagedIdentity:
 		return fmt.Sprintf("az identity federated-credential create --name %s --identity-name %s --resource-group %s --subscription %s --issuer %s --subject %s --audiences %s", createFedCred.Name, sp.DisplayName, sp.ResourceGroup, sp.SubscriptionID, createFedCred.Issuer, createFedCred.Subject, createFedCred.Audiences[0]), nil
@@ -250,36 +250,36 @@ func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.Servic
 	return "", fmt.Errorf("unable to generate create federated credential command for principal %s with unknow type %s", sp.DisplayName, sp.Type)
 }
 
-type FederatedCredential struct {
+type federatedCredential struct {
 	workloadidentity.FederatedCredential
 	Reason []string `json:"reason"`
 }
 
-type FederatedCredentialsValidation struct {
+type workloadIdentityValidation struct {
 	ServicePrincipal             workloadidentity.ServicePrincipal `json:"servicePrincipal"`
-	MissingFederatedCredentials  []FederatedCredential             `json:"missingFederatedCredentials"`
-	ObsoleteFederatedCredentials []FederatedCredential             `json:"obsoleteFederatedCredentials,omitempty"`
+	MissingFederatedCredentials  []federatedCredential             `json:"missingFederatedCredentials"`
+	ObsoleteFederatedCredentials []federatedCredential             `json:"obsoleteFederatedCredentials,omitempty"`
 }
 
-type FederatedCredentialsValidationHelper struct {
-	radixApiClient         *radixapiclient.Radixapi
-	servicePrincipalHelper *workloadidentity.AzureServicePrincipalHelper
-	logger                 func(msg string)
-}
-
-type clientFedCredMap map[string][]FederatedCredential
+type clientFedCredMap map[string][]federatedCredential
 
 func (target clientFedCredMap) MergeFrom(source clientFedCredMap) {
 	for clientId, fedCred := range source {
 		if _, ok := target[clientId]; !ok {
-			target[clientId] = make([]FederatedCredential, 0, len(fedCred))
+			target[clientId] = make([]federatedCredential, 0, len(fedCred))
 		}
 
 		target[clientId] = append(target[clientId], fedCred...)
 	}
 }
 
-func (v *FederatedCredentialsValidationHelper) ValidateFederatedCredentialsDetails(ctx context.Context, appNames []string) ([]FederatedCredentialsValidation, error) {
+type workloadIdentityValidationHelper struct {
+	radixApiClient         *radixapiclient.Radixapi
+	servicePrincipalHelper *workloadidentity.AzureServicePrincipalHelper
+	logger                 func(msg string)
+}
+
+func (v *workloadIdentityValidationHelper) ValidateWorkloadIdentities(ctx context.Context, appNames []string) ([]workloadIdentityValidation, error) {
 	appDeploymentsMap := map[string][]models.Deployment{}
 	affectedNamespaces := []string{"keda"}
 
@@ -309,13 +309,15 @@ func (v *FederatedCredentialsValidationHelper) ValidateFederatedCredentialsDetai
 	return v.buildFederatedCredentialValidation(ctx, fedCreds, affectedNamespaces)
 }
 
-func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidation(ctx context.Context, fedCredMap clientFedCredMap, affectedNamespaces []string) ([]FederatedCredentialsValidation, error) {
-	validations := []FederatedCredentialsValidation{}
+func (v *workloadIdentityValidationHelper) buildFederatedCredentialValidation(ctx context.Context, fedCredMap clientFedCredMap, affectedNamespaces []string) ([]workloadIdentityValidation, error) {
+	validations := []workloadIdentityValidation{}
 
 	v.log("")
 
 	for clientId, expectedFedCreds := range fedCredMap {
 		v.log(fmt.Sprintf("Analyzing service principal with client id %s", clientId))
+
+		expectedFedCreds = compactFederatedCredentials(expectedFedCreds)
 
 		sp, err := v.servicePrincipalHelper.GetServicePrincipal(ctx, clientId)
 		if err != nil {
@@ -326,12 +328,12 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidatio
 
 		existingFedCreds := slice.Map(
 			slice.FindAll(sp.FederatedCredentials, isKubernetesFederatedCredential),
-			func(c workloadidentity.FederatedCredential) FederatedCredential {
-				return FederatedCredential{FederatedCredential: c}
+			func(c workloadidentity.FederatedCredential) federatedCredential {
+				return federatedCredential{FederatedCredential: c}
 			})
-		missingFedCreds := compactFederatedCredentials(findMissingFedCreds(expectedFedCreds, existingFedCreds))
+		missingFedCreds := findMissingFedCreds(expectedFedCreds, existingFedCreds)
 		allObsoleteFedCreds := findMissingFedCreds(existingFedCreds, expectedFedCreds)
-		obsoleteFedCreds := slice.FindAll(allObsoleteFedCreds, func(fc FederatedCredential) bool {
+		obsoleteFedCreds := slice.FindAll(allObsoleteFedCreds, func(fc federatedCredential) bool {
 			namespace, _, ok := classifyKubernetesFederatedCredential(fc.FederatedCredential)
 			return ok && slices.Contains(affectedNamespaces, namespace)
 		})
@@ -340,7 +342,7 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidatio
 		if len(missingFedCreds)+len(obsoleteFedCreds) > 0 {
 			printColor = color.FgYellow
 		}
-		v.log(color.Set(printColor).Sprintf("Federated credentials total: %v, missing: %v, obsolete: %v)\n", len(expectedFedCreds), len(missingFedCreds), len(obsoleteFedCreds)))
+		v.log(color.Set(printColor).Sprintf("Federated credentials expected: %v, missing: %v, obsolete: %v)\n", len(expectedFedCreds), len(missingFedCreds), len(obsoleteFedCreds)))
 
 		for fedCredIndex := range missingFedCreds {
 			fedCredName, err := validateOrGenerateUniqueFederatedCredentialName(missingFedCreds[fedCredIndex], sp.FederatedCredentials)
@@ -350,7 +352,7 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidatio
 			missingFedCreds[fedCredIndex].Name = fedCredName
 		}
 
-		validations = append(validations, FederatedCredentialsValidation{
+		validations = append(validations, workloadIdentityValidation{
 			ServicePrincipal:             *sp,
 			MissingFederatedCredentials:  missingFedCreds,
 			ObsoleteFederatedCredentials: obsoleteFedCreds,
@@ -360,8 +362,8 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialValidatio
 	return validations, nil
 }
 
-func compactFederatedCredentials(fedCreds []FederatedCredential) []FederatedCredential {
-	var compactFedCred []FederatedCredential
+func compactFederatedCredentials(fedCreds []federatedCredential) []federatedCredential {
+	var compactFedCred []federatedCredential
 
 	for _, fedCred := range fedCreds {
 		predicate := createFederatedCredentialEqualsPredicate(fedCred)
@@ -375,7 +377,7 @@ func compactFederatedCredentials(fedCreds []FederatedCredential) []FederatedCred
 	return compactFedCred
 }
 
-func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForDeployment(appName string, deployment models.Deployment, issuers []string) clientFedCredMap {
+func (v *workloadIdentityValidationHelper) buildFederatedCredentialsMapForDeployment(appName string, deployment models.Deployment, issuers []string) clientFedCredMap {
 	fedCreds := clientFedCredMap{}
 
 	for _, component := range deployment.Components {
@@ -404,16 +406,16 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForDe
 	return fedCreds
 }
 
-func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForIdentity(identity *models.Identity, issuers []string, reason string) clientFedCredMap {
+func (v *workloadIdentityValidationHelper) buildFederatedCredentialsMapForIdentity(identity *models.Identity, issuers []string, reason string) clientFedCredMap {
 	if identity == nil || identity.Azure == nil || identity.Azure.ClientID == nil {
 		return nil
 	}
 
 	clientId := *identity.Azure.ClientID
-	fedCreds := clientFedCredMap{clientId: []FederatedCredential{}}
+	fedCreds := clientFedCredMap{clientId: []federatedCredential{}}
 
 	for _, issuer := range issuers {
-		fedCred := FederatedCredential{
+		fedCred := federatedCredential{
 			FederatedCredential: workloadidentity.FederatedCredential{
 				Issuer:    issuer,
 				Subject:   fmt.Sprintf("system:serviceaccount:%s:%s", *identity.Azure.Namespace, *identity.Azure.ServiceAccountName),
@@ -429,7 +431,7 @@ func (v *FederatedCredentialsValidationHelper) buildFederatedCredentialsMapForId
 	return fedCreds
 }
 
-func (v *FederatedCredentialsValidationHelper) getActiveDeploymentsForApplication(ctx context.Context, appName string) ([]models.Deployment, error) {
+func (v *workloadIdentityValidationHelper) getActiveDeploymentsForApplication(ctx context.Context, appName string) ([]models.Deployment, error) {
 	app, err := v.radixApiClient.Application.GetApplication(&application.GetApplicationParams{Context: ctx, AppName: appName}, nil)
 	if err != nil {
 		return nil, err
@@ -450,7 +452,7 @@ func (v *FederatedCredentialsValidationHelper) getActiveDeploymentsForApplicatio
 	return deployments, nil
 }
 
-func (v *FederatedCredentialsValidationHelper) log(msg string) {
+func (v *workloadIdentityValidationHelper) log(msg string) {
 	if v.logger != nil {
 		v.logger(msg)
 	}
@@ -470,7 +472,7 @@ func classifyKubernetesFederatedCredential(fedCred workloadidentity.FederatedCre
 	return subjectParts[2], subjectParts[3], true
 }
 
-func validateOrGenerateUniqueFederatedCredentialName(fedCred FederatedCredential, existingFedCreds []workloadidentity.FederatedCredential) (string, error) {
+func validateOrGenerateUniqueFederatedCredentialName(fedCred federatedCredential, existingFedCreds []workloadidentity.FederatedCredential) (string, error) {
 	nameUnused := func(name string) bool {
 		return !slice.Any(existingFedCreds, createFederatedCredentialsNameEqualsPredicate(name))
 	}
@@ -543,8 +545,8 @@ func sanitizeFederatedCredential(value string) string {
 	return strings.Trim(builder.String(), "-")
 }
 
-func findMissingFedCreds(expected, actual []FederatedCredential) []FederatedCredential {
-	var missing []FederatedCredential
+func findMissingFedCreds(expected, actual []federatedCredential) []federatedCredential {
+	var missing []federatedCredential
 
 	for _, expectedFedCred := range expected {
 		predicate := createFederatedCredentialEqualsPredicate(expectedFedCred)
@@ -564,8 +566,8 @@ func createFederatedCredentialsNameEqualsPredicate(name string) func(fedCred wor
 	}
 }
 
-func createFederatedCredentialEqualsPredicate(fedCred FederatedCredential) func(FederatedCredential) bool {
-	return func(compareWith FederatedCredential) bool {
+func createFederatedCredentialEqualsPredicate(fedCred federatedCredential) func(federatedCredential) bool {
+	return func(compareWith federatedCredential) bool {
 		fedCredAudSorted := slices.Clone(fedCred.Audiences)
 		compareWithAudSorted := slices.Clone(compareWith.Audiences)
 		slices.Sort(fedCredAudSorted)
