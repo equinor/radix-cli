@@ -284,7 +284,7 @@ func (v *workloadIdentityValidationHelper) ValidateWorkloadIdentities(ctx contex
 	affectedNamespaces := []string{"keda"}
 
 	for _, appName := range appNames {
-		v.log(fmt.Sprintf("Reading deployments for application %s", appName))
+		v.logMessage(fmt.Sprintf("Reading deployments for application %s", appName))
 		appDeployments, err := v.getActiveDeploymentsForApplication(ctx, appName)
 		if err != nil {
 			return nil, err
@@ -312,37 +312,18 @@ func (v *workloadIdentityValidationHelper) ValidateWorkloadIdentities(ctx contex
 func (v *workloadIdentityValidationHelper) buildFederatedCredentialValidation(ctx context.Context, fedCredMap clientFedCredMap, affectedNamespaces []string) ([]workloadIdentityValidation, error) {
 	validations := []workloadIdentityValidation{}
 
-	v.log("")
+	v.logMessage("")
 
 	for clientId, expectedFedCreds := range fedCredMap {
-		v.log(fmt.Sprintf("Analyzing service principal with client id %s", clientId))
-
-		expectedFedCreds = compactFederatedCredentials(expectedFedCreds)
+		v.logMessage(fmt.Sprintf("Analyzing service principal with client id %s", clientId))
 
 		sp, err := v.servicePrincipalHelper.GetServicePrincipal(ctx, clientId)
 		if err != nil {
 			return nil, err
 		}
+		v.logMessage(fmt.Sprintf("Found %s with name %s ", sp.Type, sp.DisplayName))
 
-		v.log(fmt.Sprintf("Found %s with name %s ", sp.Type, sp.DisplayName))
-
-		existingFedCreds := slice.Map(
-			slice.FindAll(sp.FederatedCredentials, isKubernetesFederatedCredential),
-			func(c workloadidentity.FederatedCredential) federatedCredential {
-				return federatedCredential{FederatedCredential: c}
-			})
-		missingFedCreds := findMissingFedCreds(expectedFedCreds, existingFedCreds)
-		allObsoleteFedCreds := findMissingFedCreds(existingFedCreds, expectedFedCreds)
-		obsoleteFedCreds := slice.FindAll(allObsoleteFedCreds, func(fc federatedCredential) bool {
-			namespace, _, ok := classifyKubernetesFederatedCredential(fc.FederatedCredential)
-			return ok && slices.Contains(affectedNamespaces, namespace)
-		})
-
-		printColor := color.FgGreen
-		if len(missingFedCreds)+len(obsoleteFedCreds) > 0 {
-			printColor = color.FgYellow
-		}
-		v.log(color.Set(printColor).Sprintf("Federated credentials expected: %v, missing: %v, obsolete: %v)\n", len(expectedFedCreds), len(missingFedCreds), len(obsoleteFedCreds)))
+		missingFedCreds, obsoleteFedCreds := compareServicePrincipalFederatedCredentials(sp, expectedFedCreds, affectedNamespaces)
 
 		for fedCredIndex := range missingFedCreds {
 			fedCredName, err := validateOrGenerateUniqueFederatedCredentialName(missingFedCreds[fedCredIndex], sp.FederatedCredentials)
@@ -352,6 +333,12 @@ func (v *workloadIdentityValidationHelper) buildFederatedCredentialValidation(ct
 			missingFedCreds[fedCredIndex].Name = fedCredName
 		}
 
+		printColor := color.FgGreen
+		if len(missingFedCreds) > 0 || len(obsoleteFedCreds) > 0 {
+			printColor = color.FgYellow
+		}
+		v.logMessage(color.Set(printColor).Sprintf("Federated credentials expected: %v, missing: %v, obsolete: %v)\n", len(expectedFedCreds), len(missingFedCreds), len(obsoleteFedCreds)))
+
 		validations = append(validations, workloadIdentityValidation{
 			ServicePrincipal:             *sp,
 			MissingFederatedCredentials:  missingFedCreds,
@@ -360,6 +347,25 @@ func (v *workloadIdentityValidationHelper) buildFederatedCredentialValidation(ct
 	}
 
 	return validations, nil
+}
+
+func compareServicePrincipalFederatedCredentials(sp *workloadidentity.ServicePrincipal, expectedFedCreds []federatedCredential, affectedNamespaces []string) (missing, obsolete []federatedCredential) {
+	expectedFedCreds = compactFederatedCredentials(expectedFedCreds)
+
+	existingKubernetesFedCreds := slice.FindAll(sp.FederatedCredentials, isKubernetesFederatedCredential)
+	existingFedCreds := slice.Map(existingKubernetesFedCreds, func(c workloadidentity.FederatedCredential) federatedCredential {
+		return federatedCredential{FederatedCredential: c}
+	})
+
+	missingFedCreds := findMissingFedCreds(expectedFedCreds, existingFedCreds)
+
+	obsoleteFedCreds := findMissingFedCreds(existingFedCreds, expectedFedCreds)
+	filteredObsoleteFedCreds := slice.FindAll(obsoleteFedCreds, func(fc federatedCredential) bool {
+		namespace, _, ok := classifyKubernetesFederatedCredential(fc.FederatedCredential)
+		return ok && slices.Contains(affectedNamespaces, namespace)
+	})
+
+	return missingFedCreds, filteredObsoleteFedCreds
 }
 
 func compactFederatedCredentials(fedCreds []federatedCredential) []federatedCredential {
@@ -452,7 +458,7 @@ func (v *workloadIdentityValidationHelper) getActiveDeploymentsForApplication(ct
 	return deployments, nil
 }
 
-func (v *workloadIdentityValidationHelper) log(msg string) {
+func (v *workloadIdentityValidationHelper) logMessage(msg string) {
 	if v.logger != nil {
 		v.logger(msg)
 	}
@@ -545,6 +551,7 @@ func sanitizeFederatedCredential(value string) string {
 	return strings.Trim(builder.String(), "-")
 }
 
+// returns a list of federatedCredential that exists in expected but not in actual
 func findMissingFedCreds(expected, actual []federatedCredential) []federatedCredential {
 	var missing []federatedCredential
 
