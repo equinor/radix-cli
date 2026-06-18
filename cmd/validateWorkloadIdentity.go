@@ -354,7 +354,6 @@ func (v *workloadIdentityValidationHelper) buildFederatedCredentialValidation(ct
 func compareServicePrincipalFederatedCredentials(sp *workloadidentity.ServicePrincipal, expectedFedCreds []federatedCredential, affectedNamespaces []string) (missing, obsolete []federatedCredential) {
 	expectedFedCreds = compactFederatedCredentials(expectedFedCreds)
 
-	// existingKubernetesFedCreds := slice.FindAll(sp.FederatedCredentials, isKubernetesFederatedCredential)
 	existingFedCreds := slice.Map(sp.FederatedCredentials, func(c workloadidentity.FederatedCredential) federatedCredential {
 		return federatedCredential{FederatedCredential: c}
 	})
@@ -469,11 +468,6 @@ func (v *workloadIdentityValidationHelper) logMessage(msg string) {
 	if v.logger != nil {
 		v.logger(msg)
 	}
-}
-
-func isKubernetesFederatedCredential(fedCred workloadidentity.FederatedCredential) bool {
-	_, _, ok := classifyKubernetesFederatedCredential(fedCred)
-	return ok
 }
 
 func classifyKubernetesFederatedCredential(fedCred workloadidentity.FederatedCredential) (namespace, serviceAccount string, ok bool) {
