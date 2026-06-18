@@ -339,7 +339,7 @@ func (v *workloadIdentityValidationHelper) buildFederatedCredentialValidation(ct
 		if len(missingFedCreds) > 0 || len(obsoleteFedCreds) > 0 {
 			printColor = color.FgYellow
 		}
-		v.logMessage(color.Set(printColor).Sprintf("Federated credentials expected: %v, missing: %v, obsolete: %v)\n", len(expectedFedCreds), len(missingFedCreds), len(obsoleteFedCreds)))
+		v.logMessage(color.Set(printColor).Sprintf("Federated credentials expected: %v, missing: %v, obsolete: %v\n", len(expectedFedCreds), len(missingFedCreds), len(obsoleteFedCreds)))
 
 		validations = append(validations, workloadIdentityValidation{
 			ServicePrincipal:             *sp,
