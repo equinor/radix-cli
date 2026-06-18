@@ -315,6 +315,8 @@ func (v *workloadIdentityValidationHelper) buildFederatedCredentialValidation(ct
 	v.logMessage("")
 
 	for clientId, expectedFedCreds := range fedCredMap {
+		expectedFedCreds = compactFederatedCredentials(expectedFedCreds)
+
 		v.logMessage(fmt.Sprintf("Analyzing service principal with client id %s", clientId))
 
 		sp, err := v.servicePrincipalHelper.GetServicePrincipal(ctx, clientId)
@@ -352,14 +354,19 @@ func (v *workloadIdentityValidationHelper) buildFederatedCredentialValidation(ct
 func compareServicePrincipalFederatedCredentials(sp *workloadidentity.ServicePrincipal, expectedFedCreds []federatedCredential, affectedNamespaces []string) (missing, obsolete []federatedCredential) {
 	expectedFedCreds = compactFederatedCredentials(expectedFedCreds)
 
-	existingKubernetesFedCreds := slice.FindAll(sp.FederatedCredentials, isKubernetesFederatedCredential)
-	existingFedCreds := slice.Map(existingKubernetesFedCreds, func(c workloadidentity.FederatedCredential) federatedCredential {
+	// existingKubernetesFedCreds := slice.FindAll(sp.FederatedCredentials, isKubernetesFederatedCredential)
+	existingFedCreds := slice.Map(sp.FederatedCredentials, func(c workloadidentity.FederatedCredential) federatedCredential {
 		return federatedCredential{FederatedCredential: c}
 	})
 
+	// Find feddcreds that exists in expected fedcreds but not in existing fedcreds
 	missingFedCreds := findMissingFedCreds(expectedFedCreds, existingFedCreds)
 
+	// Find fedcreds that exists in existing fedcreds but not in expected fedcreds
 	obsoleteFedCreds := findMissingFedCreds(existingFedCreds, expectedFedCreds)
+
+	// Filter obsolete fedcreds and only include fedcreds which namespace exists in the list of affected namespaces
+	// We do not care about obsolete fedcreds that does not belong to other apps
 	filteredObsoleteFedCreds := slice.FindAll(obsoleteFedCreds, func(fc federatedCredential) bool {
 		namespace, _, ok := classifyKubernetesFederatedCredential(fc.FederatedCredential)
 		return ok && slices.Contains(affectedNamespaces, namespace)
