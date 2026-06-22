@@ -18,7 +18,7 @@ type RegenerateSharedSecretReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *RegenerateSharedSecretReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *RegenerateSharedSecretReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 204:
 		result := NewRegenerateSharedSecretNoContent()

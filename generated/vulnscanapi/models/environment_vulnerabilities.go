@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -69,11 +70,15 @@ func (m *EnvironmentVulnerabilities) validateComponents(formats strfmt.Registry)
 
 	if m.Components != nil {
 		if err := m.Components.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("components")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("components")
 			}
+
 			return err
 		}
 	}
@@ -88,11 +93,15 @@ func (m *EnvironmentVulnerabilities) validateJobs(formats strfmt.Registry) error
 
 	if m.Jobs != nil {
 		if err := m.Jobs.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("jobs")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("jobs")
 			}
+
 			return err
 		}
 	}
@@ -125,11 +134,15 @@ func (m *EnvironmentVulnerabilities) contextValidateComponents(ctx context.Conte
 	}
 
 	if err := m.Components.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
+		ve := new(errors.Validation)
+		if stderrors.As(err, &ve) {
 			return ve.ValidateName("components")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
+		}
+		ce := new(errors.CompositeError)
+		if stderrors.As(err, &ce) {
 			return ce.ValidateName("components")
 		}
+
 		return err
 	}
 
@@ -143,11 +156,15 @@ func (m *EnvironmentVulnerabilities) contextValidateJobs(ctx context.Context, fo
 	}
 
 	if err := m.Jobs.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
+		ve := new(errors.Validation)
+		if stderrors.As(err, &ve) {
 			return ve.ValidateName("jobs")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
+		}
+		ce := new(errors.CompositeError)
+		if stderrors.As(err, &ce) {
 			return ce.ValidateName("jobs")
 		}
+
 		return err
 	}
 

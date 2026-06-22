@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -163,7 +164,7 @@ func (m *ReplicaSummary) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-var replicaSummaryTypeTypePropEnum []interface{}
+var replicaSummaryTypeTypePropEnum []any
 
 func init() {
 	var res []string
@@ -227,11 +228,15 @@ func (m *ReplicaSummary) validateReplicaStatus(formats strfmt.Registry) error {
 
 	if m.ReplicaStatus != nil {
 		if err := m.ReplicaStatus.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("replicaStatus")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("replicaStatus")
 			}
+
 			return err
 		}
 	}
@@ -246,11 +251,15 @@ func (m *ReplicaSummary) validateResources(formats strfmt.Registry) error {
 
 	if m.Resources != nil {
 		if err := m.Resources.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("resources")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("resources")
 			}
+
 			return err
 		}
 	}
@@ -285,11 +294,15 @@ func (m *ReplicaSummary) contextValidateReplicaStatus(ctx context.Context, forma
 		}
 
 		if err := m.ReplicaStatus.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("replicaStatus")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("replicaStatus")
 			}
+
 			return err
 		}
 	}
@@ -306,11 +319,15 @@ func (m *ReplicaSummary) contextValidateResources(ctx context.Context, formats s
 		}
 
 		if err := m.Resources.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("resources")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("resources")
 			}
+
 			return err
 		}
 	}

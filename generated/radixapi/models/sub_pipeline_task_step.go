@@ -136,7 +136,7 @@ func (m *SubPipelineTaskStep) validatePipelineRunName(formats strfmt.Registry) e
 	return nil
 }
 
-var subPipelineTaskStepTypeStatusPropEnum []interface{}
+var subPipelineTaskStepTypeStatusPropEnum []any
 
 func init() {
 	var res []string

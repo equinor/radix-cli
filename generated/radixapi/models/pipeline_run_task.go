@@ -155,7 +155,7 @@ func (m *PipelineRunTask) validatePipelineRunEnv(formats strfmt.Registry) error 
 	return nil
 }
 
-var pipelineRunTaskTypeStatusPropEnum []interface{}
+var pipelineRunTaskTypeStatusPropEnum []any
 
 func init() {
 	var res []string

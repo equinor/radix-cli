@@ -101,7 +101,7 @@ type ClientService interface {
 GetJobComponentDeployments gets list of deployments for the job component
 */
 func (a *Client) GetJobComponentDeployments(params *GetJobComponentDeploymentsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetJobComponentDeploymentsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetJobComponentDeploymentsParams()
 	}
@@ -121,17 +121,22 @@ func (a *Client) GetJobComponentDeployments(params *GetJobComponentDeploymentsPa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetJobComponentDeploymentsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetJobComponentDeployments: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -140,7 +145,7 @@ func (a *Client) GetJobComponentDeployments(params *GetJobComponentDeploymentsPa
 CopyBatch creates a copy of existing scheduled batch with optional changes
 */
 func (a *Client) CopyBatch(params *CopyBatchParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CopyBatchOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCopyBatchParams()
 	}
@@ -160,17 +165,22 @@ func (a *Client) CopyBatch(params *CopyBatchParams, authInfo runtime.ClientAuthI
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CopyBatchOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for copyBatch: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -179,7 +189,7 @@ func (a *Client) CopyBatch(params *CopyBatchParams, authInfo runtime.ClientAuthI
 CopyJob creates a copy of existing scheduled job with optional changes
 */
 func (a *Client) CopyJob(params *CopyJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CopyJobOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCopyJobParams()
 	}
@@ -199,17 +209,22 @@ func (a *Client) CopyJob(params *CopyJobParams, authInfo runtime.ClientAuthInfoW
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CopyJobOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for copyJob: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -218,7 +233,7 @@ func (a *Client) CopyJob(params *CopyJobParams, authInfo runtime.ClientAuthInfoW
 DeleteBatch deletes batch
 */
 func (a *Client) DeleteBatch(params *DeleteBatchParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteBatchNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteBatchParams()
 	}
@@ -238,17 +253,22 @@ func (a *Client) DeleteBatch(params *DeleteBatchParams, authInfo runtime.ClientA
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteBatchNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for deleteBatch: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -257,7 +277,7 @@ func (a *Client) DeleteBatch(params *DeleteBatchParams, authInfo runtime.ClientA
 DeleteJob deletes job
 */
 func (a *Client) DeleteJob(params *DeleteJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteJobNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteJobParams()
 	}
@@ -277,17 +297,22 @@ func (a *Client) DeleteJob(params *DeleteJobParams, authInfo runtime.ClientAuthI
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteJobNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for deleteJob: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -296,7 +321,7 @@ func (a *Client) DeleteJob(params *DeleteJobParams, authInfo runtime.ClientAuthI
 GetBatch gets list of scheduled batches
 */
 func (a *Client) GetBatch(params *GetBatchParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBatchOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetBatchParams()
 	}
@@ -316,17 +341,22 @@ func (a *Client) GetBatch(params *GetBatchParams, authInfo runtime.ClientAuthInf
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetBatchOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getBatch: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -335,7 +365,7 @@ func (a *Client) GetBatch(params *GetBatchParams, authInfo runtime.ClientAuthInf
 GetBatches gets list of scheduled batches
 */
 func (a *Client) GetBatches(params *GetBatchesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBatchesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetBatchesParams()
 	}
@@ -355,17 +385,22 @@ func (a *Client) GetBatches(params *GetBatchesParams, authInfo runtime.ClientAut
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetBatchesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getBatches: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -374,7 +409,7 @@ func (a *Client) GetBatches(params *GetBatchesParams, authInfo runtime.ClientAut
 GetJob gets list of scheduled jobs
 */
 func (a *Client) GetJob(params *GetJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetJobOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetJobParams()
 	}
@@ -394,17 +429,22 @@ func (a *Client) GetJob(params *GetJobParams, authInfo runtime.ClientAuthInfoWri
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetJobOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getJob: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -413,7 +453,7 @@ func (a *Client) GetJob(params *GetJobParams, authInfo runtime.ClientAuthInfoWri
 GetJobPayload gets payload of a scheduled job
 */
 func (a *Client) GetJobPayload(params *GetJobPayloadParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetJobPayloadOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetJobPayloadParams()
 	}
@@ -433,17 +473,22 @@ func (a *Client) GetJobPayload(params *GetJobPayloadParams, authInfo runtime.Cli
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetJobPayloadOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getJobPayload: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -452,7 +497,7 @@ func (a *Client) GetJobPayload(params *GetJobPayloadParams, authInfo runtime.Cli
 GetJobs gets list of scheduled jobs
 */
 func (a *Client) GetJobs(params *GetJobsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetJobsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetJobsParams()
 	}
@@ -472,17 +517,22 @@ func (a *Client) GetJobs(params *GetJobsParams, authInfo runtime.ClientAuthInfoW
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetJobsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for getJobs: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -491,7 +541,7 @@ func (a *Client) GetJobs(params *GetJobsParams, authInfo runtime.ClientAuthInfoW
 JobLog gets log from a scheduled job
 */
 func (a *Client) JobLog(params *JobLogParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*JobLogOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewJobLogParams()
 	}
@@ -511,17 +561,22 @@ func (a *Client) JobLog(params *JobLogParams, authInfo runtime.ClientAuthInfoWri
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*JobLogOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for jobLog: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -530,7 +585,7 @@ func (a *Client) JobLog(params *JobLogParams, authInfo runtime.ClientAuthInfoWri
 RestartBatch restarts a scheduled or stopped batch
 */
 func (a *Client) RestartBatch(params *RestartBatchParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RestartBatchNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewRestartBatchParams()
 	}
@@ -550,17 +605,22 @@ func (a *Client) RestartBatch(params *RestartBatchParams, authInfo runtime.Clien
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*RestartBatchNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for restartBatch: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -569,7 +629,7 @@ func (a *Client) RestartBatch(params *RestartBatchParams, authInfo runtime.Clien
 RestartJob restarts a running or stopped scheduled job
 */
 func (a *Client) RestartJob(params *RestartJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RestartJobNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewRestartJobParams()
 	}
@@ -589,17 +649,22 @@ func (a *Client) RestartJob(params *RestartJobParams, authInfo runtime.ClientAut
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*RestartJobNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for restartJob: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -608,7 +673,7 @@ func (a *Client) RestartJob(params *RestartJobParams, authInfo runtime.ClientAut
 StopAllBatches stops scheduled batch
 */
 func (a *Client) StopAllBatches(params *StopAllBatchesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopAllBatchesNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewStopAllBatchesParams()
 	}
@@ -628,17 +693,22 @@ func (a *Client) StopAllBatches(params *StopAllBatchesParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*StopAllBatchesNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for stopAllBatches: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -647,7 +717,7 @@ func (a *Client) StopAllBatches(params *StopAllBatchesParams, authInfo runtime.C
 StopAllBatchesAndJobsForEnvironment stops all scheduled batches and jobs in the environment
 */
 func (a *Client) StopAllBatchesAndJobsForEnvironment(params *StopAllBatchesAndJobsForEnvironmentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopAllBatchesAndJobsForEnvironmentNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewStopAllBatchesAndJobsForEnvironmentParams()
 	}
@@ -667,17 +737,22 @@ func (a *Client) StopAllBatchesAndJobsForEnvironment(params *StopAllBatchesAndJo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*StopAllBatchesAndJobsForEnvironmentNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for stopAllBatchesAndJobsForEnvironment: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -686,7 +761,7 @@ func (a *Client) StopAllBatchesAndJobsForEnvironment(params *StopAllBatchesAndJo
 StopAllBatchesAndJobsForJobComponent stops all scheduled batches for the job component
 */
 func (a *Client) StopAllBatchesAndJobsForJobComponent(params *StopAllBatchesAndJobsForJobComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopAllBatchesAndJobsForJobComponentNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewStopAllBatchesAndJobsForJobComponentParams()
 	}
@@ -706,17 +781,22 @@ func (a *Client) StopAllBatchesAndJobsForJobComponent(params *StopAllBatchesAndJ
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*StopAllBatchesAndJobsForJobComponentNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for stopAllBatchesAndJobsForJobComponent: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -725,7 +805,7 @@ func (a *Client) StopAllBatchesAndJobsForJobComponent(params *StopAllBatchesAndJ
 StopAllJobs stops all scheduled jobs
 */
 func (a *Client) StopAllJobs(params *StopAllJobsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopAllJobsNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewStopAllJobsParams()
 	}
@@ -745,17 +825,22 @@ func (a *Client) StopAllJobs(params *StopAllJobsParams, authInfo runtime.ClientA
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*StopAllJobsNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for stopAllJobs: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -764,7 +849,7 @@ func (a *Client) StopAllJobs(params *StopAllJobsParams, authInfo runtime.ClientA
 StopBatch stops scheduled batch
 */
 func (a *Client) StopBatch(params *StopBatchParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopBatchNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewStopBatchParams()
 	}
@@ -784,17 +869,22 @@ func (a *Client) StopBatch(params *StopBatchParams, authInfo runtime.ClientAuthI
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*StopBatchNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for stopBatch: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -803,7 +893,7 @@ func (a *Client) StopBatch(params *StopBatchParams, authInfo runtime.ClientAuthI
 StopJob stops scheduled job
 */
 func (a *Client) StopJob(params *StopJobParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*StopJobNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewStopJobParams()
 	}
@@ -823,17 +913,22 @@ func (a *Client) StopJob(params *StopJobParams, authInfo runtime.ClientAuthInfoW
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*StopJobNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for stopJob: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }

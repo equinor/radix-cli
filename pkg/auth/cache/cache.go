@@ -69,22 +69,22 @@ func (c *Cache) read() (namespaceItems, error) {
 	return items, nil
 }
 
-func (c *Cache) GetItem(key string) (string, bool) {
+func (c *Cache) GetItem(key string) (Item, bool) {
 	items, err := c.read()
 	if err != nil {
-		return "", false
+		return Item{}, false
 	}
 
 	item, ok := items[key]
 	if !ok {
-		return "", false
+		return Item{}, false
 	}
 
 	if time.Now().After(item.ExpiresAt) {
-		return "", false
+		return Item{}, false
 	}
 
-	return item.Content, ok
+	return item, ok
 }
 func (c *Cache) ClearItem(key string) error {
 	items, err := c.read()

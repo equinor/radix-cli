@@ -19,6 +19,7 @@ import (
 	"github.com/equinor/radix-cli/generated/radixapi/client/job"
 	"github.com/equinor/radix-cli/generated/radixapi/client/pipeline_job"
 	"github.com/equinor/radix-cli/generated/radixapi/client/platform"
+	"github.com/equinor/radix-cli/generated/radixapi/client/webhook"
 )
 
 // Default radixapi HTTP client.
@@ -72,6 +73,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Radixapi {
 	cli.Job = job.New(transport, formats)
 	cli.PipelineJob = pipeline_job.New(transport, formats)
 	cli.Platform = platform.New(transport, formats)
+	cli.Webhook = webhook.New(transport, formats)
 	return cli
 }
 
@@ -134,6 +136,8 @@ type Radixapi struct {
 
 	Platform platform.ClientService
 
+	Webhook webhook.ClientService
+
 	Transport runtime.ClientTransport
 }
 
@@ -149,4 +153,5 @@ func (c *Radixapi) SetTransport(transport runtime.ClientTransport) {
 	c.Job.SetTransport(transport)
 	c.PipelineJob.SetTransport(transport)
 	c.Platform.SetTransport(transport)
+	c.Webhook.SetTransport(transport)
 }

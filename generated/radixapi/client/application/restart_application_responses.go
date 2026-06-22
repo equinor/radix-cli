@@ -18,7 +18,7 @@ type RestartApplicationReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *RestartApplicationReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *RestartApplicationReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewRestartApplicationOK()

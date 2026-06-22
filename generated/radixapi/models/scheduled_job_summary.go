@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -238,11 +239,15 @@ func (m *ScheduledJobSummary) validateReplicaList(formats strfmt.Registry) error
 
 		if m.ReplicaList[i] != nil {
 			if err := m.ReplicaList[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("replicaList" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("replicaList" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -264,7 +269,7 @@ func (m *ScheduledJobSummary) validateStarted(formats strfmt.Registry) error {
 	return nil
 }
 
-var scheduledJobSummaryTypeStatusPropEnum []interface{}
+var scheduledJobSummaryTypeStatusPropEnum []any
 
 func init() {
 	var res []string
@@ -332,11 +337,15 @@ func (m *ScheduledJobSummary) validateNode(formats strfmt.Registry) error {
 
 	if m.Node != nil {
 		if err := m.Node.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("node")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("node")
 			}
+
 			return err
 		}
 	}
@@ -351,11 +360,15 @@ func (m *ScheduledJobSummary) validateResources(formats strfmt.Registry) error {
 
 	if m.Resources != nil {
 		if err := m.Resources.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("resources")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("resources")
 			}
+
 			return err
 		}
 	}
@@ -370,11 +383,15 @@ func (m *ScheduledJobSummary) validateRuntime(formats strfmt.Registry) error {
 
 	if m.Runtime != nil {
 		if err := m.Runtime.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("runtime")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("runtime")
 			}
+
 			return err
 		}
 	}
@@ -419,11 +436,15 @@ func (m *ScheduledJobSummary) contextValidateReplicaList(ctx context.Context, fo
 			}
 
 			if err := m.ReplicaList[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("replicaList" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("replicaList" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -442,11 +463,15 @@ func (m *ScheduledJobSummary) contextValidateNode(ctx context.Context, formats s
 		}
 
 		if err := m.Node.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("node")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("node")
 			}
+
 			return err
 		}
 	}
@@ -463,11 +488,15 @@ func (m *ScheduledJobSummary) contextValidateResources(ctx context.Context, form
 		}
 
 		if err := m.Resources.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("resources")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("resources")
 			}
+
 			return err
 		}
 	}
@@ -484,11 +513,15 @@ func (m *ScheduledJobSummary) contextValidateRuntime(ctx context.Context, format
 		}
 
 		if err := m.Runtime.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("runtime")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("runtime")
 			}
+
 			return err
 		}
 	}

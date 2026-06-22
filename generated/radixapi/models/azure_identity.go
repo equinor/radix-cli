@@ -27,6 +27,10 @@ type AzureIdentity struct {
 	// Required: true
 	ClientID *string `json:"clientId"`
 
+	// The namespace to use when configuring Kubernetes Federation Credentials for the identity
+	// Required: true
+	Namespace *string `json:"namespace"`
+
 	// The Service Account name to use when configuring Kubernetes Federation Credentials for the identity
 	// Required: true
 	ServiceAccountName *string `json:"serviceAccountName"`
@@ -37,6 +41,10 @@ func (m *AzureIdentity) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateClientID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNamespace(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -53,6 +61,15 @@ func (m *AzureIdentity) Validate(formats strfmt.Registry) error {
 func (m *AzureIdentity) validateClientID(formats strfmt.Registry) error {
 
 	if err := validate.Required("clientId", "body", m.ClientID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *AzureIdentity) validateNamespace(formats strfmt.Registry) error {
+
+	if err := validate.Required("namespace", "body", m.Namespace); err != nil {
 		return err
 	}
 

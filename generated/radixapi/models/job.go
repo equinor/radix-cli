@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -60,14 +61,12 @@ type Job struct {
 	// branch
 	// tag
 	// <empty> - either branch or tag
-	//
-	// required false
-	// Example: \"branch\
+	// Example: branch
 	// Enum: ["branch","tag","\"\""]
 	GitRefType string `json:"gitRefType,omitempty"`
 
 	// Image tags names for components - if empty will use default logic
-	// Example: component1: tag1,component2: tag2
+	// Example: {"component1":"tag1","component2":"tag2"}
 	ImageTagNames map[string]string `json:"imageTagNames,omitempty"`
 
 	// Name of the job
@@ -177,11 +176,15 @@ func (m *Job) validateComponents(formats strfmt.Registry) error {
 
 		if m.Components[i] != nil {
 			if err := m.Components[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("components" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("components" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -203,11 +206,15 @@ func (m *Job) validateDeployments(formats strfmt.Registry) error {
 
 		if m.Deployments[i] != nil {
 			if err := m.Deployments[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("deployments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("deployments" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -217,7 +224,7 @@ func (m *Job) validateDeployments(formats strfmt.Registry) error {
 	return nil
 }
 
-var jobTypeGitRefTypePropEnum []interface{}
+var jobTypeGitRefTypePropEnum []any
 
 func init() {
 	var res []string
@@ -262,7 +269,7 @@ func (m *Job) validateGitRefType(formats strfmt.Registry) error {
 	return nil
 }
 
-var jobTypePipelinePropEnum []interface{}
+var jobTypePipelinePropEnum []any
 
 func init() {
 	var res []string
@@ -313,7 +320,7 @@ func (m *Job) validatePipeline(formats strfmt.Registry) error {
 	return nil
 }
 
-var jobTypeStatusPropEnum []interface{}
+var jobTypeStatusPropEnum []any
 
 func init() {
 	var res []string
@@ -385,11 +392,15 @@ func (m *Job) validateSteps(formats strfmt.Registry) error {
 
 		if m.Steps[i] != nil {
 			if err := m.Steps[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("steps" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("steps" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -441,11 +452,15 @@ func (m *Job) contextValidateComponents(ctx context.Context, formats strfmt.Regi
 			}
 
 			if err := m.Components[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("components" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("components" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -466,11 +481,15 @@ func (m *Job) contextValidateDeployments(ctx context.Context, formats strfmt.Reg
 			}
 
 			if err := m.Deployments[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("deployments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("deployments" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -491,11 +510,15 @@ func (m *Job) contextValidateSteps(ctx context.Context, formats strfmt.Registry)
 			}
 
 			if err := m.Steps[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("steps" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("steps" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

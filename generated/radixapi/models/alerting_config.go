@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -67,11 +68,15 @@ func (m *AlertingConfig) validateAlerts(formats strfmt.Registry) error {
 	}
 
 	if err := m.Alerts.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
+		ve := new(errors.Validation)
+		if stderrors.As(err, &ve) {
 			return ve.ValidateName("alerts")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
+		}
+		ce := new(errors.CompositeError)
+		if stderrors.As(err, &ce) {
 			return ce.ValidateName("alerts")
 		}
+
 		return err
 	}
 
@@ -85,11 +90,15 @@ func (m *AlertingConfig) validateReceiverSecretStatus(formats strfmt.Registry) e
 
 	if m.ReceiverSecretStatus != nil {
 		if err := m.ReceiverSecretStatus.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("receiverSecretStatus")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("receiverSecretStatus")
 			}
+
 			return err
 		}
 	}
@@ -104,11 +113,15 @@ func (m *AlertingConfig) validateReceivers(formats strfmt.Registry) error {
 
 	if m.Receivers != nil {
 		if err := m.Receivers.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("receivers")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("receivers")
 			}
+
 			return err
 		}
 	}
@@ -141,11 +154,15 @@ func (m *AlertingConfig) ContextValidate(ctx context.Context, formats strfmt.Reg
 func (m *AlertingConfig) contextValidateAlerts(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := m.Alerts.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
+		ve := new(errors.Validation)
+		if stderrors.As(err, &ve) {
 			return ve.ValidateName("alerts")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
+		}
+		ce := new(errors.CompositeError)
+		if stderrors.As(err, &ce) {
 			return ce.ValidateName("alerts")
 		}
+
 		return err
 	}
 
@@ -159,11 +176,15 @@ func (m *AlertingConfig) contextValidateReceiverSecretStatus(ctx context.Context
 	}
 
 	if err := m.ReceiverSecretStatus.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
+		ve := new(errors.Validation)
+		if stderrors.As(err, &ve) {
 			return ve.ValidateName("receiverSecretStatus")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
+		}
+		ce := new(errors.CompositeError)
+		if stderrors.As(err, &ce) {
 			return ce.ValidateName("receiverSecretStatus")
 		}
+
 		return err
 	}
 
@@ -177,11 +198,15 @@ func (m *AlertingConfig) contextValidateReceivers(ctx context.Context, formats s
 	}
 
 	if err := m.Receivers.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
+		ve := new(errors.Validation)
+		if stderrors.As(err, &ve) {
 			return ve.ValidateName("receivers")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
+		}
+		ce := new(errors.CompositeError)
+		if stderrors.As(err, &ce) {
 			return ce.ValidateName("receivers")
 		}
+
 		return err
 	}
 

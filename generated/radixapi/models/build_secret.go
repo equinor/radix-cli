@@ -68,7 +68,7 @@ func (m *BuildSecret) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-var buildSecretTypeStatusPropEnum []interface{}
+var buildSecretTypeStatusPropEnum []any
 
 func init() {
 	var res []string

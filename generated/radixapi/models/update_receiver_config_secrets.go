@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -43,11 +44,15 @@ func (m *UpdateReceiverConfigSecrets) validateSlackConfig(formats strfmt.Registr
 
 	if m.SlackConfig != nil {
 		if err := m.SlackConfig.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("slackConfig")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("slackConfig")
 			}
+
 			return err
 		}
 	}
@@ -78,11 +83,15 @@ func (m *UpdateReceiverConfigSecrets) contextValidateSlackConfig(ctx context.Con
 		}
 
 		if err := m.SlackConfig.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("slackConfig")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("slackConfig")
 			}
+
 			return err
 		}
 	}

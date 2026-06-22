@@ -27,7 +27,7 @@ type PipelineParametersDeploy struct {
 	ComponentsToDeploy []string `json:"componentsToDeploy"`
 
 	// Image tags names for components
-	// Example: component1=tag1,component2=tag2
+	// Example: {"component1":"tag1","component2":"tag2"}
 	ImageTagNames map[string]string `json:"imageTagNames,omitempty"`
 
 	// Name of environment to deploy

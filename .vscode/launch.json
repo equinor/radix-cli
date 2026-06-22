@@ -321,6 +321,19 @@
 				"--context",
 				"development"
 			]
+		},
+		{
+			"name": "Launch validate workload-identity",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cli/rx/main.go",
+			"args": [
+				"validate",
+				"workload-identity",
+				"-a",
+				"oauth-demo"
+			]
 		}
 	]
 }

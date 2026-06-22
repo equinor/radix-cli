@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -94,7 +95,7 @@ func (m *Step) validateStarted(formats strfmt.Registry) error {
 	return nil
 }
 
-var stepTypeStatusPropEnum []interface{}
+var stepTypeStatusPropEnum []any
 
 func init() {
 	var res []string
@@ -158,11 +159,15 @@ func (m *Step) validateSubPipelineTaskStep(formats strfmt.Registry) error {
 
 	if m.SubPipelineTaskStep != nil {
 		if err := m.SubPipelineTaskStep.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("subPipelineTaskStep")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("subPipelineTaskStep")
 			}
+
 			return err
 		}
 	}
@@ -193,11 +198,15 @@ func (m *Step) contextValidateSubPipelineTaskStep(ctx context.Context, formats s
 		}
 
 		if err := m.SubPipelineTaskStep.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("subPipelineTaskStep")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("subPipelineTaskStep")
 			}
+
 			return err
 		}
 	}

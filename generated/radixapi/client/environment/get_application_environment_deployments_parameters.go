@@ -64,7 +64,7 @@ type GetApplicationEnvironmentDeploymentsParams struct {
 
 	/* ImpersonateGroup.
 
-	   Works only with custom setup of cluster. Allow impersonation of a comma-seperated list of test groups (Required if Impersonate-User is set)
+	   Works only with custom setup of cluster. Allow impersonation of a comma-separated list of test groups (Required if Impersonate-User is set)
 	*/
 	ImpersonateGroup *string
 

@@ -1,6 +1,8 @@
 package completion
 
 import (
+	"strings"
+
 	"github.com/equinor/radix-cli/generated/radixapi/client/job"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/client"
@@ -9,7 +11,6 @@ import (
 	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/equinor/radix-common/utils/slice"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 func ScheduledJobCompletion(cmd *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {

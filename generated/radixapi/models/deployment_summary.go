@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -61,9 +62,7 @@ type DeploymentSummary struct {
 	// branch
 	// tag
 	// <empty> - either branch or tag
-	//
-	// required false
-	// Example: \"branch\
+	// Example: branch
 	// Enum: ["branch","tag","\"\""]
 	GitRefType string `json:"gitRefType,omitempty"`
 
@@ -88,6 +87,18 @@ type DeploymentSummary struct {
 
 	// RefreshBuildCache forces to rebuild cache when UseBuildCache is true in the RadixApplication or OverrideUseBuildCache is true
 	RefreshBuildCache *bool `json:"refreshBuildCache,omitempty"`
+
+	// Status of deployment reconciliation
+	// Reconciling DeploymentStatusReconciling  DeploymentStatusReconciling deployment is not fully reconciled
+	// Ready DeploymentStatusReady  DeploymentStatusReady deployment is reconciled successfully
+	// Failed DeploymentStatusFailed  DeploymentStatusFailed deployment reconciliation failed
+	// Inactive DeploymentStatusInactive  DeploymentStatusInactive deployment is inactive
+	// Required: true
+	// Enum: ["Reconciling","Ready","Failed","Inactive"]
+	Status *string `json:"status"`
+
+	// StatusReason contains details when deployment status is Failed
+	StatusReason string `json:"statusReason,omitempty"`
 
 	// Defaults to true and requires useBuildKit to have an effect.
 	UseBuildCache *bool `json:"useBuildCache,omitempty"`
@@ -125,6 +136,10 @@ func (m *DeploymentSummary) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePipelineJobType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -171,11 +186,15 @@ func (m *DeploymentSummary) validateComponents(formats strfmt.Registry) error {
 
 		if m.Components[i] != nil {
 			if err := m.Components[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("components" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("components" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -194,7 +213,7 @@ func (m *DeploymentSummary) validateEnvironment(formats strfmt.Registry) error {
 	return nil
 }
 
-var deploymentSummaryTypeGitRefTypePropEnum []interface{}
+var deploymentSummaryTypeGitRefTypePropEnum []any
 
 func init() {
 	var res []string
@@ -248,7 +267,7 @@ func (m *DeploymentSummary) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-var deploymentSummaryTypePipelineJobTypePropEnum []interface{}
+var deploymentSummaryTypePipelineJobTypePropEnum []any
 
 func init() {
 	var res []string
@@ -299,6 +318,55 @@ func (m *DeploymentSummary) validatePipelineJobType(formats strfmt.Registry) err
 	return nil
 }
 
+var deploymentSummaryTypeStatusPropEnum []any
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["Reconciling","Ready","Failed","Inactive"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		deploymentSummaryTypeStatusPropEnum = append(deploymentSummaryTypeStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// DeploymentSummaryStatusReconciling captures enum value "Reconciling"
+	DeploymentSummaryStatusReconciling string = "Reconciling"
+
+	// DeploymentSummaryStatusReady captures enum value "Ready"
+	DeploymentSummaryStatusReady string = "Ready"
+
+	// DeploymentSummaryStatusFailed captures enum value "Failed"
+	DeploymentSummaryStatusFailed string = "Failed"
+
+	// DeploymentSummaryStatusInactive captures enum value "Inactive"
+	DeploymentSummaryStatusInactive string = "Inactive"
+)
+
+// prop value enum
+func (m *DeploymentSummary) validateStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, deploymentSummaryTypeStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *DeploymentSummary) validateStatus(formats strfmt.Registry) error {
+
+	if err := validate.Required("status", "body", m.Status); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateStatusEnum("status", "body", *m.Status); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ContextValidate validate this deployment summary based on the context it is used
 func (m *DeploymentSummary) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -324,11 +392,15 @@ func (m *DeploymentSummary) contextValidateComponents(ctx context.Context, forma
 			}
 
 			if err := m.Components[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("components" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("components" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

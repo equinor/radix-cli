@@ -7,6 +7,7 @@ package job
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -22,7 +23,7 @@ type CopyJobReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *CopyJobReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *CopyJobReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewCopyJobOK()
@@ -122,7 +123,7 @@ func (o *CopyJobOK) readResponse(response runtime.ClientResponse, consumer runti
 	o.Payload = new(models.ScheduledJobSummary)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 

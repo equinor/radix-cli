@@ -7,7 +7,11 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
-	"github.com/equinor/radix-cli/pkg/cache"
+	"github.com/equinor/radix-cli/pkg/auth/cache"
+)
+
+const (
+	federatedTokenFileCacheKey = "federated_token_file"
 )
 
 type AzureFederatedCredentials struct {
@@ -23,46 +27,42 @@ func NewAzureFederatedCredentials(cache cache.Cache) *AzureFederatedCredentials 
 	}
 }
 
-func (p *AzureFederatedCredentials) Authenticate(ctx context.Context, azureClientId, federatedTokenFile string) (string, error) {
-	if token, ok := p.cache.GetItem(AccessTokenCacheKey); ok {
-		return token, nil
-	}
-
+func (p *AzureFederatedCredentials) Authenticate(ctx context.Context, azureClientId, federatedTokenFile string, scopes []string) (AccessToken, error) {
 	if federatedTokenFile == "" || azureClientId == "" {
-		return "", errors.New("please login again")
+		return AccessToken{}, errors.New("please login again")
 	}
 	ctx, cancel := context.WithTimeout(ctx, 100*time.Second)
 	defer cancel()
 
 	cred, err := azidentity.NewWorkloadIdentityCredential(&azidentity.WorkloadIdentityCredentialOptions{
 		ClientID:      azureClientId,
-		TenantID:      AzureTenantID,
+		TenantID:      azureTenantID,
 		TokenFilePath: federatedTokenFile,
 	})
 	if err != nil {
-		return "", err
+		return AccessToken{}, err
 	}
 
 	authResult, err := cred.GetToken(ctx, policy.TokenRequestOptions{
-		Scopes:   getScopes(),
-		TenantID: AzureTenantID,
+		Scopes:   scopes,
+		TenantID: azureTenantID,
 	})
 	if err != nil {
-		return "", err
+		return AccessToken{}, err
 	}
 
 	p.cache.SetItem(azureClientIdCacheKey, azureClientId, 365*24*time.Hour)
 	p.cache.SetItem(federatedTokenFileCacheKey, federatedTokenFile, 365*24*time.Hour)
-	p.cache.SetItem(AccessTokenCacheKey, authResult.Token, time.Until(authResult.ExpiresOn))
-	return authResult.Token, nil
+	p.cache.SetItem(accessTokenCacheKey(scopes), authResult.Token, time.Until(authResult.ExpiresOn))
+	return AccessToken{Token: authResult.Token, ExpiresOn: authResult.ExpiresOn}, nil
 }
 
-func (p *AzureFederatedCredentials) GetAccessToken(ctx context.Context) (string, error) {
-	if token, ok := p.cache.GetItem(AccessTokenCacheKey); ok {
-		return token, nil
+func (p *AzureFederatedCredentials) GetAccessToken(ctx context.Context, scopes []string) (AccessToken, error) {
+	if token, ok := p.cache.GetItem(accessTokenCacheKey(scopes)); ok {
+		return AccessToken{Token: token.Content, ExpiresOn: token.ExpiresAt}, nil
 	}
 
 	azureClientId, _ := p.cache.GetItem(azureClientIdCacheKey)
 	federatedTokenFile, _ := p.cache.GetItem(federatedTokenFileCacheKey)
-	return p.Authenticate(ctx, azureClientId, federatedTokenFile)
+	return p.Authenticate(ctx, azureClientId.Content, federatedTokenFile.Content, scopes)
 }

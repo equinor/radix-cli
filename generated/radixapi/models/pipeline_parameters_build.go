@@ -31,9 +31,6 @@ type PipelineParametersBuild struct {
 	// Example: 4faca8595c5283a9d0f17a623b9255a0d9866a2e
 	CommitID string `json:"commitID,omitempty"`
 
-	// DeployExternalDNS deploy external DNS
-	DeployExternalDNS *bool `json:"deployExternalDNS,omitempty"`
-
 	// GitRef Branch or tag to build from
 	// REQUIRED for "build" and "build-deploy" pipelines
 	// Example: master
@@ -43,19 +40,9 @@ type PipelineParametersBuild struct {
 	// branch
 	// tag
 	// <empty> - either branch or tag
-	//
-	// required false
-	// Example: \"branch\
+	// Example: branch
 	// Enum: ["branch","tag","\"\""]
 	GitRefType string `json:"gitRefType,omitempty"`
-
-	// ImageName of the component, without repository name and image-tag
-	// Example: radix-component
-	ImageName string `json:"imageName,omitempty"`
-
-	// ImageRepository of the component, without image name and image-tag
-	// Example: ghcr.io/test
-	ImageRepository string `json:"imageRepository,omitempty"`
 
 	// ImageTag of the image - if empty will use default logic
 	// Example: master-latest
@@ -94,7 +81,7 @@ func (m *PipelineParametersBuild) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-var pipelineParametersBuildTypeGitRefTypePropEnum []interface{}
+var pipelineParametersBuildTypeGitRefTypePropEnum []any
 
 func init() {
 	var res []string

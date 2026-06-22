@@ -57,14 +57,12 @@ type JobSummary struct {
 	// branch
 	// tag
 	// <empty> - either branch or tag
-	//
-	// required false
-	// Example: \"branch\
+	// Example: branch
 	// Enum: ["branch","tag","\"\""]
 	GitRefType string `json:"gitRefType,omitempty"`
 
 	// Image tags names for components - if empty will use default logic
-	// Example: component1: tag1,component2: tag2
+	// Example: {"component1":"tag1","component2":"tag2"}
 	ImageTagNames map[string]string `json:"imageTagNames,omitempty"`
 
 	// Name of the job
@@ -183,7 +181,7 @@ func (m *JobSummary) validateEnded(formats strfmt.Registry) error {
 	return nil
 }
 
-var jobSummaryTypeGitRefTypePropEnum []interface{}
+var jobSummaryTypeGitRefTypePropEnum []any
 
 func init() {
 	var res []string
@@ -237,7 +235,7 @@ func (m *JobSummary) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-var jobSummaryTypePipelinePropEnum []interface{}
+var jobSummaryTypePipelinePropEnum []any
 
 func init() {
 	var res []string
@@ -300,7 +298,7 @@ func (m *JobSummary) validateStarted(formats strfmt.Registry) error {
 	return nil
 }
 
-var jobSummaryTypeStatusPropEnum []interface{}
+var jobSummaryTypeStatusPropEnum []any
 
 func init() {
 	var res []string

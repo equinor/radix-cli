@@ -10,7 +10,7 @@ import (
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	vulnscanapi "github.com/equinor/radix-cli/generated/vulnscanapi/client"
-	"github.com/equinor/radix-cli/pkg/client/auth"
+	"github.com/equinor/radix-cli/pkg/auth"
 	"github.com/equinor/radix-cli/pkg/client/consumer"
 	radixconfig "github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
@@ -112,7 +112,25 @@ func getAuthWriter(cmd *cobra.Command) (runtime.ClientAuthInfoWriter, error) {
 		return httptransport.BearerToken(*token), nil
 	}
 
-	return getAuthProvider()
+	provider, err := getAuthProvider()
+	if err != nil {
+		return nil, err
+	}
+
+	return &clientAuthWriterAdapter{provider: provider}, nil
+}
+
+type clientAuthWriterAdapter struct {
+	provider auth.Provider
+}
+
+func (a *clientAuthWriterAdapter) AuthenticateRequest(r runtime.ClientRequest, _ strfmt.Registry) error {
+	token, err := a.provider.GetAccessToken(context.Background(), auth.RadixAPIScopes)
+	if err != nil {
+		return err
+	}
+
+	return r.SetHeaderParam(runtime.HeaderAuthorization, "Bearer "+token.Token)
 }
 
 // LoginCommand Login radixapi for command

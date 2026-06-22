@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -20,8 +21,8 @@ import (
 // swagger:model ApplicationSummary
 type ApplicationSummary struct {
 
-	// EnvironmentActiveComponents All component summaries of the active deployments in the environments
-	EnvironmentActiveComponents map[string][]Component `json:"environmentActiveComponents,omitempty"`
+	// Environments List of environments for this application
+	Environments []*Environment `json:"environments"`
 
 	// Name the name of the application
 	// Example: radix-canary-golang
@@ -36,7 +37,7 @@ type ApplicationSummary struct {
 func (m *ApplicationSummary) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateEnvironmentActiveComponents(formats); err != nil {
+	if err := m.validateEnvironments(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -54,28 +55,29 @@ func (m *ApplicationSummary) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ApplicationSummary) validateEnvironmentActiveComponents(formats strfmt.Registry) error {
-	if swag.IsZero(m.EnvironmentActiveComponents) { // not required
+func (m *ApplicationSummary) validateEnvironments(formats strfmt.Registry) error {
+	if swag.IsZero(m.Environments) { // not required
 		return nil
 	}
 
-	for k := range m.EnvironmentActiveComponents {
-
-		if err := validate.Required("environmentActiveComponents"+"."+k, "body", m.EnvironmentActiveComponents[k]); err != nil {
-			return err
+	for i := 0; i < len(m.Environments); i++ {
+		if swag.IsZero(m.Environments[i]) { // not required
+			continue
 		}
 
-		for i := 0; i < len(m.EnvironmentActiveComponents[k]); i++ {
-
-			if err := m.EnvironmentActiveComponents[k][i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("environmentActiveComponents" + "." + k + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("environmentActiveComponents" + "." + k + "." + strconv.Itoa(i))
+		if m.Environments[i] != nil {
+			if err := m.Environments[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
 				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("environments" + "." + strconv.Itoa(i))
+				}
+
 				return err
 			}
-
 		}
 
 	}
@@ -99,11 +101,15 @@ func (m *ApplicationSummary) validateLatestJob(formats strfmt.Registry) error {
 
 	if m.LatestJob != nil {
 		if err := m.LatestJob.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("latestJob")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("latestJob")
 			}
+
 			return err
 		}
 	}
@@ -115,7 +121,7 @@ func (m *ApplicationSummary) validateLatestJob(formats strfmt.Registry) error {
 func (m *ApplicationSummary) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateEnvironmentActiveComponents(ctx, formats); err != nil {
+	if err := m.contextValidateEnvironments(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -129,25 +135,28 @@ func (m *ApplicationSummary) ContextValidate(ctx context.Context, formats strfmt
 	return nil
 }
 
-func (m *ApplicationSummary) contextValidateEnvironmentActiveComponents(ctx context.Context, formats strfmt.Registry) error {
+func (m *ApplicationSummary) contextValidateEnvironments(ctx context.Context, formats strfmt.Registry) error {
 
-	for k := range m.EnvironmentActiveComponents {
+	for i := 0; i < len(m.Environments); i++ {
 
-		for i := 0; i < len(m.EnvironmentActiveComponents[k]); i++ {
+		if m.Environments[i] != nil {
 
-			if swag.IsZero(m.EnvironmentActiveComponents[k][i]) { // not required
+			if swag.IsZero(m.Environments[i]) { // not required
 				return nil
 			}
 
-			if err := m.EnvironmentActiveComponents[k][i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("environmentActiveComponents" + "." + k + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("environmentActiveComponents" + "." + k + "." + strconv.Itoa(i))
+			if err := m.Environments[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
 				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("environments" + "." + strconv.Itoa(i))
+				}
+
 				return err
 			}
-
 		}
 
 	}
@@ -164,11 +173,15 @@ func (m *ApplicationSummary) contextValidateLatestJob(ctx context.Context, forma
 		}
 
 		if err := m.LatestJob.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("latestJob")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("latestJob")
 			}
+
 			return err
 		}
 	}

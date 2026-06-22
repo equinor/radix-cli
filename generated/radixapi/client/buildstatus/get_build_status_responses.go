@@ -18,7 +18,7 @@ type GetBuildStatusReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetBuildStatusReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetBuildStatusReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetBuildStatusOK()
