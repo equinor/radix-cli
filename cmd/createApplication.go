@@ -48,7 +48,6 @@ var createApplicationCmd = &cobra.Command{
 		}
 
 		repository, _ := cmd.Flags().GetString(flagnames.Repository)
-		sharedSecret, _ := cmd.Flags().GetString(flagnames.SharedSecret)
 		configBranch, _ := cmd.Flags().GetString(flagnames.ConfigBranch)
 		configFile, _ := cmd.Flags().GetString(flagnames.ConfigFile)
 		configurationItem, _ := cmd.Flags().GetString(flagnames.ConfigurationItem)
@@ -78,7 +77,6 @@ var createApplicationCmd = &cobra.Command{
 				RadixConfigFullName: configFile,
 				ReaderAdGroups:      readerAdGroups,
 				Repository:          &repository,
-				SharedSecret:        &sharedSecret,
 			},
 		})
 
