@@ -149,7 +149,7 @@ func validateSchema(raw []byte, schema string) (validationErrors []error, err er
 	var obj interface{}
 	err = yaml.Unmarshal(raw, &obj)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse file: %v", err)
+		return nil, fmt.Errorf("failed to parse file: %w", err)
 	}
 
 	err = s.Validate(obj)
@@ -170,7 +170,7 @@ func strictUnmarshalValidation(raw []byte) error {
 
 	err := yaml.UnmarshalStrict(raw, radixApp)
 	if err != nil {
-		return fmt.Errorf("strict test failed: %v", err)
+		return fmt.Errorf("strict test failed: %w", err)
 	}
 
 	return nil
@@ -180,7 +180,7 @@ func unmarshalRadixApplication(raw []byte) (*radixv1.RadixApplication, error) {
 
 	err := yaml.Unmarshal(raw, radixApp)
 	if err != nil {
-		return nil, fmt.Errorf("strict test failed: %v", err)
+		return nil, fmt.Errorf("strict test failed: %w", err)
 	}
 
 	return radixApp, nil

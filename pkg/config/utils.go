@@ -8,8 +8,8 @@ import (
 
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	v1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
-	"github.com/equinor/radix-operator/pkg/apis/utils"
 	"github.com/spf13/cobra"
+	"sigs.k8s.io/yaml"
 )
 
 func GetAppNameFromConfigOrFromParameter(cmd *cobra.Command, appNameField string) (string, error) {
@@ -65,9 +65,15 @@ func GetRadixApplicationFromFile() (*v1.RadixApplication, error) {
 
 // LoadConfigFromFile loads radix config from appFileName
 func loadConfigFromFile(appFileName string) (*v1.RadixApplication, error) {
-	radixApplication, err := utils.GetRadixApplicationFromFile(appFileName)
+	raw, err := os.ReadFile(appFileName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get ra from file (%s) for app Error: %v", appFileName, err)
+		return nil, fmt.Errorf("failed to read file %s: %w ", appFileName, err)
+	}
+
+	radixApplication := &v1.RadixApplication{}
+
+	if err := yaml.Unmarshal(raw, radixApplication); err != nil {
+		return nil, fmt.Errorf("failed unmarshal file %s: %w", appFileName, err)
 	}
 
 	return radixApplication, nil

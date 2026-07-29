@@ -12,7 +12,7 @@ jobs:
     permissions:
       pull-requests: read
       contents: read
-    uses: equinor/radix-reusable-workflows/.github/workflows/template-unreleased-pr-metadata.yml@bbbf79dd34776ca9e9a4dc4fcf6dc643953f37e8 # v1.1.0
+    uses: equinor/radix-reusable-workflows/.github/workflows/template-unreleased-pr-metadata.yml@1c276b3288a8749e369cd05b503e73bd7a3370c1 # v1.1.1
     
   release-pull-request:
     name: Release pull request
@@ -26,7 +26,7 @@ jobs:
       pull-requests: write
       contents: read
       issues: write
-    uses: equinor/radix-reusable-workflows/.github/workflows/template-create-release-from-pr.yml@bbbf79dd34776ca9e9a4dc4fcf6dc643953f37e8 # v1.1.0
+    uses: equinor/radix-reusable-workflows/.github/workflows/template-create-release-from-pr.yml@1c276b3288a8749e369cd05b503e73bd7a3370c1 # v1.1.1
     with:
       pull-request-number: ${{ matrix.pull-request-number }}
       use-github-app-token: true
