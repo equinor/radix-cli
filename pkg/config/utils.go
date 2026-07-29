@@ -67,7 +67,7 @@ func GetRadixApplicationFromFile() (*v1.RadixApplication, error) {
 func loadConfigFromFile(appFileName string) (*v1.RadixApplication, error) {
 	raw, err := os.ReadFile(appFileName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read file %s: %w ", appFileName, err)
+		return nil, fmt.Errorf("failed to read file %s: %w", appFileName, err)
 	}
 
 	radixApplication := &v1.RadixApplication{}
