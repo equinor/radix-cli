@@ -73,7 +73,7 @@ func loadConfigFromFile(appFileName string) (*v1.RadixApplication, error) {
 	radixApplication := &v1.RadixApplication{}
 
 	if err := yaml.Unmarshal(raw, radixApplication); err != nil {
-		return nil, fmt.Errorf("failed unmarshal file %s: %w", appFileName, err)
+		return nil, fmt.Errorf("failed to unmarshal file %s: %w", appFileName, err)
 	}
 
 	return radixApplication, nil
