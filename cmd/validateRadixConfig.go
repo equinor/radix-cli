@@ -180,7 +180,7 @@ func unmarshalRadixApplication(raw []byte) (*radixv1.RadixApplication, error) {
 
 	err := yaml.Unmarshal(raw, radixApp)
 	if err != nil {
-		return nil, fmt.Errorf("strict test failed: %w", err)
+		return nil, fmt.Errorf("failed to parse file data: %w", err)
 	}
 
 	return radixApp, nil
