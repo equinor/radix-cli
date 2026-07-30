@@ -38,13 +38,9 @@ type Application struct {
 	// Required: true
 	Name *string `json:"name"`
 
-	// UseBuildCache if build cache is used for building the application. Applicable when UseBuildKit is true. Default is true.
+	// UseBuildCache if build cache is used for building the application. Defaults to true.
 	// Required: true
 	UseBuildCache *bool `json:"useBuildCache"`
-
-	// UseBuildKit if buildkit is used for building the application
-	// Required: true
-	UseBuildKit *bool `json:"useBuildKit"`
 
 	// UserIsAdmin if user is member of application's admin groups
 	// Required: true
@@ -83,10 +79,6 @@ func (m *Application) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUseBuildCache(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateUseBuildKit(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -240,15 +232,6 @@ func (m *Application) validateName(formats strfmt.Registry) error {
 func (m *Application) validateUseBuildCache(formats strfmt.Registry) error {
 
 	if err := validate.Required("useBuildCache", "body", m.UseBuildCache); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Application) validateUseBuildKit(formats strfmt.Registry) error {
-
-	if err := validate.Required("useBuildKit", "body", m.UseBuildKit); err != nil {
 		return err
 	}
 
