@@ -41,7 +41,6 @@ const (
 	Repository             = "repository"
 	Schema                 = "schema"
 	Secret                 = "secret"
-	SharedSecret           = "shared-secret"
 	Since                  = "since"
 	SkipValidation         = "skip-validation"
 	StrictValidation       = "strict-validation"

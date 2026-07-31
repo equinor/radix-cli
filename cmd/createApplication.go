@@ -40,7 +40,7 @@ var createApplicationCmd = &cobra.Command{
 	Use:     "application",
 	Short:   "Create application",
 	Long:    "Creates a Radix application in the cluster",
-	Example: `rx create application --application your-application-name --repository https://github.com/your-repository --config-branch main --ad-groups abcdef-1234-5678-9aaa-abcdefgf --reader-ad-groups=23456789--9123-4567-8901-23456701 --shared-secret someSecretPhrase12345 --acknowledge-warnings --configuration-item "YOUR PROJECT CONFIG ITEM" --context playground`,
+	Example: `rx create application --application your-application-name --repository https://github.com/your-repository --config-branch main --ad-groups abcdef-1234-5678-9aaa-abcdefgf --reader-ad-groups=23456789--9123-4567-8901-23456701 --acknowledge-warnings --configuration-item "YOUR PROJECT CONFIG ITEM" --context playground`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
@@ -141,7 +141,6 @@ func init() {
 	createCmd.AddCommand(createApplicationCmd)
 	createApplicationCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application to create")
 	createApplicationCmd.Flags().StringP(flagnames.Repository, "", "", "The GitHub repository URL")
-	createApplicationCmd.Flags().StringP(flagnames.SharedSecret, "", "", "(Optional) Shared secret for the webhook. It is needed when use a GitHub webhook.")
 	createApplicationCmd.Flags().StringP(flagnames.ConfigBranch, "", "", "Name of the branch where Radix will read your radixconfig.yaml from")
 	createApplicationCmd.Flags().StringP(flagnames.ConfigFile, "", "", "(Optional) Name of the radix config file. Defaults to radixconfig.yaml")
 	createApplicationCmd.Flags().StringSliceP(flagnames.AdminADGroups, "", []string{}, "Admin groups (UUIDs of Microsoft Entra groups). Optional for the Playground context")
