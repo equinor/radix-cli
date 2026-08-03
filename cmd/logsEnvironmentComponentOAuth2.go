@@ -26,7 +26,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// logsEnvironmentComponentOAuth2Cmd represents the logsEnvironmentComponentOAuth2Cmd command
+// logsEnvironmentComponentOAuth2Cmd represents the logs for oauth2 command
 var logsEnvironmentComponentOAuth2Cmd = &cobra.Command{
 	Use:   "oauth2",
 	Short: "Gets logs for the OAuth2 auxiliary resource of a component",
