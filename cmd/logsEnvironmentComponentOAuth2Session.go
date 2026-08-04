@@ -70,7 +70,7 @@ Examples:
 
 		return replicalog.New(
 			cmd.ErrOrStderr(),
-			replicalog.GetReplicasForComponentOAuth2(apiClient, appName, environmentName, componentName, radixv1.OAuthRedisAuxiliaryComponentType,, previousLog),
+			replicalog.GetReplicasForComponentOAuth2(apiClient, appName, environmentName, componentName, radixv1.OAuthRedisAuxiliaryComponentType, previousLog),
 			replicalog.GetOAuth2ComponentLog(apiClient, appName, previousLog),
 			since,
 		).StreamLogs(cmd.Context(), false)
