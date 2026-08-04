@@ -23,6 +23,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/settings"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/replicalog"
+	radixv1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
 	"github.com/spf13/cobra"
 )
 
@@ -69,7 +70,7 @@ Examples:
 
 		return replicalog.New(
 			cmd.ErrOrStderr(),
-			replicalog.GetReplicasForComponentOAuth2(apiClient, appName, environmentName, componentName, "oauth", previousLog),
+			replicalog.GetReplicasForComponentOAuth2(apiClient, appName, environmentName, componentName, radixv1.OAuthProxyAuxiliaryComponentType, previousLog),
 			replicalog.GetOAuth2ComponentLog(apiClient, appName, previousLog),
 			since,
 		).StreamLogs(cmd.Context(), false)
