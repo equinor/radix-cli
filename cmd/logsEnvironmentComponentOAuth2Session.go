@@ -67,12 +67,14 @@ Examples:
 		if err != nil {
 			return err
 		}
-
+		if (previousLog == false) && (since == 0) {
+			since = settings.DeltaRefreshApplication
+		}
 		return replicalog.New(
 			cmd.ErrOrStderr(),
 			replicalog.GetReplicasForComponentOAuth2(apiClient, appName, environmentName, componentName, radixv1.OAuthRedisAuxiliaryComponentType, previousLog),
 			replicalog.GetOAuth2ComponentLog(apiClient, appName, previousLog),
-			since,
+			&since,
 		).StreamLogs(cmd.Context(), false)
 	},
 }

@@ -65,7 +65,7 @@ rx get logs environment --application radix-test --environment dev`,
 			cmd.ErrOrStderr(),
 			replicalog.GetComponentReplicasForEnvironment(apiClient, appName, environmentName, previousLog),
 			replicalog.GetComponentLog(apiClient, appName, previousLog),
-			since,
+			&since,
 		).StreamLogs(cmd.Context(), false)
 	},
 }

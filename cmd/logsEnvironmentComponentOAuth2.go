@@ -72,7 +72,7 @@ Examples:
 			cmd.ErrOrStderr(),
 			replicalog.GetReplicasForComponentOAuth2(apiClient, appName, environmentName, componentName, radixv1.OAuthProxyAuxiliaryComponentType, previousLog),
 			replicalog.GetOAuth2ComponentLog(apiClient, appName, previousLog),
-			since,
+			&since,
 		).StreamLogs(cmd.Context(), false)
 	},
 }

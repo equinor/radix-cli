@@ -74,7 +74,7 @@ Examples:
 			cmd.ErrOrStderr(),
 			replicalog.GetReplicasForComponent(apiClient, appName, environmentName, componentName, previousLog),
 			replicalog.GetComponentLog(apiClient, appName, previousLog),
-			since,
+			&since,
 		).StreamLogs(cmd.Context(), false)
 	},
 }
