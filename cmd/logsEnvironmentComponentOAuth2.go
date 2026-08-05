@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"time"
 
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
@@ -68,11 +69,18 @@ Examples:
 			return err
 		}
 
+		if !previousLog && since == 0 {
+			since = settings.DeltaRefreshApplication
+		}
+		var sincePtr *time.Duration
+		if since > 0 {
+			sincePtr = &since
+		}
 		return replicalog.New(
 			cmd.ErrOrStderr(),
 			replicalog.GetReplicasForComponentOAuth2(apiClient, appName, environmentName, componentName, radixv1.OAuthProxyAuxiliaryComponentType, previousLog),
 			replicalog.GetOAuth2ComponentLog(apiClient, appName, previousLog),
-			&since,
+			sincePtr,
 		).StreamLogs(cmd.Context(), false)
 	},
 }
@@ -83,7 +91,7 @@ func init() {
 	logsEnvironmentComponentOAuth2Cmd.Flags().StringP(flagnames.Environment, "e", "", "Environment the component runs in")
 	logsEnvironmentComponentOAuth2Cmd.Flags().String(flagnames.Component, "", "The component to follow")
 	logsEnvironmentComponentOAuth2Cmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print the logs for the previous instance of the OAuth2 auxiliary container, if it exists")
-	logsEnvironmentComponentOAuth2Cmd.Flags().DurationP(flagnames.Since, "s", settings.DeltaRefreshApplication, "If set, start get logs from the specified time, eg. 5m or 12h")
+	logsEnvironmentComponentOAuth2Cmd.Flags().DurationP(flagnames.Since, "s", 0, "Only return logs newer than a relative duration, eg. 5m or 12h. Defaults to showing all logs when --previous is set")
 
 	_ = logsEnvironmentComponentOAuth2Cmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = logsEnvironmentComponentOAuth2Cmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
