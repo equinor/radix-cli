@@ -82,8 +82,8 @@ func init() {
 	logsCmd.AddCommand(logsEnvironmentCmd)
 	logsEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application owning the component")
 	logsEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Environment the component runs in")
-	logsEnvironmentCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
-	logsEnvironmentCmd.Flags().DurationP(flagnames.Since, "s", 0, "Only return logs newer than a relative duration, eg. 5m or 12h. Defaults to showing all logs when --previous is set")
+	logsEnvironmentCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print all logs for the previous instances of containers in environment component pods, if they exist")
+	logsEnvironmentCmd.Flags().DurationP(flagnames.Since, "s", 0, "Only return logs newer than a relative duration, eg. 5m or 12h.")
 
 	_ = logsEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = logsEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
