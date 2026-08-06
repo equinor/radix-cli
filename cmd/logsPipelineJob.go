@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"errors"
-	"time"
 
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
@@ -64,7 +63,7 @@ rx get logs pipeline-job --application radix-test --job radix-pipeline-202303231
 			cmd.ErrOrStderr(),
 			replicalog.GetReplicasForJob(apiClient, appName, jobName),
 			replicalog.GetLogsForJob(apiClient, appName, jobName),
-			time.Second, // not used
+			nil,
 		).StreamLogs(cmd.Context(), true)
 	},
 }

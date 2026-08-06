@@ -100,11 +100,8 @@ type DeploymentSummary struct {
 	// StatusReason contains details when deployment status is Failed
 	StatusReason string `json:"statusReason,omitempty"`
 
-	// Defaults to true and requires useBuildKit to have an effect.
+	// Defaults to true.
 	UseBuildCache *bool `json:"useBuildCache,omitempty"`
-
-	// Enables BuildKit when building Dockerfile.
-	UseBuildKit *bool `json:"useBuildKit,omitempty"`
 }
 
 // Validate validates this deployment summary

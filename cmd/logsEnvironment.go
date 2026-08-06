@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"time"
 
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
@@ -61,11 +62,18 @@ rx get logs environment --application radix-test --environment dev`,
 			return err
 		}
 
+		if !previousLog && since == 0 {
+			since = settings.DeltaRefreshApplication
+		}
+		var sincePtr *time.Duration
+		if since > 0 {
+			sincePtr = &since
+		}
 		return replicalog.New(
 			cmd.ErrOrStderr(),
 			replicalog.GetComponentReplicasForEnvironment(apiClient, appName, environmentName, previousLog),
 			replicalog.GetComponentLog(apiClient, appName, previousLog),
-			since,
+			sincePtr,
 		).StreamLogs(cmd.Context(), false)
 	},
 }
@@ -74,8 +82,8 @@ func init() {
 	logsCmd.AddCommand(logsEnvironmentCmd)
 	logsEnvironmentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application owning the component")
 	logsEnvironmentCmd.Flags().StringP(flagnames.Environment, "e", "", "Environment the component runs in")
-	logsEnvironmentCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print the logs for the previous instances of containers in environment component pods, if they exist")
-	logsEnvironmentCmd.Flags().DurationP(flagnames.Since, "s", settings.DeltaRefreshApplication, "If set, start get logs from the specified time, eg. 5m or 12h")
+	logsEnvironmentCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print all logs for the previous instances of containers in environment component pods, if they exist")
+	logsEnvironmentCmd.Flags().DurationP(flagnames.Since, "s", 0, "Only return logs newer than a relative duration, eg. 5m or 12h")
 
 	_ = logsEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = logsEnvironmentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)

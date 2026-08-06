@@ -107,11 +107,8 @@ type JobSummary struct {
 	// Required: true
 	TriggeredFromWebhook *bool `json:"triggeredFromWebhook"`
 
-	// Defaults to true and requires useBuildKit to have an effect.
+	// Defaults to true.
 	UseBuildCache *bool `json:"useBuildCache,omitempty"`
-
-	// Enables BuildKit when building Dockerfile.
-	UseBuildKit *bool `json:"useBuildKit,omitempty"`
 }
 
 // Validate validates this job summary

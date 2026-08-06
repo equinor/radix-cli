@@ -34,9 +34,11 @@ type streamingReplicas[T Item] struct {
 
 var loopDuration = 2 * time.Second
 
-func New[T Item](output io.Writer, getReplicas GetReplicasFunc[T], getLogs GetLogFunc[T], since time.Duration) *streamingReplicas[T] {
-	sinceTime := time.Now().Add(-since)
-
+func New[T Item](output io.Writer, getReplicas GetReplicasFunc[T], getLogs GetLogFunc[T], since *time.Duration) *streamingReplicas[T] {
+	var sinceTime time.Time
+	if since != nil {
+		sinceTime = time.Now().Add(-*since)
+	}
 	return &streamingReplicas[T]{
 		output:      output,
 		getReplicas: getReplicas,

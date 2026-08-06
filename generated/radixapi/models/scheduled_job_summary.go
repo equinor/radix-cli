@@ -41,6 +41,10 @@ type ScheduledJobSummary struct {
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
+	// CronSchedule is the cron schedule expression, if this job was created by a cron schedule.
+	// Example: \"0 1 * * *\
+	CronSchedule string `json:"cronSchedule,omitempty"`
+
 	// DeploymentName name of RadixDeployment for the job
 	// Required: true
 	DeploymentName *string `json:"deploymentName"`

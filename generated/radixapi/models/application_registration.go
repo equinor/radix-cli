@@ -45,6 +45,10 @@ type ApplicationRegistration struct {
 	// Required: true
 	Creator *string `json:"creator"`
 
+	// HasMigratedFederatedCredential indicates whether federated credential annotation exists
+	// Required: true
+	HasMigratedFederatedCredential *bool `json:"hasMigratedFederatedCredential"`
+
 	// Name the unique name of the Radix application
 	// Example: radix-canary-golang
 	// Required: true
@@ -96,6 +100,10 @@ func (m *ApplicationRegistration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCreator(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateHasMigratedFederatedCredential(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -168,6 +176,15 @@ func (m *ApplicationRegistration) validateConfigBranch(formats strfmt.Registry) 
 func (m *ApplicationRegistration) validateCreator(formats strfmt.Registry) error {
 
 	if err := validate.Required("creator", "body", m.Creator); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ApplicationRegistration) validateHasMigratedFederatedCredential(formats strfmt.Registry) error {
+
+	if err := validate.Required("hasMigratedFederatedCredential", "body", m.HasMigratedFederatedCredential); err != nil {
 		return err
 	}
 

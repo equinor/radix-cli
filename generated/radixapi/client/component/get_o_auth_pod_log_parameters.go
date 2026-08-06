@@ -121,6 +121,14 @@ type GetOAuthPodLogParams struct {
 	*/
 	PodName string
 
+	/* Previous.
+
+	   Get previous container log if true
+
+	   Format: boolean
+	*/
+	Previous *string
+
 	/* SinceTime.
 
 	   Get log only from sinceTime (example 2020-03-18T07:20:41+00:00)
@@ -287,6 +295,17 @@ func (o *GetOAuthPodLogParams) SetPodName(podName string) {
 	o.PodName = podName
 }
 
+// WithPrevious adds the previous to the get o auth pod log params
+func (o *GetOAuthPodLogParams) WithPrevious(previous *string) *GetOAuthPodLogParams {
+	o.SetPrevious(previous)
+	return o
+}
+
+// SetPrevious adds the previous to the get o auth pod log params
+func (o *GetOAuthPodLogParams) SetPrevious(previous *string) {
+	o.Previous = previous
+}
+
 // WithSinceTime adds the sinceTime to the get o auth pod log params
 func (o *GetOAuthPodLogParams) WithSinceTime(sinceTime *strfmt.DateTime) *GetOAuthPodLogParams {
 	o.SetSinceTime(sinceTime)
@@ -402,6 +421,23 @@ func (o *GetOAuthPodLogParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	// path param podName
 	if err := r.SetPathParam("podName", o.PodName); err != nil {
 		return err
+	}
+
+	if o.Previous != nil {
+
+		// query param previous
+		var qrPrevious string
+
+		if o.Previous != nil {
+			qrPrevious = *o.Previous
+		}
+		qPrevious := qrPrevious
+		if qPrevious != "" {
+
+			if err := r.SetQueryParam("previous", qPrevious); err != nil {
+				return err
+			}
+		}
 	}
 
 	if o.SinceTime != nil {

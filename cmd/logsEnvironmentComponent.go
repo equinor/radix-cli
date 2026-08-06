@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"errors"
+	"time"
 
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
@@ -70,11 +71,18 @@ Examples:
 			return err
 		}
 
+		if !previousLog && since == 0 {
+			since = settings.DeltaRefreshApplication
+		}
+		var sincePtr *time.Duration
+		if since > 0 {
+			sincePtr = &since
+		}
 		return replicalog.New(
 			cmd.ErrOrStderr(),
 			replicalog.GetReplicasForComponent(apiClient, appName, environmentName, componentName, previousLog),
 			replicalog.GetComponentLog(apiClient, appName, previousLog),
-			since,
+			sincePtr,
 		).StreamLogs(cmd.Context(), false)
 	},
 }
@@ -84,8 +92,8 @@ func init() {
 	logsEnvironmentComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application owning the component")
 	logsEnvironmentComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Environment the component runs in")
 	logsEnvironmentComponentCmd.Flags().String(flagnames.Component, "", "The component to follow")
-	logsEnvironmentComponentCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print the logs for the previous instance of the container in a component pod, if it exists")
-	logsEnvironmentComponentCmd.Flags().DurationP(flagnames.Since, "s", settings.DeltaRefreshApplication, "If set, start get logs from the specified time, eg. 5m or 12h")
+	logsEnvironmentComponentCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print all logs for the previous instance of the container in a component pod, if it exists")
+	logsEnvironmentComponentCmd.Flags().DurationP(flagnames.Since, "s", 0, "Only return logs newer than a relative duration, eg. 5m or 12h")
 
 	_ = logsEnvironmentComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = logsEnvironmentComponentCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)

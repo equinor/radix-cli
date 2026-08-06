@@ -18,7 +18,6 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
-	"time"
 
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
@@ -120,7 +119,7 @@ var createDeployPipelineJobCmd = &cobra.Command{
 			cmd.ErrOrStderr(),
 			replicalog.GetReplicasForJob(apiClient, appName, *jobName),
 			replicalog.GetLogsForJob(apiClient, appName, *jobName),
-			time.Second, // not used
+			nil,
 		).StreamLogs(cmd.Context(), true)
 	},
 }

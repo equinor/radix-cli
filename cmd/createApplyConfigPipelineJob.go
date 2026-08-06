@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"errors"
-	"time"
 
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/models"
@@ -96,7 +95,7 @@ By default it applies changes to properties DNS alias, build secrets, and create
 			cmd.ErrOrStderr(),
 			replicalog.GetReplicasForJob(apiClient, appName, *jobName),
 			replicalog.GetLogsForJob(apiClient, appName, *jobName),
-			time.Second, // not used
+			nil,
 		).StreamLogs(cmd.Context(), true)
 	},
 }
