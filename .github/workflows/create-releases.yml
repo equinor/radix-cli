@@ -4,7 +4,7 @@ on:
     branches:
       - master
   workflow_dispatch:
-  
+
 permissions: {}
 jobs:
   unreleased-prs-metadata:
@@ -12,11 +12,11 @@ jobs:
     permissions:
       pull-requests: read
       contents: read
-    uses: equinor/radix-reusable-workflows/.github/workflows/template-unreleased-pr-metadata.yml@1c276b3288a8749e369cd05b503e73bd7a3370c1 # v1.1.1
-    
+    uses: equinor/radix-reusable-workflows/.github/workflows/template-unreleased-pr-metadata.yml@c09456726181391559941adde1a467846eb60975 # v1.2.0
+
   release-pull-request:
     name: Release pull request
-    needs: 
+    needs:
       - unreleased-prs-metadata
     if: needs.unreleased-prs-metadata.outputs.unreleased-pull-request-count > 0
     strategy:
@@ -26,11 +26,10 @@ jobs:
       pull-requests: write
       contents: read
       issues: write
-    uses: equinor/radix-reusable-workflows/.github/workflows/template-create-release-from-pr.yml@1c276b3288a8749e369cd05b503e73bd7a3370c1 # v1.1.1
+    uses: equinor/radix-reusable-workflows/.github/workflows/template-create-release-from-pr.yml@c09456726181391559941adde1a467846eb60975 # v1.2.0
     with:
       pull-request-number: ${{ matrix.pull-request-number }}
       use-github-app-token: true
       github-app-id: ${{ vars.GH_APP_ID }}
     secrets:
       github-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-      
