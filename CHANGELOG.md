@@ -8,6 +8,13 @@ All notable changes to this project will be documented in this file.
 
 - Update release workflows for draft publishing (#185) - ([6f11587](https://github.com/equinor/radix-cli/commit/6f11587795049f05b154592b02f8d03a832b5aad)) by @Richard87 in [#185](https://github.com/equinor/radix-cli/pull/185)
 
+- Set draft when merging release PR (#187) - ([e8509c8](https://github.com/equinor/radix-cli/commit/e8509c8d0c3092f784e383e2a80dfbb2c6e2887a)) by @Richard87 in [#187](https://github.com/equinor/radix-cli/pull/187)
+
+
+### ⚙️ Miscellaneous Tasks
+
+- Revert version to 1.39.0 (#189) - ([b56b4bf](https://github.com/equinor/radix-cli/commit/b56b4bf442f040cae9c113636c728a6b310d0ff2)) by @Richard87 in [#189](https://github.com/equinor/radix-cli/pull/189)
+
 
 ## [1.39.0](https://github.com/equinor/radix-cli/compare/v1.38.1..v1.39.0) - 2026-08-06
 
