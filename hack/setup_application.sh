@@ -24,8 +24,7 @@ PUBLIC_KEY=$(rx create application \
     --token-environment \
     --from-config \
     --repository $REPOSITORY \
-    --owner $OWNER \
-    --shared-secret $SHARED_SECRET 2>&1)
+    --owner $OWNER 2>&1)
 
 # Wait for application to be reconciled
 sleep 3
