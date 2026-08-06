@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.39.1](https://github.com/equinor/radix-cli/compare/v1.39.0..v1.39.1) - 2026-08-06
+
+### 🐛 Bug Fixes
+
+- Update release workflows for draft publishing (#185) - ([6f11587](https://github.com/equinor/radix-cli/commit/6f11587795049f05b154592b02f8d03a832b5aad)) by @Richard87 in [#185](https://github.com/equinor/radix-cli/pull/185)
+
+
 ## [1.39.0](https://github.com/equinor/radix-cli/compare/v1.38.1..v1.39.0) - 2026-08-06
 
 ### 🚀 Features
