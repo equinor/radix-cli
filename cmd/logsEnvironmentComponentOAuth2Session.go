@@ -90,7 +90,7 @@ func init() {
 	logsEnvironmentComponentOAuth2SessionCmd.Flags().StringP(flagnames.Environment, "e", "", "Environment the component runs in")
 	logsEnvironmentComponentOAuth2SessionCmd.Flags().String(flagnames.Component, "", "The component to follow")
 	logsEnvironmentComponentOAuth2SessionCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print all logs for the previous instance of the OAuth2 session store auxiliary container, if it exists")
-	logsEnvironmentComponentOAuth2SessionCmd.Flags().DurationP(flagnames.Since, "s", 0, "Only return logs newer than a relative duration, eg. 5m or 12h.")
+	logsEnvironmentComponentOAuth2SessionCmd.Flags().DurationP(flagnames.Since, "s", 0, "Only return logs newer than a relative duration, eg. 5m or 12h")
 
 	_ = logsEnvironmentComponentOAuth2SessionCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = logsEnvironmentComponentOAuth2SessionCmd.RegisterFlagCompletionFunc(flagnames.Environment, completion.EnvironmentCompletion)
