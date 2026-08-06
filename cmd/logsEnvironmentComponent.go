@@ -92,7 +92,7 @@ func init() {
 	logsEnvironmentComponentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application owning the component")
 	logsEnvironmentComponentCmd.Flags().StringP(flagnames.Environment, "e", "", "Environment the component runs in")
 	logsEnvironmentComponentCmd.Flags().String(flagnames.Component, "", "The component to follow")
-	logsEnvironmentComponentCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print the all logs for the previous instance of the container in a component pod, if it exists")
+	logsEnvironmentComponentCmd.Flags().BoolP(flagnames.Previous, "p", false, "If set, print all logs for the previous instance of the container in a component pod, if it exists")
 	logsEnvironmentComponentCmd.Flags().DurationP(flagnames.Since, "s", 0, "Only return logs newer than a relative duration, eg. 5m or 12h")
 
 	_ = logsEnvironmentComponentCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
