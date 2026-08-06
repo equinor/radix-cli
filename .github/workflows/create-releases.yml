@@ -31,5 +31,6 @@ jobs:
       pull-request-number: ${{ matrix.pull-request-number }}
       use-github-app-token: true
       github-app-id: ${{ vars.GH_APP_ID }}
+      set-draft: true
     secrets:
       github-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
