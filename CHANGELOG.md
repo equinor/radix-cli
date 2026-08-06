@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.39.0](https://github.com/equinor/radix-cli/compare/v1.38.1..v1.39.0) - 2026-08-06
+
+### 🚀 Features
+
+- Add rx auth2 logs (#182) - ([d4dbce8](https://github.com/equinor/radix-cli/commit/d4dbce8c6c66dca7b77c4b29dea0732c65debff0)) by @herda1 in [#182](https://github.com/equinor/radix-cli/pull/182)
+
+
+### 🐛 Bug Fixes
+
+- Remove setting shared-secret in register application endpoint (#179) - ([93b46f7](https://github.com/equinor/radix-cli/commit/93b46f730f16cf658a37a949d5e3dba2975d8dc6)) by @Richard87 in [#179](https://github.com/equinor/radix-cli/pull/179)
+
+- Allow getDeployment to run without optional options (#176) - ([b1faa05](https://github.com/equinor/radix-cli/commit/b1faa05afd570a9e6e7603a5ca26a34f1584ee01)) by @Pespiri in [#176](https://github.com/equinor/radix-cli/pull/176)
+
+
+## New Contributors ❤️
+
+* @Pespiri made their first contribution in [#176](https://github.com/equinor/radix-cli/pull/176)
+* @herda1 made their first contribution in [#182](https://github.com/equinor/radix-cli/pull/182)
 ## [1.38.1](https://github.com/equinor/radix-cli/compare/v1.38.0..v1.38.1) - 2026-07-30
 
 ### 🐛 Bug Fixes
