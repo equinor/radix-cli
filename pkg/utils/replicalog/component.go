@@ -86,9 +86,9 @@ func GetComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, e
 					componentReplicas = append(componentReplicas, ComponentItem{
 						Component: *component.Name,
 						Replica:   *replica.Name,
+						created:   time.Time(*replica.Created),
 					})
 				}
-				//
 			}
 		}
 
