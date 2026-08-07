@@ -40,20 +40,34 @@ jobs:
       - release-pull-request
       - unreleased-prs-metadata
     if: needs.unreleased-prs-metadata.outputs.unreleased-pull-request-count == 1
-    runs-on: radix-runner
-    permissions:
-      contents: write
+    runs-on: ubuntu-latest
     steps:
+      # Step 1: Generate the Installation Access Token
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          permission-workflows: write
+          permission-contents: write
+
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Configure Git User Info
+        run: |
+          # Replace 'your-app-slug' with your actual GitHub App's name/slug
+          git config --global user.name "${{ steps.app-token.outputs.app-slug}}[bot]"
+          git config --global user.email "${{ steps.app-token.outputs.installation-id}}+${{ steps.app-token.outputs.app-slug}}[bot]@users.noreply.github.com"
 
       - name: Configure Git with Context
 
         run: |
           tag="${{ needs.release-pull-request.outputs.tag }}"
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
           git tag -a "$tag" -m "Tag created by ${{ github.actor }}"
           git push origin "$tag"
