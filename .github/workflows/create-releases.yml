@@ -53,5 +53,7 @@ jobs:
 
         run: |
           tag="${{ needs.release-pull-request.outputs.tag }}"
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
           git tag -a "$tag" -m "Tag created by ${{ github.actor }}"
           git push origin "$tag"
