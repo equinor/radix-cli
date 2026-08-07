@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.39.1](https://github.com/equinor/radix-cli/compare/v1.39.0..v1.39.1) - 2026-08-06
+## [1.39.1](https://github.com/equinor/radix-cli/compare/v1.39.0..v1.39.1) - 2026-08-07
 
 ### 🐛 Bug Fixes
 
@@ -14,6 +14,8 @@ All notable changes to this project will be documented in this file.
 ### ⚙️ Miscellaneous Tasks
 
 - Revert version to 1.39.0 (#189) - ([b56b4bf](https://github.com/equinor/radix-cli/commit/b56b4bf442f040cae9c113636c728a6b310d0ff2)) by @Richard87 in [#189](https://github.com/equinor/radix-cli/pull/189)
+
+- Refactor goreleaser (#190) - ([6c153fc](https://github.com/equinor/radix-cli/commit/6c153fcae0d27ab40a9521533e00e5fdd1705c6a)) by @Richard87 in [#190](https://github.com/equinor/radix-cli/pull/190)
 
 
 ## [1.39.0](https://github.com/equinor/radix-cli/compare/v1.38.1..v1.39.0) - 2026-08-06
