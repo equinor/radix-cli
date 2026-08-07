@@ -59,9 +59,4 @@ changelog:
   disable: true
 
 release:
-  github:
-    owner: equinor
-    name: radix-cli
-
   use_existing_draft: true
-  
