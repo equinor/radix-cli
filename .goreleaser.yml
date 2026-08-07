@@ -17,7 +17,7 @@ builds:
       - amd64
       - arm64
     ldflags:
-      -  "-s -w -X 'github.com/equinor/radix-cli/cmd.Version={{ .Version }}'"
+      - "-s -w -X 'github.com/equinor/radix-cli/cmd.Version={{ .Version }}'"
 
 dockers_v2:
   - dockerfile: Dockerfile.goreleaser
@@ -57,3 +57,6 @@ snapshot:
 
 changelog:
   disable: true
+
+release:
+  use_existing_draft: true

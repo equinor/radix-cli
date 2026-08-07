@@ -34,3 +34,24 @@ jobs:
       set-draft: true
     secrets:
       github-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+  tag:
+    needs:
+      - release-pull-request
+      - unreleased-prs-metadata
+    if: needs.unreleased-prs-metadata.outputs.unreleased-pull-request-count == 1
+    runs-on: radix-runner
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git with Context
+
+        run: |
+          tag="${{ needs.release-pull-request.outputs.tag }}"
+          git tag -a "$tag" -m "Tag created by ${{ github.actor }}"
+          git push origin "$tag"
