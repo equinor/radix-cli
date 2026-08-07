@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file.
 
 - Refactor goreleaser (#190) - ([6c153fc](https://github.com/equinor/radix-cli/commit/6c153fcae0d27ab40a9521533e00e5fdd1705c6a)) by @Richard87 in [#190](https://github.com/equinor/radix-cli/pull/190)
 
+- Fix update git configuration for tagging and revert version to 1.39.0 (#192) - ([d210f79](https://github.com/equinor/radix-cli/commit/d210f79b5456fa2de5602100b93632ea086e5587)) by @Richard87 in [#192](https://github.com/equinor/radix-cli/pull/192)
+
 
 ## [1.39.0](https://github.com/equinor/radix-cli/compare/v1.38.1..v1.39.0) - 2026-08-06
 
