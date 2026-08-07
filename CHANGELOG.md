@@ -19,6 +19,8 @@ All notable changes to this project will be documented in this file.
 
 - Fix update git configuration for tagging and revert version to 1.39.0 (#192) - ([d210f79](https://github.com/equinor/radix-cli/commit/d210f79b5456fa2de5602100b93632ea086e5587)) by @Richard87 in [#192](https://github.com/equinor/radix-cli/pull/192)
 
+- Fix workflow, we try again (#194) - ([835883d](https://github.com/equinor/radix-cli/commit/835883d9896f5c26afaa698a5441267fec7c86e9)) by @Richard87 in [#194](https://github.com/equinor/radix-cli/pull/194)
+
 
 ## [1.39.0](https://github.com/equinor/radix-cli/compare/v1.38.1..v1.39.0) - 2026-08-06
 
