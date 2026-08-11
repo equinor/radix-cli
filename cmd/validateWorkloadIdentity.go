@@ -50,7 +50,7 @@ const (
 	flagAzureCLICommandFormat               = "azure-cli-command-format"
 
 	azureCLICommandFormatPosix             = "posix"
-	azureCLICommandFormatWindowsCmd        = "windows-cmd"
+	azureCLICommandFormatWindowsCmd        = "windows"
 	azureCLICommandFormatWindowsPowershell = "windows-powershell"
 )
 
@@ -628,7 +628,7 @@ func createFederatedCredentialEqualsPredicate(fedCred federatedCredential) func(
 func init() {
 	validateCmd.AddCommand(validateWorkloadIdentityCmd)
 	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
-	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Output, "o", "text", "(Optional) Output format. Valud options are json or text")
+	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Output, "o", "text", "Output format. Valid options: json, text")
 	validateWorkloadIdentityCmd.Flags().Bool(flagExcludeObsoleteFederatedCredentials, false, "Exclude potential obsolete federated credentials from output")
 	validateWorkloadIdentityCmd.Flags().String(flagAzureCLICommandFormat, azureCLICommandFormatDefault, fmt.Sprintf("Azure CLI command format. Valid options: %s", strings.Join(validAzureCliCommandFormats, ", ")))
 
