@@ -265,7 +265,7 @@ func detectTerminalShell() terminalShell {
 		return terminalShellPowerShell
 	}
 
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == "windows" && os.Getenv("SHELL") == "" {
 		return terminalShellWindowsCmd
 	}
 
