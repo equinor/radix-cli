@@ -82,8 +82,8 @@ Note: After running generated Azure CLI commands, Azure can take up to one minut
   # Exclude potentially obsolete federated credentials from output
   rx validate workload-identity --application my-app --exclude-obsolete
 
-  # Generate Azure CLI commands formatted for Windows Command Prompt
-  rx validate workload-identity --application my-app --azure-cli-command-format windows-cmd`,
+  # Generate Azure CLI commands formatted for Powershell on Windows
+  rx validate workload-identity --application my-app --azure-cli-command-format windows-powershell`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
 
@@ -630,7 +630,7 @@ func init() {
 	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Output, "o", "text", "(Optional) Output format. Valud options are json or text")
 	validateWorkloadIdentityCmd.Flags().Bool(flagExcludeObsoleteFederatedCredentials, false, "Exclude potential obsolete federated credentials from output")
-	validateWorkloadIdentityCmd.Flags().String(flagAzureCLICommandFormat, azureCLICommandFormatPosix, fmt.Sprintf("(Optional) Azure CLI command format. Valid options: %s", strings.Join(validAzureCliCommandFormats, ", ")))
+	validateWorkloadIdentityCmd.Flags().String(flagAzureCLICommandFormat, azureCLICommandFormatDefault, fmt.Sprintf("(Optional) Azure CLI command format. Valid options: %s. If omitted, auto-detected from OS (linux/darwin: %s, windows: %s)", strings.Join(validAzureCliCommandFormats, ", "), azureCLICommandFormatPosix, azureCLICommandFormatWindowsCmd))
 
 	_ = validateWorkloadIdentityCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = validateWorkloadIdentityCmd.RegisterFlagCompletionFunc(flagnames.Output, completion.Output)
