@@ -30,11 +30,6 @@ func TestFormatJSONForShell(t *testing.T) {
 			expected: `'{"name":"app-fedcred","subject":"system:serviceaccount:default:app'\''oauth2"}'`,
 		},
 		{
-			name:     "powershell",
-			shell:    terminalShellPowerShell,
-			expected: `'{"name":"app-fedcred","subject":"system:serviceaccount:default:app''oauth2"}'`,
-		},
-		{
 			name:     "windows cmd",
 			shell:    terminalShellWindowsCmd,
 			expected: `"{\"name\":\"app-fedcred\",\"subject\":\"system:serviceaccount:default:app'oauth2\"}"`,

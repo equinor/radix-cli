@@ -256,36 +256,21 @@ type terminalShell int
 
 const (
 	terminalShellPosix terminalShell = iota
-	terminalShellPowerShell
 	terminalShellWindowsCmd
 )
 
 func detectTerminalShell() terminalShell {
-	if isPowerShellTerminal() {
-		return terminalShellPowerShell
-	}
-
-	if runtime.GOOS == "windows" && os.Getenv("SHELL") == "" {
+	if runtime.GOOS == "windows" {
+		fmt.Println("windows command line")
 		return terminalShellWindowsCmd
 	}
 
+	fmt.Println("posix")
 	return terminalShellPosix
-}
-
-func isPowerShellTerminal() bool {
-	if os.Getenv("PSMODULEPATH") != "" || os.Getenv("PSModulePath") != "" {
-		return true
-	}
-
-	shell := strings.ToLower(os.Getenv("SHELL"))
-	return strings.Contains(shell, "pwsh") || strings.Contains(shell, "powershell")
 }
 
 func formatJSONForShell(payload string, shell terminalShell) string {
 	switch shell {
-	case terminalShellPowerShell:
-		escaped := strings.ReplaceAll(payload, `'`, `''`)
-		return fmt.Sprintf("'%s'", escaped)
 	case terminalShellWindowsCmd:
 		escaped := strings.ReplaceAll(payload, `"`, `\"`)
 		return fmt.Sprintf(`"%s"`, escaped)
