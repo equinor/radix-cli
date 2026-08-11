@@ -630,7 +630,7 @@ func init() {
 	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Output, "o", "text", "(Optional) Output format. Valud options are json or text")
 	validateWorkloadIdentityCmd.Flags().Bool(flagExcludeObsoleteFederatedCredentials, false, "Exclude potential obsolete federated credentials from output")
-	validateWorkloadIdentityCmd.Flags().String(flagAzureCLICommandFormat, azureCLICommandFormatDefault, fmt.Sprintf("(Optional) Azure CLI command format. Valid options: %s. If omitted, auto-detected from OS (linux/darwin: %s, windows: %s)", strings.Join(validAzureCliCommandFormats, ", "), azureCLICommandFormatPosix, azureCLICommandFormatWindowsCmd))
+	validateWorkloadIdentityCmd.Flags().String(flagAzureCLICommandFormat, azureCLICommandFormatDefault, fmt.Sprintf("Azure CLI command format. Valid options: %s", strings.Join(validAzureCliCommandFormats, ", ")))
 
 	_ = validateWorkloadIdentityCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = validateWorkloadIdentityCmd.RegisterFlagCompletionFunc(flagnames.Output, completion.Output)
