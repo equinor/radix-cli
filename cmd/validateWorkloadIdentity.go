@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"runtime"
 	"slices"
 	"strings"
 
@@ -244,10 +245,54 @@ func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.Servic
 			return "", err
 		}
 
-		return fmt.Sprintf("az ad app federated-credential create --id %s --parameters %s", sp.ClientID, fmt.Sprintf("%q", string(paramBytes))), nil
+		escapedParams := formatJSONForShell(string(paramBytes), detectTerminalShell())
+		return fmt.Sprintf("az ad app federated-credential create --id %s --parameters %s", sp.ClientID, escapedParams), nil
 	}
 
 	return "", fmt.Errorf("unable to generate create federated credential command for principal %s with unknow type %s", sp.DisplayName, sp.Type)
+}
+
+type terminalShell int
+
+const (
+	terminalShellPosix terminalShell = iota
+	terminalShellPowerShell
+	terminalShellWindowsCmd
+)
+
+func detectTerminalShell() terminalShell {
+	if isPowerShellTerminal() {
+		return terminalShellPowerShell
+	}
+
+	if runtime.GOOS == "windows" {
+		return terminalShellWindowsCmd
+	}
+
+	return terminalShellPosix
+}
+
+func isPowerShellTerminal() bool {
+	if os.Getenv("PSMODULEPATH") != "" || os.Getenv("PSModulePath") != "" {
+		return true
+	}
+
+	shell := strings.ToLower(os.Getenv("SHELL"))
+	return strings.Contains(shell, "pwsh") || strings.Contains(shell, "powershell")
+}
+
+func formatJSONForShell(payload string, shell terminalShell) string {
+	switch shell {
+	case terminalShellPowerShell:
+		escaped := strings.ReplaceAll(payload, `'`, `''`)
+		return fmt.Sprintf("'%s'", escaped)
+	case terminalShellWindowsCmd:
+		escaped := strings.ReplaceAll(payload, `"`, `\"`)
+		return fmt.Sprintf(`"%s"`, escaped)
+	default:
+		escaped := strings.ReplaceAll(payload, `'`, `'\''`)
+		return fmt.Sprintf("'%s'", escaped)
+	}
 }
 
 type federatedCredential struct {
