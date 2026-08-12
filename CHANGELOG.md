@@ -2,13 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.39.1](https://github.com/equinor/radix-cli/compare/v1.39.0..v1.39.1) - 2026-08-07
+## [1.39.1](https://github.com/equinor/radix-cli/compare/v1.39.0..v1.39.1) - 2026-08-12
 
 ### 🐛 Bug Fixes
 
 - Update release workflows for draft publishing (#185) - ([6f11587](https://github.com/equinor/radix-cli/commit/6f11587795049f05b154592b02f8d03a832b5aad)) by @Richard87 in [#185](https://github.com/equinor/radix-cli/pull/185)
 
 - Set draft when merging release PR (#187) - ([e8509c8](https://github.com/equinor/radix-cli/commit/e8509c8d0c3092f784e383e2a80dfbb2c6e2887a)) by @Richard87 in [#187](https://github.com/equinor/radix-cli/pull/187)
+
+- Format generated azure cli --parameters json for workload identity to support Posix, Windows and Powershell on Windows formats (#199) - ([55e9c60](https://github.com/equinor/radix-cli/commit/55e9c603081bcc4b4772758b9d73ef75cad7e93c)) by @nilsgstrabo in [#199](https://github.com/equinor/radix-cli/pull/199)
 
 
 ### ⚙️ Miscellaneous Tasks
@@ -20,6 +22,8 @@ All notable changes to this project will be documented in this file.
 - Fix update git configuration for tagging and revert version to 1.39.0 (#192) - ([d210f79](https://github.com/equinor/radix-cli/commit/d210f79b5456fa2de5602100b93632ea086e5587)) by @Richard87 in [#192](https://github.com/equinor/radix-cli/pull/192)
 
 - Fix workflow, we try again (#194) - ([835883d](https://github.com/equinor/radix-cli/commit/835883d9896f5c26afaa698a5441267fec7c86e9)) by @Richard87 in [#194](https://github.com/equinor/radix-cli/pull/194)
+
+- Revert version.txt to 1.39.0 (#197) - ([5a435f5](https://github.com/equinor/radix-cli/commit/5a435f59068fcf8ba2d849e467a4229dc7346d18)) by @nilsgstrabo in [#197](https://github.com/equinor/radix-cli/pull/197)
 
 
 ## [1.39.0](https://github.com/equinor/radix-cli/compare/v1.38.1..v1.39.0) - 2026-08-06
