@@ -64,7 +64,7 @@ func setContextSpecificPersistentFlags(cmd *cobra.Command) {
 }
 
 func setContextPersistentFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringP(flagnames.Context, "c", "", fmt.Sprintf("(Optional) Name of context. Valid values: %s", strings.Join(radixconfig.ValidContexts, ",")))
+	cmd.PersistentFlags().StringP(flagnames.Context, "c", "", fmt.Sprintf("(Optional) Name of context. Valid options: %s", strings.Join(radixconfig.ValidContexts, ", ")))
 	_ = cmd.RegisterFlagCompletionFunc(flagnames.Context, completion.ConfigContext)
 }
 
