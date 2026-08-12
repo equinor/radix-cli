@@ -47,15 +47,15 @@ import (
 
 const (
 	flagExcludeObsoleteFederatedCredentials = "exclude-obsolete"
-	flagAzureCLICommandFormat               = "azure-cli-command-format"
+	flagAzureCLIShellFormat                 = "azure-cli-shell-format"
 
-	azureCLICommandFormatPosix             = "posix"
-	azureCLICommandFormatWindowsCmd        = "windows"
-	azureCLICommandFormatWindowsPowershell = "windows-powershell"
+	azureCLIShellFormatPosix             = "posix"
+	azureCLIShellFormatWindowsCmd        = "windows"
+	azureCLIShellFormatWindowsPowershell = "windows-powershell"
 )
 
 var (
-	validAzureCliCommandFormats = []string{azureCLICommandFormatPosix, azureCLICommandFormatWindowsCmd, azureCLICommandFormatWindowsPowershell}
+	validAzureCLIShellFormats = []string{azureCLIShellFormatPosix, azureCLIShellFormatWindowsCmd, azureCLIShellFormatWindowsPowershell}
 )
 
 var validateWorkloadIdentityCmd = &cobra.Command{
@@ -64,6 +64,8 @@ var validateWorkloadIdentityCmd = &cobra.Command{
 	Long: `Validate workload identity configuration for one application or all applications.
 
 The command compares expected federated credentials with existing credentials in Azure and prints Azure CLI commands to create missing credentials and delete potentially obsolete credentials.
+By default, the Azure CLI shell format (specified with the --azure-cli-shell-format flag) is chosen automatically based on the current operating system: posix on Unix-like systems and windows on Windows.
+If you need commands that work in PowerShell on Windows, select --azure-cli-shell-format windows-powershell explicitly.
 
 Take care when reviewing obsolete federated credentials: the obsolete list is best-effort and must not be trusted 100%. Existing federated credentials can belong to another Radix cluster, even if they look obsolete for the currently selected context.
 
@@ -83,18 +85,18 @@ Note: After running generated Azure CLI commands, Azure can take up to one minut
   rx validate workload-identity --application my-app --exclude-obsolete
 
   # Generate Azure CLI commands formatted for Powershell on Windows
-  rx validate workload-identity --application my-app --azure-cli-command-format windows-powershell`,
+  rx validate workload-identity --application my-app --azure-cli-shell-format windows-powershell`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
 
 		outputFormat, _ := cmd.Flags().GetString(flagnames.Output)
-		azureCLICommandFormat, _ := cmd.Flags().GetString(flagAzureCLICommandFormat)
-		if !slices.Contains(validAzureCliCommandFormats, azureCLICommandFormat) {
-			return fmt.Errorf("invalid value for --%s: %q", flagAzureCLICommandFormat, azureCLICommandFormat)
+		azureCLIShellFormat, _ := cmd.Flags().GetString(flagAzureCLIShellFormat)
+		if !slices.Contains(validAzureCLIShellFormats, azureCLIShellFormat) {
+			return fmt.Errorf("invalid value for --%s: %q", flagAzureCLIShellFormat, azureCLIShellFormat)
 		}
 
 		validationPrinter := func(validations []workloadIdentityValidation) error {
-			return validationTextPrinter(validations, azureCLICommandFormat)
+			return validationTextPrinter(validations, azureCLIShellFormat)
 		}
 		if outputFormat == flagvalues.OutputFormatJson {
 			validationPrinter = validationJsonPrinter
@@ -158,7 +160,7 @@ Note: After running generated Azure CLI commands, Azure can take up to one minut
 	},
 }
 
-func validationTextPrinter(validations []workloadIdentityValidation, azureCLICommandFormat string) error {
+func validationTextPrinter(validations []workloadIdentityValidation, azureCLIShellFormat string) error {
 	if len(validations) == 0 {
 		fmt.Fprintln(os.Stdout, "No workload identity configurations found for selected application(s).")
 		return nil
@@ -177,7 +179,7 @@ func validationTextPrinter(validations []workloadIdentityValidation, azureCLICom
 		}
 
 		for _, missing := range validation.MissingFederatedCredentials {
-			command, err := generateCreateFederatedCredentialAzureCLICommand(validation.ServicePrincipal, missing, azureCLICommandFormat)
+			command, err := generateCreateFederatedCredentialAzureCLICommand(validation.ServicePrincipal, missing, azureCLIShellFormat)
 			if err != nil {
 				return err
 			}
@@ -240,7 +242,7 @@ func generateDeleteFederatedCredentialAzureCLICommand(sp workloadidentity.Servic
 	return "", fmt.Errorf("unable to generate delete federated credential command for principal %s with unknow type %s", sp.DisplayName, sp.Type)
 }
 
-func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, createFedCred federatedCredential, azureCLICommandFormat string) (string, error) {
+func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.ServicePrincipal, createFedCred federatedCredential, azureCLIShellFormat string) (string, error) {
 	switch sp.Type {
 	case workloadidentity.ManagedIdentity:
 		return fmt.Sprintf("az identity federated-credential create --name %s --identity-name %s --resource-group %s --subscription %s --issuer %s --subject %s --audiences %s", createFedCred.Name, sp.DisplayName, sp.ResourceGroup, sp.SubscriptionID, createFedCred.Issuer, createFedCred.Subject, createFedCred.Audiences[0]), nil
@@ -262,7 +264,7 @@ func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.Servic
 			return "", err
 		}
 
-		formattedParams, err := formatAzureCLIJSONParameters(string(paramBytes), azureCLICommandFormat)
+		formattedParams, err := formatAzureCLIJSONParameters(string(paramBytes), azureCLIShellFormat)
 		if err != nil {
 			return "", err
 		}
@@ -273,20 +275,20 @@ func generateCreateFederatedCredentialAzureCLICommand(sp workloadidentity.Servic
 	return "", fmt.Errorf("unable to generate create federated credential command for principal %s with unknow type %s", sp.DisplayName, sp.Type)
 }
 
-func formatAzureCLIJSONParameters(parametersJSON string, azureCLICommandFormat string) (string, error) {
-	switch azureCLICommandFormat {
-	case azureCLICommandFormatPosix:
+func formatAzureCLIJSONParameters(parametersJSON string, azureCLIShellFormat string) (string, error) {
+	switch azureCLIShellFormat {
+	case azureCLIShellFormatPosix:
 		escapedParams := strings.ReplaceAll(parametersJSON, `'`, `'\''`)
 		return fmt.Sprintf("'%s'", escapedParams), nil
-	case azureCLICommandFormatWindowsCmd:
+	case azureCLIShellFormatWindowsCmd:
 		escapedParams := strings.ReplaceAll(parametersJSON, `"`, `\"`)
 		return fmt.Sprintf("\"%s\"", escapedParams), nil
-	case azureCLICommandFormatWindowsPowershell:
-		escapedParams := strings.ReplaceAll(parametersJSON, `"`, `"""`)
+	case azureCLIShellFormatWindowsPowershell:
+		escapedParams := strings.ReplaceAll(parametersJSON, `"`, `\"`)
 		escapedParams = strings.ReplaceAll(escapedParams, `'`, `''`)
 		return fmt.Sprintf("'%s'", escapedParams), nil
 	default:
-		return "", fmt.Errorf("unsupported Azure CLI command format %q", azureCLICommandFormat)
+		return "", fmt.Errorf("unsupported Azure CLI shell format %q", azureCLIShellFormat)
 	}
 }
 
@@ -630,16 +632,16 @@ func init() {
 	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	validateWorkloadIdentityCmd.Flags().StringP(flagnames.Output, "o", "text", "Output format. Valid options: json, text")
 	validateWorkloadIdentityCmd.Flags().Bool(flagExcludeObsoleteFederatedCredentials, false, "Exclude potential obsolete federated credentials from output")
-	validateWorkloadIdentityCmd.Flags().String(flagAzureCLICommandFormat, azureCLICommandFormatDefault, fmt.Sprintf("Azure CLI command format. Valid options: %s", strings.Join(validAzureCliCommandFormats, ", ")))
+	validateWorkloadIdentityCmd.Flags().String(flagAzureCLIShellFormat, azureCLIShellFormatDefault, fmt.Sprintf("Azure CLI shell format. Valid options: %s", strings.Join(validAzureCLIShellFormats, ", ")))
 
 	_ = validateWorkloadIdentityCmd.RegisterFlagCompletionFunc(flagnames.Application, completion.ApplicationCompletion)
 	_ = validateWorkloadIdentityCmd.RegisterFlagCompletionFunc(flagnames.Output, completion.Output)
-	_ = validateWorkloadIdentityCmd.RegisterFlagCompletionFunc(flagAzureCLICommandFormat, azureCLICommandFormatCompletions)
+	_ = validateWorkloadIdentityCmd.RegisterFlagCompletionFunc(flagAzureCLIShellFormat, azureCLIShellFormatCompletions)
 	setContextSpecificPersistentFlags(validateWorkloadIdentityCmd)
 }
 
-func azureCLICommandFormatCompletions(_ *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	formats := slice.FindAll(validAzureCliCommandFormats, func(format string) bool {
+func azureCLIShellFormatCompletions(_ *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	formats := slice.FindAll(validAzureCLIShellFormats, func(format string) bool {
 		return strings.HasPrefix(format, toComplete)
 	})
 	return formats, cobra.ShellCompDirectiveNoFileComp

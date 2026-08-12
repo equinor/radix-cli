@@ -2,4 +2,4 @@
 
 package cmd
 
-const azureCLICommandFormatDefault = azureCLICommandFormatWindowsCmd
+const azureCLIShellFormatDefault = azureCLIShellFormatWindowsCmd
