@@ -1,4 +1,0 @@
-FROM gcr.io/distroless/static:nonroot
-ARG TARGETPLATFORM
-COPY $TARGETPLATFORM/rx /rx
-ENTRYPOINT ["/rx"]
