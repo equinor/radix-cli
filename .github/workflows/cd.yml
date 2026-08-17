@@ -10,13 +10,123 @@ permissions:
     packages: write
 
 jobs:
-    build:
+    build-binaries:
         runs-on: radix-runner
+        timeout-minutes: 30
+        strategy:
+            fail-fast: true
+            matrix:
+                include:
+                    - {
+                          goos: linux,
+                          goarch: amd64,
+                          os_name: Linux,
+                          arch_name: x86_64,
+                          ext: "",
+                      }
+                    - {
+                          goos: linux,
+                          goarch: arm64,
+                          os_name: Linux,
+                          arch_name: arm64,
+                          ext: "",
+                      }
+                    - {
+                          goos: darwin,
+                          goarch: amd64,
+                          os_name: Darwin,
+                          arch_name: x86_64,
+                          ext: "",
+                      }
+                    - {
+                          goos: darwin,
+                          goarch: arm64,
+                          os_name: Darwin,
+                          arch_name: arm64,
+                          ext: "",
+                      }
+                    - {
+                          goos: windows,
+                          goarch: amd64,
+                          os_name: Windows,
+                          arch_name: x86_64,
+                          ext: ".exe",
+                      }
+                    - {
+                          goos: windows,
+                          goarch: arm64,
+                          os_name: Windows,
+                          arch_name: arm64,
+                          ext: ".exe",
+                      }
         steps:
             - name: Checkout
               uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+            - name: Set up Go
+              uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
               with:
-                  fetch-depth: 0
+                  go-version-file: "go.mod"
+
+            - name: Build and archive
+              env:
+                  CGO_ENABLED: "0"
+                  GOOS: ${{ matrix.goos }}
+                  GOARCH: ${{ matrix.goarch }}
+              run: |
+                  set -euo pipefail
+                  version="${GITHUB_REF_NAME#v}"
+                  mkdir -p dist
+                  go build -trimpath \
+                      -ldflags "-s -w -X github.com/equinor/radix-cli/cmd.Version=${version}" \
+                      -o "rx${{ matrix.ext }}" ./cli/rx
+                  archive="radix-cli_${version}_${{ matrix.os_name }}_${{ matrix.arch_name }}.tar.gz"
+                  tar -czf "dist/${archive}" "rx${{ matrix.ext }}"
+
+            - name: Upload archive artifact
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              with:
+                  name: dist-${{ matrix.goos }}-${{ matrix.goarch }}
+                  path: dist/*.tar.gz
+                  if-no-files-found: error
+                  retention-days: 1
+
+    release:
+        needs: build-binaries
+        runs-on: radix-runner
+        timeout-minutes: 15
+        steps:
+            - name: Download archives
+              uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+              with:
+                  path: dist
+                  pattern: dist-*
+                  merge-multiple: true
+
+            - name: Generate checksums
+              run: |
+                  set -euo pipefail
+                  cd dist
+                  sha256sum *.tar.gz > checksums.txt
+
+            - name: Attach artifacts to draft release and publish
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  set -euo pipefail
+                  gh release upload "$GITHUB_REF_NAME" dist/*.tar.gz dist/checksums.txt --clobber --repo "$GITHUB_REPOSITORY"
+                  gh release edit "$GITHUB_REF_NAME" --draft=false --latest --repo "$GITHUB_REPOSITORY"
+
+    docker:
+        runs-on: radix-runner
+        timeout-minutes: 30
+        steps:
+            - name: Checkout
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+            - name: Set version
+              id: version
+              run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
@@ -28,16 +138,16 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Set up Go
-              uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+            - name: Build and push image
+              uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
               with:
-                  go-version-file: "go.mod"
-
-            - name: Run GoReleaser
-              uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
-              with:
-                  distribution: goreleaser
-                  version: "~> v2"
-                  args: release --clean
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  context: .
+                  file: ./Dockerfile
+                  platforms: linux/amd64,linux/arm64
+                  push: true
+                  provenance: false
+                  build-args: |
+                      VERSION=${{ steps.version.outputs.version }}
+                  tags: |
+                      ghcr.io/equinor/radix/rx:latest
+                      ghcr.io/equinor/radix/rx:${{ steps.version.outputs.version }}

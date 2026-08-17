@@ -20,7 +20,8 @@ COPY . /app
 RUN addgroup -S -g 1000 radix && adduser -S -u 1000 -G radix radix
 
 # Build
-RUN go build -ldflags "-s -w" -a -installsuffix cgo -o ./rootfs/rx ./cli/rx
+ARG VERSION=dev
+RUN go build -ldflags "-s -w -X github.com/equinor/radix-cli/cmd.Version=${VERSION}" -a -installsuffix cgo -o ./rootfs/rx ./cli/rx
 
 ## Run operator
 FROM scratch
