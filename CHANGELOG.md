@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.39.1](https://github.com/equinor/radix-cli/compare/v1.39.0..v1.39.1) - 2026-08-12
+## [1.39.2](https://github.com/equinor/radix-cli/compare/v1.39.1..v1.39.2) - 2026-08-17
+
+### 🐛 Bug Fixes
+
+- Replace GoReleaser with custom build script (#201) - ([f3a8a61](https://github.com/equinor/radix-cli/commit/f3a8a61ab2858421165aae56edbf2e122a72fe1d)) by @Richard87 in [#201](https://github.com/equinor/radix-cli/pull/201)
+
+
+## [1.39.1](https://github.com/equinor/radix-cli/compare/v1.39.0..v1.39.1) - 2026-08-13
 
 ### 🐛 Bug Fixes
 
