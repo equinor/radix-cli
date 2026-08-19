@@ -14,7 +14,7 @@ var lock sync.Mutex
 // Marshal is a function that marshals the object into an
 // io.Reader.
 // By default, it uses the JSON marshaller.
-var Marshal = func(v interface{}) (io.Reader, error) {
+var Marshal = func(v any) (io.Reader, error) {
 	b, err := json.MarshalIndent(v, "", "\t")
 	if err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ var Marshal = func(v interface{}) (io.Reader, error) {
 }
 
 // Save saves a representation of v to the file at path.
-func Save(path string, v interface{}) error {
+func Save(path string, v any) error {
 	lock.Lock()
 	defer lock.Unlock()
 	f, err := os.Create(path)
@@ -39,7 +39,7 @@ func Save(path string, v interface{}) error {
 	return err
 }
 
-func Load(path string, v interface{}) error {
+func Load(path string, v any) error {
 	lock.Lock()
 	defer lock.Unlock()
 	f, err := os.Open(path)
@@ -53,12 +53,12 @@ func Load(path string, v interface{}) error {
 // Unmarshal is a function that unmarshals the data from the
 // reader into the specified value.
 // By default, it uses the JSON unmarshaller.
-var Unmarshal = func(r io.Reader, v interface{}) error {
+var Unmarshal = func(r io.Reader, v any) error {
 	return json.NewDecoder(r).Decode(v)
 }
 
 // Pretty Gets json from data
-func Pretty(data interface{}) (*string, error) {
+func Pretty(data any) (*string, error) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func Pretty(data interface{}) (*string, error) {
 }
 
 // PrettyPrintJson prints json from data
-func PrettyPrintJson(data interface{}) error {
+func PrettyPrintJson(data any) error {
 	prettyJSON, err := Pretty(data)
 	if err != nil {
 		return err
