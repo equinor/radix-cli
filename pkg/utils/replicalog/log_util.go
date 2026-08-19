@@ -9,7 +9,7 @@ import (
 	"github.com/fatih/color"
 )
 
-type colorFunc func(a ...interface{}) string
+type colorFunc func(a ...any) string
 
 var (
 	yellow  = color.New(color.FgHiYellow, color.BgBlack).SprintFunc()
@@ -19,7 +19,7 @@ var (
 	red     = color.New(color.FgHiRed, color.BgBlack).SprintFunc()
 	magenta = color.New(color.FgHiMagenta, color.BgBlack).SprintFunc()
 
-	colors = []func(a ...interface{}) string{yellow, green, blue, cyan, red, magenta}
+	colors = []func(a ...any) string{yellow, green, blue, cyan, red, magenta}
 
 	writeMutex = sync.Mutex{}
 )

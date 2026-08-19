@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"slices"
 
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
@@ -117,10 +118,8 @@ func isComponentSecretReconciled(apiClient *radixapi.Radixapi, appName, environm
 		env.Payload.ActiveDeployment.Components != nil {
 		for _, component := range env.Payload.ActiveDeployment.Components {
 			if *component.Name == componentName {
-				for _, secret := range component.Secrets {
-					if secret == secretName {
-						return true
-					}
+				if slices.Contains(component.Secrets, secretName) {
+					return true
 				}
 			}
 		}

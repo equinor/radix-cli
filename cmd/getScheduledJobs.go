@@ -27,7 +27,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/flagvalues"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
 	"github.com/equinor/radix-cli/pkg/utils/json"
-	"github.com/equinor/radix-common/utils/pointers"
+	"github.com/equinor/radix-cli/pkg/utils/pointers"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )

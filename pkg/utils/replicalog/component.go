@@ -10,7 +10,6 @@ import (
 	"github.com/equinor/radix-cli/generated/radixapi/client/component"
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
 	"github.com/equinor/radix-cli/pkg/client/consumer"
-	"github.com/equinor/radix-common/utils/pointers"
 	"github.com/go-openapi/strfmt"
 )
 
@@ -166,8 +165,8 @@ func GetOAuth2ComponentLog(apiClient *radixapi.Radixapi, appName string, previou
 		logParameters.WithComponentName(item.Component)
 		logParameters.WithPodName(item.Replica)
 		logParameters.WithType(item.AuxType)
-		logParameters.WithFollow(pointers.Ptr("true"))
-		logParameters.WithSinceTime(pointers.Ptr(strfmt.DateTime(since)))
+		logParameters.WithFollow(new("true"))
+		logParameters.WithSinceTime(new(strfmt.DateTime(since)))
 		logParameters.WithPrevious(&previousStr)
 
 		_, err := apiClient.Component.GetOAuthPodLog(logParameters, nil, consumer.NewEventSourceClientOptions(callback))
@@ -184,8 +183,8 @@ func GetComponentLog(apiClient *radixapi.Radixapi, appName string, previous bool
 		logParameters.WithDeploymentName("irrelevant")
 		logParameters.WithComponentName(item.Component)
 		logParameters.WithPodName(item.Replica)
-		logParameters.WithFollow(pointers.Ptr("true"))
-		logParameters.SetSinceTime(pointers.Ptr(strfmt.DateTime(since)))
+		logParameters.WithFollow(new("true"))
+		logParameters.SetSinceTime(new(strfmt.DateTime(since)))
 		logParameters.WithPrevious(&previousStr)
 
 		_, err := apiClient.Component.Log(logParameters, nil, consumer.NewEventSourceClientOptions(callback))

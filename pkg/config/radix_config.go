@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path"
+	"slices"
 	"time"
 
 	jsonutils "github.com/equinor/radix-cli/pkg/utils/json"
@@ -60,12 +61,7 @@ type CustomConfig struct {
 }
 
 func IsValidContext(context string) bool {
-	for _, validContext := range ValidContexts {
-		if validContext == context {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(ValidContexts, context)
 }
 
 func GetRadixConfig() (*RadixConfig, error) {

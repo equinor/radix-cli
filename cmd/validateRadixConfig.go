@@ -146,7 +146,7 @@ func validateSchema(raw []byte, schema string) (validationErrors []error, err er
 		return nil, fmt.Errorf("failed compiling schema %s: %s", schema, err)
 	}
 
-	var obj interface{}
+	var obj any
 	err = yaml.Unmarshal(raw, &obj)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse file: %w", err)
