@@ -22,6 +22,7 @@ import (
 	"github.com/equinor/radix-cli/generated/radixapi/client/application"
 	"github.com/equinor/radix-cli/generated/radixapi/client/deployment"
 	"github.com/equinor/radix-cli/generated/radixapi/client/environment"
+	"github.com/equinor/radix-cli/generated/radixapi/models"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	"github.com/equinor/radix-cli/pkg/utils/completion"
@@ -49,6 +50,9 @@ Examples:
 
   # Get only the active deployment for an application radix-test and its environment test
   rx get deployment --application radix-test --environment test --active-only
+
+  # Get only the active deployments for all environments of an application radix-test
+  rx get deployment --application radix-test --active-only
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
@@ -74,9 +78,6 @@ Examples:
 		if deploymentName != "" && envName != "" {
 			return errors.New("options 'deployment' and 'environment' cannot be used together")
 		}
-		if activeOnly && envName == "" {
-			return errors.New("option 'active-only' requires option 'environment'")
-		}
 
 		cmd.SilenceUsage = true
 
@@ -86,6 +87,9 @@ Examples:
 		}
 
 		if deploymentName == "" && envName == "" {
+			if activeOnly {
+				return getActiveDeploymentForAllEnvironments(apiClient, appName)
+			}
 			return getDeploymentForAllEnvironments(apiClient, appName)
 		}
 		if deploymentName != "" {
@@ -166,12 +170,33 @@ func getActiveDeploymentForEnvironment(apiClient *radixapi.Radixapi, appName, en
 	return nil
 }
 
+func getActiveDeploymentForAllEnvironments(apiClient *radixapi.Radixapi, appName string) error {
+	params := application.NewGetApplicationParams()
+	params.WithAppName(appName)
+	resp, err := apiClient.Application.GetApplication(params, nil)
+	if err != nil {
+		return err
+	}
+	activeDeployments := make([]*models.DeploymentSummary, 0, len(resp.Payload.Environments))
+	for _, env := range resp.Payload.Environments {
+		if env.ActiveDeployment != nil {
+			activeDeployments = append(activeDeployments, env.ActiveDeployment)
+		}
+	}
+	prettyJSON, err := json.Pretty(activeDeployments)
+	if err != nil {
+		return err
+	}
+	fmt.Println(*prettyJSON)
+	return nil
+}
+
 func init() {
 	getCmd.AddCommand(getDeploymentCmd)
 	getDeploymentCmd.Flags().StringP(flagnames.Application, "a", "", "Name of the application")
 	getDeploymentCmd.Flags().StringP(flagnames.Deployment, "d", "", "Optional, name of a deployment. It cannot be used together with an option 'environment'.")
 	getDeploymentCmd.Flags().StringP(flagnames.Environment, "e", "", "Optional, name of the environment. It cannot be used together with an option 'deployment'.")
-	getDeploymentCmd.Flags().Bool(flagnames.ActiveOnly, false, "Optional, only return the active deployment. Requires option 'environment'.")
+	getDeploymentCmd.Flags().Bool(flagnames.ActiveOnly, false, "Optional, only return the active deployment(s). If 'environment' is not set, returns active deployments for all environments.")
 	getDeploymentCmd.MarkFlagsMutuallyExclusive(flagnames.Environment, flagnames.Deployment)
 	getDeploymentCmd.MarkFlagsMutuallyExclusive(flagnames.ActiveOnly, flagnames.Deployment)
 
