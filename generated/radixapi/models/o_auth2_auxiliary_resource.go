@@ -29,10 +29,6 @@ type OAuth2AuxiliaryResource struct {
 	// Enum: ["cookie","redis","systemManaged","\"\""]
 	SessionStoreType string `json:"sessionStoreType,omitempty"`
 
-	// deployment
-	// Required: true
-	Deployment *AuxiliaryResourceDeployment `json:"deployment"`
-
 	// identity
 	Identity *Identity `json:"identity,omitempty"`
 }
@@ -46,10 +42,6 @@ func (m *OAuth2AuxiliaryResource) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateSessionStoreType(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDeployment(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -141,30 +133,6 @@ func (m *OAuth2AuxiliaryResource) validateSessionStoreType(formats strfmt.Regist
 	return nil
 }
 
-func (m *OAuth2AuxiliaryResource) validateDeployment(formats strfmt.Registry) error {
-
-	if err := validate.Required("deployment", "body", m.Deployment); err != nil {
-		return err
-	}
-
-	if m.Deployment != nil {
-		if err := m.Deployment.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("deployment")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("deployment")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (m *OAuth2AuxiliaryResource) validateIdentity(formats strfmt.Registry) error {
 	if swag.IsZero(m.Identity) { // not required
 		return nil
@@ -193,10 +161,6 @@ func (m *OAuth2AuxiliaryResource) ContextValidate(ctx context.Context, formats s
 	var res []error
 
 	if err := m.contextValidateDeployments(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateDeployment(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -234,27 +198,6 @@ func (m *OAuth2AuxiliaryResource) contextValidateDeployments(ctx context.Context
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *OAuth2AuxiliaryResource) contextValidateDeployment(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Deployment != nil {
-
-		if err := m.Deployment.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("deployment")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("deployment")
-			}
-
-			return err
-		}
 	}
 
 	return nil
