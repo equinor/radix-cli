@@ -155,6 +155,9 @@ func getActiveDeploymentForEnvironment(apiClient *radixapi.Radixapi, appName, en
 	if err != nil {
 		return err
 	}
+	if resp.Payload.ActiveDeployment == nil {
+		    return errors.New("No active deployment found for environment")
+	}  
 	prettyJSON, err := json.Pretty(resp.Payload.ActiveDeployment)
 	if err != nil {
 		return err
