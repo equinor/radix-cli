@@ -73,10 +73,6 @@ type ApplicationRegistration struct {
 	// Example: https://github.com/equinor/radix-canary-golang
 	// Required: true
 	Repository *string `json:"repository"`
-
-	// SharedSecret the shared secret of the webhook
-	// Required: true
-	SharedSecret *string `json:"sharedSecret"`
 }
 
 // Validate validates this application registration
@@ -124,10 +120,6 @@ func (m *ApplicationRegistration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRepository(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateSharedSecret(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -230,15 +222,6 @@ func (m *ApplicationRegistration) validateReaderAdUsers(formats strfmt.Registry)
 func (m *ApplicationRegistration) validateRepository(formats strfmt.Registry) error {
 
 	if err := validate.Required("repository", "body", m.Repository); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ApplicationRegistration) validateSharedSecret(formats strfmt.Registry) error {
-
-	if err := validate.Required("sharedSecret", "body", m.SharedSecret); err != nil {
 		return err
 	}
 

@@ -14,8 +14,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/equinor/radix-cli/generated/radixapi/models"
 )
 
 // NewRegenerateSharedSecretParams creates a new RegenerateSharedSecretParams object,
@@ -80,12 +78,6 @@ type RegenerateSharedSecretParams struct {
 	   name of application
 	*/
 	AppName string
-
-	/* RegenerateRegenerateSharedSecretData.
-
-	   Regenerate shared secret and secret data
-	*/
-	RegenerateRegenerateSharedSecretData *models.RegenerateSharedSecretData
 
 	timeout    time.Duration
 	Context    context.Context
@@ -173,17 +165,6 @@ func (o *RegenerateSharedSecretParams) SetAppName(appName string) {
 	o.AppName = appName
 }
 
-// WithRegenerateRegenerateSharedSecretData adds the regenerateRegenerateSharedSecretData to the regenerate shared secret params
-func (o *RegenerateSharedSecretParams) WithRegenerateRegenerateSharedSecretData(regenerateRegenerateSharedSecretData *models.RegenerateSharedSecretData) *RegenerateSharedSecretParams {
-	o.SetRegenerateRegenerateSharedSecretData(regenerateRegenerateSharedSecretData)
-	return o
-}
-
-// SetRegenerateRegenerateSharedSecretData adds the regenerateRegenerateSharedSecretData to the regenerate shared secret params
-func (o *RegenerateSharedSecretParams) SetRegenerateRegenerateSharedSecretData(regenerateRegenerateSharedSecretData *models.RegenerateSharedSecretData) {
-	o.RegenerateRegenerateSharedSecretData = regenerateRegenerateSharedSecretData
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *RegenerateSharedSecretParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -211,11 +192,6 @@ func (o *RegenerateSharedSecretParams) WriteToRequest(r runtime.ClientRequest, r
 	// path param appName
 	if err := r.SetPathParam("appName", o.AppName); err != nil {
 		return err
-	}
-	if o.RegenerateRegenerateSharedSecretData != nil {
-		if err := r.SetBodyParam(o.RegenerateRegenerateSharedSecretData); err != nil {
-			return err
-		}
 	}
 
 	if len(res) > 0 {
