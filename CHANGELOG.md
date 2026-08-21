@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.40.0](https://github.com/equinor/radix-cli/compare/v1.39.2..v1.40.0) - 2026-08-21
+
+### 🚀 Features
+
+- Get only active deployment per environment  (#205) - ([1526965](https://github.com/equinor/radix-cli/commit/1526965705ba67d242f08084baa7e53646e8c878)) by @herda1 in [#205](https://github.com/equinor/radix-cli/pull/205)
+
+
 ## [1.39.2](https://github.com/equinor/radix-cli/compare/v1.39.1..v1.39.2) - 2026-08-17
 
 ### 🐛 Bug Fixes
