@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.40.0](https://github.com/equinor/radix-cli/compare/v1.39.2..v1.40.0) - 2026-08-21
+## [1.40.1](https://github.com/equinor/radix-cli/compare/v1.40.0..v1.40.1) - 2026-08-26
+
+### 🐛 Bug Fixes
+
+- Update codebase to use modern go constructs (#204) - ([2813102](https://github.com/equinor/radix-cli/commit/28131027bb13ad41fc37931363e793d1aef6783d)) by @nilsgstrabo in [#204](https://github.com/equinor/radix-cli/pull/204)
+
+
+## [1.40.0](https://github.com/equinor/radix-cli/compare/v1.39.2..v1.40.0) - 2026-08-24
 
 ### 🚀 Features
 
