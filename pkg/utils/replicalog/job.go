@@ -11,7 +11,6 @@ import (
 	radixapi "github.com/equinor/radix-cli/generated/radixapi/client"
 	"github.com/equinor/radix-cli/generated/radixapi/client/pipeline_job"
 	"github.com/equinor/radix-cli/pkg/client/consumer"
-	"github.com/equinor/radix-common/utils/pointers"
 )
 
 const (
@@ -111,7 +110,7 @@ func GetLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) GetLog
 			logParameters.SetPipelineRunName(item.pipelineRunName)
 			logParameters.SetTaskName(item.pipelineRunKubeName)
 			logParameters.SetStepName(item.pipelineStepName)
-			logParameters.WithFollow(pointers.Ptr("true"))
+			logParameters.WithFollow(new("true"))
 			logParameters.WithContext(ctx)
 
 			_, err := apiClient.PipelineJob.GetTektonPipelineRunTaskStepLogs(logParameters, nil, consumer.NewEventSourceClientOptions(callback))
@@ -122,7 +121,7 @@ func GetLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) GetLog
 		stepLogsParams.SetAppName(appName)
 		stepLogsParams.SetJobName(jobName)
 		stepLogsParams.SetStepName(item.stepName)
-		stepLogsParams.WithFollow(pointers.Ptr("true"))
+		stepLogsParams.WithFollow(new("true"))
 		stepLogsParams.WithContext(ctx)
 
 		_, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil, consumer.NewEventSourceClientOptions(callback))
