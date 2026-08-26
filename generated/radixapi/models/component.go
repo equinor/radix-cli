@@ -26,6 +26,10 @@ type Component struct {
 	// Example: 4faca8595c5283a9d0f17a623b9255a0d9866a2e
 	CommitID string `json:"commitID,omitempty"`
 
+	// Cron schedules defined for a job component
+	// Example: ["0 0 * * *","*/5 * * * *"]
+	CronSchedules []string `json:"cronSchedules"`
+
 	// Array of external DNS configurations
 	ExternalDNS []*ExternalDNS `json:"externalDNS"`
 
@@ -42,6 +46,11 @@ type Component struct {
 	// Example: server
 	// Required: true
 	Name *string `json:"name"`
+
+	// NextRun is the next time the job component's cron schedule is due to run, if a cron schedule is configured.
+	// It is the earliest next run across all configured schedules, interpreted in the configured timezone and returned as a UTC timestamp.
+	// Format: date-time
+	NextRun strfmt.DateTime `json:"nextRun,omitempty"`
 
 	// Ports defines the port number and protocol that a component is exposed for internally in environment
 	Ports []*Port `json:"ports"`
@@ -119,6 +128,10 @@ func (m *Component) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNextRun(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -210,6 +223,18 @@ func (m *Component) validateImage(formats strfmt.Registry) error {
 func (m *Component) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Component) validateNextRun(formats strfmt.Registry) error {
+	if swag.IsZero(m.NextRun) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("nextRun", "body", "date-time", m.NextRun.String(), formats); err != nil {
 		return err
 	}
 

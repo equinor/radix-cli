@@ -2,6 +2,7 @@ package flagnames
 
 const (
 	AcknowledgeWarnings    = "acknowledge-warnings"
+	ActiveOnly             = "active-only"
 	AdminADGroups          = "ad-groups"
 	Alias                  = "alias"
 	ApiEnvironment         = "api-environment"
