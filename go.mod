@@ -7,8 +7,8 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.13.1
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/msi/armmsi v1.3.0
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.7.2
-	github.com/equinor/radix-common v1.12.5-0.20260817115908-6589107d3e06
-	github.com/equinor/radix-operator v1.123.0
+	github.com/equinor/radix-common v1.13.0
+	github.com/equinor/radix-operator v1.127.0
 	github.com/fatih/color v1.19.0
 	github.com/go-openapi/errors v0.22.1
 	github.com/go-openapi/runtime v0.28.0
@@ -21,7 +21,7 @@ require (
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.1
 	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/cobra v1.10.2
-	github.com/stretchr/testify v1.11.1
+	github.com/stretchr/testify v1.12.1
 	github.com/tidwall/pretty v1.2.1
 	sigs.k8s.io/yaml v1.6.0
 )
@@ -117,7 +117,7 @@ require (
 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
 	go.uber.org/mock v0.6.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
-	go.yaml.in/yaml/v3 v3.0.4 // indirect
+	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/exp v0.0.0-20260508232706-74f9aab9d74a // indirect
 	golang.org/x/net v0.57.0 // indirect
@@ -149,9 +149,4 @@ require (
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/secrets-store-csi-driver v1.4.5 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.4.0 // indirect
-)
-
-replace (
-	github.com/equinor/radix-common => /Users/NST/src/github.com/equinor/radix-common
-	github.com/equinor/radix-operator => /Users/NST/src/github.com/equinor/radix-operator
 )
