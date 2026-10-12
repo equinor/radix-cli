@@ -51,14 +51,18 @@ var createApplicationCmd = &cobra.Command{
 		configBranch, _ := cmd.Flags().GetString(flagnames.ConfigBranch)
 		configFile, _ := cmd.Flags().GetString(flagnames.ConfigFile)
 		configurationItem, _ := cmd.Flags().GetString(flagnames.ConfigurationItem)
+		contextName, err := config.GetContextFromConfigOrFromParameter(cmd)
+		if err != nil {
+			return err
+		}
 		acknowledgeWarnings, err := cmd.Flags().GetBool(flagnames.AcknowledgeWarnings)
 		if err != nil {
 			println(fmt.Sprintf("invalid argument %s: %v", "acknowledge-warnings", err))
 			return err
 		}
 
-		if appName == "" || repository == "" || configBranch == "" || configurationItem == "" {
-			return errors.New("application name, repository, configuration item and config branch are required fields")
+		if err := validateCreateApplicationInput(appName, repository, configBranch, configurationItem, contextName); err != nil {
+			return err
 		}
 
 		adGroups, _ := cmd.Flags().GetStringSlice(flagnames.AdminADGroups)
@@ -112,6 +116,16 @@ var createApplicationCmd = &cobra.Command{
 		// print out payload with, or without the deploy key (if it returns err, thats okay)
 		return err
 	},
+}
+
+func validateCreateApplicationInput(appName, repository, configBranch, configurationItem, contextName string) error {
+	if appName == "" || repository == "" || configBranch == "" {
+		return errors.New("application name, repository and config branch are required fields")
+	}
+	if configurationItem == "" && contextName != config.ContextPlayground {
+		return errors.New("configuration item is required outside the Playground context")
+	}
+	return nil
 }
 
 func getDeployKeyAndSecretWithRetry(apiClient *radixapi.Radixapi, appName string) (string, error) {
