@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.40.2](https://github.com/equinor/radix-cli/compare/v1.40.1..v1.40.2) - 2026-10-16
+
+### 🐛 Bug Fixes
+
+- Bump google.golang.org/grpc (#209) - ([e6f5b4c](https://github.com/equinor/radix-cli/commit/e6f5b4cdc9677e82352c4d2de48bab27695fed84)) by @dependabot[bot] in [#209](https://github.com/equinor/radix-cli/pull/209)
+
+- Bump go.opentelemetry.io/otel/sdk (#214) - ([04e7a94](https://github.com/equinor/radix-cli/commit/04e7a943e187681a0fae22f874c8d53dec6ac2bb)) by @dependabot[bot] in [#214](https://github.com/equinor/radix-cli/pull/214)
+
+
 ## [1.40.1](https://github.com/equinor/radix-cli/compare/v1.40.0..v1.40.1) - 2026-08-26
 
 ### 🐛 Bug Fixes
