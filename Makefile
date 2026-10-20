@@ -21,6 +21,10 @@ push:
 lint: bootstrap
 	golangci-lint run --max-same-issues 0
 
+.PHONY: test
+test:
+	go test ./...
+
 install:
 	go build ./cli/rx/
 	mv rx $$(go env GOPATH)/bin/rx
