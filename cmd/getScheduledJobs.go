@@ -260,8 +260,8 @@ func prettyPrintTextScheduledJobSummary(job models.ScheduledJobSummary, indent s
 		itemSeparatorValue = "-"
 	}
 	fmt.Printf("%s%s Name: %s\n", indent, itemSeparatorValue, pointers.Val(job.Name))
-	if len(job.JobID) > 0 {
-		fmt.Printf("%s  Job ID: %s\n", indent, job.JobID)
+	if len(job.JobId) > 0 {
+		fmt.Printf("%s  Job ID: %s\n", indent, job.JobId)
 	}
 	if !hideBatchName && len(job.BatchName) > 0 {
 		fmt.Printf("%s  Batch: %s\n", indent, job.BatchName)
@@ -301,7 +301,7 @@ func prettyPrintReplicaList(replicaList []*models.ReplicaSummary, indent string)
 			continue
 		}
 		fmt.Printf("%s    Name: %s\n", indent, pointers.Val(replica.Name))
-		if replica.Created != nil {
+		if !replica.Created.IsZero() {
 			fmt.Printf("%s    Created: %s\n", indent, replica.Created.String())
 		}
 		if !replica.ContainerStarted.IsZero() {
@@ -314,7 +314,7 @@ func prettyPrintReplicaList(replicaList []*models.ReplicaSummary, indent string)
 			fmt.Printf("%s    Status: %s\n", indent, *replica.ReplicaStatus.Status)
 		}
 		fmt.Printf("%s    Image: %s\n", indent, replica.Image)
-		fmt.Printf("%s    Image ID: %s\n", indent, replica.ImageID)
+		fmt.Printf("%s    Image ID: %s\n", indent, replica.ImageId)
 	}
 }
 

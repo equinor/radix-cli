@@ -8,7 +8,7 @@ on:
 permissions:
     contents: write
     packages: write
-
+# add lint job and tests 
 jobs:
     build-binaries:
         runs-on: radix-runner

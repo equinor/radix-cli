@@ -51,7 +51,7 @@ func GetReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentN
 				replicas = append(replicas, ComponentItem{
 					Component: *comp.Name,
 					Replica:   *replica.Name,
-					created:   time.Time(*replica.Created),
+					created:   time.Time(replica.Created),
 				})
 			}
 		}
@@ -85,7 +85,7 @@ func GetComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, e
 					componentReplicas = append(componentReplicas, ComponentItem{
 						Component: *component.Name,
 						Replica:   *replica.Name,
-						created:   time.Time(*replica.Created),
+						created:   time.Time(replica.Created),
 					})
 				}
 			}
@@ -143,7 +143,7 @@ func GetReplicasForComponentOAuth2(apiClient *radixapi.Radixapi, appName, enviro
 							Env:       environmentName,
 							Replica:   *replica.Name,
 							AuxType:   deployment.Type,
-							created:   time.Time(*replica.Created),
+							created:   time.Time(replica.Created),
 						})
 					}
 				}

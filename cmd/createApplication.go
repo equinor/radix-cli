@@ -26,7 +26,7 @@ import (
 	"github.com/equinor/radix-cli/pkg/client"
 	"github.com/equinor/radix-cli/pkg/config"
 	"github.com/equinor/radix-cli/pkg/flagnames"
-	"github.com/sirupsen/logrus"
+ 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -51,17 +51,9 @@ var createApplicationCmd = &cobra.Command{
 		configBranch, _ := cmd.Flags().GetString(flagnames.ConfigBranch)
 		configFile, _ := cmd.Flags().GetString(flagnames.ConfigFile)
 		configurationItem, _ := cmd.Flags().GetString(flagnames.ConfigurationItem)
-		contextName, err := config.GetContextFromConfigOrFromParameter(cmd)
-		if err != nil {
-			return err
-		}
 		acknowledgeWarnings, err := cmd.Flags().GetBool(flagnames.AcknowledgeWarnings)
 		if err != nil {
 			println(fmt.Sprintf("invalid argument %s: %v", "acknowledge-warnings", err))
-			return err
-		}
-
-		if err := validateCreateApplicationInput(appName, repository, configBranch, configurationItem, contextName); err != nil {
 			return err
 		}
 
@@ -92,7 +84,7 @@ var createApplicationCmd = &cobra.Command{
 		resp, err := apiClient.Platform.RegisterApplication(registerApplicationParams, nil)
 
 		if err != nil {
-			return err
+			return registerApplicationError(err)
 		}
 		registrationUpsertResponse := resp.Payload
 		if len(registrationUpsertResponse.Warnings) > 0 {
@@ -118,16 +110,6 @@ var createApplicationCmd = &cobra.Command{
 	},
 }
 
-func validateCreateApplicationInput(appName, repository, configBranch, configurationItem, contextName string) error {
-	if appName == "" || repository == "" || configBranch == "" {
-		return errors.New("application name, repository and config branch are required fields")
-	}
-	if configurationItem == "" && contextName != config.ContextPlayground {
-		return errors.New("configuration item is required outside the Playground context")
-	}
-	return nil
-}
-
 func getDeployKeyAndSecretWithRetry(apiClient *radixapi.Radixapi, appName string) (string, error) {
 	deployKeyAndSecretParams := application.NewGetDeployKeyAndSecretParams()
 	deployKeyAndSecretParams.SetAppName(appName)
@@ -148,6 +130,22 @@ func getDeployKeyAndSecretWithRetry(apiClient *radixapi.Radixapi, appName string
 			continue
 		}
 		return *deployKeyResp.Payload.PublicDeployKey, nil
+	}
+}
+
+// carrying the message from the API's ErrorResponseBody.
+func registerApplicationError(err error) error {
+	switch e := err.(type) {
+	case *platform.RegisterApplicationBadRequest:
+		return fmt.Errorf("invalid application registration: %s", client.ErrorResponseDetails(e.Payload, e.Code()))
+	case *platform.RegisterApplicationUnauthorized:
+		return fmt.Errorf("unauthorized, run `rx login` or provide a valid token: %s", client.ErrorResponseDetails(e.Payload, e.Code()))
+	case *platform.RegisterApplicationForbidden:
+		return fmt.Errorf("you are not allowed to register this application: %s", client.ErrorResponseDetails(e.Payload, e.Code()))
+	case *platform.RegisterApplicationConflict:
+		return fmt.Errorf("application registration conflicts with an existing application: %s", client.ErrorResponseDetails(e.Payload, e.Code()))
+	default:
+		return err
 	}
 }
 
