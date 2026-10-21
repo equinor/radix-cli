@@ -116,7 +116,7 @@ Note: After running generated Azure CLI commands, Azure can take up to one minut
 		if len(appName) > 0 {
 			appNames = []string{appName}
 		} else {
-			apps, err := apiClient.Platform.ShowApplications(platform.NewShowApplicationsParamsWithContext(cmd.Context()), nil)
+			apps, err := apiClient.Platform.ShowApplicationsContext(cmd.Context(), platform.NewShowApplicationsParams(), nil)
 			if err != nil {
 				return err
 			}
@@ -336,7 +336,7 @@ func (v *workloadIdentityValidationHelper) ValidateWorkloadIdentities(ctx contex
 		affectedNamespaces = append(affectedNamespaces, slice.Map(appDeployments, func(d models.Deployment) string { return *d.Namespace })...)
 	}
 
-	cfg, err := v.radixApiClient.Configuration.GetConfiguration(configuration.NewGetConfigurationParamsWithContext(ctx), nil)
+	cfg, err := v.radixApiClient.Configuration.GetConfigurationContext(ctx, configuration.NewGetConfigurationParams(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -486,7 +486,7 @@ func (v *workloadIdentityValidationHelper) buildFederatedCredentialsMapForIdenti
 }
 
 func (v *workloadIdentityValidationHelper) getActiveDeploymentsForApplication(ctx context.Context, appName string) ([]models.Deployment, error) {
-	app, err := v.radixApiClient.Application.GetApplication(application.NewGetApplicationParamsWithContext(ctx).WithAppName(appName), nil)
+	app, err := v.radixApiClient.Application.GetApplicationContext(ctx, application.NewGetApplicationParams().WithAppName(appName), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -495,7 +495,7 @@ func (v *workloadIdentityValidationHelper) getActiveDeploymentsForApplication(ct
 
 	for _, env := range app.Payload.Environments {
 		if env.ActiveDeployment != nil {
-			activeDeployment, err := v.radixApiClient.Deployment.GetDeployment(deployment.NewGetDeploymentParamsWithContext(ctx).WithAppName(appName).WithDeploymentName(*env.ActiveDeployment.Name), nil)
+			activeDeployment, err := v.radixApiClient.Deployment.GetDeploymentContext(ctx, deployment.NewGetDeploymentParams().WithAppName(appName).WithDeploymentName(*env.ActiveDeployment.Name), nil)
 			if err != nil {
 				return nil, err
 			}
