@@ -57,6 +57,10 @@ var createApplicationCmd = &cobra.Command{
 			return err
 		}
 
+		if appName == "" || repository == "" || configBranch == "" {
+			return errors.New("application name, repository, config branch are required fields")
+		}
+
 		adGroups, _ := cmd.Flags().GetStringSlice(flagnames.AdminADGroups)
 		readerAdGroups, _ := cmd.Flags().GetStringSlice(flagnames.ReaderADGroups)
 
