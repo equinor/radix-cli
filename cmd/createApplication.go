@@ -40,7 +40,7 @@ var createApplicationCmd = &cobra.Command{
 	Use:     "application",
 	Short:   "Create application",
 	Long:    "Creates a Radix application in the cluster",
-	Example: `rx create application --application your-application-name --repository https://github.com/your-repository --config-branch main --ad-groups abcdef-1234-5678-9aaa-abcdefgf --reader-ad-groups=23456789--9123-4567-8901-23456701 --acknowledge-warnings --configuration-item "YOUR PROJECT CONFIG ITEM" --context playground`,
+	Example: `rx create application --application your-application-name --repository https://github.com/your-repository --config-branch main --ad-groups abcdef-1234-5678-9aaa-abcdefgf --reader-ad-groups=23456789--9123-4567-8901-23456701 --acknowledge-warnings --configuration-item "YOUR PROJECT CONFIG ITEM (optional in playground)" --context playground`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appName, err := config.GetAppNameFromConfigOrFromParameter(cmd, flagnames.Application)
 		if err != nil {
@@ -57,8 +57,8 @@ var createApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		if appName == "" || repository == "" || configBranch == "" || configurationItem == "" {
-			return errors.New("application name, repository, configuration item and config branch are required fields")
+		if appName == "" || repository == "" || configBranch == "" {
+			return errors.New("application name, repository, config branch are required fields")
 		}
 
 		adGroups, _ := cmd.Flags().GetStringSlice(flagnames.AdminADGroups)
@@ -86,9 +86,8 @@ var createApplicationCmd = &cobra.Command{
 		}
 
 		resp, err := apiClient.Platform.RegisterApplication(registerApplicationParams, nil)
-
 		if err != nil {
-			return err
+			return client.HandleErrorResponseBody(err)
 		}
 		registrationUpsertResponse := resp.Payload
 		if len(registrationUpsertResponse.Warnings) > 0 {

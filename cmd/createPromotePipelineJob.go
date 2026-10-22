@@ -157,16 +157,16 @@ func getLastDeploymentNameByCommitId(apiClient *radixapi.Radixapi, appName, envN
 	}
 
 	sort.Slice(deploymentSummaries, func(i, j int) bool {
-		if deploymentSummaries[i].ActiveFrom == nil && deploymentSummaries[j].ActiveFrom == nil {
+		if deploymentSummaries[i].ActiveFrom.IsZero() && deploymentSummaries[j].ActiveFrom.IsZero() {
 			return false
 		}
-		if deploymentSummaries[i].ActiveFrom == nil {
+		if deploymentSummaries[i].ActiveFrom.IsZero() {
 			return true
 		}
-		if deploymentSummaries[j].ActiveFrom == nil {
+		if deploymentSummaries[j].ActiveFrom.IsZero() {
 			return false
 		}
-		return time.Time(*deploymentSummaries[i].ActiveFrom).Before(time.Time(*deploymentSummaries[j].ActiveFrom))
+		return time.Time(deploymentSummaries[i].ActiveFrom).Before(time.Time(deploymentSummaries[j].ActiveFrom))
 	})
 	return *deploymentSummaries[len(deploymentSummaries)-1].Name, nil
 }

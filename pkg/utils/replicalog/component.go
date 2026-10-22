@@ -51,7 +51,7 @@ func GetReplicasForComponent(apiClient *radixapi.Radixapi, appName, environmentN
 				replicas = append(replicas, ComponentItem{
 					Component: *comp.Name,
 					Replica:   *replica.Name,
-					created:   time.Time(*replica.Created),
+					created:   time.Time(replica.Created),
 				})
 			}
 		}
@@ -85,7 +85,7 @@ func GetComponentReplicasForEnvironment(apiClient *radixapi.Radixapi, appName, e
 					componentReplicas = append(componentReplicas, ComponentItem{
 						Component: *component.Name,
 						Replica:   *replica.Name,
-						created:   time.Time(*replica.Created),
+						created:   time.Time(replica.Created),
 					})
 				}
 			}
@@ -143,7 +143,7 @@ func GetReplicasForComponentOAuth2(apiClient *radixapi.Radixapi, appName, enviro
 							Env:       environmentName,
 							Replica:   *replica.Name,
 							AuxType:   deployment.Type,
-							created:   time.Time(*replica.Created),
+							created:   time.Time(replica.Created),
 						})
 					}
 				}
@@ -159,7 +159,7 @@ func GetOAuth2ComponentLog(apiClient *radixapi.Radixapi, appName string, previou
 	previousStr := strconv.FormatBool(previous)
 
 	return func(ctx context.Context, item OAuth2ComponentItem, since time.Time, callback consumer.EventCallback) error {
-		logParameters := component.NewGetOAuthPodLogParamsWithContext(ctx)
+		logParameters := component.NewGetOAuthPodLogParams()
 		logParameters.WithAppName(appName)
 		logParameters.WithEnvName(item.Env)
 		logParameters.WithComponentName(item.Component)
@@ -169,7 +169,7 @@ func GetOAuth2ComponentLog(apiClient *radixapi.Radixapi, appName string, previou
 		logParameters.WithSinceTime(new(strfmt.DateTime(since)))
 		logParameters.WithPrevious(&previousStr)
 
-		_, err := apiClient.Component.GetOAuthPodLog(logParameters, nil, consumer.NewEventSourceClientOptions(callback))
+		_, err := apiClient.Component.GetOAuthPodLogContext(ctx, logParameters, nil, consumer.NewEventSourceClientOptions(callback))
 		return err
 	}
 }
@@ -178,7 +178,7 @@ func GetComponentLog(apiClient *radixapi.Radixapi, appName string, previous bool
 	previousStr := strconv.FormatBool(previous)
 
 	return func(ctx context.Context, item ComponentItem, since time.Time, callback consumer.EventCallback) error {
-		logParameters := component.NewLogParamsWithContext(ctx)
+		logParameters := component.NewLogParams()
 		logParameters.WithAppName(appName)
 		logParameters.WithDeploymentName("irrelevant")
 		logParameters.WithComponentName(item.Component)
@@ -187,7 +187,7 @@ func GetComponentLog(apiClient *radixapi.Radixapi, appName string, previous bool
 		logParameters.SetSinceTime(new(strfmt.DateTime(since)))
 		logParameters.WithPrevious(&previousStr)
 
-		_, err := apiClient.Component.Log(logParameters, nil, consumer.NewEventSourceClientOptions(callback))
+		_, err := apiClient.Component.LogContext(ctx, logParameters, nil, consumer.NewEventSourceClientOptions(callback))
 		return err
 	}
 }
