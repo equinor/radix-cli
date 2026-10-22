@@ -86,9 +86,8 @@ var createApplicationCmd = &cobra.Command{
 		}
 
 		resp, err := apiClient.Platform.RegisterApplication(registerApplicationParams, nil)
-
 		if err != nil {
-			return registerApplicationError(err)
+			return client.HandleErrorResponseBody(err)
 		}
 		registrationUpsertResponse := resp.Payload
 		if len(registrationUpsertResponse.Warnings) > 0 {
@@ -134,22 +133,6 @@ func getDeployKeyAndSecretWithRetry(apiClient *radixapi.Radixapi, appName string
 			continue
 		}
 		return *deployKeyResp.Payload.PublicDeployKey, nil
-	}
-}
-
-// carrying the message from the API's ErrorResponseBody.
-func registerApplicationError(err error) error {
-	switch e := err.(type) {
-	case *platform.RegisterApplicationBadRequest:
-		return fmt.Errorf("invalid application registration: %s", client.ErrorResponseDetails(e.Payload, e.Code()))
-	case *platform.RegisterApplicationUnauthorized:
-		return fmt.Errorf("unauthorized, run `rx login` or provide a valid token: %s", client.ErrorResponseDetails(e.Payload, e.Code()))
-	case *platform.RegisterApplicationForbidden:
-		return fmt.Errorf("you are not allowed to register this application: %s", client.ErrorResponseDetails(e.Payload, e.Code()))
-	case *platform.RegisterApplicationConflict:
-		return fmt.Errorf("application registration conflicts with an existing application: %s", client.ErrorResponseDetails(e.Payload, e.Code()))
-	default:
-		return err
 	}
 }
 
