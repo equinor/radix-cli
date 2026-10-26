@@ -104,27 +104,25 @@ func GetReplicasForJob(apiClient *radixapi.Radixapi, appName, jobName string) Ge
 func GetLogsForJob(apiClient *radixapi.Radixapi, appName, jobName string) GetLogFunc[JobStep] {
 	return func(ctx context.Context, item JobStep, _ time.Time, callback consumer.EventCallback) error {
 		if item.isSubPipeline {
-			logParameters := pipeline_job.NewGetTektonPipelineRunTaskStepLogsParamsWithContext(ctx)
+			logParameters := pipeline_job.NewGetTektonPipelineRunTaskStepLogsParams()
 			logParameters.SetAppName(appName)
 			logParameters.SetJobName(jobName)
 			logParameters.SetPipelineRunName(item.pipelineRunName)
 			logParameters.SetTaskName(item.pipelineRunKubeName)
 			logParameters.SetStepName(item.pipelineStepName)
 			logParameters.WithFollow(new("true"))
-			logParameters.WithContext(ctx)
 
-			_, err := apiClient.PipelineJob.GetTektonPipelineRunTaskStepLogs(logParameters, nil, consumer.NewEventSourceClientOptions(callback))
+			_, err := apiClient.PipelineJob.GetTektonPipelineRunTaskStepLogsContext(ctx, logParameters, nil, consumer.NewEventSourceClientOptions(callback))
 			return err
 		}
 
-		stepLogsParams := pipeline_job.NewGetPipelineJobStepLogsParamsWithContext(ctx)
+		stepLogsParams := pipeline_job.NewGetPipelineJobStepLogsParams()
 		stepLogsParams.SetAppName(appName)
 		stepLogsParams.SetJobName(jobName)
 		stepLogsParams.SetStepName(item.stepName)
 		stepLogsParams.WithFollow(new("true"))
-		stepLogsParams.WithContext(ctx)
 
-		_, err := apiClient.PipelineJob.GetPipelineJobStepLogs(stepLogsParams, nil, consumer.NewEventSourceClientOptions(callback))
+		_, err := apiClient.PipelineJob.GetPipelineJobStepLogsContext(ctx, stepLogsParams, nil, consumer.NewEventSourceClientOptions(callback))
 		return err
 	}
 }

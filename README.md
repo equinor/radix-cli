@@ -16,7 +16,7 @@ For general usage documentation, see the [Radix CLI docs](https://radix.equinor.
 | Mac   | `radix-cli_<version>_Darwin_x86_64.tar.gz`  | `radix-cli_<version>_Darwin_arm64.tar.gz`  |
 | Linux | `radix-cli_<version>_Linux_x86_64.tar.gz`   | `radix-cli_<version>_Linux_arm64.tar.gz`   |
 
-**Example installation (Mac, AMD64):**
+**Example installation (Mac, AMD64, auto-detects OS and CPU):**
 
 ```bash
 LATEST_VERSION=$(
@@ -25,23 +25,9 @@ LATEST_VERSION=$(
         sed -E 's/.*"v([^"]+)".*/\1/'
 )
 
-rx_tar="radix-cli_${LATEST_VERSION}_Darwin_x86_64.tar.gz"
-curl -OL "https://github.com/equinor/radix-cli/releases/download/v${LATEST_VERSION}/${rx_tar}"
-tar -xf "${rx_tar}"
-sudo mv rx /usr/local/bin/rx
-rm "${rx_tar}"
-```
-
-**Example installation (Linux, AMD64):**
-
-```bash
-LATEST_VERSION=$(
-    curl --silent "https://api.github.com/repos/equinor/radix-cli/releases/latest" |
-        grep '"tag_name":' |
-        sed -E 's/.*"v([^"]+)".*/\1/'
-)
-
-rx_tar="radix-cli_${LATEST_VERSION}_Linux_x86_64.tar.gz"
+OS=$(uname -s)                                  # Darwin or Linux
+ARCH=$(uname -m | sed 's/aarch64/arm64/')       # x86_64 or arm64
+rx_tar="radix-cli_${LATEST_VERSION}_${OS}_${ARCH}.tar.gz"
 curl -OL "https://github.com/equinor/radix-cli/releases/download/v${LATEST_VERSION}/${rx_tar}"
 tar -xf "${rx_tar}"
 sudo mv rx /usr/local/bin/rx
