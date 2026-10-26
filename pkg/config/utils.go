@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/equinor/radix-cli/pkg/flagnames"
 	v1 "github.com/equinor/radix-operator/pkg/apis/radix/v1"
@@ -33,22 +32,6 @@ func GetAppNameFromConfigOrFromParameter(cmd *cobra.Command, appNameField string
 	}
 
 	return appName, nil
-}
-
-func GetContextFromConfigOrFromParameter(cmd *cobra.Command) (string, error) {
-	contextName, err := cmd.Flags().GetString(flagnames.Context)
-	if err != nil {
-		return "", err
-	}
-	if strings.TrimSpace(contextName) != "" {
-		return contextName, nil
-	}
-
-	radixConfig, err := GetRadixConfig()
-	if err != nil {
-		return "", err
-	}
-	return radixConfig.CustomConfig.Context, nil
 }
 
 func GetEnvironmentFromConfig(cmd *cobra.Command, branchName string) (string, error) {
