@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.40.2](https://github.com/equinor/radix-cli/compare/v1.40.1..v1.40.2) - 2026-10-26
+
+### 🐛 Bug Fixes
+
+- Bump google.golang.org/grpc (#209) - ([e6f5b4c](https://github.com/equinor/radix-cli/commit/e6f5b4cdc9677e82352c4d2de48bab27695fed84)) by @dependabot[bot] in [#209](https://github.com/equinor/radix-cli/pull/209)
+
+- Bump go.opentelemetry.io/otel/sdk (#214) - ([04e7a94](https://github.com/equinor/radix-cli/commit/04e7a943e187681a0fae22f874c8d53dec6ac2bb)) by @dependabot[bot] in [#214](https://github.com/equinor/radix-cli/pull/214)
+
+- Remove required app id for playground (#212) - ([eff796c](https://github.com/equinor/radix-cli/commit/eff796c785297025dc6d16ac6f93643d12360f6e)) by @herda1 in [#212](https://github.com/equinor/radix-cli/pull/212)
+
+- Bump github.com/kedacore/keda/v2 (#217) - ([c00b1a4](https://github.com/equinor/radix-cli/commit/c00b1a42b3e5922def9c18920a4ba7bb411050de)) by @dependabot[bot] in [#217](https://github.com/equinor/radix-cli/pull/217)
+
+
 ## [1.40.1](https://github.com/equinor/radix-cli/compare/v1.40.0..v1.40.1) - 2026-08-26
 
 ### 🐛 Bug Fixes
