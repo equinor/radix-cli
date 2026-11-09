@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.40.2](https://github.com/equinor/radix-cli/compare/v1.40.1..v1.40.2) - 2026-10-26
+## [1.40.3](https://github.com/equinor/radix-cli/compare/v1.40.2..v1.40.3) - 2026-11-09
+
+### 🐛 Bug Fixes
+
+- Updated Radix Operator version (#221) - ([354cf23](https://github.com/equinor/radix-cli/commit/354cf23fd8996b083348825b45dad7b51acd046c)) by @ingeknudsen in [#221](https://github.com/equinor/radix-cli/pull/221)
+
+
+## [1.40.2](https://github.com/equinor/radix-cli/compare/v1.40.1..v1.40.2) - 2026-11-03
 
 ### 🐛 Bug Fixes
 
